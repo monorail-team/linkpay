@@ -1,0 +1,12 @@
+dependencies {
+    implementation project(':core')
+    implementation project(':domain:domain-member')
+    implementation project(':in-system-available:common-web')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    runtimeOnly 'com.h2database:h2'
+}
+
+bootJar {
+    enabled = true
+}
