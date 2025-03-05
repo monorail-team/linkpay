@@ -54,14 +54,14 @@ class AuthControllerTest {
                 }),
 
                 dynamicTest("카카오 로그인을 통해 엑세스 토큰을 발급받는다.", () -> {
-                    AuthResponse authResponse = 카카오_로그인_요청
+                    var response = 카카오_로그인_요청
                             .then()
                             .statusCode(HttpStatus.OK.value())
                             .body("accessToken", notNullValue())
                             .log().all()
-                            .extract().as(AuthResponse.class);
+                            .extract().as(LoginResponse.class);
 
-                    accessToken.set(authResponse.accessToken());
+                    accessToken.set(response.accessToken());
                 }),
 
                 dynamicTest("발급받은 엑세스 토큰을 사용하면 인증에 성공한다.", () -> {
