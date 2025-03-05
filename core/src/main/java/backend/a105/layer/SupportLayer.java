@@ -1,7 +1,6 @@
 package backend.a105.layer;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
