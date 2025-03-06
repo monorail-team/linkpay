@@ -14,7 +14,7 @@ public class LoginStrategyResolver {
 
     private final KakaoLoginProcessor kakaoLoginProcessor;
 
-    public LoginCandidate resolve(LoginRequest request) {
+    public Email resolve(LoginRequest request) {
         if (request instanceof KakaoLoginRequest kakaoLoginRequest) {
             log.debug("카카오 로그인");
             return kakaoLoginProcessor.process(kakaoLoginRequest.code());

@@ -20,21 +20,15 @@ class LoginStrategyResolverTest {
 
         KakaoLoginProcessor kakaoLoginProcessor = Mockito.mock(KakaoLoginProcessor.class);
         LoginStrategyResolver sut = new LoginStrategyResolver(kakaoLoginProcessor);
-        Email email = new Email("test@email.com");
-        MemberId memberId = new MemberId(1L);
         when(kakaoLoginProcessor.process(code))
-                .thenReturn(LoginCandidate.builder()
-                        .email(email)
-                        .memberId(memberId)
-                        .build());
+                .thenReturn(Email.of("test@email.com"));
 
         //when
-        LoginCandidate loginCandidate = sut.resolve(request);
+        Email email = sut.resolve(request);
 
         //then
         verify(kakaoLoginProcessor).process(code);
-        assertThat(loginCandidate.email().value()).isEqualTo("test@email.com");
-        assertThat(loginCandidate.memberId().value()).isEqualTo(1L);
+        assertThat(email.value()).isEqualTo("test@email.com");
     }
 
     @Test

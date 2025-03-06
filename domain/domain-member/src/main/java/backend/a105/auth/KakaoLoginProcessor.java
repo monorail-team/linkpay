@@ -9,12 +9,12 @@ import org.springframework.http.ResponseEntity;
 public class KakaoLoginProcessor {
     private final KakaoOauthClint kakaoOauthClint;
 
-    public LoginCandidate process(String code) {
+    public Email process(String code) {
         ResponseEntity<String> response = kakaoOauthClint.authenticate(code);
         if(response.getStatusCode().is4xxClientError()){
             // thrdow
         }
 
-        return LoginCandidate.of();
+        return Email.of("email");
     }
 }

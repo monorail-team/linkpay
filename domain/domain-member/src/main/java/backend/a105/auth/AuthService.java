@@ -14,8 +14,8 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) {
         log.debug("login process in progress : {}", request);
-        var loginCandidate = loginStrategyResolver.resolve(request);
-        var loginMember = memberFetcher.fetchBy(loginCandidate.email());
+        var email = loginStrategyResolver.resolve(request);
+        var loginMember = memberFetcher.fetchBy(email);
         var accessToken = authTokenGenerator.generateFor(loginMember);
 
         log.debug("로그인 검증 진행");
