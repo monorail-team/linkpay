@@ -31,9 +31,7 @@ public class AuthController {
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
 //                .header(HttpHeaders.SET_COOKIE, refreshCookie)
-                .body(LoginResponse.builder()
-                        .accessToken(response.accessToken())
-                        .build());
+                .body(response);
     }
 
     @GetMapping("/test-authenticate")
