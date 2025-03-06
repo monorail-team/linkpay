@@ -1,8 +1,9 @@
 package backend.a105.auth;
 
 import lombok.Builder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-//@ConfigurationProperties("oauth.kakao")
+@ConfigurationProperties(prefix = "oauth.kakao")
 public class KakaoOauthProps {
     String userApiUri;
     String authorizeApiUri;

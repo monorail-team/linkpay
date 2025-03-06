@@ -1,10 +1,10 @@
 package backend.a105.auth;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class KakaoLoginProcessorTest {
@@ -13,7 +13,7 @@ class KakaoLoginProcessorTest {
     public void 카카오_인증_과정을_진행한다() throws Exception {
         //given
         String code = "카카오 인증 토큰";
-        KakaoOauthClient kakaoOauthClient = Mockito.mock(KakaoOauthClient.class);
+        KakaoOauthClient kakaoOauthClient = mock(KakaoOauthClient.class);
         when(kakaoOauthClient.authorize(code))
                 .thenReturn(ResponseEntity.ok(KakaoOauthResponse.of("accessToken")));
         when(kakaoOauthClient.fetchUser("accessToken"))
