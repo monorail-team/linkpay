@@ -1,7 +1,6 @@
 rootProject.name = 'A105'
 
-include 'core'
+include 'support'
 include 'in-system-available:common-web'
-include 'domain:domain-common'
-include 'domain:domain-member'
+include 'domain:domain-core'
 include 'app:app-external-api'

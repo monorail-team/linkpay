@@ -1,6 +1,6 @@
 dependencies {
-    implementation project(':core')
-    implementation project(':domain:domain-member')
+    implementation project(':support')
+    implementation project(':domain:domain-core')
     implementation project(':in-system-available:common-web')
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
