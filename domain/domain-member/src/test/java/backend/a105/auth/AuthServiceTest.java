@@ -22,11 +22,9 @@ import static org.mockito.Mockito.when;
 class AuthServiceTest {
 
     @Autowired
-    AuthService authService;
-
+    AuthService sut;
     @Autowired
     KakaoOauthClient mockKakaoOauthClient;
-
     @Autowired
     MemberRepository memberRepository;
 
@@ -52,10 +50,10 @@ class AuthServiceTest {
             memberRepository.save(Member.builder().email(email).build());
 
             //when
-            LoginResponse sut = authService.login(new KakaoLoginRequest(code));
+            LoginResponse response = sut.login(new KakaoLoginRequest(code));
 
             //then
-            assertThat(sut.accessToken()).isNotBlank();
+            assertThat(response.accessToken()).isNotBlank();
         }
 
 
@@ -68,7 +66,7 @@ class AuthServiceTest {
             );
 
             //when, then
-            assertThatThrownBy(() -> authService.login(request))
+            assertThatThrownBy(() -> sut.login(request))
                     .isInstanceOf(AppException.class);
         }
     }

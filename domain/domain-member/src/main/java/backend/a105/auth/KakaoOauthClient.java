@@ -26,26 +26,22 @@ public class KakaoOauthClient {
                 .queryParam("code", code)
                 .toUriString();
 
-        // RestTemplate을 사용하여 POST 요청 보내기
-        HttpEntity<String> entity = new HttpEntity<>(null);  // 요청 본문이 없는 경우
+
         ResponseEntity<KakaoOauthResponse> responseEntity = restTemplate.exchange(
                 uri,
                 HttpMethod.POST,
-                entity,
+                HttpEntity.EMPTY,
                 KakaoOauthResponse.class
         );
-
 
         return responseEntity;
     }
 
     public ResponseEntity<KakaoUserResponse> fetchUser(String accessToken) {
-        // RestTemplate을 사용하여 GET 요청 보내기
-        HttpEntity<String> entity = new HttpEntity<>(null);  // 요청 본문이 없는 경우
         ResponseEntity<KakaoUserResponse> responseEntity = restTemplate.exchange(
                 props.userApiUri,
                 HttpMethod.GET,
-                entity,
+                HttpEntity.EMPTY,
                 KakaoUserResponse.class,
                 "Bearer " + accessToken
         );
