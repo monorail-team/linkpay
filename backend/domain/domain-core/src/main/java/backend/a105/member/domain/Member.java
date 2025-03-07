@@ -1,5 +1,7 @@
 package backend.a105.member.domain;
 
+import backend.a105.auth.Email;
+import backend.a105.auth.MemberId;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,13 +18,15 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    @Convert(converter = MemberIdConverter.class)
+    private MemberId id;
+    @Convert(converter = EmailConverter.class)
+    private Email email;
     private String username;
     private String password;
-    private String email;
 
     @Builder
-    private Member(final String username, final String password, final String email) {
+    private Member(final String username, final String password, final Email email) {
         this.username = username;
         this.password = password;
         this.email = email;
