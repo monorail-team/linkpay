@@ -19,10 +19,12 @@ public class Member {
     private Long id;
     private String username;
     private String password;
+    private String email;
 
     @Builder
-    private Member(final String username, final String password) {
+    private Member(final String username, final String password, final String email) {
         this.username = username;
         this.password = password;
+        this.email = email;
     }
 }

@@ -1,6 +1,8 @@
 dependencies {
     implementation project(':support')
     implementation project(':in-system-available:common-web')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testRuntimeOnly 'com.h2database:h2'
 }
