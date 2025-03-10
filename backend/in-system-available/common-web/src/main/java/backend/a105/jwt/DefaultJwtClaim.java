@@ -1,19 +1,17 @@
 package backend.a105.jwt;
 
-public enum JwtClaim {
+public enum DefaultJwtClaim {
     TOKEN_ID("tokenId"),
-    MEMBER_ID("memberId"),
-    ROLES("roles"),
-    TYPE("type"),
+    TOKEN_TYPE("type"),
     SALT("salt");
 
     private final String value;
 
-    JwtClaim(String value) {
+    DefaultJwtClaim(String value) {
         this.value = value;
     }
 
-    String claim() {
+    String value() {
         return value;
     }
 }
