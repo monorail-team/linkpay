@@ -1,5 +1,6 @@
-package backend.a105.jwt;
+package backend.a105.token;
 
+import backend.a105.type.Json;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -9,5 +10,5 @@ import java.util.Map;
 public record ValidatedToken(String tokenId,
                              TokenType type,
                              Instant expiresAt,
-                             Map<String, Object> payload) {
+                             Json payload) {
 }

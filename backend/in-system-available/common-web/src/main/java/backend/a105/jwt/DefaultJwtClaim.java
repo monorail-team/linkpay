@@ -4,4 +4,5 @@ public enum DefaultJwtClaim {
     TOKEN_ID,
     TOKEN_TYPE,
     SALT,
+    PAYLOAD,
 }

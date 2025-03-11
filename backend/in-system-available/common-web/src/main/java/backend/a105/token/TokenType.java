@@ -1,4 +1,4 @@
-package backend.a105.jwt;
+package backend.a105.token;
 
 public enum TokenType {
     ACCESS,

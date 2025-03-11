@@ -1,4 +1,4 @@
-package backend.a105.jwt;
+package backend.a105.token;
 
 import lombok.Builder;
 
@@ -6,5 +6,5 @@ import lombok.Builder;
 public record GeneratedToken(
         String tokenId,
         TokenType type,
-        String value) {
+        String token) {
 }

@@ -1,6 +1,6 @@
 package backend.a105.auth;
 
-import backend.a105.jwt.TokenType;
+import backend.a105.token.TokenType;
 import backend.a105.layer.BusinessLayer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
