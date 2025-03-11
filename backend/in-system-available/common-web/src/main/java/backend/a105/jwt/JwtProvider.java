@@ -46,7 +46,7 @@ public class JwtProvider {
      * 나머지 정보는 Map의 형태로 호출하는 쪽에서 자유롭게 구성할 수 있는 게 더 낫다고 생각했습니다.
      * 범용성은 높으나 호출하는 쪽에서 편하게 쓰기 위해서는 별도로 어댑터 역할을 해줄 클래스를 추가로 구현해야 될 것 같습니다.
      */
-    public String generate(long tokenId, String tokenType, int expirySeconds, Json payload) {
+    public String generate(long tokenId, String tokenType, long expirySeconds, Json payload) {
         Instant expiresAt = Instant.now().plus(expirySeconds, ChronoUnit.SECONDS);
         return JWT.create().withIssuer(props.issuer)
                 .withClaim(TOKEN_ID.name(), tokenId)

@@ -1,8 +1,9 @@
 package backend.a105.member.domain;
 
-import backend.a105.type.Email;
-import backend.a105.type.MemberId;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,15 +19,13 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Convert(converter = MemberIdConverter.class)
-    private MemberId id;
-    @Convert(converter = EmailConverter.class)
-    private Email email;
+    private Long id;
+    private String email;
     private String username;
     private String password;
 
     @Builder
-    private Member(final String username, final String password, final Email email) {
+    private Member(final String username, final String password, final String email) {
         this.username = username;
         this.password = password;
         this.email = email;

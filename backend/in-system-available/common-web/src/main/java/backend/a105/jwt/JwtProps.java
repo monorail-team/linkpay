@@ -9,12 +9,12 @@ public class JwtProps {
     String issuer;
     String secret;
     @Getter
-    private int expirySeconds;
+    long expirySeconds;
     @Getter
-    private int refreshExpirySeconds;
+    long refreshExpirySeconds;
 
     @Builder
-    protected JwtProps(String issuer, String secret, int expirySeconds, int refreshExpirySeconds) {
+    protected JwtProps(String issuer, String secret, long expirySeconds, long refreshExpirySeconds) {
         this.issuer = issuer;
         this.secret = secret;
         this.expirySeconds = expirySeconds;

@@ -22,7 +22,7 @@ public class TokenGenerator {
 
     public GeneratedToken generate(TokenType type, Json json) {
         long tokenId = idGenerator.generate();
-        int expirySeconds = fetchExpirySeconds(type);
+        long expirySeconds = fetchExpirySeconds(type);
         String jwt = jwtProvider.generate(tokenId, type.toString(), expirySeconds, json);
 
         return GeneratedToken.builder()
@@ -42,7 +42,7 @@ public class TokenGenerator {
      * -> 외부에서 설정 값을 주입받으면 설정 정보가 @value를 통해 너무 분산되지 않을까?
      * 현재는 보안과 관련된 만큼 한 곳에서 엄격하게 관리하는 게 좋겠다는 생각에 Jwt를 직접 생성하는 Provider 내부에 위치시켰습니다.
      */
-    private int fetchExpirySeconds(TokenType type) {
+    private long fetchExpirySeconds(TokenType type) {
         assert !isNull(type);
         return switch (type) {
             case ACCESS -> jwtProps.getExpirySeconds();
