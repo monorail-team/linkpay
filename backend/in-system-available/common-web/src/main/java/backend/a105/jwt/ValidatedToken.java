@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Builder
 public record ValidatedToken(String tokenId,
-                             JwtType type,
+                             TokenType type,
                              Instant expiresAt,
                              Map<String, Object> payload) {
 }

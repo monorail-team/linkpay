@@ -15,7 +15,7 @@ public class TokenGenerator {
     private final IdGenerator idGenerator;
 
 
-    public GeneratedToken generate(JwtType type, Map<String, Object> payload) {
+    public GeneratedToken generate(TokenType type, Map<String, Object> payload) {
         long tokenId = idGenerator.generate();
         var jwtString = jwtProvider.generate(tokenId, type, payload);
         return GeneratedToken.builder()

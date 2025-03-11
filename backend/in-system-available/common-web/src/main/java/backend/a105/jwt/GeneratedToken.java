@@ -5,6 +5,6 @@ import lombok.Builder;
 @Builder
 public record GeneratedToken(
         String tokenId,
-        JwtType type,
+        TokenType type,
         String value) {
 }

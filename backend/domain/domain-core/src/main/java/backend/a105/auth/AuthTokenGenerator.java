@@ -2,7 +2,7 @@ package backend.a105.auth;
 
 import backend.a105.jwt.GeneratedToken;
 import backend.a105.jwt.TokenGenerator;
-import backend.a105.jwt.JwtType;
+import backend.a105.jwt.TokenType;
 import backend.a105.layer.SupportLayer;
 import backend.a105.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import static backend.a105.auth.AccessTokenClaim.ROLES;
 public class AuthTokenGenerator {
     private final TokenGenerator tokenGenerator;
 
-    public AuthToken generateFor(Member member, JwtType type) {
+    public AuthToken generateFor(Member member, TokenType type) {
         Map<String, Object> payload = Map.of(
                 MEMBER_ID.value(), member.getId().value(),
                 ROLES.value(), List.of()

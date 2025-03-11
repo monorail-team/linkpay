@@ -1,7 +1,5 @@
 package backend.a105.jwt;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,11 +23,15 @@ public class TokenValidator {
         DecodedJWT decodedJWT = getDecodedJWT(token);
         Map<String, Claim> claims = decodedJWT.getClaims();
         return ValidatedToken.builder()
-                .type(JwtType.valueOf(claims.get(TOKEN_TYPE.value()).asString()))
-                .tokenId(claims.get(TOKEN_ID.value()).asString())
+                .type(TokenType.valueOf(extract(TOKEN_TYPE, claims)))
+                .tokenId(extract(TOKEN_ID, claims))
                 .expiresAt(decodedJWT.getExpiresAtAsInstant())
                 .payload(getPayload(decodedJWT))
                 .build();
+    }
+
+    private static String extract(DefaultJwtClaim key, Map<String, Claim> claims) {
+        return claims.get(key.toString()).asString();
     }
 
     private DecodedJWT getDecodedJWT(String jwt) {

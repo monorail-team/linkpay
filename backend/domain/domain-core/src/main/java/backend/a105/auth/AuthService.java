@@ -1,6 +1,6 @@
 package backend.a105.auth;
 
-import backend.a105.jwt.JwtType;
+import backend.a105.jwt.TokenType;
 import backend.a105.layer.BusinessLayer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ public class AuthService {
         log.debug("login process in progress : {}", request);
         var email = loginStrategyResolver.resolve(request);
         var loginMember = memberFetcher.fetchBy(email);
-        var accessToken = authTokenGenerator.generateFor(loginMember, JwtType.ACCESS);
+        var accessToken = authTokenGenerator.generateFor(loginMember, TokenType.ACCESS);
 
         log.debug("로그인 검증 진행");
         return LoginResponse.builder()
