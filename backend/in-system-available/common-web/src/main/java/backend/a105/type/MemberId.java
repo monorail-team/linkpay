@@ -1,4 +1,4 @@
-package backend.a105.auth;
+package backend.a105.type;
 
 import jakarta.persistence.Embeddable;
 

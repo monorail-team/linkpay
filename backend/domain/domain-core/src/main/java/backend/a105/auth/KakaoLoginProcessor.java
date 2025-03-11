@@ -3,6 +3,7 @@ package backend.a105.auth;
 import backend.a105.exception.AppException;
 import backend.a105.exception.ExceptionCode;
 import backend.a105.layer.SupportLayer;
+import backend.a105.type.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 

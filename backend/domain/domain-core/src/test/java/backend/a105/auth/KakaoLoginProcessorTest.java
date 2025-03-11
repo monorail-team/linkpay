@@ -1,5 +1,6 @@
 package backend.a105.auth;
 
+import backend.a105.type.Email;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 

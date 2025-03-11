@@ -1,7 +1,7 @@
 package backend.a105.member.domain;
 
-import backend.a105.auth.Email;
-import backend.a105.auth.MemberId;
+import backend.a105.type.Email;
+import backend.a105.type.MemberId;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

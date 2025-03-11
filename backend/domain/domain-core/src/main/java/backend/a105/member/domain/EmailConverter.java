@@ -1,6 +1,6 @@
 package backend.a105.member.domain;
 
-import backend.a105.auth.Email;
+import backend.a105.type.Email;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

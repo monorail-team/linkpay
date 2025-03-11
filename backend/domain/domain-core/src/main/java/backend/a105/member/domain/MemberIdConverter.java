@@ -1,6 +1,6 @@
 package backend.a105.member.domain;
 
-import backend.a105.auth.MemberId;
+import backend.a105.type.MemberId;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
