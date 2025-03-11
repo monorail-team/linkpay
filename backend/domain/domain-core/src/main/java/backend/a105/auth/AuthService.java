@@ -1,12 +1,12 @@
 package backend.a105.auth;
 
 import backend.a105.token.TokenType;
-import backend.a105.layer.BusinessLayer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Slf4j
-@BusinessLayer
+@Service
 @RequiredArgsConstructor
 public class AuthService {
     private final LoginStrategyResolver loginStrategyResolver;

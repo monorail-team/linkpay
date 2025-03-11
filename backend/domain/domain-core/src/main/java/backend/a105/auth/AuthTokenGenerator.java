@@ -1,6 +1,6 @@
 package backend.a105.auth;
 
-import backend.a105.layer.SupportLayer;
+import backend.a105.annotation.SupportLayer;
 import backend.a105.member.domain.Member;
 import backend.a105.token.GeneratedToken;
 import backend.a105.token.TokenGenerator;
