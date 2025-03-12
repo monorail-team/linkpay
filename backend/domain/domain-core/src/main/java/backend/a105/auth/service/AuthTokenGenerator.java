@@ -20,7 +20,7 @@ public class AuthTokenGenerator {
     public AuthToken generateFor(Member member, TokenType type) {
         AccessTokenPayload payload = AccessTokenPayload.builder()
                 .memberId(member.getId())
-                .roles(List.of())
+                .roles(List.of("member_role"))
                 .build();
         GeneratedToken generated = tokenGenerator.generate(type, JsonUtil.toJson(payload));
         return AuthToken.of(generated.value());

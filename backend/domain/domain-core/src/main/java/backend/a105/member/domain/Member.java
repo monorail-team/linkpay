@@ -18,16 +18,16 @@ import static lombok.AccessLevel.PROTECTED;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String email;
     private String username;
     private String password;
 
     @Builder
-    private Member(final String username, final String password, final String email) {
+    private Member(Long id, String email, String username, String password) {
+        this.id = id;
+        this.email = email;
         this.username = username;
         this.password = password;
-        this.email = email;
     }
 }
