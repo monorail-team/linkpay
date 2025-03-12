@@ -17,6 +17,13 @@ public class LoginStrategyResolver {
 
     private final KakaoLoginProcessor kakaoLoginProcessor;
 
+    /**
+    * @설명
+    * 로그인 요청 유형에 따라 적절한 LoginProcessor에게 로그인 과정을 위임
+    * @생각[주빈]
+    * 로그인 방법이 다양화될 수 있다는 생각에 분리했습니다.
+     * 현재는 약간 오버엔지니어링이라는 생각이듭니다.
+     */
     public LoginPrincipal resolve(LoginRequest request) {
         if (request instanceof KakaoLoginRequest kakaoLoginRequest) {
             log.debug("카카오 로그인");
