@@ -1,8 +1,12 @@
 package backend.a105.auth;
 
+import backend.a105.auth.dto.LoginPrincipal;
+import backend.a105.auth.dto.LoginRequest;
+import backend.a105.auth.service.KakaoLoginProcessor;
+import backend.a105.auth.service.LoginStrategyResolver;
 import backend.a105.exception.AppException;
 import backend.a105.exception.ExceptionCode;
-import backend.a105.type.Email;
+import backend.a105.auth.dto.KakaoLoginRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,14 +26,14 @@ class LoginStrategyResolverTest {
         KakaoLoginProcessor kakaoLoginProcessor = Mockito.mock(KakaoLoginProcessor.class);
         LoginStrategyResolver sut = new LoginStrategyResolver(kakaoLoginProcessor);
         when(kakaoLoginProcessor.process(code))
-                .thenReturn(Email.of("test@email.com"));
+                .thenReturn(LoginPrincipal.of("test@email.com"));
 
         //when
-        Email email = sut.resolve(request);
+        LoginPrincipal loginPrincipal = sut.resolve(request);
 
         //then
         verify(kakaoLoginProcessor).process(code);
-        assertThat(email.value()).isEqualTo("test@email.com");
+        assertThat(loginPrincipal.email()).isEqualTo("test@email.com");
     }
 
     @Test

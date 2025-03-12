@@ -2,13 +2,12 @@ package backend.a105.token;
 
 import backend.a105.jwt.JwtProps;
 import backend.a105.jwt.JwtProvider;
+import backend.a105.token.dto.GeneratedToken;
 import backend.a105.type.Json;
 import backend.a105.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 import static java.util.Objects.isNull;
 

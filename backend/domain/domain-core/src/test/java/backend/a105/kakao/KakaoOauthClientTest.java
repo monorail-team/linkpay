@@ -1,5 +1,7 @@
-package backend.a105.auth;
+package backend.a105.kakao;
 
+import backend.a105.auth.dto.KakaoUserResponse;
+import backend.a105.kakao.dto.KakaoOauthResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -68,7 +70,7 @@ class KakaoOauthClientTest {
         String expectedResponse = """
                     {
                         "kakao_account": {
-                            "email": "test@kakao.com"
+                            "loginPrincipal": "test@kakao.com"
                         }
                     }
                 """;

@@ -1,4 +1,4 @@
-package backend.a105.auth;
+package backend.a105.kakao;
 
 import lombok.Builder;
 import org.springframework.boot.context.properties.ConfigurationProperties;

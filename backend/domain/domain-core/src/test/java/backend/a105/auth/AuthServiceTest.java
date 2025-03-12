@@ -1,7 +1,13 @@
 package backend.a105.auth;
 
 import backend.a105.ClientTestConfiguration;
+import backend.a105.auth.dto.LoginResponse;
+import backend.a105.auth.service.AuthService;
 import backend.a105.exception.AppException;
+import backend.a105.auth.dto.KakaoLoginRequest;
+import backend.a105.kakao.KakaoOauthClient;
+import backend.a105.kakao.dto.KakaoOauthResponse;
+import backend.a105.auth.dto.KakaoUserResponse;
 import backend.a105.member.domain.Member;
 import backend.a105.member.repository.MemberRepository;
 import org.junit.jupiter.api.Nested;

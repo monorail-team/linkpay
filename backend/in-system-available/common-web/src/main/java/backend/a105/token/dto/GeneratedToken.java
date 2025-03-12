@@ -1,5 +1,6 @@
-package backend.a105.token;
+package backend.a105.token.dto;
 
+import backend.a105.token.TokenType;
 import lombok.Builder;
 
 @Builder

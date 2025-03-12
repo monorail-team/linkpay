@@ -1,4 +1,4 @@
-package backend.a105.auth;
+package backend.a105.kakao.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

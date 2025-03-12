@@ -1,10 +1,10 @@
-package backend.a105.token;
+package backend.a105.token.dto;
 
+import backend.a105.token.TokenType;
 import backend.a105.type.Json;
 import lombok.Builder;
 
 import java.time.Instant;
-import java.util.Map;
 
 @Builder
 public record ValidatedToken(String tokenId,

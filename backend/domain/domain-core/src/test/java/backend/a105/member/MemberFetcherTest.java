@@ -1,10 +1,11 @@
-package backend.a105.auth;
+package backend.a105.member;
 
+import backend.a105.auth.dto.LoginPrincipal;
 import backend.a105.exception.AppException;
 import backend.a105.exception.ExceptionCode;
 import backend.a105.member.domain.Member;
 import backend.a105.member.repository.MemberRepository;
-import backend.a105.type.Email;
+import backend.a105.member.service.MemberFetcher;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,9 +27,9 @@ class MemberFetcherTest {
         @Test
         public void 조회_성공() throws Exception {
             //given
-            Email email = Email.of("email@email.com");
+            String email = "email@email.com";
             memberRepository.save(Member.builder()
-                    .email(email.value())
+                    .email(email)
                     .build());
             MemberFetcher sut = new MemberFetcher(memberRepository);
 
@@ -36,7 +37,7 @@ class MemberFetcherTest {
             Member member = sut.fetchBy(email);
 
             //then
-            assertThat(member.getEmail()).isEqualTo(email.value());
+            assertThat(member.getEmail()).isEqualTo(email);
         }
 
         @Test
@@ -45,7 +46,7 @@ class MemberFetcherTest {
             MemberFetcher sut = new MemberFetcher(memberRepository);
 
             //when, then
-            Assertions.assertThatThrownBy(()->sut.fetchBy(Email.of("wrong")))
+            Assertions.assertThatThrownBy(()->sut.fetchBy("wrong@email.com"))
                     .isInstanceOf(AppException.class)
                     .extracting(e -> ((AppException) e).getExceptionCode())
                     .isEqualTo(ExceptionCode.NOT_FOUND_RESOURCE);

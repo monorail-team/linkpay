@@ -1,8 +1,10 @@
-package backend.a105.auth;
+package backend.a105.auth.service;
 
 import backend.a105.annotation.SupportLayer;
+import backend.a105.auth.dto.AccessTokenPayload;
+import backend.a105.auth.dto.AuthToken;
 import backend.a105.member.domain.Member;
-import backend.a105.token.GeneratedToken;
+import backend.a105.token.dto.GeneratedToken;
 import backend.a105.token.TokenGenerator;
 import backend.a105.token.TokenType;
 import backend.a105.util.JsonUtil;

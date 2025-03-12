@@ -2,6 +2,7 @@ package backend.a105.token;
 
 import backend.a105.jwt.JwtProvider;
 import backend.a105.jwt.JwtValidationException;
+import backend.a105.token.dto.ValidatedToken;
 import backend.a105.type.Json;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;

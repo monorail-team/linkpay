@@ -1,8 +1,10 @@
-package backend.a105.auth;
+package backend.a105.auth.service;
 
+import backend.a105.auth.dto.LoginPrincipal;
+import backend.a105.auth.dto.LoginRequest;
 import backend.a105.exception.AppException;
 import backend.a105.annotation.SupportLayer;
-import backend.a105.type.Email;
+import backend.a105.auth.dto.KakaoLoginRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +17,7 @@ public class LoginStrategyResolver {
 
     private final KakaoLoginProcessor kakaoLoginProcessor;
 
-    public Email resolve(LoginRequest request) {
+    public LoginPrincipal resolve(LoginRequest request) {
         if (request instanceof KakaoLoginRequest kakaoLoginRequest) {
             log.debug("카카오 로그인");
             return kakaoLoginProcessor.process(kakaoLoginRequest.code());

@@ -1,9 +1,10 @@
-package backend.a105.auth;
+package backend.a105.auth.service;
 
+import backend.a105.auth.dto.LoginPrincipal;
 import backend.a105.exception.AppException;
 import backend.a105.exception.ExceptionCode;
 import backend.a105.annotation.SupportLayer;
-import backend.a105.type.Email;
+import backend.a105.kakao.KakaoOauthClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
@@ -12,14 +13,14 @@ import org.springframework.http.ResponseEntity;
 public class KakaoLoginProcessor {
     private final KakaoOauthClient kakaoOauthClient;
 
-    public Email process(String code) {
+    public LoginPrincipal process(String code) {
         var authResponse = kakaoOauthClient.authorize(code);
         validate(authResponse, "유효하지 않은 카카오 OAuth 요청");
 
         var userResponse = kakaoOauthClient.fetchUser(authResponse.getBody().accessToken());
         validate(userResponse, "로그인을 위한 권한이 부족");
 
-        return Email.of(userResponse.getBody().kakaoAccount().email());
+        return LoginPrincipal.of(userResponse.getBody().kakaoAccount().email());
     }
 
     private static void validate(ResponseEntity<?> response, String messageFor4xx) {

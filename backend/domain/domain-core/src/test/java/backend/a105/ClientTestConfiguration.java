@@ -1,6 +1,6 @@
 package backend.a105;
 
-import backend.a105.auth.KakaoOauthClient;
+import backend.a105.kakao.KakaoOauthClient;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;

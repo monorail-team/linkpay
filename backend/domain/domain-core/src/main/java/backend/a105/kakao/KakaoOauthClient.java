@@ -1,5 +1,7 @@
-package backend.a105.auth;
+package backend.a105.kakao;
 
+import backend.a105.auth.dto.KakaoUserResponse;
+import backend.a105.kakao.dto.KakaoOauthResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
