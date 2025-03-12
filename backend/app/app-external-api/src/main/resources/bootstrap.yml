@@ -1,5 +1,5 @@
 spring:
   cloud:
     config:
-      uri: http://127.0.0.1:8081
+      uri: http://3.37.114.5:8081
       name: linkpay
