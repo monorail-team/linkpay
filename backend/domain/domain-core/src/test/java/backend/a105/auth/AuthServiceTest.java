@@ -45,7 +45,7 @@ class AuthServiceTest {
         public void 로그인_성공_시_엑세스_토큰을_반환한다() throws Exception {
             //given
             String code = "code";
-            String accessToken = "token";
+            String accessToken = "value";
             String email = "email@kakao.com";
             when(mockKakaoOauthClient.authorize(code)).thenReturn(
                     ResponseEntity.ok(KakaoOauthResponse.of(accessToken))
