@@ -1,8 +1,5 @@
-package backend.a105.fixture;
+package backend.a105.jwt;
 
-import backend.a105.jwt.JwtProps;
-import backend.a105.jwt.JwtProvider;
-import backend.a105.token.TokenGenerator;
 import backend.a105.util.id.IdGenerator;
 import backend.a105.util.id.UniqueIdGenerator;
 

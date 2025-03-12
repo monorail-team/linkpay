@@ -1,12 +1,11 @@
 package backend.a105.token;
 
-import backend.a105.fixture.JwtFixtures;
 import backend.a105.token.dto.GeneratedToken;
 import backend.a105.util.json.Json;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static backend.a105.fixture.JwtFixtures.*;
+import static backend.a105.jwt.JwtFixtures.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TokenGeneratorTest {
 
@@ -22,6 +21,7 @@ class TokenGeneratorTest {
         GeneratedToken token = sut.generate(TokenType.ACCESS, Json.of(payload));
 
         //then
-        Assertions.assertThat(token).isNotNull();
+        assertThat(token).isNotNull();
+        assertThat(token.type()).isEqualTo(TokenType.ACCESS);
     }
 }

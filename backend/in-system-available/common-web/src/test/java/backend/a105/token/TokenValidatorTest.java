@@ -5,8 +5,8 @@ import backend.a105.token.dto.ValidatedToken;
 import backend.a105.util.json.Json;
 import org.junit.jupiter.api.Test;
 
-import static backend.a105.fixture.JwtFixtures.jwtProvider;
-import static backend.a105.fixture.TokenFixtures.tokenGenerator;
+import static backend.a105.jwt.JwtFixtures.jwtProvider;
+import static backend.a105.token.TokenFixtures.tokenGenerator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
