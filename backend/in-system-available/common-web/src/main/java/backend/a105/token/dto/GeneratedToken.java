@@ -7,5 +7,5 @@ import lombok.Builder;
 public record GeneratedToken(
         String tokenId,
         TokenType type,
-        String token) {
+        String value) {
 }

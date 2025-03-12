@@ -3,8 +3,8 @@ package backend.a105.token;
 import backend.a105.jwt.JwtProps;
 import backend.a105.jwt.JwtProvider;
 import backend.a105.token.dto.GeneratedToken;
-import backend.a105.type.Json;
-import backend.a105.util.IdGenerator;
+import backend.a105.util.id.IdGenerator;
+import backend.a105.util.json.Json;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,6 +20,8 @@ public class TokenGenerator {
     private final IdGenerator idGenerator;
 
     public GeneratedToken generate(TokenType type, Json json) {
+        assert !isNull(type);
+        assert !isNull(json);
         long tokenId = idGenerator.generate();
         long expirySeconds = fetchExpirySeconds(type);
         String jwt = jwtProvider.generate(tokenId, type.toString(), expirySeconds, json);
@@ -27,7 +29,7 @@ public class TokenGenerator {
         return GeneratedToken.builder()
                 .tokenId(String.valueOf(tokenId))
                 .type(type)
-                .token(jwt)
+                .value(jwt)
                 .build();
     }
 
@@ -42,7 +44,6 @@ public class TokenGenerator {
      * 현재는 보안과 관련된 만큼 한 곳에서 엄격하게 관리하는 게 좋겠다는 생각에 Jwt를 직접 생성하는 Provider 내부에 위치시켰습니다.
      */
     private long fetchExpirySeconds(TokenType type) {
-        assert !isNull(type);
         return switch (type) {
             case ACCESS -> jwtProps.getExpirySeconds();
             case REFRESH -> jwtProps.getRefreshExpirySeconds();

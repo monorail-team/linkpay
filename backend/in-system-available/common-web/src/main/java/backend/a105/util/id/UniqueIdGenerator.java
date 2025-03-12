@@ -1,4 +1,4 @@
-package backend.a105.util;
+package backend.a105.util.id;
 
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
 package backend.a105.jwt;
 
-import backend.a105.type.Json;
+import backend.a105.util.json.Json;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -23,8 +23,7 @@ public class JwtProvider {
     private final Random randomSalt;
     private final JwtProps props;
 
-    @Builder
-    protected JwtProvider(JwtProps props) {
+    public JwtProvider(JwtProps props) {
         this.props = props;
         this.algorithm = Algorithm.HMAC512(props.secret);
         this.jwtVerifier = JWT.require(algorithm)

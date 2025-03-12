@@ -18,6 +18,6 @@ class AuthTokenGeneratorTest {
 
         //then
 //        Assertions.assertThat(authToken).isNotNull();
-//        Assertions.assertThat(authToken.token()).isNotBlank();
+//        Assertions.assertThat(authToken.value()).isNotBlank();
     }
 }

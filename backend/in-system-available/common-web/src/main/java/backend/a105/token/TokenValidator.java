@@ -3,7 +3,7 @@ package backend.a105.token;
 import backend.a105.jwt.JwtProvider;
 import backend.a105.jwt.JwtValidationException;
 import backend.a105.token.dto.ValidatedToken;
-import backend.a105.type.Json;
+import backend.a105.util.json.Json;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class TokenValidator {
         try {
             return jwtProvider.decode(jwt);
         } catch (JwtValidationException e) {
-            throw new RuntimeException(e); // todo
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
     }
 }

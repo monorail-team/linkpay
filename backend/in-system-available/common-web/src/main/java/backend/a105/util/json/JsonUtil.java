@@ -1,6 +1,5 @@
-package backend.a105.util;
+package backend.a105.util.json;
 
-import backend.a105.type.Json;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

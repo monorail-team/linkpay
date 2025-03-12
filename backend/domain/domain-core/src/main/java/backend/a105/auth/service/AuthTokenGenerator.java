@@ -7,7 +7,7 @@ import backend.a105.member.domain.Member;
 import backend.a105.token.dto.GeneratedToken;
 import backend.a105.token.TokenGenerator;
 import backend.a105.token.TokenType;
-import backend.a105.util.JsonUtil;
+import backend.a105.util.json.JsonUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -23,6 +23,6 @@ public class AuthTokenGenerator {
                 .roles(List.of())
                 .build();
         GeneratedToken generated = tokenGenerator.generate(type, JsonUtil.toJson(payload));
-        return AuthToken.of(generated.token());
+        return AuthToken.of(generated.value());
     }
 }

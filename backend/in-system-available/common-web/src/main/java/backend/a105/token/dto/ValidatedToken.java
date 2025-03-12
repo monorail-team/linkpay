@@ -1,7 +1,7 @@
 package backend.a105.token.dto;
 
 import backend.a105.token.TokenType;
-import backend.a105.type.Json;
+import backend.a105.util.json.Json;
 import lombok.Builder;
 
 import java.time.Instant;
