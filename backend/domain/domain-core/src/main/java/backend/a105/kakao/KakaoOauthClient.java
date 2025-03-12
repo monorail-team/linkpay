@@ -5,6 +5,7 @@ import backend.a105.kakao.dto.KakaoOauthResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -29,25 +30,22 @@ public class KakaoOauthClient {
                 .toUriString();
 
 
-        ResponseEntity<KakaoOauthResponse> responseEntity = restTemplate.exchange(
+        return restTemplate.exchange(
                 uri,
                 HttpMethod.POST,
                 HttpEntity.EMPTY,
                 KakaoOauthResponse.class
         );
-
-        return responseEntity;
     }
 
     public ResponseEntity<KakaoUserResponse> fetchUser(String accessToken) {
-        ResponseEntity<KakaoUserResponse> responseEntity = restTemplate.exchange(
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        return restTemplate.exchange(
                 props.userApiUri,
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
-                KakaoUserResponse.class,
-                "Bearer " + accessToken
+                new HttpEntity<>(headers),
+                KakaoUserResponse.class
         );
-        log.info("Fetched user response: {}", responseEntity);
-        return responseEntity;
     }
 }

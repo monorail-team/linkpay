@@ -1,13 +1,13 @@
 package backend.a105.auth;
 
-import backend.a105.ClientTestConfiguration;
+import backend.a105.MockTestConfiguration;
+import backend.a105.auth.dto.KakaoLoginRequest;
+import backend.a105.auth.dto.KakaoUserResponse;
 import backend.a105.auth.dto.LoginResponse;
 import backend.a105.auth.service.AuthService;
 import backend.a105.exception.AppException;
-import backend.a105.auth.dto.KakaoLoginRequest;
 import backend.a105.kakao.KakaoOauthClient;
 import backend.a105.kakao.dto.KakaoOauthResponse;
-import backend.a105.auth.dto.KakaoUserResponse;
 import backend.a105.member.domain.Member;
 import backend.a105.member.repository.MemberRepository;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@Import({ClientTestConfiguration.class})
+@Import({MockTestConfiguration.class})
 @SpringBootTest
 class AuthServiceTest {
 
@@ -46,14 +46,15 @@ class AuthServiceTest {
             //given
             String code = "code";
             String accessToken = "value";
-            String email = "email@kakao.com";
+            Member member = memberRepository.save(Member.builder()
+                    .id(1L)
+                    .email("email@kakao.com").build());
             when(mockKakaoOauthClient.authorize(code)).thenReturn(
                     ResponseEntity.ok(KakaoOauthResponse.of(accessToken))
             );
             when(mockKakaoOauthClient.fetchUser(accessToken)).thenReturn(
-                    ResponseEntity.ok(KakaoUserResponse.of(email))
+                    ResponseEntity.ok(KakaoUserResponse.of(member.getEmail()))
             );
-            memberRepository.save(Member.builder().email(email).build());
 
             //when
             LoginResponse response = sut.login(new KakaoLoginRequest(code));

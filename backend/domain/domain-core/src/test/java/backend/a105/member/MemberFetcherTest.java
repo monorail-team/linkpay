@@ -1,6 +1,5 @@
 package backend.a105.member;
 
-import backend.a105.auth.dto.LoginPrincipal;
 import backend.a105.exception.AppException;
 import backend.a105.exception.ExceptionCode;
 import backend.a105.member.domain.Member;
@@ -29,6 +28,7 @@ class MemberFetcherTest {
             //given
             String email = "email@email.com";
             memberRepository.save(Member.builder()
+                    .id(1L)
                     .email(email)
                     .build());
             MemberFetcher sut = new MemberFetcher(memberRepository);

@@ -24,7 +24,6 @@ class KakaoOauthClientTest {
             .grantType("authorization_code")
             .build();
     private RestTemplate restTemplate = new RestTemplate();
-    private KakaoOauthClient sut = new KakaoOauthClient(restTemplate, props);
     private MockRestServiceServer mockServer = MockRestServiceServer.bindTo(restTemplate).build();
 
     @Test
@@ -46,6 +45,7 @@ class KakaoOauthClientTest {
         mockServer.expect(requestTo(expectedUri))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(expectedResponse, MediaType.APPLICATION_JSON));
+        KakaoOauthClient sut = new KakaoOauthClient(restTemplate, props);
 
         // When
         var response = sut.authorize(code);
@@ -70,7 +70,7 @@ class KakaoOauthClientTest {
         String expectedResponse = """
                     {
                         "kakao_account": {
-                            "loginPrincipal": "test@kakao.com"
+                            "email": "test@kakao.com"
                         }
                     }
                 """;
@@ -78,8 +78,10 @@ class KakaoOauthClientTest {
         mockServer.expect(requestTo(props.userApiUri))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(expectedResponse, MediaType.APPLICATION_JSON));
+        KakaoOauthClient sut = new KakaoOauthClient(restTemplate, props);
 
         // When
+
         var response = sut.fetchUser(accessToken);
 
         // Then
@@ -91,7 +93,7 @@ class KakaoOauthClientTest {
         KakaoUserResponse body = response.getBody();
         assertAll(
                 () -> assertThat(body).isNotNull(),
-                () -> assertThat("test@kakao.com").isEqualTo(body.kakaoAccount().email())
+                () -> assertThat(body.kakaoAccount().email()).isEqualTo("test@kakao.com")
         );
     }
 }
