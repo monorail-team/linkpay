@@ -14,19 +14,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static backend.a105.auth.TokenAuthentication.unauthenticated;
+import static backend.a105.auth.AuthTokenAuthentication.unauthenticated;
 import static backend.a105.util.ObjectUtil.isNull;
 import static backend.a105.util.StringUtil.substringAfter;
 
 @Slf4j
-public class TokenAuthenticationFilter extends OncePerRequestFilter {
+public class AuthTokenAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationManager authenticationManager;
     private final String header;
     private final String scheme;
 
-    public TokenAuthenticationFilter(AuthenticationManager authenticationManager,
-                                     String header,
-                                     String scheme) {
+    public AuthTokenAuthenticationFilter(AuthenticationManager authenticationManager,
+                                         String header,
+                                         String scheme) {
         this.authenticationManager = authenticationManager;
         this.header = header;
         this.scheme = scheme;

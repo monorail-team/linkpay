@@ -4,7 +4,6 @@ import backend.a105.auth.dto.AuthTokenPayload;
 import backend.a105.token.TokenValidationException;
 import backend.a105.token.TokenValidator;
 import backend.a105.token.dto.ValidatedToken;
-import backend.a105.util.json.Json;
 import backend.a105.util.json.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,18 +19,18 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TokenAuthenticationProvider implements AuthenticationProvider {
+public class AuthTokenAuthenticationProvider implements AuthenticationProvider {
     private final TokenValidator tokenValidator;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         try {
-            var tokenAuthentication = (TokenAuthentication) authentication;
+            var tokenAuthentication = (AuthTokenAuthentication) authentication;
             ValidatedToken validatedToken = tokenValidator.validate(tokenAuthentication.getCredentials());
             AuthTokenPayload payload = JsonUtil.parse(validatedToken.payload(), AuthTokenPayload.class);
             AuthPrincipal principal = new AuthPrincipal(payload.memberId());
             List<GrantedAuthority> authorities = new ArrayList<>();
-            return TokenAuthentication.authenticated(principal, authorities);
+            return AuthTokenAuthentication.authenticated(principal, authorities);
         } catch (TokenValidationException e) {
             log.debug("TokenAuthentication failed to authenticate");
             throw new AuthenticationException(e.getMessage()) {};
@@ -40,6 +39,6 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return authentication.isAssignableFrom(TokenAuthentication.class);
+        return authentication.isAssignableFrom(AuthTokenAuthentication.class);
     }
 }

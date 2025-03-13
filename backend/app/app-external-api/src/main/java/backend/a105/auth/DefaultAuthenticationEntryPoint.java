@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -19,11 +18,11 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Component
-public class TokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class DefaultAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public TokenAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver) {
+    public DefaultAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver) {
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
@@ -35,11 +34,6 @@ public class TokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 
-        String msg = (String) request.getAttribute("msg");
-        msg = isNull(msg) ? authException.getMessage() : msg;
-//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//        response.setContentType("application/json");
-//        response.getWriter().write("{\"error\": \"" + msg + "\"}");
-        handlerExceptionResolver.resolveException(request, response, null, new AppException(ExceptionCode.UNAUTHORIZED_ACCESS_TOKEN, msg));
+        handlerExceptionResolver.resolveException(request, response, null, new AppException(ExceptionCode.UNAUTHORIZED_ACCESS_TOKEN, authException.getMessage()));
     }
 }
