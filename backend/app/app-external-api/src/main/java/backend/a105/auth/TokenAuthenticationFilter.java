@@ -10,8 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
@@ -20,49 +19,46 @@ import static backend.a105.util.ObjectUtil.isNull;
 import static backend.a105.util.StringUtil.substringAfter;
 
 @Slf4j
-public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class TokenAuthenticationFilter extends OncePerRequestFilter {
+    private final AuthenticationManager authenticationManager;
     private final String header;
     private final String scheme;
 
-    public TokenAuthenticationFilter(RequestMatcher requiresAuthenticationRequestMatcher,
-                                     AuthenticationManager authenticationManager,
+    public TokenAuthenticationFilter(AuthenticationManager authenticationManager,
                                      String header,
                                      String scheme) {
-        super(requiresAuthenticationRequestMatcher,authenticationManager);
+        this.authenticationManager = authenticationManager;
         this.header = header;
         this.scheme = scheme;
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
-        log.debug("attemptAuthentication");
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        try {
+            log.debug("attemptAuthentication");
+            Authentication authResult = attemptAuthentication(request);
+            SecurityContextHolder.getContext().setAuthentication(authResult);
+        } catch (AuthenticationException e) {
+            log.debug("Handling authentication failure");
+            SecurityContextHolder.clearContext();
+        }
+        filterChain.doFilter(request, response);
+    }
+
+    private Authentication attemptAuthentication(HttpServletRequest request) {
         String token = extractToken(request);
-        return super.getAuthenticationManager().authenticate(unauthenticated(token));
+        Authentication authResult = authenticationManager.authenticate(unauthenticated(token));
+        return authResult;
     }
 
     private String extractToken(HttpServletRequest request) {
         String authHeader = request.getHeader(header);
         if (isNull(authHeader) || !authHeader.startsWith(scheme)) {
-            throw new AuthenticationException("인증 헤더가 올바르지 않습니다 header = " + authHeader) {};
+            throw new AuthenticationException("인증 헤더가 올바르지 않습니다 header = " + authHeader) {
+            };
         }
 
         return substringAfter(authHeader, scheme).trim();
     }
 
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            FilterChain chain,
-                                            Authentication authResult) throws IOException, ServletException {
-        SecurityContextHolder.getContext().setAuthentication(authResult);
-        chain.doFilter(request, response);
-    }
-
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        log.debug("Handling authentication failure");
-        log.debug("Failed to process authentication request", failed);
-        SecurityContextHolder.clearContext();
-        throw failed;
-    }
 }

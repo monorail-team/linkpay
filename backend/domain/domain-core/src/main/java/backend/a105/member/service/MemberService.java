@@ -13,6 +13,9 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    public void create(Member member) {
+        memberRepository.save(member);
+    }
     public List<Member> getMembers() {
         return memberRepository.findAll();
     }

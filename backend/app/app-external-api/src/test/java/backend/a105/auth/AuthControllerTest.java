@@ -1,9 +1,13 @@
 package backend.a105.auth;
 
 import backend.a105.ClientTestConfiguration;
-import backend.a105.member.repository.MemberJpaRepository;
+import backend.a105.auth.dto.KakaoUserResponse;
+import backend.a105.auth.dto.LoginResponse;
+import backend.a105.kakao.KakaoOauthClient;
+import backend.a105.kakao.dto.KakaoOauthResponse;
+import backend.a105.member.domain.Member;
+import backend.a105.member.service.MemberService;
 import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
@@ -32,7 +36,7 @@ class AuthControllerTest {
     KakaoOauthClient mockKakaoOauthClient;
 
     @Autowired
-    MemberJpaRepository memberRepository;
+    MemberService memberService;
 
     @LocalServerPort
     int port;
@@ -44,22 +48,24 @@ class AuthControllerTest {
     }
 
     @TestFactory
-    Stream<DynamicTest> 로그인_및_인증_시나리오() {
-        AtomicReference<String> accessToken = new AtomicReference<>("accessToken");
+    Stream<DynamicTest> 카카오_로그인_및_인증_시나리오() {
+        AtomicReference<String> accessToken = new AtomicReference<>("");
         String code = "사용자가 카카오 로그인 후 발급받은 코드";
         String token = "kakaoOauthToken";
+        Member member = Member.builder()
+                .id(1L)
+                .email("email@kakao.com")
+                .build();
+        memberService.create(member);
         when(mockKakaoOauthClient.authorize(any())).thenReturn(ResponseEntity.ok(KakaoOauthResponse.of(token)));
-        when(mockKakaoOauthClient.fetchUser(any())).thenReturn(ResponseEntity.ok(KakaoUserResponse.of("email")));
-
-        Response 테스트_인증_요청 = RestAssured
-                .given()
-                .header("Authorization", accessToken.get() == null? "Bearer x" : "Bearer " + accessToken.get())
-                .when()
-                .get("/api/auth/test-authenticate");
+        when(mockKakaoOauthClient.fetchUser(any())).thenReturn(ResponseEntity.ok(KakaoUserResponse.of(member.getEmail())));
 
         return Stream.of(
                 dynamicTest("로그인하지 않고 인증이 필요한 api요청 시 401응답을 반환받는다.", () -> {
-                    테스트_인증_요청
+                    RestAssured
+                            .given()
+                            .when()
+                            .get("/api/auth/test-authenticate")
                             .then()
                             .statusCode(HttpStatus.UNAUTHORIZED.value())
                             .log().all();
@@ -68,7 +74,6 @@ class AuthControllerTest {
                 dynamicTest("카카오 로그인을 통해 엑세스 토큰을 발급받는다.", () -> {
                     var response = RestAssured
                             .given()
-                            .header("Authorization", accessToken.get() == null? "Bearer x" : "Bearer "+accessToken.get())
                             .param("code", code)
                             .when()
                             .post("/api/auth/login/kakao")
@@ -82,7 +87,11 @@ class AuthControllerTest {
                 }),
 
                 dynamicTest("발급받은 엑세스 토큰을 사용하면 인증에 성공한다.", () -> {
-                    테스트_인증_요청
+                    RestAssured
+                            .given()
+                            .header("Authorization", "Bearer " + accessToken.get())
+                            .when()
+                            .get("/api/auth/test-authenticate")
                             .then()
                             .statusCode(HttpStatus.OK.value())
                             .log().all();
