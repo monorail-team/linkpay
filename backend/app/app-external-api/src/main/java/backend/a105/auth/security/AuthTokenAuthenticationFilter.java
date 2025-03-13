@@ -1,4 +1,4 @@
-package backend.a105.auth;
+package backend.a105.auth.security;
 
 
 import jakarta.servlet.FilterChain;
@@ -14,7 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static backend.a105.auth.AuthTokenAuthentication.unauthenticated;
+import static backend.a105.auth.security.AuthTokenAuthentication.unauthenticated;
 import static backend.a105.util.ObjectUtil.isNull;
 import static backend.a105.util.StringUtil.substringAfter;
 

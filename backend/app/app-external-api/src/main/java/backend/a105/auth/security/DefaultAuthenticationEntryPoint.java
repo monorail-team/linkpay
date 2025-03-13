@@ -1,4 +1,4 @@
-package backend.a105.auth;
+package backend.a105.auth.security;
 
 import backend.a105.exception.AppException;
 import backend.a105.exception.ExceptionCode;
@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
-
-import static java.util.Objects.isNull;
 
 @Slf4j
 @Component

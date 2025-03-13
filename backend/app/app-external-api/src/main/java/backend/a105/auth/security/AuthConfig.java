@@ -1,4 +1,4 @@
-package backend.a105.auth;
+package backend.a105.auth.security;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

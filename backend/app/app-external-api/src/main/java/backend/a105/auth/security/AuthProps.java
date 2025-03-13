@@ -1,4 +1,4 @@
-package backend.a105.auth;
+package backend.a105.auth.security;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Setter;

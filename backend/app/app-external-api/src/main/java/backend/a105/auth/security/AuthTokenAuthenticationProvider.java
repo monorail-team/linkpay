@@ -1,4 +1,4 @@
-package backend.a105.auth;
+package backend.a105.auth.security;
 
 import backend.a105.auth.dto.AuthTokenPayload;
 import backend.a105.token.TokenValidationException;
