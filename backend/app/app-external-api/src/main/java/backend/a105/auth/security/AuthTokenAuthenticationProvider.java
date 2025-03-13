@@ -22,14 +22,22 @@ import java.util.List;
 public class AuthTokenAuthenticationProvider implements AuthenticationProvider {
     private final TokenValidator tokenValidator;
 
+    /**
+    * @설명
+    * 토큰 검증 과정을 수행한다.
+    * @주의
+    * 검증에 실패하면 AuthenticationException을 발생: 호출하는 부분에서 적절히 처리해야 한다.
+    */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         try {
             var tokenAuthentication = (AuthTokenAuthentication) authentication;
             ValidatedToken validatedToken = tokenValidator.validate(tokenAuthentication.getCredentials());
+
             AuthTokenPayload payload = JsonUtil.parse(validatedToken.payload(), AuthTokenPayload.class);
             AuthPrincipal principal = new AuthPrincipal(payload.memberId());
             List<GrantedAuthority> authorities = new ArrayList<>();
+
             return AuthTokenAuthentication.authenticated(principal, authorities);
         } catch (TokenValidationException e) {
             log.debug("TokenAuthentication failed to authenticate");

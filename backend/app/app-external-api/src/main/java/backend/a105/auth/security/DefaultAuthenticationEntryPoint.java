@@ -24,6 +24,14 @@ public class DefaultAuthenticationEntryPoint implements AuthenticationEntryPoint
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
+    /**
+    * @설명
+    * 인증 실패시 401 예외를 발생시킨다.
+    * @주의
+    * 보통 여기서 sendResponse를 통해 직접적으로 응답을 생성하지만-
+     * ControllerAdvice를 통해 예외 처리 방법을 통일시키기 위해서-
+     * ExceptionResolver를 사용해 스프링 컨테이너 내에서 예외를 처리시켰습니다.
+    */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.debug("Handle 401 Error: requestURI = {} {}", request.getMethod(), request.getRequestURI());

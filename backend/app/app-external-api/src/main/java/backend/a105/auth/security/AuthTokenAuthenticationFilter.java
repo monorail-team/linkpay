@@ -54,7 +54,7 @@ public class AuthTokenAuthenticationFilter extends OncePerRequestFilter {
     private String extractToken(HttpServletRequest request) {
         String authHeader = request.getHeader(header);
         if (isNull(authHeader) || !authHeader.startsWith(scheme)) {
-            throw new AuthenticationException("인증 헤더가 올바르지 않습니다 header = " + authHeader) {
+            throw new AuthenticationException("인증 헤더를 포함시켜 요청해주세요: 인증 헤더 = " + authHeader) {
             };
         }
 
