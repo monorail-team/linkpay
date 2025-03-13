@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -50,15 +49,17 @@ class AuthControllerTest {
     @TestFactory
     Stream<DynamicTest> 카카오_로그인_및_인증_시나리오() {
         AtomicReference<String> accessToken = new AtomicReference<>("");
-        String code = "사용자가 카카오 로그인 후 발급받은 코드";
-        String token = "kakaoOauthToken";
+        String kakaoOauthCode = "kakaocode";
+        String kakaoOauthAccessToken = "kaccesstoken";
         Member member = Member.builder()
                 .id(1L)
                 .email("email@kakao.com")
                 .build();
         memberService.create(member);
-        when(mockKakaoOauthClient.authorize(any())).thenReturn(ResponseEntity.ok(KakaoOauthResponse.of(token)));
-        when(mockKakaoOauthClient.fetchUser(any())).thenReturn(ResponseEntity.ok(KakaoUserResponse.of(member.getEmail())));
+        when(mockKakaoOauthClient.authorize(kakaoOauthCode))
+                .thenReturn(ResponseEntity.ok(KakaoOauthResponse.of(kakaoOauthAccessToken)));
+        when(mockKakaoOauthClient.fetchUser(kakaoOauthAccessToken))
+                .thenReturn(ResponseEntity.ok(KakaoUserResponse.of(member.getEmail())));
 
         return Stream.of(
                 dynamicTest("로그인하지 않고 인증이 필요한 api요청 시 401응답을 반환받는다.", () -> {
@@ -74,7 +75,7 @@ class AuthControllerTest {
                 dynamicTest("카카오 로그인을 통해 엑세스 토큰을 발급받는다.", () -> {
                     var response = RestAssured
                             .given()
-                            .param("code", code)
+                            .param("code", kakaoOauthCode)
                             .when()
                             .post("/api/auth/login/kakao")
                             .then()

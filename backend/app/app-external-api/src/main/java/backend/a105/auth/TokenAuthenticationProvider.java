@@ -1,5 +1,11 @@
 package backend.a105.auth;
 
+import backend.a105.auth.dto.AuthTokenPayload;
+import backend.a105.token.TokenValidationException;
+import backend.a105.token.TokenValidator;
+import backend.a105.token.dto.ValidatedToken;
+import backend.a105.util.json.Json;
+import backend.a105.util.json.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,20 +21,21 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class TokenAuthenticationProvider implements AuthenticationProvider {
+    private final TokenValidator tokenValidator;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        var tokenAuthentication = (TokenAuthentication) authentication;
-        var token = tokenAuthentication.getCredentials();
-        // todo 검증 진행
-        boolean success = token.equals("accessToken")? true: false;
-        if(!success){
+        try {
+            var tokenAuthentication = (TokenAuthentication) authentication;
+            ValidatedToken validatedToken = tokenValidator.validate(tokenAuthentication.getCredentials());
+            AuthTokenPayload payload = JsonUtil.parse(validatedToken.payload(), AuthTokenPayload.class);
+            AuthPrincipal principal = new AuthPrincipal(payload.memberId());
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            return TokenAuthentication.authenticated(principal, authorities);
+        } catch (TokenValidationException e) {
             log.debug("TokenAuthentication failed to authenticate");
-            throw new AuthenticationException("msg") {};
+            throw new AuthenticationException(e.getMessage()) {};
         }
-        AuthPrincipal principal = new AuthPrincipal(1L);
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        return TokenAuthentication.authenticated(principal, authorities);
     }
 
     @Override

@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final AuthProps authProps;
     private final TokenAuthenticationEntryPoint tokenAuthenticationEntryPoint;
+    private final TokenAuthenticationProvider tokenAuthenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,7 +45,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager() {
-        return new ProviderManager(new TokenAuthenticationProvider());
+        return new ProviderManager(tokenAuthenticationProvider);
     }
 
 }
