@@ -1,6 +1,9 @@
 package backend.a105.member.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,16 +18,16 @@ import static lombok.AccessLevel.PROTECTED;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    private String email;
     private String username;
     private String password;
-    private String email;
 
     @Builder
-    private Member(final String username, final String password, final String email) {
+    private Member(Long id, String email, String username, String password) {
+        this.id = id;
+        this.email = email;
         this.username = username;
         this.password = password;
-        this.email = email;
     }
 }

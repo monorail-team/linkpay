@@ -1,5 +1,10 @@
 package backend.a105.auth;
 
+import backend.a105.auth.dto.LoginPrincipal;
+import backend.a105.auth.service.KakaoLoginProcessor;
+import backend.a105.kakao.KakaoOauthClient;
+import backend.a105.kakao.dto.KakaoOauthResponse;
+import backend.a105.auth.dto.KakaoUserResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
@@ -21,11 +26,11 @@ class KakaoLoginProcessorTest {
         KakaoLoginProcessor sut = new KakaoLoginProcessor(kakaoOauthClient);
 
         //when
-        Email email = sut.process(code);
+        LoginPrincipal loginPrincipal = sut.process(code);
 
         //then
-        assertThat(email).isNotNull();
-        assertThat(email.value()).isEqualTo("kakao@kakao.com");
+        assertThat(loginPrincipal).isNotNull();
+        assertThat(loginPrincipal.email()).isEqualTo("kakao@kakao.com");
     }
 
 }
