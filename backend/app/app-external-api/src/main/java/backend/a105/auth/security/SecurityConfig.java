@@ -1,18 +1,25 @@
-package backend.a105.auth;
+package backend.a105.auth.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final AuthProps authProps;
+    private final DefaultAuthenticationEntryPoint defaultAuthenticationEntryPoint;
+    private final AuthTokenAuthenticationProvider authTokenAuthenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,8 +31,22 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(GET, "/api/auth/test-authenticate").authenticated()
-                        .anyRequest().permitAll())
+                        .requestMatchers(HttpMethod.POST,"/api/auth/login/**").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(eh -> eh
+                        .authenticationEntryPoint(defaultAuthenticationEntryPoint))
                 .build();
     }
+
+    public AuthTokenAuthenticationFilter tokenAuthenticationFilter() {
+        return new AuthTokenAuthenticationFilter(authenticationManager(), authProps.header, authProps.scheme);
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return new ProviderManager(authTokenAuthenticationProvider);
+    }
+
 }
+

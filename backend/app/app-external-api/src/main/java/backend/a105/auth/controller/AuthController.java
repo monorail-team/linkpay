@@ -1,4 +1,4 @@
-package backend.a105.auth;
+package backend.a105.auth.controller;
 
 import backend.a105.auth.dto.KakaoLoginRequest;
 import backend.a105.auth.dto.LoginResponse;

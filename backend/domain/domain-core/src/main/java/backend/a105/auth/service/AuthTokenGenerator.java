@@ -1,7 +1,7 @@
 package backend.a105.auth.service;
 
 import backend.a105.annotation.SupportLayer;
-import backend.a105.auth.dto.AccessTokenPayload;
+import backend.a105.auth.dto.AuthTokenPayload;
 import backend.a105.auth.dto.AuthToken;
 import backend.a105.member.domain.Member;
 import backend.a105.token.dto.GeneratedToken;
@@ -25,7 +25,7 @@ public class AuthTokenGenerator {
     * 당장은 권한에 대한 정책이 없어서 임시로 "member_role" 하드코딩했습니다.
     */
     public AuthToken generateFor(Member member, TokenType type) {
-        AccessTokenPayload payload = AccessTokenPayload.builder()
+        AuthTokenPayload payload = AuthTokenPayload.builder()
                 .memberId(member.getId())
                 .roles(List.of("member_role"))
                 .build();
