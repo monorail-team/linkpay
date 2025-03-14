@@ -35,8 +35,6 @@ public class DefaultAuthenticationEntryPoint implements AuthenticationEntryPoint
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.debug("Handle 401 Error: requestURI = {} {}", request.getMethod(), request.getRequestURI());
-        // CORS 헤더 추가
-        response.setHeader("Access-Control-Allow-Origin", "*"); // 또는 특정 도메인 설정
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 

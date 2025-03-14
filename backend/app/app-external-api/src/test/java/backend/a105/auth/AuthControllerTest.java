@@ -56,6 +56,7 @@ class AuthControllerTest {
                 .email("email@kakao.com")
                 .build();
         memberService.create(member);
+
         when(mockKakaoOauthClient.authorize(kakaoOauthCode))
                 .thenReturn(ResponseEntity.ok(KakaoOauthResponse.of(kakaoOauthAccessToken)));
         when(mockKakaoOauthClient.fetchUser(kakaoOauthAccessToken))

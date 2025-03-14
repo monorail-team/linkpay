@@ -9,16 +9,23 @@ public class AuthTokenAuthentication extends CustomAuthentication {
 
 
     public static AuthTokenAuthentication unauthenticated(String token) {
-        return new AuthTokenAuthentication(null, token, null);
+        return new AuthTokenAuthentication(token);
     }
 
     public static AuthTokenAuthentication authenticated(AuthPrincipal principal, Collection<? extends GrantedAuthority> authorities) {
-        return new AuthTokenAuthentication(principal, null, authorities);
+        return new AuthTokenAuthentication(principal, authorities);
     }
 
-    private AuthTokenAuthentication(AuthPrincipal principal, String token, Collection<? extends GrantedAuthority> authorities) {
-        super(principal, authorities);
+    private AuthTokenAuthentication(String token) {
+        super(null, null);
         this.credentials = token;
+        super.setAuthenticated(false);
+    }
+
+    private AuthTokenAuthentication(AuthPrincipal principal, Collection<? extends GrantedAuthority> authorities) {
+        super(principal, authorities);
+        this.credentials = null;
+        super.setAuthenticated(true);
     }
 
     @Override
