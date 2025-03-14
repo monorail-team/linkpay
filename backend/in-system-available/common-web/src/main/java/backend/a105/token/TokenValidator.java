@@ -20,7 +20,7 @@ import static backend.a105.jwt.DefaultJwtClaim.*;
 public class TokenValidator {
     private final JwtProvider jwtProvider;
 
-    public ValidatedToken validate(String token) {
+    public ValidatedToken validate(String token) throws TokenValidationException {
         DecodedJWT jwt = getDecodedJWT(token);
         Map<String, Claim> claims = jwt.getClaims();
         return ValidatedToken.builder()
@@ -31,11 +31,11 @@ public class TokenValidator {
                 .build();
     }
 
-    private DecodedJWT getDecodedJWT(String jwt) {
+    private DecodedJWT getDecodedJWT(String jwt) throws TokenValidationException {
         try {
             return jwtProvider.decode(jwt);
         } catch (JwtValidationException e) {
-            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+            throw new TokenValidationException();
         }
     }
 }

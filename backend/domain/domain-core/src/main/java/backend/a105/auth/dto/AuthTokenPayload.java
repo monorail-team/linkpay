@@ -5,5 +5,5 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record AccessTokenPayload(long memberId, List<String> roles) {
+public record AuthTokenPayload(long memberId, List<String> roles) {
 }
