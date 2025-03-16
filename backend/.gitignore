@@ -40,4 +40,4 @@ out/
 .env
 
 ### rest docs ###
-/app/app-external-api/src/main/resources/static/index.html
+/app/app-external-api/src/main/resources/static/docs/index.html
