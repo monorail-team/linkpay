@@ -37,6 +37,6 @@ class TokenValidatorTest {
         //when, then
         assertThatThrownBy(()->
         sut.validate(token))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(TokenValidationException.class);
     }
 }
