@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 @Slf4j
 @Import(ClientTestConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AuthControllerTest {
+class AuthAcceptanceTest {
 
     @Autowired
     KakaoOauthClient mockKakaoOauthClient;
