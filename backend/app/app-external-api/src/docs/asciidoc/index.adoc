@@ -1,0 +1,14 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+= LinkPay REST API 문서
+
+== Auth API
+include::auth.adoc[]
