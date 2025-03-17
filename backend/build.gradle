@@ -1,7 +1,10 @@
 plugins {
     id 'java-library'
-    id 'org.springframework.boot' version '3.4.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.4.3' apply(false)
+    id 'org.asciidoctor.jvm.convert' version '3.3.2' apply(false)
+    id 'io.spring.dependency-management' version '1.1.7' apply(false)
+    id 'jacoco'
+    id "org.sonarqube" version "6.0.1.5171"
 }
 
 allprojects {
@@ -10,8 +13,9 @@ allprojects {
     }
 
     apply plugin: 'java-library'
+    apply plugin: 'org.sonarqube'
 
-    group = 'backend'
+    group = 'monorail'
     version = '0.0.1-SNAPSHOT'
 
     java {
@@ -25,10 +29,13 @@ subprojects {
         compileOnly {
             extendsFrom annotationProcessor
         }
+        asciidoctorExt
     }
 
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.asciidoctor.jvm.convert'
+    apply plugin: 'jacoco'
 
     dependencies {
         compileOnly 'org.projectlombok:lombok'
@@ -49,7 +56,50 @@ subprojects {
         enabled = true
     }
 
-    tasks.named('test') {
+    test {
         useJUnitPlatform()
+        finalizedBy jacocoTestReport
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.required = true
+            html.required = true
+        }
+        finalizedBy 'jacocoTestCoverageVerification'
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                enabled = true
+                element = 'BUNDLE'
+
+                limit {
+                    counter = 'CLASS'
+                    value = 'COVEREDRATIO'
+                    minimum = 0.0
+                }
+            }
+            rule {
+                enabled = true
+                element = 'CLASS'
+
+                limit {
+                    counter = 'LINE'
+                    value = 'COVEREDRATIO'
+                    minimum = 0.0
+                }
+            }
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "monorail_linkpay"
+        property "sonar.projectName", "monorail_linkpay"
+        property "sonar.host.url", "http://127.0.0.1:9000"
+        property 'sonar.coverage.jacoco.xmlReportPaths', '${buildDir}/reports/jacoco/test/jacocoTestReport.xml'
     }
 }
