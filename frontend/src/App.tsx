@@ -5,7 +5,7 @@ import Home from './pages/Home';
 
 const App: React.FC = () => {
   return (
-    <div style={{ width: '456px', height: '892px' }} className="mx-auto border">
+    <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto border">
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />

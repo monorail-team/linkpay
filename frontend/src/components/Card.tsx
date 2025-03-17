@@ -1,21 +1,37 @@
 // src/components/Card.tsx
 import React from 'react';
+
 interface CardProps {
-  title: string;
-  description: string;
-  expireDate: string;
-  used: number;
-  limit: number;
+  title: string;         // 예: "카드명"
+  description: string;   // 예: "Description"
+  expireDate: string;    // 예: "25.12.23"
+  used: number;          // 예: 54000
+  limit: number;         // 예: 100000
 }
 
 const Card: React.FC<CardProps> = ({ title, description, expireDate, used, limit }) => {
   return (
-    <div className="w-[300px] h-44 rounded-lg bg-gray-100 mx-2 flex flex-col justify-center p-4">
-      <div className="text-sm text-gray-600 mb-2">{title}</div>
-      <div className="text-lg font-bold mb-1">{description}</div>
-      <div className="text-xs text-gray-500 mb-2">만료일 {expireDate}</div>
-      <div className="text-sm text-gray-700">
-        사용금액 {used.toLocaleString()}원 / {limit.toLocaleString()}원
+    <div className="relative w-full max-w-[354px] aspect-[354/210] bg-gray-50 rounded-xl shadow-md p-4 flex flex-col">
+      {/* 상단: 카드명 & 만료일 */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-gray-600">{title}</div>
+        <div className="text-sm text-gray-600">만료일 {expireDate}</div>
+      </div>
+
+      {/* 중앙: 설명 (Description) */}
+      <div className="text-base text-gray-700 font-medium mb-4">
+        {description}
+      </div>
+
+      {/* 하단: 사용금액 */}
+      <div>
+        <div className="text-sm text-gray-500 mb-1">사용금액</div>
+        <div className="text-2xl font-bold text-gray-800">
+          {used.toLocaleString()}원
+          <span className="text-base text-gray-500 ml-1">
+            / {limit.toLocaleString()}원
+          </span>
+        </div>
       </div>
     </div>
   );
