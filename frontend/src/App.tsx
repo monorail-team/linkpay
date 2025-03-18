@@ -1,7 +1,18 @@
-import '@/App.css';
+// 예: src/App.tsx
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
 
-function App() {
-
-}
+const App: React.FC = () => {
+  return (
+    <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto border">
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Router>
+    </div>
+  );
+};
 
 export default App;
