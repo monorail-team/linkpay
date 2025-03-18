@@ -1,7 +1,12 @@
 spring:
+  profiles:
+    default: dev
+    active: ${SPRING_PROFILES_ACTIVE:}
+  config:
+    import: optional:classpath:.env[.properties]
   cloud:
     config:
       uri: http://3.37.114.5:8081
       name: linkpay
-  profiles:
-    default: dev
+      username: ${CONFIG_USERNAME}
+      password: ${CONFIG_PASSWORD}
