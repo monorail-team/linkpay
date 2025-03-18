@@ -1,6 +1,5 @@
 package monorail.linkpay.controller;
 
-import monorail.linkpay.auth.controller.AuthController;
 import monorail.linkpay.auth.service.AuthService;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;

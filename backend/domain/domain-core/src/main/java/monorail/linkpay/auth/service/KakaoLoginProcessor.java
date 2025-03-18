@@ -4,7 +4,7 @@ import monorail.linkpay.auth.dto.LoginPrincipal;
 import monorail.linkpay.exception.AppException;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.annotation.SupportLayer;
-import monorail.linkpay.kakao.KakaoOauthClient;
+import monorail.linkpay.auth.kakao.KakaoOauthClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 

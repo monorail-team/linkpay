@@ -1,7 +1,9 @@
 package monorail.linkpay.kakao;
 
 import monorail.linkpay.auth.dto.KakaoUserResponse;
-import monorail.linkpay.kakao.dto.KakaoOauthResponse;
+import monorail.linkpay.auth.kakao.KakaoOauthClient;
+import monorail.linkpay.auth.kakao.KakaoOauthProps;
+import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;

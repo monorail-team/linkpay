@@ -6,8 +6,8 @@ import monorail.linkpay.auth.dto.KakaoUserResponse;
 import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.auth.service.AuthService;
 import monorail.linkpay.exception.AppException;
-import monorail.linkpay.kakao.KakaoOauthClient;
-import monorail.linkpay.kakao.dto.KakaoOauthResponse;
+import monorail.linkpay.auth.kakao.KakaoOauthClient;
+import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import org.junit.jupiter.api.Nested;
@@ -47,7 +47,7 @@ class AuthServiceTest {
             String code = "code";
             String accessToken = "value";
             Member member = memberRepository.save(Member.builder()
-                    .id(1L)
+                    .memberId(1L)
                     .email("email@kakao.com").build());
             when(mockKakaoOauthClient.authorize(code)).thenReturn(
                     ResponseEntity.ok(KakaoOauthResponse.of(accessToken))
