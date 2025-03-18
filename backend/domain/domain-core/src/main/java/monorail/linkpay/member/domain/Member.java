@@ -1,5 +1,6 @@
 package monorail.linkpay.member.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -20,15 +21,17 @@ public class Member extends BaseEntity {
 
     @Id
     private Long memberId;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String username;
-    private String fingerprint;
 
     @Builder
-    public Member(final Long memberId, final String email, final String username, final String fingerprint) {
+    public Member(final Long memberId, final String email, final String username) {
         this.memberId = memberId;
         this.email = email;
         this.username = username;
-        this.fingerprint = fingerprint;
     }
 }

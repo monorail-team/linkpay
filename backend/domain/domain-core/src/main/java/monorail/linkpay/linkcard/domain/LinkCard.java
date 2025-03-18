@@ -1,16 +1,18 @@
 package monorail.linkpay.linkcard.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
+import monorail.linkpay.linkedwallet.domain.LinkedWallet;
+import monorail.linkpay.member.domain.Member;
+import monorail.linkpay.wallet.domain.Wallet;
 
 import java.time.LocalDateTime;
 
+import static jakarta.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "link_card")
@@ -22,35 +24,58 @@ public class LinkCard extends BaseEntity {
 
     @Id
     private Long linkCardId;
-    private String cardNumber;
-    private String cvcNumber;
-    private LocalDateTime deletedAt;
+
+    @Column(nullable = true)
+    private Long limitPrice;
+
+    @Column(nullable = false, updatable = false)
+    @Enumerated(STRING)
     private CardType cardType;
-    private Long linkCardDetailsId;
-    private Long memberId;
-    private Long linkWalletId;
-    private Long myWalletId;
+
+    @Column(nullable = false)
+    @Enumerated(STRING)
+    private CardColor cardColor;
+
+    @Column(nullable = false)
+    private String cardName;
+
+    @Column(nullable = false)
+    private LocalDateTime expiredAt;
+
+    @JoinColumn(name = "member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
+    @JoinColumn(name = "linked_wallet_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private LinkedWallet linkedWallet;
+
+    @JoinColumn(name = "wallet_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Wallet wallet;
 
     @Builder
     public LinkCard(
             final Long linkCardId,
-            final String cardNumber,
-            final String cvcNumber,
-            final LocalDateTime deletedAt,
+            final Long limitPrice,
             final CardType cardType,
-            final Long linkCardDetailsId,
-            final Long memberId,
-            final Long linkWalletId,
-            final Long myWalletId
+            final CardColor cardColor,
+            final String cardName,
+            final LocalDateTime deletedAt,
+            final LocalDateTime expiredAt,
+            final Member member,
+            final LinkedWallet linkedWallet,
+            final Wallet wallet
     ) {
         this.linkCardId = linkCardId;
-        this.cardNumber = cardNumber;
-        this.cvcNumber = cvcNumber;
-        this.deletedAt = deletedAt;
+        this.limitPrice = limitPrice;
         this.cardType = cardType;
-        this.linkCardDetailsId = linkCardDetailsId;
-        this.memberId = memberId;
-        this.linkWalletId = linkWalletId;
-        this.myWalletId = myWalletId;
+        this.cardColor = cardColor;
+        this.cardName = cardName;
+        this.deletedAt = deletedAt;
+        this.expiredAt = expiredAt;
+        this.member = member;
+        this.linkedWallet = linkedWallet;
+        this.wallet = wallet;
     }
 }
