@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Card from '../components/Card';
 import Icon from '../components/Icon';
-
-const cards = [
-  { title: "카드명", description: "Description", expireDate: "25.12.23", used: 54000, limit: 100000 },
-  { title: "다른 카드", description: "Another Card", expireDate: "01.01.24", used: 30000, limit: 80000 },
-  { title: "세번째 카드", description: "Third Card", expireDate: "12.05.24", used: 10000, limit: 50000 },
-];
+import { cards } from '@/mocks/cards';
+import { wallets } from '@/mocks/wallets';
+import AddLinkCard from '@/components/AddLinkCard';
 
 const Home: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const totalCardsCount = cards.length + 1;
+  const navigate = useNavigate();
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
-      if (currentIndex < cards.length - 1) setCurrentIndex(currentIndex + 1);
+      if (currentIndex < totalCardsCount - 1) setCurrentIndex(currentIndex + 1);
     },
     onSwipedRight: () => {
       if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
@@ -28,6 +28,17 @@ const Home: React.FC = () => {
   const cardTotalWidthPercent = 78 + 3.5; // 카드 너비 78% + gap 3.5% = 81.5%
   const translatePercent = containerPositionPercent - currentIndex * cardTotalWidthPercent;
 
+  let currentCardType: string | null = null;
+  if (currentIndex < cards.length) {
+    currentCardType = cards[currentIndex].type;
+  }
+  const walletInfo = wallets.find(wallet => wallet.type === currentCardType);
+
+
+  // 플러스 카드 클릭 시 호출
+  const handleAddLinkClick = () => {
+    navigate('/register');
+  };
   return (
     <div>
       <Header />
@@ -38,7 +49,8 @@ const Home: React.FC = () => {
           {...handlers}
           className="flex transition-transform duration-300"
           style={{ transform: `translateX(${translatePercent}%)` }}
-        >
+        > 
+          {/* 실제 카드들을 화면에 표시 */}
           {cards.map((card, index) => (
             <div 
               key={index} 
@@ -48,6 +60,14 @@ const Home: React.FC = () => {
               <Card {...card} />
             </div>
           ))}
+
+          {/* 마지막에 카드 추가 버튼인 플러스카드를 표시 */}
+          <div
+            className="flex-shrink-0 mr-[3.5%] last:mr-0 transition-opacity duration-300 w-[78%]"
+            style={{ opacity: currentIndex === cards.length ? 1 : 0.5 }}
+          >
+            <AddLinkCard onClick={handleAddLinkClick}/>
+          </div>
         </div>
       </div>
 
@@ -55,13 +75,20 @@ const Home: React.FC = () => {
       <div className="text-center text-lg text-gray-300 font-bold mt-3">Link Pay</div>
 
       {/* my link 섹션 */}
-      <div className="flex flex-col flex-1 items-center justify-center mt-10">
-        <div className="text-2xl font-bold mb-2">₩ 100,000</div>
-        <div className="text-sm text-gray-600">/ 500,000</div>
-      </div>
+      <div className="flex flex-col flex-1 items-center justify-center mt-10 min-h-[80px]">
+        {currentCardType && currentCardType !== 'otherWallet' && walletInfo ? (
+          <div className="text-2xl font-medium mb-2 text-center">
+             지갑 잔액 {walletInfo.remainingPoints.toLocaleString()} 원
+          </div>
+        ) : 
+        (
+        // 다른 사람의 지갑인 경우
+          <div className="h-8"></div>
+        )}
+    </div>
 
       {/* 지문 아이콘 및 결제 문구 */}
-      <footer className="flex flex-col items-center p-4 mt-10">
+      <footer className="flex flex-col items-center p-4 mt-10 min-h-[120px]">
         <Icon name="fingerprint" width={60} height={60} />
         <div className="mt-2 text-sm text-gray-800">지문으로 결제하세요</div>
       </footer>
