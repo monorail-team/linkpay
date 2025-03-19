@@ -30,7 +30,7 @@ const Home: React.FC = () => {
 
   let currentCardType: string | null = null;
   if (currentIndex < cards.length) {
-    currentCardType = cards[currentIndex].type;
+    currentCardType = cards[currentIndex].cardType;
   }
   const walletInfo = wallets.find(wallet => wallet.type === currentCardType);
 
@@ -41,8 +41,7 @@ const Home: React.FC = () => {
   };
   return (
     <div>
-      <Header />
-
+    <Header headerType="menu" onMenuClick={() => console.log('메뉴 클릭')} />
       {/* 카드 영역 */}
       <div className="relative w-full md:w-[456px] mx-auto overflow-hidden mt-[200px]">
         <div
@@ -51,11 +50,11 @@ const Home: React.FC = () => {
           style={{ transform: `translateX(${translatePercent}%)` }}
         > 
           {/* 실제 카드들을 화면에 표시 */}
-          {cards.map((card, index) => (
+          {cards.map((card) => (
             <div 
-              key={index} 
+              key={card.linkCardId} 
               className="flex-shrink-0 mr-[3.5%] last:mr-0 transition-opacity duration-300 w-[78%]"
-              style={{ opacity: Math.abs(currentIndex - index) > 1 ? 0.5 : 1 }}
+              style={{ opacity: Math.abs(currentIndex - cards.indexOf(card)) > 1 ? 0.5 : 1 }}
             >
               <Card {...card} />
             </div>
