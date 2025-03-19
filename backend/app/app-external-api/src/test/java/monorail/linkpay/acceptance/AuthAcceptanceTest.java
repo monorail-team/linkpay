@@ -1,21 +1,18 @@
 package monorail.linkpay.acceptance;
 
-import monorail.linkpay.ClientTestConfiguration;
+import io.restassured.RestAssured;
+import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.auth.dto.KakaoUserResponse;
 import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.auth.kakao.KakaoOauthClient;
 import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberService;
-import io.restassured.RestAssured;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -27,9 +24,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.Mockito.when;
 
 @Slf4j
-@Import(ClientTestConfiguration.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AuthAcceptanceTest {
+class AuthAcceptanceTest extends AcceptanceTest {
 
     @Autowired
     KakaoOauthClient mockKakaoOauthClient;
@@ -52,7 +47,8 @@ class AuthAcceptanceTest {
         String kakaoOauthCode = "kakaocode";
         String kakaoOauthAccessToken = "kaccesstoken";
         Member member = Member.builder()
-                .memberId(1L)
+                .id(1L)
+                .username("link")
                 .email("email@kakao.com")
                 .build();
         memberService.create(member);
