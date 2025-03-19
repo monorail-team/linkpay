@@ -2,11 +2,13 @@
 import React from 'react';
 import fingerprintIcon from '@/assets/icons/Fingerprint.png';
 import menuIcon from '@/assets/icons/Menu.png';
+import backIcon from '@/assets/icons/arrow_back.png';
 // 아이콘 매핑: icon 이름과 해당 파일 경로를 매핑합니다.
 // 만약 추가 아이콘이 있다면 이 객체에 추가하면 됩니다.
 const iconMap: { [key: string]: string } = {
   fingerprint: fingerprintIcon,
   menu: menuIcon,
+  back: backIcon,
   // 예시: home: require('@/assets/icons/Home.png'),
   // 예시: search: require('@/assets/icons/Search.png'),
 };

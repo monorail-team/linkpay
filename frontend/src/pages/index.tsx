@@ -30,7 +30,7 @@ const Home: React.FC = () => {
 
   let currentCardType: string | null = null;
   if (currentIndex < cards.length) {
-    currentCardType = cards[currentIndex].type;
+    currentCardType = cards[currentIndex].cardType;
   }
   const walletInfo = wallets.find(wallet => wallet.type === currentCardType);
 
@@ -41,8 +41,7 @@ const Home: React.FC = () => {
   };
   return (
     <div>
-      <Header />
-
+    <Header variant="menu" onMenuClick={() => console.log('메뉴 클릭')} />
       {/* 카드 영역 */}
       <div className="relative w-full md:w-[456px] mx-auto overflow-hidden mt-[200px]">
         <div
