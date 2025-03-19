@@ -1,0 +1,68 @@
+package monorail.linkpay.wallet;
+
+import monorail.linkpay.common.IntegrationTest;
+import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.member.domain.Member;
+import monorail.linkpay.member.repository.MemberRepository;
+import monorail.linkpay.wallet.domain.Wallet;
+import monorail.linkpay.wallet.repository.WalletRepository;
+import monorail.linkpay.wallet.service.WalletResponse;
+import monorail.linkpay.wallet.service.WalletService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class WalletServiceTest extends IntegrationTest {
+
+    @Autowired
+    private WalletService walletService;
+    @Autowired
+    private WalletRepository walletRepository;
+    @Autowired
+    private MemberRepository memberRepository;
+
+    private Member member;
+
+    @BeforeEach
+    void setUp() {
+        walletRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
+        member = memberRepository.save(createMember());
+    }
+
+    @Test
+    void 지갑을_생성한다() {
+        Long walletId = walletService.create(member);
+
+        Wallet result = walletRepository.findById(walletId).orElseThrow();
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    void 지갑을_충전하고_잔액을_확인한다() {
+        Wallet wallet = walletRepository.save(createWallet(member));
+
+        walletService.charge(member.getId(), 50000L);
+
+        WalletResponse response = walletService.read(member.getId());
+        assertThat(response.amount()).isEqualTo(50000L);
+    }
+
+    private Wallet createWallet(Member member) {
+        return Wallet.builder()
+            .id(1L)
+            .point(new Point(0))
+            .member(member)
+            .build();
+    }
+
+    private Member createMember() {
+        return Member.builder()
+            .id(1L)
+            .email("linkpay@gmail.com")
+            .username("link1")
+            .build();
+    }
+}
