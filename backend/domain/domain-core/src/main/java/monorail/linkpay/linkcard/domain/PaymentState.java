@@ -1,6 +1,6 @@
 package monorail.linkpay.linkcard.domain;
 
-public enum PaymentStatus {
+public enum PaymentState {
     PENDING,
     APPROVED,
     REJECTED,
