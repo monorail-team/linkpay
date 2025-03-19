@@ -1,7 +1,7 @@
 // src/components/Icon.tsx
 import React from 'react';
-import fingerprintIcon from '@/assets/icons/Fingerprint.png';
-import menuIcon from '@/assets/icons/Menu.png';
+import fingerprintIcon from '@/assets/icons/fingerprint.png';
+import menuIcon from '@/assets/icons/menu.png';
 import backIcon from '@/assets/icons/arrow_back.png';
 // 아이콘 매핑: icon 이름과 해당 파일 경로를 매핑합니다.
 // 만약 추가 아이콘이 있다면 이 객체에 추가하면 됩니다.
