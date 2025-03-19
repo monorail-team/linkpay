@@ -4,7 +4,7 @@ import monorail.linkpay.auth.dto.LoginPrincipal;
 import monorail.linkpay.auth.dto.LoginRequest;
 import monorail.linkpay.auth.service.KakaoLoginProcessor;
 import monorail.linkpay.auth.service.LoginStrategyResolver;
-import monorail.linkpay.exception.AppException;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.auth.dto.KakaoLoginRequest;
 import org.assertj.core.api.Assertions;
@@ -44,8 +44,8 @@ class LoginStrategyResolverTest {
 
         //when, then
         Assertions.assertThatThrownBy(() -> sut.resolve(지원하지_않는_로그인_요청))
-                .isInstanceOf(AppException.class)
-                .extracting(e -> ((AppException) e).getExceptionCode())
+                .isInstanceOf(LinkPayException.class)
+                .extracting(e -> ((LinkPayException) e).getExceptionCode())
                 .isEqualTo(ExceptionCode.INVALID_REQUEST);
     }
 }

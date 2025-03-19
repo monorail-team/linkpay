@@ -3,7 +3,7 @@ package monorail.linkpay.common.domain;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import monorail.linkpay.exception.AppException;
+import monorail.linkpay.exception.LinkPayException;
 
 import java.util.Objects;
 
@@ -19,7 +19,7 @@ public class Point {
 
     public Point(final long amount) {
         if (amount < 0) {
-            throw new AppException(INVALID_REQUEST, "금액은 음수가 될 수 없습니다.");
+            throw new LinkPayException(INVALID_REQUEST, "금액은 음수가 될 수 없습니다.");
         }
         this.amount = amount;
     }
@@ -34,14 +34,14 @@ public class Point {
 
     public Point multiply(final long value) {
         if(value < 1) {
-            throw new AppException(INVALID_REQUEST, "곱할 값은 1 이상이어야 합니다.");
+            throw new LinkPayException(INVALID_REQUEST, "곱할 값은 1 이상이어야 합니다.");
         }
         return new Point(this.amount * value);
     }
 
     public Point divide(final long value) {
         if(value < 1) {
-            throw new AppException(INVALID_REQUEST, "나눌 값은 1 이상이어야 합니다.");
+            throw new LinkPayException(INVALID_REQUEST, "나눌 값은 1 이상이어야 합니다.");
         }
         return new Point(this.amount / value);
     }

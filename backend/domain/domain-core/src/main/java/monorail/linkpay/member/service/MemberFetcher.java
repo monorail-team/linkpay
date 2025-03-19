@@ -1,6 +1,6 @@
 package monorail.linkpay.member.service;
 
-import monorail.linkpay.exception.AppException;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.member.domain.Member;
@@ -15,11 +15,11 @@ public class MemberFetcher {
 
     public Member fetchBy(final String email) {
         return memberRepository.findByEmail(email)
-            .orElseThrow(() -> new AppException(ExceptionCode.NOT_FOUND_RESOURCE, "Member not found"));
+            .orElseThrow(() -> new LinkPayException(ExceptionCode.NOT_FOUND_RESOURCE, "Member not found"));
     }
 
     public Member fetchById(final Long memberId) {
         return memberRepository.findById(memberId)
-            .orElseThrow(() -> new AppException(ExceptionCode.NOT_FOUND_RESOURCE, "Member not found"));
+            .orElseThrow(() -> new LinkPayException(ExceptionCode.NOT_FOUND_RESOURCE, "Member not found"));
     }
 }

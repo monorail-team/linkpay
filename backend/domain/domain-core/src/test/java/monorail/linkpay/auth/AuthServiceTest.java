@@ -1,12 +1,11 @@
 package monorail.linkpay.auth;
 
-import monorail.linkpay.MockTestConfiguration;
 import monorail.linkpay.auth.dto.KakaoLoginRequest;
 import monorail.linkpay.auth.dto.KakaoUserResponse;
 import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.auth.service.AuthService;
 import monorail.linkpay.common.IntegrationTest;
-import monorail.linkpay.exception.AppException;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.auth.kakao.KakaoOauthClient;
 import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import monorail.linkpay.member.domain.Member;
@@ -14,8 +13,6 @@ import monorail.linkpay.member.repository.MemberRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -74,7 +71,7 @@ class AuthServiceTest extends IntegrationTest {
 
             //when, then
             assertThatThrownBy(() -> sut.login(request))
-                    .isInstanceOf(AppException.class);
+                    .isInstanceOf(LinkPayException.class);
         }
     }
 }

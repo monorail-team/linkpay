@@ -1,6 +1,6 @@
 package monorail.linkpay.common.domain;
 
-import monorail.linkpay.exception.AppException;
+import monorail.linkpay.exception.LinkPayException;
 import org.junit.jupiter.api.Test;
 
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
@@ -16,7 +16,7 @@ class PointTest {
     @Test
     void 금액이_음수면_예외가_발생한다() {
         assertThatThrownBy(() -> new Point(-1))
-            .isInstanceOf(AppException.class)
+            .isInstanceOf(LinkPayException.class)
             .hasMessage("금액은 음수가 될 수 없습니다.")
             .extracting("exceptionCode.code")
             .isEqualTo(INVALID_REQUEST.getCode());
@@ -28,12 +28,12 @@ class PointTest {
         assertSoftly(
             softly -> {
                 softly.assertThatThrownBy(() -> point.multiply(0))
-                    .isInstanceOf(AppException.class)
+                    .isInstanceOf(LinkPayException.class)
                     .hasMessage("곱할 값은 1 이상이어야 합니다.")
                     .extracting("exceptionCode.code")
                     .isEqualTo(INVALID_REQUEST.getCode());
                 softly.assertThatThrownBy(() -> point.divide(0))
-                    .isInstanceOf(AppException.class)
+                    .isInstanceOf(LinkPayException.class)
                     .hasMessage("나눌 값은 1 이상이어야 합니다.")
                     .extracting("exceptionCode.code")
                     .isEqualTo(INVALID_REQUEST.getCode());

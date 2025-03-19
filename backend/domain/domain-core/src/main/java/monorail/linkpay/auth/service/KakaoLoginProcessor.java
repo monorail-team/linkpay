@@ -1,7 +1,7 @@
 package monorail.linkpay.auth.service;
 
 import monorail.linkpay.auth.dto.LoginPrincipal;
-import monorail.linkpay.exception.AppException;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.auth.kakao.KakaoOauthClient;
@@ -40,11 +40,11 @@ public class KakaoLoginProcessor {
     private static void validate(ResponseEntity<?> response, String messageFor4xx) {
         // 2xx 응답이면 JSON 파싱
         if (response.getStatusCode().is4xxClientError()) {
-            throw new AppException(ExceptionCode.INVALID_AUTHORIZATION_CODE, messageFor4xx);
+            throw new LinkPayException(ExceptionCode.INVALID_AUTHORIZATION_CODE, messageFor4xx);
         }else if(response.getStatusCode().is5xxServerError()) {
-            throw new AppException(ExceptionCode.SERVER_ERROR, "카카오 서버 에러");
+            throw new LinkPayException(ExceptionCode.SERVER_ERROR, "카카오 서버 에러");
         }else if(!response.getStatusCode().is2xxSuccessful()) {
-            throw new AppException(ExceptionCode.SERVER_ERROR, "알 수 없는 에러");
+            throw new LinkPayException(ExceptionCode.SERVER_ERROR, "알 수 없는 에러");
         }
     }
 }

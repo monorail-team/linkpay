@@ -1,6 +1,6 @@
 package monorail.linkpay.auth;
 
-import monorail.linkpay.exception.AppException;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.exception.ExceptionCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +38,6 @@ public class DefaultAuthenticationEntryPoint implements AuthenticationEntryPoint
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 
-        handlerExceptionResolver.resolveException(request, response, null, new AppException(ExceptionCode.UNAUTHORIZED_ACCESS_TOKEN, authException.getMessage()));
+        handlerExceptionResolver.resolveException(request, response, null, new LinkPayException(ExceptionCode.UNAUTHORIZED_ACCESS_TOKEN, authException.getMessage()));
     }
 }

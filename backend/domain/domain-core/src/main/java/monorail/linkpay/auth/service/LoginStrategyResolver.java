@@ -2,7 +2,7 @@ package monorail.linkpay.auth.service;
 
 import monorail.linkpay.auth.dto.LoginPrincipal;
 import monorail.linkpay.auth.dto.LoginRequest;
-import monorail.linkpay.exception.AppException;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.auth.dto.KakaoLoginRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +30,6 @@ public class LoginStrategyResolver {
             return kakaoLoginProcessor.process(kakaoLoginRequest.code());
         }
 
-        throw new AppException(INVALID_REQUEST, "지원하지 않는 타입의 로그인 요청");
+        throw new LinkPayException(INVALID_REQUEST, "지원하지 않는 타입의 로그인 요청");
     }
 }

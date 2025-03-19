@@ -2,7 +2,7 @@ package monorail.linkpay.wallet.service;
 
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.exception.AppException;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.util.id.IdGenerator;
@@ -34,7 +34,7 @@ public class WalletService {
     public WalletResponse read(final Long memberId) {
         Member member = memberFetcher.fetchById(memberId);
         Wallet wallet = walletRepository.findByMember(member)
-            .orElseThrow(() -> new AppException(NOT_FOUND_RESOURCE, "멤버 아이디에 해당하는 지갑이 존재하지 않습니다."));
+            .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "멤버 아이디에 해당하는 지갑이 존재하지 않습니다."));
         return new WalletResponse(wallet.getAmount());
     }
 

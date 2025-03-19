@@ -1,6 +1,6 @@
 package monorail.linkpay.member;
 
-import monorail.linkpay.exception.AppException;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
@@ -47,8 +47,8 @@ class MemberFetcherTest {
 
             //when, then
             Assertions.assertThatThrownBy(()->sut.fetchBy("wrong@email.com"))
-                    .isInstanceOf(AppException.class)
-                    .extracting(e -> ((AppException) e).getExceptionCode())
+                    .isInstanceOf(LinkPayException.class)
+                    .extracting(e -> ((LinkPayException) e).getExceptionCode())
                     .isEqualTo(ExceptionCode.NOT_FOUND_RESOURCE);
         }
     }

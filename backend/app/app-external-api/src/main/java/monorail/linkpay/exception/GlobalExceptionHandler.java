@@ -29,14 +29,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.warn(e.getMessage(), e);
         final String errorMessage = Objects.requireNonNull(
             e.getBindingResult().getAllErrors().getFirst().getDefaultMessage());
-        final AppException appException = new AppException(INVALID_REQUEST, errorMessage);
-        final ExceptionCode exceptionCode = appException.getExceptionCode();
+        final LinkPayException linkPayException = new LinkPayException(INVALID_REQUEST, errorMessage);
+        final ExceptionCode exceptionCode = linkPayException.getExceptionCode();
         return ResponseEntity.status(exceptionCode.getHttpStatus())
-            .body(new ExceptionResponse(exceptionCode.getCode(), appException.getMessage()));
+            .body(new ExceptionResponse(exceptionCode.getCode(), linkPayException.getMessage()));
     }
 
-    @ExceptionHandler(AppException.class)
-    public ResponseEntity<ExceptionResponse> handleAppException(final AppException e) {
+    @ExceptionHandler(LinkPayException.class)
+    public ResponseEntity<ExceptionResponse> handleAppException(final LinkPayException e) {
         log.warn(e.getMessage(), e);
         final ExceptionCode exceptionCode = e.getExceptionCode();
         return ResponseEntity.status(exceptionCode.getHttpStatus())
@@ -46,9 +46,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(final Exception e) {
         log.error(e.getMessage(), e);
-        final AppException appException = new AppException(SERVER_ERROR, "서버 오류가 발생했습니다.");
-        final ExceptionCode exceptionCode = appException.getExceptionCode();
+        final LinkPayException linkPayException = new LinkPayException(SERVER_ERROR, "서버 오류가 발생했습니다.");
+        final ExceptionCode exceptionCode = linkPayException.getExceptionCode();
         return ResponseEntity.status(exceptionCode.getHttpStatus())
-            .body(new ExceptionResponse(exceptionCode.getCode(), appException.getMessage()));
+            .body(new ExceptionResponse(exceptionCode.getCode(), linkPayException.getMessage()));
     }
 }
