@@ -37,8 +37,9 @@ class AuthServiceTest extends IntegrationTest {
      */
     @Nested
     class 로그인_테스트 {
+
         @Test
-        public void 로그인_성공_시_엑세스_토큰을_반환한다() throws Exception {
+        public void 로그인_성공_시_엑세스_토큰을_반환한다() {
             //given
             String code = "code";
             String accessToken = "value";
@@ -60,9 +61,8 @@ class AuthServiceTest extends IntegrationTest {
             assertThat(response.accessToken()).isNotBlank();
         }
 
-
         @Test
-        public void 올바르지_않은_code_를_전달하면_로그인에_실패한다() throws Exception {
+        public void 올바르지_않은_code_를_전달하면_로그인에_실패한다() {
             //given
             var request = new KakaoLoginRequest("wrong_code");
             when(mockKakaoOauthClient.authorize(any())).thenReturn(

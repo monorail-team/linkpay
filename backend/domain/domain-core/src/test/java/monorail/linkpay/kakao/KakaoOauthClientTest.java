@@ -18,6 +18,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 class KakaoOauthClientTest {
+
     private KakaoOauthProps props = KakaoOauthProps.builder()
             .authorizeApiUri("https://kakao.auth.kakao.com/oauth/authorize")
             .userApiUri("https://kakao.auth.kakao.com/oauth/user")
@@ -29,7 +30,7 @@ class KakaoOauthClientTest {
     private MockRestServiceServer mockServer = MockRestServiceServer.bindTo(restTemplate).build();
 
     @Test
-    void 카카오_OAuth_인증_요청이_성공한다() throws Exception {
+    void 카카오_OAuth_인증_요청이_성공한다() {
         // Given
         String code = "test_auth_code";
         String expectedResponse = """
@@ -66,7 +67,7 @@ class KakaoOauthClientTest {
     }
 
     @Test
-    void 카카오_OAuth_유저_정보_요청이_성공한다() throws Exception {
+    void 카카오_OAuth_유저_정보_요청이_성공한다() {
         // Given
         String accessToken = "test_access_token";
         String expectedResponse = """

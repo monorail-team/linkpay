@@ -7,7 +7,7 @@ import lombok.Builder;
 public record KakaoOauthResponse(
         @JsonProperty("access_token") String accessToken
 ) {
-    public static KakaoOauthResponse of(String accessToken) {
+    public static KakaoOauthResponse of(final String accessToken) {
         return new KakaoOauthResponse(accessToken);
     }
 }

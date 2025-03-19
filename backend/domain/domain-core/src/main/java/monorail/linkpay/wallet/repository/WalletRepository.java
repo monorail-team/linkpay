@@ -13,13 +13,11 @@ import java.util.Optional;
 @Repository
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
-    Optional<Wallet> findByMember(Member member);
-
     @Modifying
     @Query(value = "update wallet w " +
                     "set w.amount = w.amount + :amount " +
-                    "where w.member_id = :memberId",
+                    "where w.wallet_id = :walletId",
         nativeQuery = true
     )
-    void updateAmount(@Param("memberId") Long memberId, @Param("amount") Long amount);
+    void increaseWalletAmount(@Param("walletId") Long walletId, @Param("amount") Long amount);
 }

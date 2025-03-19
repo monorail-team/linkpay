@@ -1,9 +1,15 @@
 package monorail.linkpay.util;
 
-import static io.micrometer.common.util.StringUtils.isEmpty;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class StringUtil {
-    public static String substringAfter(String str, String separator) {
+import static io.micrometer.common.util.StringUtils.isEmpty;
+import static lombok.AccessLevel.PRIVATE;
+
+@NoArgsConstructor(access = PRIVATE)
+public final class StringUtil {
+
+    public static String substringAfter(final String str, final String separator) {
         if (isEmpty(str)) {
             return str;
         } else if (separator == null) {

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 class LoginStrategyResolverTest {
 
     @Test
-    public void 로그인_전략에_맞는_객체를_호출한다() throws Exception {
+    public void 로그인_전략에_맞는_객체를_호출한다() {
         //given
         String code = "카카오_OAuth_토큰";
         KakaoLoginRequest request = KakaoLoginRequest.of(code);
@@ -37,7 +37,7 @@ class LoginStrategyResolverTest {
     }
 
     @Test
-    public void 지원하지_않는_전략인_경우_예외를_반환한다() throws Exception{
+    public void 지원하지_않는_전략인_경우_예외를_반환한다() {
         //given
         LoginStrategyResolver sut = new LoginStrategyResolver(Mockito.mock(KakaoLoginProcessor.class));
         LoginRequest 지원하지_않는_로그인_요청 = new LoginRequest() {};

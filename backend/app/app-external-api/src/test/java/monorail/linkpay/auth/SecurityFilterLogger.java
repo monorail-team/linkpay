@@ -10,7 +10,7 @@ import java.util.List;
 @Component
 public class SecurityFilterLogger {
 
-    public SecurityFilterLogger(ApplicationContext applicationContext) {
+    public SecurityFilterLogger(final ApplicationContext applicationContext) {
         FilterChainProxy filterChainProxy = applicationContext.getBean(FilterChainProxy.class);
         List<SecurityFilterChain> filterChains = filterChainProxy.getFilterChains();
 

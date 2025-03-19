@@ -7,6 +7,8 @@ import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 
+import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
+
 @SupportLayer
 @RequiredArgsConstructor
 public class MemberFetcher {
@@ -15,11 +17,11 @@ public class MemberFetcher {
 
     public Member fetchBy(final String email) {
         return memberRepository.findByEmail(email)
-            .orElseThrow(() -> new LinkPayException(ExceptionCode.NOT_FOUND_RESOURCE, "Member not found"));
+            .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "요청한 이메일에 해당하는 회원이 존재하지 않습니다."));
     }
 
     public Member fetchById(final Long memberId) {
         return memberRepository.findById(memberId)
-            .orElseThrow(() -> new LinkPayException(ExceptionCode.NOT_FOUND_RESOURCE, "Member not found"));
+            .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "요청한 아이디에 해당하는 회원이 존재하지 않습니다."));
     }
 }

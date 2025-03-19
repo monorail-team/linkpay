@@ -20,6 +20,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class AuthTokenAuthenticationProvider implements AuthenticationProvider {
+
     private final TokenValidator tokenValidator;
 
     /**
@@ -29,7 +30,7 @@ public class AuthTokenAuthenticationProvider implements AuthenticationProvider {
     * 검증에 실패하면 AuthenticationException을 발생: 호출하는 부분에서 적절히 처리해야 한다.
     */
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         try {
             var tokenAuthentication = (AuthTokenAuthentication) authentication;
             ValidatedToken validatedToken = tokenValidator.validate(tokenAuthentication.getCredentials());
@@ -46,7 +47,7 @@ public class AuthTokenAuthenticationProvider implements AuthenticationProvider {
     }
 
     @Override
-    public boolean supports(Class<?> authentication) {
+    public boolean supports(final Class<?> authentication) {
         return AuthTokenAuthentication.class.isAssignableFrom(authentication);
     }
 }

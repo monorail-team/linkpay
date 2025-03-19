@@ -13,7 +13,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public void create(Member member) {
+    public void create(final Member member) {
         memberRepository.save(member);
     }
 }
