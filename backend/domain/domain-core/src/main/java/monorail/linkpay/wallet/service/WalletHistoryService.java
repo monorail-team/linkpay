@@ -20,7 +20,7 @@ public class WalletHistoryService {
 
     public WalletHistoryResponse read(final Long walletHistoryId) {
         WalletHistory walletHistory = walletHistoryRepository.findById(walletHistoryId)
-                .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "내역 아이디에 해당하는 내역이 존재하지 않습니다."));
+            .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "내역 아이디에 해당하는 내역이 존재하지 않습니다."));
 
         return new WalletHistoryResponse(walletHistory.getId(),
                 walletHistory.getPoint().getAmount(),
