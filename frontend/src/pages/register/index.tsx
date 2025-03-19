@@ -33,7 +33,7 @@ const Register: React.FC = () => {
   return (
     <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto border flex flex-col ">
       {/* Header: 뒤로가기 모드 */}
-      <Header variant="back" onBackClick={handleBackClick} />
+      <Header headerType="back" onBackClick={handleBackClick} />
 
       <div className="p-4 flex-1 flex flex-col">
         <h2 className="text-lg font-bold mb-4 text-center">
@@ -41,7 +41,7 @@ const Register: React.FC = () => {
         </h2>
 
         {/* 카드 목록 */}
-         <div className="mt-10 overflow-y-auto space-y-4 hide-scrollbar" style={{ maxHeight: '480px' }}>
+         <div className="overflow-y-auto space-y-4 hide-scrollbar  max-h-[75vh]" >
           {cards.map((card) => (
             <label
               key={card.linkCardId}
