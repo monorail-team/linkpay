@@ -50,11 +50,11 @@ const Home: React.FC = () => {
           style={{ transform: `translateX(${translatePercent}%)` }}
         > 
           {/* 실제 카드들을 화면에 표시 */}
-          {cards.map((card, index) => (
+          {cards.map((card) => (
             <div 
-              key={index} 
+              key={card.linkCardId} 
               className="flex-shrink-0 mr-[3.5%] last:mr-0 transition-opacity duration-300 w-[78%]"
-              style={{ opacity: Math.abs(currentIndex - index) > 1 ? 0.5 : 1 }}
+              style={{ opacity: Math.abs(currentIndex - cards.indexOf(card)) > 1 ? 0.5 : 1 }}
             >
               <Card {...card} />
             </div>

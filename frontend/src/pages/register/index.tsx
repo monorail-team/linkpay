@@ -42,16 +42,16 @@ const Register: React.FC = () => {
 
         {/* 카드 목록 */}
          <div className="mt-10 overflow-y-auto space-y-4 hide-scrollbar" style={{ maxHeight: '480px' }}>
-          {cards.map((card, index) => (
+          {cards.map((card) => (
             <label
-              key={index}
+              key={card.linkCardId}
               className="flex items-center cursor-pointer"
-              onClick={() => handleSelect(index)}
+              onClick={() => handleSelect(card.linkCardId)}
             >
               {/* 카드 영역: 선택된 경우 테두리 강조 */}
               <div
                 className={`my-1 box-border rounded-lg w-5/6 p-4 mx-auto bg-center h-[150px] ${
-                  selectedIndices.includes(index)
+                  selectedIndices.includes(card.linkCardId)
                     ? 'outline outline-4 outline-gray-400 brightness-90'
                     : ''
                 }`}
