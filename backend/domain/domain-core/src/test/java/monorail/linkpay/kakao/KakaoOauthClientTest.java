@@ -36,11 +36,11 @@ class KakaoOauthClientTest {
                     {"access_token": "test_access_token"}
                 """;
 
-        String expectedUri = UriComponentsBuilder.fromUriString(props.authorizeApiUri)
-                .queryParam("grant_type", props.grantType)
-                .queryParam("client_id", props.clientId)
-                .queryParam("client_secret", props.clientSecret)
-                .queryParam("redirect_uri", props.redirectUrl)
+        String expectedUri = UriComponentsBuilder.fromUriString(props.getAuthorizeApiUri())
+                .queryParam("grant_type", props.getGrantType())
+                .queryParam("client_id", props.getClientId())
+                .queryParam("client_secret", props.getClientSecret())
+                .queryParam("redirect_uri", props.getRedirectUrl())
                 .queryParam("code", code)
                 .toUriString();
 
@@ -77,7 +77,7 @@ class KakaoOauthClientTest {
                     }
                 """;
 
-        mockServer.expect(requestTo(props.userApiUri))
+        mockServer.expect(requestTo(props.getUserApiUri()))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(expectedResponse, MediaType.APPLICATION_JSON));
         KakaoOauthClient sut = new KakaoOauthClient(restTemplate, props);

@@ -1,8 +1,10 @@
 package monorail.linkpay.auth.kakao;
 
 import lombok.Builder;
+import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+@Getter
 @ConfigurationProperties(prefix = "oauth.kakao")
 public class KakaoOauthProps {
     String userApiUri;
