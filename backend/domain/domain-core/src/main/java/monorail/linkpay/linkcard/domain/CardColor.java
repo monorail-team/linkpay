@@ -23,5 +23,5 @@ public enum CardColor {
     PURPLE("#b589e1"),
     PLUM("#d59ccf");
 
-    private final String code;
+    private final String hexCode;
 }
