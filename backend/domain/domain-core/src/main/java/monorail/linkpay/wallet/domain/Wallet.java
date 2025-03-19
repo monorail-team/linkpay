@@ -13,13 +13,14 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "wallet")
 @Getter
-@EqualsAndHashCode(of = "walletId", callSuper = false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Wallet extends BaseEntity {
 
     @Id
-    private Long walletId;
+    @Column(name = "wallet_id")
+    private Long id;
 
     @Embedded
     private Point point;
@@ -29,9 +30,13 @@ public class Wallet extends BaseEntity {
     private Member member;
 
     @Builder
-    public Wallet(final Long walletId, final Point point, final Member member) {
-        this.walletId = walletId;
+    public Wallet(final Long id, final Point point, final Member member) {
+        this.id = id;
         this.point = point;
         this.member = member;
+    }
+
+    public long getAmount() {
+        return point.getAmount();
     }
 }

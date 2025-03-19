@@ -1,10 +1,7 @@
 package monorail.linkpay.linkedwallet.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
 
@@ -13,13 +10,20 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "linked_wallet")
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(of = "linkedWalletId", callSuper = false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Entity
 public class LinkedWallet extends BaseEntity {
 
     @Id
-    private Long linkedWalletId;
+    @Column(name = "linked_wallet_id")
+    private Long id;
 
     @Embedded
     private Point point;
+
+    @Builder
+    public LinkedWallet(final Long id, final Point point) {
+        this.id = id;
+        this.point = point;
+    }
 }

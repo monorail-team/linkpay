@@ -14,23 +14,24 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "member")
 @Getter
-@EqualsAndHashCode(of = "memberId", callSuper = false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Member extends BaseEntity {
 
     @Id
-    private Long memberId;
+    @Column(name = "member_id")
+    private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String username;
 
     @Builder
-    public Member(final Long memberId, final String email, final String username) {
-        this.memberId = memberId;
+    public Member(final Long id, final String email, final String username) {
+        this.id = id;
         this.email = email;
         this.username = username;
     }

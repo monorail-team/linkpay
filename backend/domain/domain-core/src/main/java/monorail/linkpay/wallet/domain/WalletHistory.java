@@ -14,13 +14,14 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "wallet_history")
 @Getter
-@EqualsAndHashCode(of = "walletHistoryId", callSuper = false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 public class WalletHistory {
 
     @Id
-    private Long walletHistoryId;
+    @Column(name = "wallet_history_id")
+    private Long id;
 
     @Embedded
     private Point point;
@@ -37,13 +38,13 @@ public class WalletHistory {
 
     @Builder
     public WalletHistory(
-            final Long walletHistoryId,
+            final Long id,
             final Point point,
             final TransactionType transactionType,
             final LocalDateTime createdAt,
             final Wallet wallet
     ) {
-        this.walletHistoryId = walletHistoryId;
+        this.id = id;
         this.point = point;
         this.transactionType = transactionType;
         this.createdAt = LocalDateTime.now();

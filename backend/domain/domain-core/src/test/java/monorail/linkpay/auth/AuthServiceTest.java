@@ -5,6 +5,7 @@ import monorail.linkpay.auth.dto.KakaoLoginRequest;
 import monorail.linkpay.auth.dto.KakaoUserResponse;
 import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.auth.service.AuthService;
+import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.exception.AppException;
 import monorail.linkpay.auth.kakao.KakaoOauthClient;
 import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
@@ -23,9 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@Import({MockTestConfiguration.class})
-@SpringBootTest
-class AuthServiceTest {
+class AuthServiceTest extends IntegrationTest {
 
     @Autowired
     AuthService sut;
@@ -47,7 +46,8 @@ class AuthServiceTest {
             String code = "code";
             String accessToken = "value";
             Member member = memberRepository.save(Member.builder()
-                    .memberId(1L)
+                    .id(1L)
+                    .username("link")
                     .email("email@kakao.com").build());
             when(mockKakaoOauthClient.authorize(code)).thenReturn(
                     ResponseEntity.ok(KakaoOauthResponse.of(accessToken))

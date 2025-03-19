@@ -15,12 +15,13 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "link_card_history")
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(of = "linkCardHistoryId", callSuper = false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Entity
 public class LinkCardHistory {
 
     @Id
-    private Long linkCardHistoryId;
+    @Column(name = "link_card_history_id")
+    private Long id;
 
     @Column(nullable = false)
     private String merchantName;
@@ -30,7 +31,7 @@ public class LinkCardHistory {
 
     @Column(nullable = false)
     @Enumerated(STRING)
-    private PaymentStatus paymentStatus;
+    private PaymentState paymentState;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -41,16 +42,16 @@ public class LinkCardHistory {
 
     @Builder
     public LinkCardHistory(
-            final Long linkCardHistoryId,
+            final Long id,
             final String merchantName,
             final Point point,
-            final PaymentStatus paymentStatus,
+            final PaymentState paymentState,
             final LinkCard linkCard
     ) {
-        this.linkCardHistoryId = linkCardHistoryId;
+        this.id = id;
         this.merchantName = merchantName;
         this.point = point;
-        this.paymentStatus = paymentStatus;
+        this.paymentState = paymentState;
         this.createdAt = LocalDateTime.now();
         this.linkCard = linkCard;
     }

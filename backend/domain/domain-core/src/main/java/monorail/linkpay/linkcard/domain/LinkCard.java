@@ -17,13 +17,14 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "link_card")
 @Getter
-@EqualsAndHashCode(of = "linkCardId", callSuper = false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 public class LinkCard extends BaseEntity {
 
     @Id
-    private Long linkCardId;
+    @Column(name = "link_card_id")
+    private Long id;
 
     @Column(nullable = true)
     private Long limitPrice;
@@ -42,6 +43,10 @@ public class LinkCard extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime expiredAt;
 
+    @Column(nullable = false)
+    @Enumerated(STRING)
+    private CardState state;
+
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
@@ -56,7 +61,7 @@ public class LinkCard extends BaseEntity {
 
     @Builder
     public LinkCard(
-            final Long linkCardId,
+            final Long id,
             final Long limitPrice,
             final CardType cardType,
             final CardColor cardColor,
@@ -67,7 +72,7 @@ public class LinkCard extends BaseEntity {
             final LinkedWallet linkedWallet,
             final Wallet wallet
     ) {
-        this.linkCardId = linkCardId;
+        this.id = id;
         this.limitPrice = limitPrice;
         this.cardType = cardType;
         this.cardColor = cardColor;
