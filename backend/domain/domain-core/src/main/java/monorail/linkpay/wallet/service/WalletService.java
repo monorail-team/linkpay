@@ -34,7 +34,6 @@ public class WalletService {
 
     @Transactional
     public void charge(final Long walletId, final Long amount) {
-        Wallet wallet = walletFetcher.fetchById(walletId);
         walletRepository.increaseWalletAmount(walletId, amount);
     }
 }
