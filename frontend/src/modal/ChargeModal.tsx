@@ -1,0 +1,61 @@
+import React, { useState } from 'react';
+import Button from '../components/Button';
+
+export interface ChargeModalProps {
+  onClose: () => void;
+  onConfirm: (amount: number) => void;
+}
+
+const ChargeModal: React.FC<ChargeModalProps> = ({ onClose, onConfirm }) => {
+  const [amount, setAmount] = useState<string>('');
+
+  // 🔹 입력값을 숫자로 변환 & 1000단위 콤마 추가
+  const formatNumber = (value: string) => {
+    // 숫자만 남기기 (정수값만 입력 가능)
+    let numericValue = value.replace(/\D/g, '');
+    if (parseInt(numericValue) > 100000000) {
+      alert('최대 입력 가능 금액은 100,000,000원 입니다.');
+      numericValue = amount; // 최대값 제한
+    }
+    // 1000 단위 콤마 추가
+    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  // 🔹 입력 변경 핸들러
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    setAmount(formatNumber(rawValue));
+  };
+
+  const handleConfirm = () => {
+    const numAmount = parseInt(amount.replace(/,/g, ''), 10);
+    if (!isNaN(numAmount) && numAmount > 0) {
+      onConfirm(numAmount);
+    } else {
+      alert('올바른 금액을 입력해주세요.');
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30">
+      <div className="bg-white p-6 rounded-xl shadow-lg w-80">
+        <h2 className="text-lg font-semibold text-center mb-4">
+          충전할 금액을 입력해주세요.
+        </h2>
+        <input
+          type="text" // 🔹 숫자가 아닌 'text'로 설정하여 콤마 표시 가능
+          placeholder="금액을 입력해주세요."
+          value={amount}
+          onChange={handleChange}
+          className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-left"
+        />
+        <div className="flex justify-between mt-4">
+          <Button type={'modal'} label={'확인'} onClick={handleConfirm} />
+          <Button type={'modal'} label={'취소'} onClick={onClose} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ChargeModal;
