@@ -32,17 +32,22 @@ public class AuthService {
         log.debug("login process in progress : {}", request);
         var loginPrincipal = loginStrategyResolver.resolve(request);
         var loginMember = memberRepository.findByEmail(loginPrincipal.email())
-            .orElseGet(() -> memberRepository.save(Member.builder()
-                    .id(idGenerator.generate())
-                    .email(loginPrincipal.email())
-                    .username("")
-                    .build()
-            ));
-        walletRepository.save(Wallet.builder()
-            .id(idGenerator.generate())
-            .point(new Point(0))
-            .member(loginMember)
-            .build());
+            .orElseGet(() -> {
+                Member member = memberRepository.save(Member.builder()
+                        .id(idGenerator.generate())
+                        .email(loginPrincipal.email())
+                        .username("")
+                        .build()
+                );
+                walletRepository.save(Wallet.builder()
+                        .id(idGenerator.generate())
+                        .point(new Point(0))
+                        .member(member)
+                        .build());
+                return member;
+            });
+
+
 
         var accessToken = authTokenGenerator.generateFor(loginMember, TokenType.ACCESS);
 

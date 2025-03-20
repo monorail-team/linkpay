@@ -25,7 +25,7 @@ public class WalletController {
     public ResponseEntity<Void> chargeWallet(@AuthenticationPrincipal final AuthPrincipal principal,
                                              @Valid @RequestBody final ChargeRequest chargeRequest) {
         walletService.charge(principal.memberId(), chargeRequest.amount());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/deduct")
