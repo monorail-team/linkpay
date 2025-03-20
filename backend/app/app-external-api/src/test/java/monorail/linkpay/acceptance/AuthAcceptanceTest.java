@@ -70,16 +70,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
                 }),
 
                 dynamicTest("카카오 로그인을 통해 엑세스 토큰을 발급받는다.", () -> {
-                    var response = RestAssured
-                            .given()
-                            .param("code", kakaoOauthCode)
-                            .when()
-                            .post("/api/auth/login/kakao")
-                            .then()
-                            .statusCode(HttpStatus.OK.value())
-                            .body("accessToken", notNullValue())
-                            .log().all()
-                            .extract().as(LoginResponse.class);
+                    var response = 카카오_로그인(kakaoOauthCode);
 
                     accessToken.set(response.accessToken());
                 }),
@@ -97,4 +88,20 @@ class AuthAcceptanceTest extends AcceptanceTest {
         );
     }
 
+    private static LoginResponse 카카오_로그인(final String kakaoOauthCode) {
+        return RestAssured
+            .given()
+            .param("code", kakaoOauthCode)
+            .when()
+            .post("/api/auth/login/kakao")
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("accessToken", notNullValue())
+            .log().all()
+            .extract().as(LoginResponse.class);
+    }
+
+    public static String 엑세스_토큰() {
+        return 카카오_로그인("kakaocode").accessToken();
+    }
 }

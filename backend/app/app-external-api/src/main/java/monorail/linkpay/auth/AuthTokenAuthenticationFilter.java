@@ -49,8 +49,7 @@ public class AuthTokenAuthenticationFilter extends OncePerRequestFilter {
 
     private Authentication attemptAuthentication(final HttpServletRequest request) {
         String token = extractToken(request);
-        Authentication authResult = authenticationManager.authenticate(unauthenticated(token));
-        return authResult;
+        return authenticationManager.authenticate(unauthenticated(token));
     }
 
     private String extractToken(final HttpServletRequest request) {

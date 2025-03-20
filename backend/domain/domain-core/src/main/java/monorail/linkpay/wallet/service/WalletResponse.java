@@ -1,4 +1,4 @@
 package monorail.linkpay.wallet.service;
 
-public record WalletResponse(Long amount) {
+public record WalletResponse(long amount) {
 }

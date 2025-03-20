@@ -35,7 +35,7 @@ class MemberFetcherTest {
             MemberFetcher sut = new MemberFetcher(memberRepository);
 
             //when
-            Member member = sut.fetchBy(email);
+            Member member = sut.fetchByEmail(email);
 
             //then
             assertThat(member.getEmail()).isEqualTo(email);
@@ -47,7 +47,7 @@ class MemberFetcherTest {
             MemberFetcher sut = new MemberFetcher(memberRepository);
 
             //when, then
-            Assertions.assertThatThrownBy(()->sut.fetchBy("wrong@email.com"))
+            Assertions.assertThatThrownBy(()->sut.fetchByEmail("wrong@email.com"))
                     .isInstanceOf(LinkPayException.class)
                     .extracting(e -> ((LinkPayException) e).getExceptionCode())
                     .isEqualTo(ExceptionCode.NOT_FOUND_RESOURCE);

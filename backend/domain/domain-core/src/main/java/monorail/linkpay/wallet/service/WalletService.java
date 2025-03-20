@@ -27,13 +27,14 @@ public class WalletService {
             .build()).getId();
     }
 
-    public WalletResponse read(final Long walletId) {
-        Wallet wallet = walletFetcher.fetchById(walletId);
+    public WalletResponse read(final Long id) {
+        Wallet wallet = walletFetcher.fetchById(id);
         return new WalletResponse(wallet.getAmount());
     }
 
     @Transactional
-    public void charge(final Long walletId, final Long amount) {
-        walletRepository.increaseWalletAmount(walletId, amount);
+    public void charge(final Long id, final Long amount) {
+        walletFetcher.checkExistsById(id);
+        walletRepository.increaseWalletAmount(id, amount);
     }
 }
