@@ -27,7 +27,7 @@ const Home: React.FC = () => {
 
   // 상대 단위로 계산 (퍼센트)
   const containerPositionPercent = 0; // (100 - 78) / 2
-  const cardTotalWidthPercent = 103; // 카드 너비 78% + gap 3.5% = 81.5%
+  const cardTotalWidthPercent = 110; // 카드 너비 78% + gap 3.5% = 81.5%
   const translatePercent = containerPositionPercent - currentIndex * cardTotalWidthPercent;
 
   let currentCardType: string | null = null;
@@ -42,10 +42,10 @@ const Home: React.FC = () => {
     navigate('/register');
   };
   return (
-    <div className='dark:bg-[#3b3838]'>
+    <div className='dark:bg-[#3b3838] overflow-hidden'>
     <Header headerType="menu" onMenuClick={() => console.log('메뉴 클릭')} />
 
-    <div className="relative w-4/5 max:w-[456px] mx-auto overflow-hidden mt-20 rounded-lg">
+    <div className="relative w-4/5 max:w-[456px] mx-auto  mt-20 rounded-lg">
       <div className='p-4 
             bg-white dark:bg-[#5a5757]
             border border-gray-200 dark:border-gray-600
@@ -60,7 +60,7 @@ const Home: React.FC = () => {
             {cards.map((card) => (
               <div 
                 key={card.linkCardId} 
-                className="flex-shrink-0 mr-[3.5%] last:mr-0 transition-opacity duration-300 w-full"
+                className="flex-shrink-0 mr-[10%] last:mr-0 transition-opacity duration-300 w-full"
                 style={{ opacity: Math.abs(currentIndex - cards.indexOf(card)) > 1 ? 0.5 : 1 }}
               >
                 <Card {...card} />
@@ -100,7 +100,7 @@ const Home: React.FC = () => {
             name={theme === 'dark' ? 'fingerprintDarkIcon' : 'fingerprint'}
             width={78}
             height={78}
-            alt="메뉴뉴"
+            alt="메뉴"
           />
         <div className="mt-2 text-sm text-gray-800 dark:text-white">지문으로 결제하세요</div>
       </footer>

@@ -48,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({
             name={theme === 'dark' ? 'menuDarkIcon' : 'menu'}
             width={24}
             height={24}
-            alt="메뉴뉴"
+            alt="메뉴"
           />
           </button>
         </div>
