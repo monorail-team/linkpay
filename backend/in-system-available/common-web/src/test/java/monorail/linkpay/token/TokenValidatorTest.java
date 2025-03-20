@@ -23,7 +23,6 @@ class TokenValidatorTest {
         ValidatedToken validatedToken = sut.validate(token.value());
 
         //then
-
         assertThat(validatedToken).isNotNull();
         assertThat(validatedToken.payload()).isEqualTo(payload);
     }

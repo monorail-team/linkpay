@@ -17,6 +17,7 @@ import static monorail.linkpay.jwt.DefaultJwtClaim.*;
 
 @Component
 public class JwtProvider {
+
     private final Algorithm algorithm;
     private final JWTVerifier jwtVerifier;
     private final Random randomSalt;

@@ -15,6 +15,7 @@ import static java.util.Objects.isNull;
 @Component
 @RequiredArgsConstructor
 public class TokenGenerator {
+
     private final JwtProvider jwtProvider;
     private final JwtProps jwtProps;
     private final IdGenerator idGenerator;
@@ -27,7 +28,7 @@ public class TokenGenerator {
      * 세부적인 토큰과 관련된 정책(어떤 타입인지, 만료일 설정 등)을 캡슐화했습니다.
      * 토큰을 사용하는 객체 입장에서는 내부적으로 jwt를 쓰는지 어떤 다른 토큰을 쓰는지 몰라도 된다고 생각했습니다.
      */
-    public GeneratedToken generate(TokenType type, Json payload) {
+    public GeneratedToken generate(final TokenType type, final Json payload) {
         assert !isNull(type);
         assert !isNull(payload);
         long tokenId = idGenerator.generate();
@@ -50,7 +51,7 @@ public class TokenGenerator {
      * -> 외부에서 설정 값을 주입받으면 설정 정보가 @value를 통해 너무 분산되지 않을까?
      * 현재는 보안과 관련된 만큼 한 곳에서 엄격하게 관리하는 게 좋겠다는 생각에 Jwt를 직접 생성하는 Provider 내부에 위치시켰습니다.
      */
-    private long fetchExpirySeconds(TokenType type) {
+    private long fetchExpirySeconds(final TokenType type) {
         return switch (type) {
             case ACCESS -> jwtProps.getExpirySeconds();
             case REFRESH -> jwtProps.getRefreshExpirySeconds();

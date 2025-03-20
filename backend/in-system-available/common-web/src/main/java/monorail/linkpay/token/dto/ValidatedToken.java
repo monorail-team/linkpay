@@ -7,8 +7,10 @@ import lombok.Builder;
 import java.time.Instant;
 
 @Builder
-public record ValidatedToken(String tokenId,
-                             TokenType type,
-                             Instant expiresAt,
-                             Json payload) {
+public record ValidatedToken(
+        String tokenId,
+        TokenType type,
+        Instant expiresAt,
+        Json payload
+) {
 }
