@@ -27,6 +27,9 @@ public class LinkedWalletHistory {
     @Embedded
     private Point point;
 
+    @Embedded
+    private Point remaining;
+
     @Column(nullable = false, updatable = false)
     @Enumerated(STRING)
     private TransactionType transactionType;

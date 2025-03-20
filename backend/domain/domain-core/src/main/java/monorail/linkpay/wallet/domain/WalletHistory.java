@@ -26,6 +26,9 @@ public class WalletHistory {
     @Embedded
     private Point point;
 
+    @Embedded
+    private Point remaining;
+
     @Column(nullable = false, updatable = false)
     private TransactionType transactionType;
 
