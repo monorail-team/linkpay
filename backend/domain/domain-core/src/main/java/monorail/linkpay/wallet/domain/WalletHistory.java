@@ -43,12 +43,14 @@ public class WalletHistory {
     public WalletHistory(
             final Long id,
             final Point point,
+            final Point remaining,
             final TransactionType transactionType,
             final LocalDateTime createdAt,
             final Wallet wallet
     ) {
         this.id = id;
         this.point = point;
+        this.remaining = remaining;
         this.transactionType = transactionType;
         this.createdAt = LocalDateTime.now();
         this.wallet = wallet;

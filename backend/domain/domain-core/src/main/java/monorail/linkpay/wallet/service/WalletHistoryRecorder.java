@@ -30,6 +30,7 @@ public class WalletHistoryRecorder {
         return walletHistoryRepository.save(WalletHistory.builder()
             .id(idGenerator.generate())
             .point(new Point(amount))
+            .remaining(new Point(wallet.getAmount()))
             .wallet(wallet)
             .createdAt(LocalDateTime.now())
             .transactionType(transactionType)
