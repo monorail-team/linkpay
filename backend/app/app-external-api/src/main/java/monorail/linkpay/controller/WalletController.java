@@ -3,6 +3,8 @@ package monorail.linkpay.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.controller.request.ChargeRequest;
+import monorail.linkpay.wallet.service.WalletHistoryListResponse;
+import monorail.linkpay.wallet.service.WalletHistoryService;
 import monorail.linkpay.wallet.service.WalletResponse;
 import monorail.linkpay.wallet.service.WalletService;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class WalletController {
 
     private final WalletService walletService;
+    private final WalletHistoryService walletHistoryService;
 
     @PatchMapping("/charge")
     public ResponseEntity<Void> chargeWallet(@PathVariable final Long walletId,
@@ -27,5 +30,12 @@ public class WalletController {
     @GetMapping
     public ResponseEntity<WalletResponse> getWallet(@PathVariable final Long walletId) {
         return ResponseEntity.ok(walletService.read(walletId));
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<WalletHistoryListResponse> getWalletHistories(@RequestParam final Long walletId,
+                                                                        @RequestParam final Long lastId,
+                                                                        @RequestParam final int size) {
+        return ResponseEntity.ok(walletHistoryService.readPage(walletId, lastId, size));
     }
 }
