@@ -11,8 +11,8 @@ import static monorail.linkpay.exception.ExceptionCode.INVALID_DEDUCT_AMOUNT;
 @RequiredArgsConstructor
 public class WalletValidator {
 
-    public void validateDeducting(final Wallet wallet, final Long amount) {
-        if (wallet.getAmount() < amount) {
+    public void validateDeducting(final Long remaining, final Long amount) {
+        if (remaining < amount) {
             throw new LinkPayException(INVALID_DEDUCT_AMOUNT, "잔액이 부족합니다.");
         }
     }

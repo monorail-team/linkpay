@@ -25,9 +25,15 @@ public class LinkedWalletHistory {
     private Long id;
 
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "amount", column = @Column(name = "point"))
+    })
     private Point point;
 
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "amount", column = @Column(name = "remaining"))
+    })
     private Point remaining;
 
     @Column(nullable = false, updatable = false)

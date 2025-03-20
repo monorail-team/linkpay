@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
+import { useNavigate } from 'react-router-dom';
 import LinkCardItem from '@/components/LinkCardItem';
 import { cards } from '@/mocks/cards';
 
@@ -25,18 +26,20 @@ const Register: React.FC = () => {
     }
   };
 
+  const navigate = useNavigate();
+
   const handleBackClick = () => {
     // 뒤로가기 로직 (예: navigate(-1))
-    alert('뒤로가기');
+    navigate('/');
   };
 
   return (
-    <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto border flex flex-col ">
+    <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto border flex flex-col dark:bg-[#3b3838]">
       {/* Header: 뒤로가기 모드 */}
       <Header headerType="back" onBackClick={handleBackClick} />
 
       <div className="p-4 flex-1 flex flex-col">
-        <h2 className="text-lg font-bold mb-4 text-center">
+        <h2 className="text-lg font-bold mb-4 text-center dark:text-white">
           등록할 링크 카드를 선택해주세요.
         </h2>
 
@@ -52,7 +55,7 @@ const Register: React.FC = () => {
               <div
                 className={`my-1 box-border rounded-lg w-5/6 p-4 mx-auto bg-center h-[150px] ${
                   selectedIndices.includes(card.linkCardId)
-                    ? 'outline outline-4 outline-gray-400 brightness-90'
+                    ? 'outline outline-4 outline-gray-400 brightness-90 dark:outline-white '
                     : ''
                 }`}
                 style={{ backgroundColor: card.cardColor }}
@@ -69,7 +72,7 @@ const Register: React.FC = () => {
 
         {/* 등록하기 버튼 */}
         <button
-          className="mt-auto mx-auto w-4/5 py-3 bg-[#9CA1D7] text-white rounded-3xl disabled:bg-gray-300"
+          className="mt-auto mx-auto w-4/5 py-3 bg-[#9CA1D7] text-white rounded-3xl disabled:bg-gray-300 dark:bg-[#252527] dark:text-white dark:disabled:text-gray-500"
           onClick={handleRegister}
           disabled={selectedIndices.length === 0}
         >

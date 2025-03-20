@@ -9,7 +9,6 @@ import monorail.linkpay.wallet.service.WalletHistoryListResponse;
 import monorail.linkpay.wallet.service.WalletHistoryService;
 import monorail.linkpay.wallet.service.WalletResponse;
 import monorail.linkpay.wallet.service.WalletService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +29,10 @@ public class WalletController {
     }
 
     @PatchMapping("/deduct")
-    public ResponseEntity<Void> deductWallet(@PathVariable final Long walletId,
+    public ResponseEntity<Void> deductWallet(@AuthenticationPrincipal final AuthPrincipal principal,
                                              @Valid @RequestBody final DeductRequest deductRequest) {
-        walletService.deduct(walletId, deductRequest.amount());
-        return ResponseEntity.status(CREATED).build();
+        walletService.deduct(principal.memberId(), deductRequest.amount());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping
