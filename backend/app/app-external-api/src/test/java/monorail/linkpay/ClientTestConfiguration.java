@@ -9,8 +9,9 @@ import static org.mockito.Mockito.mock;
 
 @TestConfiguration
 public class ClientTestConfiguration {
-    @Bean
+
     @Primary
+    @Bean
     public KakaoOauthClient mockKakaoOauthClient() {
         return mock(KakaoOauthClient.class);
     }

@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 class KakaoLoginProcessorTest {
 
     @Test
-    public void 카카오_인증_과정을_진행한다() throws Exception {
+    public void 카카오_인증_과정을_진행한다() {
         //given
         String code = "카카오 인증 토큰";
         KakaoOauthClient kakaoOauthClient = mock(KakaoOauthClient.class);

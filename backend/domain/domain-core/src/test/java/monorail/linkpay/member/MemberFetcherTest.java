@@ -23,8 +23,9 @@ class MemberFetcherTest {
 
     @Nested
     class 이메일로_회원_조회 {
+
         @Test
-        public void 조회_성공() throws Exception {
+        public void 조회_성공() {
             //given
             String email = "email@email.com";
             memberRepository.save(Member.builder()
@@ -34,19 +35,19 @@ class MemberFetcherTest {
             MemberFetcher sut = new MemberFetcher(memberRepository);
 
             //when
-            Member member = sut.fetchBy(email);
+            Member member = sut.fetchByEmail(email);
 
             //then
             assertThat(member.getEmail()).isEqualTo(email);
         }
 
         @Test
-        public void 조회_실패() throws Exception {
+        public void 조회_실패() {
             //given
             MemberFetcher sut = new MemberFetcher(memberRepository);
 
             //when, then
-            Assertions.assertThatThrownBy(()->sut.fetchBy("wrong@email.com"))
+            Assertions.assertThatThrownBy(()->sut.fetchByEmail("wrong@email.com"))
                     .isInstanceOf(LinkPayException.class)
                     .extracting(e -> ((LinkPayException) e).getExceptionCode())
                     .isEqualTo(ExceptionCode.NOT_FOUND_RESOURCE);

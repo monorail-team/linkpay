@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 @SupportLayer
 @RequiredArgsConstructor
 public class KakaoLoginProcessor {
+
     private final KakaoOauthClient kakaoOauthClient;
 
     /**
@@ -27,7 +28,7 @@ public class KakaoLoginProcessor {
      * 2. 호출 결과를 검증
      * 3. 호출 결과를 적절한 객체로 매핑
     */
-    public LoginPrincipal process(String code) {
+    public LoginPrincipal process(final String code) {
         var authResponse = kakaoOauthClient.authorize(code);
         validate(authResponse, "유효하지 않은 카카오 OAuth 요청");
 
@@ -37,7 +38,7 @@ public class KakaoLoginProcessor {
         return LoginPrincipal.of(userResponse.getBody().kakaoAccount().email());
     }
 
-    private static void validate(ResponseEntity<?> response, String messageFor4xx) {
+    private static void validate(final ResponseEntity<?> response, final String messageFor4xx) {
         // 2xx 응답이면 JSON 파싱
         if (response.getStatusCode().is4xxClientError()) {
             throw new LinkPayException(ExceptionCode.INVALID_AUTHORIZATION_CODE, messageFor4xx);

@@ -15,6 +15,7 @@ import java.util.List;
 @SupportLayer
 @RequiredArgsConstructor
 public class AuthTokenGenerator {
+
     private final TokenGenerator tokenGenerator;
 
     /**
@@ -24,7 +25,7 @@ public class AuthTokenGenerator {
     * @생각[주빈]
     * 당장은 권한에 대한 정책이 없어서 임시로 "member_role" 하드코딩했습니다.
     */
-    public AuthToken generateFor(Member member, TokenType type) {
+    public AuthToken generateFor(final Member member, final TokenType type) {
         AuthTokenPayload payload = AuthTokenPayload.builder()
                 .memberId(member.getId())
                 .roles(List.of("member_role"))

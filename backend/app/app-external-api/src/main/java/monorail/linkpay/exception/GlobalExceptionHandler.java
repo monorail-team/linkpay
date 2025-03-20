@@ -27,10 +27,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final WebRequest request
     ) {
         log.warn(e.getMessage(), e);
-        final String errorMessage = Objects.requireNonNull(
+        String errorMessage = Objects.requireNonNull(
             e.getBindingResult().getAllErrors().getFirst().getDefaultMessage());
-        final LinkPayException linkPayException = new LinkPayException(INVALID_REQUEST, errorMessage);
-        final ExceptionCode exceptionCode = linkPayException.getExceptionCode();
+        LinkPayException linkPayException = new LinkPayException(INVALID_REQUEST, errorMessage);
+        ExceptionCode exceptionCode = linkPayException.getExceptionCode();
         return ResponseEntity.status(exceptionCode.getHttpStatus())
             .body(new ExceptionResponse(exceptionCode.getCode(), linkPayException.getMessage()));
     }
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(LinkPayException.class)
     public ResponseEntity<ExceptionResponse> handleAppException(final LinkPayException e) {
         log.warn(e.getMessage(), e);
-        final ExceptionCode exceptionCode = e.getExceptionCode();
+        ExceptionCode exceptionCode = e.getExceptionCode();
         return ResponseEntity.status(exceptionCode.getHttpStatus())
             .body(new ExceptionResponse(exceptionCode.getCode(), e.getMessage()));
     }
@@ -46,8 +46,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(final Exception e) {
         log.error(e.getMessage(), e);
-        final LinkPayException linkPayException = new LinkPayException(SERVER_ERROR, "서버 오류가 발생했습니다.");
-        final ExceptionCode exceptionCode = linkPayException.getExceptionCode();
+        LinkPayException linkPayException = new LinkPayException(SERVER_ERROR, "서버 오류가 발생했습니다.");
+        ExceptionCode exceptionCode = linkPayException.getExceptionCode();
         return ResponseEntity.status(exceptionCode.getHttpStatus())
             .body(new ExceptionResponse(exceptionCode.getCode(), linkPayException.getMessage()));
     }

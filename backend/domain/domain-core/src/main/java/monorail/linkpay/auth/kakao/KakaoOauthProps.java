@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @ConfigurationProperties(prefix = "oauth.kakao")
 public class KakaoOauthProps {
+
     String userApiUri;
     String authorizeApiUri;
     String clientId;
@@ -15,7 +16,14 @@ public class KakaoOauthProps {
     String grantType;
 
     @Builder
-    protected KakaoOauthProps(String userApiUri, String authorizeApiUri, String clientId, String clientSecret, String redirectUrl, String grantType) {
+    protected KakaoOauthProps(
+            final String userApiUri,
+            final String authorizeApiUri,
+            final String clientId,
+            final String clientSecret,
+            final String redirectUrl,
+            final String grantType
+    ) {
         this.userApiUri = userApiUri;
         this.authorizeApiUri = authorizeApiUri;
         this.clientId = clientId;

@@ -34,19 +34,24 @@ class WalletServiceTest extends IntegrationTest {
 
     @Test
     void 지갑을_생성한다() {
+        // when
         Long walletId = walletService.create(member);
 
+        // then
         Wallet result = walletRepository.findById(walletId).orElseThrow();
         assertThat(result).isNotNull();
     }
 
     @Test
     void 지갑을_충전하고_잔액을_확인한다() {
+        // given
         Wallet wallet = walletRepository.save(createWallet(member));
 
-        walletService.charge(member.getId(), 50000L);
+        // when
+        walletService.charge(wallet.getId(), 50000L);
 
-        WalletResponse response = walletService.read(member.getId());
+        // then
+        WalletResponse response = walletService.read(wallet.getId());
         assertThat(response.amount()).isEqualTo(50000L);
     }
 

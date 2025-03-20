@@ -12,3 +12,4 @@ endif::[]
 
 == Auth API
 include::auth.adoc[]
+include::wallet.adoc[]

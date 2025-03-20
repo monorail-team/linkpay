@@ -11,7 +11,7 @@ import java.util.Map;
 public class ServletFilterLogger implements ServletContextInitializer {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(final ServletContext servletContext) throws ServletException {
         System.out.println("===== Registered Servlet Filters =====");
         Map<String, ? extends FilterRegistration> filterRegistrations = servletContext.getFilterRegistrations();
         for (Map.Entry<String, ? extends FilterRegistration> entry : filterRegistrations.entrySet()) {

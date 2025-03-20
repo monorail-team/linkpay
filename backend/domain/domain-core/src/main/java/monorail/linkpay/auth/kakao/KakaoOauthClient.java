@@ -20,7 +20,7 @@ public class KakaoOauthClient {
     private final RestTemplate restTemplate;
     private final KakaoOauthProps props;
 
-    public ResponseEntity<KakaoOauthResponse> authorize(String code) {
+    public ResponseEntity<KakaoOauthResponse> authorize(final String code) {
         String uri = UriComponentsBuilder.fromUriString(props.authorizeApiUri)
                 .queryParam("grant_type", props.grantType)
                 .queryParam("client_id", props.clientId)
@@ -28,7 +28,6 @@ public class KakaoOauthClient {
                 .queryParam("redirect_uri", props.redirectUrl)
                 .queryParam("code", code)
                 .toUriString();
-
 
         return restTemplate.exchange(
                 uri,
@@ -38,7 +37,7 @@ public class KakaoOauthClient {
         );
     }
 
-    public ResponseEntity<KakaoUserResponse> fetchUser(String accessToken) {
+    public ResponseEntity<KakaoUserResponse> fetchUser(final String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         return restTemplate.exchange(

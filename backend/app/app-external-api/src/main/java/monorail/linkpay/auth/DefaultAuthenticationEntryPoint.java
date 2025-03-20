@@ -1,11 +1,10 @@
 package monorail.linkpay.auth;
 
-import monorail.linkpay.exception.LinkPayException;
-import monorail.linkpay.exception.ExceptionCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import monorail.linkpay.exception.LinkPayException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -14,13 +13,16 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
+import static monorail.linkpay.exception.ExceptionCode.UNAUTHORIZED_ACCESS_TOKEN;
+
 @Slf4j
 @Component
 public class DefaultAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public DefaultAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver) {
+    public DefaultAuthenticationEntryPoint(
+        @Qualifier("handlerExceptionResolver") final HandlerExceptionResolver handlerExceptionResolver) {
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
@@ -33,11 +35,18 @@ public class DefaultAuthenticationEntryPoint implements AuthenticationEntryPoint
      * ExceptionResolver를 사용해 스프링 컨테이너 내에서 예외를 처리시켰습니다.
     */
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(final HttpServletRequest request,
+                         final HttpServletResponse response,
+                         final AuthenticationException authException) throws IOException, ServletException {
         log.debug("Handle 401 Error: requestURI = {} {}", request.getMethod(), request.getRequestURI());
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 
-        handlerExceptionResolver.resolveException(request, response, null, new LinkPayException(ExceptionCode.UNAUTHORIZED_ACCESS_TOKEN, authException.getMessage()));
+        handlerExceptionResolver.resolveException(
+                request,
+                response,
+                null,
+                new LinkPayException(UNAUTHORIZED_ACCESS_TOKEN, authException.getMessage())
+        );
     }
 }

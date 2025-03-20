@@ -7,7 +7,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class UniqueIdGenerator implements IdGenerator {
+
     private static AtomicInteger sequence = new AtomicInteger();
+
+    @Override
     public long generate(){
         long id = (((long) Instant.now().getNano())) << 32 | sequence.getAndIncrement();
         sequence.compareAndSet(Integer.MAX_VALUE, 0);

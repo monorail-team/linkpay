@@ -12,7 +12,7 @@ import static monorail.linkpay.token.TokenFixtures.tokenGenerator;
 class AuthTokenGeneratorTest {
 
     @Test
-    public void 회원_정보로_인증_토큰을_생성한다() throws Exception{
+    public void 회원_정보로_인증_토큰을_생성한다() {
         //given
         Member member = Member.builder()
                 .id(1L)

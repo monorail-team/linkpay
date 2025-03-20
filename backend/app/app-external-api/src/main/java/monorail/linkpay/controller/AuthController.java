@@ -19,7 +19,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login/kakao")
-    public ResponseEntity<LoginResponse> loginWithKakao(@RequestParam("code") String code) {
+    public ResponseEntity<LoginResponse> loginWithKakao(@RequestParam("code") final String code) {
         log.debug("카카오 로그인 요청 code = {}", code);
 
         LoginResponse response = authService.login(new KakaoLoginRequest(code));
