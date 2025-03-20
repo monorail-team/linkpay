@@ -1,13 +1,19 @@
 package monorail.linkpay.util;
 
+import lombok.NoArgsConstructor;
+
 import java.util.Objects;
 
-public class ObjectUtil {
-    public static boolean isNotNull(Object o) {
+import static lombok.AccessLevel.PRIVATE;
+
+@NoArgsConstructor(access = PRIVATE)
+public final class ObjectUtil {
+
+    public static boolean isNotNull(final Object o) {
         return !isNull(o);
     }
 
-    public static boolean isNull(Object o) {
+    public static boolean isNull(final Object o) {
         return Objects.isNull(o);
     }
 }
