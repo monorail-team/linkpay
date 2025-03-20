@@ -1,7 +1,9 @@
 package monorail.linkpay.kakao;
 
 import monorail.linkpay.auth.dto.KakaoUserResponse;
-import monorail.linkpay.kakao.dto.KakaoOauthResponse;
+import monorail.linkpay.auth.kakao.KakaoOauthClient;
+import monorail.linkpay.auth.kakao.KakaoOauthProps;
+import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -16,6 +18,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 class KakaoOauthClientTest {
+
     private KakaoOauthProps props = KakaoOauthProps.builder()
             .authorizeApiUri("https://kakao.auth.kakao.com/oauth/authorize")
             .userApiUri("https://kakao.auth.kakao.com/oauth/user")
@@ -27,18 +30,18 @@ class KakaoOauthClientTest {
     private MockRestServiceServer mockServer = MockRestServiceServer.bindTo(restTemplate).build();
 
     @Test
-    void 카카오_OAuth_인증_요청이_성공한다() throws Exception {
+    void 카카오_OAuth_인증_요청이_성공한다() {
         // Given
         String code = "test_auth_code";
         String expectedResponse = """
                     {"access_token": "test_access_token"}
                 """;
 
-        String expectedUri = UriComponentsBuilder.fromUriString(props.authorizeApiUri)
-                .queryParam("grant_type", props.grantType)
-                .queryParam("client_id", props.clientId)
-                .queryParam("client_secret", props.clientSecret)
-                .queryParam("redirect_uri", props.redirectUrl)
+        String expectedUri = UriComponentsBuilder.fromUriString(props.getAuthorizeApiUri())
+                .queryParam("grant_type", props.getGrantType())
+                .queryParam("client_id", props.getClientId())
+                .queryParam("client_secret", props.getClientSecret())
+                .queryParam("redirect_uri", props.getRedirectUrl())
                 .queryParam("code", code)
                 .toUriString();
 
@@ -64,7 +67,7 @@ class KakaoOauthClientTest {
     }
 
     @Test
-    void 카카오_OAuth_유저_정보_요청이_성공한다() throws Exception {
+    void 카카오_OAuth_유저_정보_요청이_성공한다() {
         // Given
         String accessToken = "test_access_token";
         String expectedResponse = """
@@ -75,7 +78,7 @@ class KakaoOauthClientTest {
                     }
                 """;
 
-        mockServer.expect(requestTo(props.userApiUri))
+        mockServer.expect(requestTo(props.getUserApiUri()))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(expectedResponse, MediaType.APPLICATION_JSON));
         KakaoOauthClient sut = new KakaoOauthClient(restTemplate, props);

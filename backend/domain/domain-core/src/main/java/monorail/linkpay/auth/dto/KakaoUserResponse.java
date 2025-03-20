@@ -7,12 +7,10 @@ import lombok.Builder;
 public record KakaoUserResponse(
         @JsonProperty("kakao_account") KakaoAccount kakaoAccount // 중첩 객체
 ) {
-
-    public static KakaoUserResponse of(String email) {
+    public static KakaoUserResponse of(final String email) {
         return new KakaoUserResponse(new KakaoAccount(email));
     }
 
     @Builder
-    public record KakaoAccount(String email) {
-    }
+    public record KakaoAccount(String email) { }
 }

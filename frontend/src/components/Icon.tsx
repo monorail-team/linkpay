@@ -1,13 +1,20 @@
 import React from 'react';
 import fingerprintIcon from '@/assets/icons/fingerprint.png';
+import fingerprintDarkIcon from '@/assets/icons/fingerprint-darkmode.png';
 import menuIcon from '@/assets/icons/menu.png';
-import backIcon from '@/assets/icons/arrow_back.png';
-// 아이콘 매핑: icon 이름과 해당 파일 경로를 매핑합니다.
-// 만약 추가 아이콘이 있다면 이 객체에 추가하면 됩니다.
+import menuDarkIcon from '@/assets/icons/menu-darkmode.png';
+import backIcon from '@/assets/icons/arrow-back.png';
+import backDarkIcon from '@/assets/icons/arrow-back-darkmode.png';
+import theme from '@/assets/icons/day-and-night.png';
+
 const iconMap: { [key: string]: string } = {
   fingerprint: fingerprintIcon,
+  fingerprintDarkIcon: fingerprintDarkIcon,
   menu: menuIcon,
+  menuDarkIcon: menuDarkIcon,
   back: backIcon,
+  backDarkIcon: backDarkIcon,
+  theme: theme,
   // 예시: home: require('@/assets/icons/Home.png'),
   // 예시: search: require('@/assets/icons/Search.png'),
 };

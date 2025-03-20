@@ -18,9 +18,10 @@ import static monorail.linkpay.jwt.DefaultJwtClaim.*;
 @Component
 @RequiredArgsConstructor
 public class TokenValidator {
+
     private final JwtProvider jwtProvider;
 
-    public ValidatedToken validate(String token) throws TokenValidationException {
+    public ValidatedToken validate(final String token) throws TokenValidationException {
         DecodedJWT jwt = getDecodedJWT(token);
         Map<String, Claim> claims = jwt.getClaims();
         return ValidatedToken.builder()
@@ -31,7 +32,7 @@ public class TokenValidator {
                 .build();
     }
 
-    private DecodedJWT getDecodedJWT(String jwt) throws TokenValidationException {
+    private DecodedJWT getDecodedJWT(final String jwt) throws TokenValidationException {
         try {
             return jwtProvider.decode(jwt);
         } catch (JwtValidationException e) {

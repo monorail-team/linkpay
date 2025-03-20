@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class BaseEntity {
 
+    protected LocalDateTime deletedAt;
+
     @CreatedDate
     @Column(updatable = false, nullable = false)
     protected LocalDateTime createdAt;

@@ -1,6 +1,6 @@
 [[Auth]]
+== 로그인
 
-=== 로그인
 ==== HTTP Request
 include::{snippets}/auth/login/kakao/http-request.adoc[]
 include::{snippets}/auth/login/kakao/query-parameters.adoc[]
