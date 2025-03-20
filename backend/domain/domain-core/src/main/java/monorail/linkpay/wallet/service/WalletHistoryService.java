@@ -24,6 +24,7 @@ public class WalletHistoryService {
         WalletHistory walletHistory = walletHistoryFetcher.fetchById(id);
         return new WalletHistoryResponse(walletHistory.getId(),
                 walletHistory.getPoint().getAmount(),
+                walletHistory.getRemaining().getAmount(),
                 walletHistory.getTransactionType().toString(),
                 walletHistory.getCreatedAt());
     }
@@ -37,6 +38,7 @@ public class WalletHistoryService {
             walletHistoryResponses.add(new WalletHistoryResponse(
                     walletHistory.getId(),
                     walletHistory.getPoint().getAmount(),
+                    walletHistory.getRemaining().getAmount(),
                     walletHistory.getTransactionType().toString(),
                     walletHistory.getCreatedAt()));
         }

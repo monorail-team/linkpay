@@ -27,6 +27,9 @@ public class LinkedWalletHistory {
     @Embedded
     private Point point;
 
+    @Embedded
+    private Point remaining;
+
     @Column(nullable = false, updatable = false)
     @Enumerated(STRING)
     private TransactionType transactionType;
@@ -42,11 +45,13 @@ public class LinkedWalletHistory {
     public LinkedWalletHistory(
             final Long id,
             final Point point,
+            final Point remaining,
             final TransactionType transactionType,
             final LinkedWallet linkedWallet
     ) {
         this.id = id;
         this.point = point;
+        this.remaining = remaining;
         this.transactionType = transactionType;
         this.createdAt = LocalDateTime.now();
         this.linkedWallet = linkedWallet;

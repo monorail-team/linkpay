@@ -19,8 +19,20 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
                     "and deleted_at is null",
         nativeQuery = true
     )
+<<<<<<< HEAD
     void increaseWalletAmount(@Param("memberId") Long memberId, @Param("amount") Long amount);
 
     @Query(value = "select w from Wallet w where w.member.id = :memberId")
     Optional<Wallet> findByMemberId(@Param("memberId") Long memberId);
+=======
+    void increaseWalletAmount(@Param("walletId") Long walletId, @Param("amount") Long amount);
+
+    @Modifying
+    @Query(value = "update wallet w " +
+            "set w.amount = w.amount - :amount " +
+            "where w.wallet_id = :walletId",
+            nativeQuery = true
+    )
+    void decreaseWalletAmount(@Param("walletId") Long walletId, @Param("amount") Long amount);
+>>>>>>> 9ec0945684e5bc44deb08d902c37ba72ec93e051
 }

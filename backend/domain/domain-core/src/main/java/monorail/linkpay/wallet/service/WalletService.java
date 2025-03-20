@@ -17,6 +17,7 @@ public class WalletService {
 
     private final WalletRepository walletRepository;
     private final WalletHistoryRecorder walletHistoryRecorder;
+    private final WalletValidator walletValidator;
     private final WalletFetcher walletFetcher;
     private final IdGenerator idGenerator;
 
@@ -37,7 +38,15 @@ public class WalletService {
     @Transactional
     public void charge(final Long memberId, final Long amount) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        walletHistoryRecorder.record(wallet.getId(), amount, TransactionType.DEPOSIT);
         walletRepository.increaseWalletAmount(memberId, amount);
+        walletHistoryRecorder.record(wallet.getId(), amount, TransactionType.DEPOSIT);
+    }
+
+    @Transactional
+    public void deduct(final Long id, final Long amount) {
+        Wallet wallet = walletFetcher.fetchById(id);
+        walletValidator.validateDeducting(wallet, amount);
+        walletRepository.decreaseWalletAmount(id, amount);
+        walletHistoryRecorder.record(id, amount, TransactionType.DEPOSIT);
     }
 }
