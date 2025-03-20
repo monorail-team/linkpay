@@ -37,7 +37,7 @@ const ChargeModal: React.FC<ChargeModalProps> = ({ onClose, onConfirm }) => {
   };
 
   return (
-    <ButtonModal onClose={onClose} onConfirm={handleConfirm} isOpen={true}>
+    <ButtonModal onClose={onClose} onConfirm={handleConfirm}>
       <h2 className="text-lg font-semibold text-center mb-4">
         충전할 금액을 입력해주세요.
       </h2>

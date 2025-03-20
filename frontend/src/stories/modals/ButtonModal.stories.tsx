@@ -8,7 +8,7 @@ export default {
   argTypes: {
     onClose: { action: 'closed' },
     onConfirm: { action: 'confirmed' },
-    isOpen: { control: 'boolean' }
+    type: { control: 'boolean' }
   }
 } as Meta<typeof ButtonModal>;
 
@@ -17,6 +17,13 @@ const Template: StoryFn<ButtonModalProps> = (args) => <ButtonModal {...args} />;
 // 기본 모달 예제
 export const Default = Template.bind({});
 Default.args = {
-  isOpen: true,
-  children: <p className="text-center">이것은 기본 모달입니다.</p>
+  type: 'confirmAndCancel',
+  children: <p className="text-center">기본 모달 with children</p>
+};
+
+// 기본 모달 예제
+export const Confirm = Template.bind({});
+Confirm.args = {
+  type: 'confirm',
+  children: <p className="text-center">확인만 있는 모달 with children</p>
 };
