@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/walletHistory")
+@RequestMapping("/api/wallet-history")
 public class WalletHistoryController {
 
     private final WalletHistoryService walletHistoryService;
