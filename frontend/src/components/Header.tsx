@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 import React from 'react';
 import Icon from '@/components/Icon';
 

@@ -1,4 +1,3 @@
-// src/components/Icon.tsx
 import React from 'react';
 import fingerprintIcon from '@/assets/icons/fingerprint.png';
 import menuIcon from '@/assets/icons/menu.png';
