@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from '@/pages';
 import Register from '@/pages/register';
 import { useThemeStore } from '@/store/themeStore';
+import MyWalletHistory from '@/pages/mywallet';
 const App: React.FC = () => {
 
   const {theme} = useThemeStore();
@@ -23,6 +24,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home/>} />
           <Route path="/register" element={<Register />} />
+          <Route path="/mywallethistory" element={<MyWalletHistory />} />
         </Routes>
       </Router>
     </div>
