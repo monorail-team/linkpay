@@ -1,107 +1,60 @@
 package monorail.linkpay.acceptance;
 
-import io.restassured.RestAssured;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
-import monorail.linkpay.auth.dto.KakaoUserResponse;
 import monorail.linkpay.auth.dto.LoginResponse;
-import monorail.linkpay.auth.kakao.KakaoOauthClient;
-import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
-import monorail.linkpay.member.domain.Member;
-import monorail.linkpay.member.service.MemberService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.notNullValue;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPostRequest;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
-import static org.mockito.Mockito.when;
 
 @Slf4j
 class AuthAcceptanceTest extends AcceptanceTest {
 
-    @Autowired
-    KakaoOauthClient mockKakaoOauthClient;
-
-    @Autowired
-    MemberService memberService;
-
-    @LocalServerPort
-    int port;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = port;
-    }
-
     @TestFactory
     Stream<DynamicTest> 카카오_로그인_및_인증_시나리오() {
-        AtomicReference<String> accessToken = new AtomicReference<>("");
-        String kakaoOauthCode = "kakaocode";
-        String kakaoOauthAccessToken = "kaccesstoken";
-        Member member = Member.builder()
-                .id(1L)
-                .username("link")
-                .email("email@kakao.com")
-                .build();
-        memberService.create(member);
-
-        when(mockKakaoOauthClient.authorize(kakaoOauthCode))
-                .thenReturn(ResponseEntity.ok(KakaoOauthResponse.of(kakaoOauthAccessToken)));
-        when(mockKakaoOauthClient.fetchUser(kakaoOauthAccessToken))
-                .thenReturn(ResponseEntity.ok(KakaoUserResponse.of(member.getEmail())));
+        final AtomicReference<String> accessToken = new AtomicReference<String>();
 
         return Stream.of(
-                dynamicTest("로그인하지 않고 인증이 필요한 api요청 시 401응답을 반환받는다.", () -> {
-                    RestAssured
-                            .given()
-                            .when()
-                            .get("/api/auth/test-authenticate")
-                            .then()
-                            .statusCode(HttpStatus.UNAUTHORIZED.value())
-                            .log().all();
-                }),
+            dynamicTest("로그인하지 않고 인증이 필요한 api요청 시 401응답을 반환받는다.", () -> {
+                ExtractableResponse<Response> response = 인증이_필요한_요청(null);
+                assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+            }),
 
-                dynamicTest("카카오 로그인을 통해 엑세스 토큰을 발급받는다.", () -> {
-                    var response = 카카오_로그인(kakaoOauthCode);
+            dynamicTest("카카오 로그인을 통해 엑세스 토큰을 발급받는다.", () -> {
+                ExtractableResponse<Response> response = 카카오_로그인(KAKAO_OAUTH_CODE);
+                assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-                    accessToken.set(response.accessToken());
-                }),
+                accessToken.set(response.as(LoginResponse.class).accessToken());
+                assertThat(accessToken.get()).isNotNull();
+            }),
 
-                dynamicTest("발급받은 엑세스 토큰을 사용하면 인증에 성공한다.", () -> {
-                    RestAssured
-                            .given()
-                            .header("Authorization", "Bearer " + accessToken.get())
-                            .when()
-                            .get("/api/auth/test-authenticate")
-                            .then()
-                            .statusCode(HttpStatus.OK.value())
-                            .log().all();
-                })
+            dynamicTest("발급받은 엑세스 토큰을 사용하면 인증에 성공한다.", () -> {
+                ExtractableResponse<Response> response = 인증이_필요한_요청(accessToken.get());
+                assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+            })
         );
     }
 
-    private static LoginResponse 카카오_로그인(final String kakaoOauthCode) {
-        return RestAssured
-            .given()
-            .param("code", kakaoOauthCode)
-            .when()
-            .post("/api/auth/login/kakao")
-            .then()
-            .statusCode(HttpStatus.OK.value())
-            .body("accessToken", notNullValue())
-            .log().all()
-            .extract().as(LoginResponse.class);
+    private static ExtractableResponse<Response> 인증이_필요한_요청(String accessToken) {
+        return sendGetRequest("/api/auth/test-authenticate", accessToken);
+    }
+
+    private static ExtractableResponse<Response> 카카오_로그인(final String kakaoOauthCode) {
+        return sendPostRequest("api/auth/login/kakao?code=" + kakaoOauthCode);
     }
 
     public static String 엑세스_토큰() {
-        return 카카오_로그인("kakaocode").accessToken();
+        return 카카오_로그인(KAKAO_OAUTH_CODE)
+                .as(LoginResponse.class)
+                .accessToken();
     }
 }

@@ -1,0 +1,10 @@
+set referential_integrity false;
+truncate table link_card;
+truncate table link_card_history;
+truncate table linked_member;
+truncate table linked_wallet;
+truncate table linked_wallet_history;
+truncate table member;
+truncate table wallet;
+truncate table wallet_history;
+set referential_integrity true;

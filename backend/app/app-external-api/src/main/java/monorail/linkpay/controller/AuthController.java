@@ -34,6 +34,5 @@ public class AuthController {
     @GetMapping("/test-authenticate")
     public ResponseEntity<Void> testAuthenticate() {
         return ResponseEntity.ok().build();
-
     }
 }

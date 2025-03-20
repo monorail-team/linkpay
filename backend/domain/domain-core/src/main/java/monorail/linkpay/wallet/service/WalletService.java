@@ -29,15 +29,15 @@ public class WalletService {
             .build()).getId();
     }
 
-    public WalletResponse read(final Long id) {
-        Wallet wallet = walletFetcher.fetchById(id);
+    public WalletResponse read(final Long memberId) {
+        Wallet wallet = walletFetcher.fetchByMemberId(memberId);
         return new WalletResponse(wallet.getAmount());
     }
 
     @Transactional
-    public void charge(final Long id, final Long amount) {
-        walletFetcher.checkExistsById(id);
-        walletHistoryRecorder.record(id, amount, TransactionType.DEPOSIT);
-        walletRepository.increaseWalletAmount(id, amount);
+    public void charge(final Long memberId, final Long amount) {
+        Wallet wallet = walletFetcher.fetchByMemberId(memberId);
+        walletHistoryRecorder.record(wallet.getId(), amount, TransactionType.DEPOSIT);
+        walletRepository.increaseWalletAmount(memberId, amount);
     }
 }

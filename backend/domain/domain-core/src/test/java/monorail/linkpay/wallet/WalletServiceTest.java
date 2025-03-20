@@ -45,13 +45,13 @@ class WalletServiceTest extends IntegrationTest {
     @Test
     void 지갑을_충전하고_잔액을_확인한다() {
         // given
-        Wallet wallet = walletRepository.save(createWallet(member));
+        walletRepository.save(createWallet(member));
 
         // when
-        walletService.charge(wallet.getId(), 50000L);
+        walletService.charge(member.getId(), 50000L);
 
         // then
-        WalletResponse response = walletService.read(wallet.getId());
+        WalletResponse response = walletService.read(member.getId());
         assertThat(response.amount()).isEqualTo(50000L);
     }
 

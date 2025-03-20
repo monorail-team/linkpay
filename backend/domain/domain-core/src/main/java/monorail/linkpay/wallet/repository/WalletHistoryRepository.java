@@ -12,12 +12,11 @@ import org.springframework.stereotype.Repository;
 public interface WalletHistoryRepository extends JpaRepository<WalletHistory, Long> {
 
     @Query("SELECT w FROM WalletHistory w " +
-            "WHERE w.walletId = :walletId " +
+            "WHERE w.id = :walletId " +
             "AND (:lastId IS NULL OR w.id < :lastId) " +
             "ORDER BY w.createdAt DESC")
-    Slice<WalletHistory> findByWalletIdWithLastId(
-            @Param("walletId") Long walletId,
-            @Param("lastId") Long lastId,
-            Pageable pageable
+    Slice<WalletHistory> findByWalletIdWithLastId(@Param("walletId") Long walletId,
+                                                  @Param("lastId") Long lastId,
+                                                  Pageable pageable
     );
 }

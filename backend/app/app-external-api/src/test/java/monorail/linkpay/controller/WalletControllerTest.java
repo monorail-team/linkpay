@@ -19,10 +19,10 @@ public class WalletControllerTest extends ControllerTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .header("Authorization", "Bearer {access_token}")
             .body(new ChargeRequest(50000))
-            .when().patch("/api/wallets/1/charge")
+            .when().patch("/api/wallets/charge")
             .then().log().all()
             .apply(document("wallets/charge"))
-            .statusCode(HttpStatus.CREATED.value());
+            .statusCode(HttpStatus.OK.value());
     }
 
     @Test
@@ -31,7 +31,7 @@ public class WalletControllerTest extends ControllerTest {
 
         docsGiven
             .header("Authorization", "Bearer {access_token}")
-            .when().get("/api/wallets/1")
+            .when().get("/api/wallets")
             .then().log().all()
             .apply(document("wallets/read"))
             .statusCode(HttpStatus.OK.value());
