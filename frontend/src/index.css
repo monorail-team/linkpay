@@ -23,3 +23,20 @@ code {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;  /* Chrome, Safari, Opera */
 }
+
+.custom-radio {
+  @apply appearance-none h-4 w-4 border-2 border-gray-300 rounded-full;
+  position: relative;
+}
+
+.custom-radio:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 0.5rem;
+  width: 0.5rem;
+  background-color: #65558F;
+  border-radius: 50%;
+}

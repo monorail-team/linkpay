@@ -5,10 +5,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonUtil {
+
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     // String -> Object 변환
-    public static <T> T parse(Json json, Class<T> clazz) {
+    public static <T> T parse(final Json json, final Class<T> clazz) {
         try {
             return objectMapper.readValue(json.value(), clazz);
         } catch (JsonMappingException e) {
@@ -19,7 +20,7 @@ public class JsonUtil {
     }
 
     // Object -> String 변환
-    public static Json toJson(Object o) {
+    public static Json toJson(final Object o) {
         try {
             return Json.of(objectMapper.writeValueAsString(o));
         } catch (JsonProcessingException e) {

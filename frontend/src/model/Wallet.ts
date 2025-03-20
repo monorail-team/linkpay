@@ -1,5 +1,5 @@
 export interface Wallet {
-    type: 'myWallet' | 'sharedWallet' | 'otherWallet';
+    type: 'OWNED' | 'SHARED';
     remainingPoints: number;
 }
   

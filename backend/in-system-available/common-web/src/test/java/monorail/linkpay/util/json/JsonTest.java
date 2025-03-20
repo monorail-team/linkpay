@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 class JsonTest {
 
     @Test
-    public void 올바르지_않은_Json_형식인_경우_예외가_발생한다() throws Exception{
+    public void 올바르지_않은_Json_형식인_경우_예외가_발생한다() {
         //given
         String plainJson = "wrong";
 

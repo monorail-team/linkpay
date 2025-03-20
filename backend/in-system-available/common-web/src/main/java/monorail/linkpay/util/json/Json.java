@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public record Json(String value) {
+
     private static final ObjectMapper mapper = new ObjectMapper();
-    public static Json of(String value) {
+
+    public static Json of(final String value) {
         return new Json(value);
     }
 

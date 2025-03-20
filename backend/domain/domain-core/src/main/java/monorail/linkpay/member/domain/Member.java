@@ -1,31 +1,38 @@
 package monorail.linkpay.member.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import monorail.linkpay.common.domain.BaseEntity;
 
 import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "member")
 @Getter
+@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
+    @Column(name = "member_id")
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String username;
-    private String password;
 
     @Builder
-    private Member(Long id, String email, String username, String password) {
+    public Member(final Long id, final String email, final String username) {
         this.id = id;
         this.email = email;
         this.username = username;
-        this.password = password;
     }
 }

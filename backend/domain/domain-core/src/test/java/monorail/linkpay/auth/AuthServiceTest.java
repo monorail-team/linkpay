@@ -1,20 +1,18 @@
 package monorail.linkpay.auth;
 
-import monorail.linkpay.MockTestConfiguration;
 import monorail.linkpay.auth.dto.KakaoLoginRequest;
 import monorail.linkpay.auth.dto.KakaoUserResponse;
 import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.auth.service.AuthService;
-import monorail.linkpay.exception.AppException;
-import monorail.linkpay.kakao.KakaoOauthClient;
-import monorail.linkpay.kakao.dto.KakaoOauthResponse;
+import monorail.linkpay.common.IntegrationTest;
+import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.auth.kakao.KakaoOauthClient;
+import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -23,9 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@Import({MockTestConfiguration.class})
-@SpringBootTest
-class AuthServiceTest {
+class AuthServiceTest extends IntegrationTest {
 
     @Autowired
     AuthService sut;
@@ -41,13 +37,15 @@ class AuthServiceTest {
      */
     @Nested
     class 로그인_테스트 {
+
         @Test
-        public void 로그인_성공_시_엑세스_토큰을_반환한다() throws Exception {
+        public void 로그인_성공_시_엑세스_토큰을_반환한다() {
             //given
             String code = "code";
             String accessToken = "value";
             Member member = memberRepository.save(Member.builder()
                     .id(1L)
+                    .username("link")
                     .email("email@kakao.com").build());
             when(mockKakaoOauthClient.authorize(code)).thenReturn(
                     ResponseEntity.ok(KakaoOauthResponse.of(accessToken))
@@ -63,9 +61,8 @@ class AuthServiceTest {
             assertThat(response.accessToken()).isNotBlank();
         }
 
-
         @Test
-        public void 올바르지_않은_code_를_전달하면_로그인에_실패한다() throws Exception {
+        public void 올바르지_않은_code_를_전달하면_로그인에_실패한다() {
             //given
             var request = new KakaoLoginRequest("wrong_code");
             when(mockKakaoOauthClient.authorize(any())).thenReturn(
@@ -74,7 +71,7 @@ class AuthServiceTest {
 
             //when, then
             assertThatThrownBy(() -> sut.login(request))
-                    .isInstanceOf(AppException.class);
+                    .isInstanceOf(LinkPayException.class);
         }
     }
 }

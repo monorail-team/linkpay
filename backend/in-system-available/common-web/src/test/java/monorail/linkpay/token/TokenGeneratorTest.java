@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TokenGeneratorTest {
 
     @Test
-    public void Json_기반으로_토큰을_생성할_수_있다() throws Exception{
+    public void Json_기반으로_토큰을_생성할_수_있다() {
         //given
         TokenGenerator sut = new TokenGenerator(jwtProvider, jwtProps, idGenerator);
         String payload = """
