@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import ChargeModal, { ChargeModalProps } from '../modal/ChargeModal';
+import ChargeModal, { ChargeModalProps } from '../../modal/ChargeModal';
 
 
 export default {
-  title: 'Components/ChargeModal',
+  title: 'Modals/ChargeModal',
   component: ChargeModal,
   argTypes: {
     onClose: { action: 'closed' },

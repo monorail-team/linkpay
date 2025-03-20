@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Button from '../components/Button';
+import ButtonModal from '@/modal/ButtonModal';
 
 export interface ChargeModalProps {
   onClose: () => void;
@@ -37,24 +37,18 @@ const ChargeModal: React.FC<ChargeModalProps> = ({ onClose, onConfirm }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-80">
-        <h2 className="text-lg font-semibold text-center mb-4">
-          충전할 금액을 입력해주세요.
-        </h2>
-        <input
-          type="text" // 🔹 숫자가 아닌 'text'로 설정하여 콤마 표시 가능
-          placeholder="금액을 입력해주세요."
-          value={amount}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-left"
-        />
-        <div className="flex justify-between mt-4">
-          <Button type={'modal'} label={'확인'} onClick={handleConfirm} />
-          <Button type={'modal'} label={'취소'} onClick={onClose} />
-        </div>
-      </div>
-    </div>
+    <ButtonModal onClose={onClose} onConfirm={handleConfirm} isOpen={true}>
+      <h2 className="text-lg font-semibold text-center mb-4">
+        충전할 금액을 입력해주세요.
+      </h2>
+      <input
+        type="text" // 🔹 숫자가 아닌 'text'로 설정하여 콤마 표시 가능
+        placeholder="금액을 입력해주세요."
+        value={amount}
+        onChange={handleChange}
+        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-left"
+      />
+    </ButtonModal>
   );
 };
 
