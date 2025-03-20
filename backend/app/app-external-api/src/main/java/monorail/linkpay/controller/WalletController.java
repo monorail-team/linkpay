@@ -3,6 +3,7 @@ package monorail.linkpay.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.controller.request.ChargeRequest;
+import monorail.linkpay.controller.request.DeductRequest;
 import monorail.linkpay.wallet.service.WalletHistoryListResponse;
 import monorail.linkpay.wallet.service.WalletHistoryService;
 import monorail.linkpay.wallet.service.WalletResponse;
@@ -24,6 +25,13 @@ public class WalletController {
     public ResponseEntity<Void> chargeWallet(@PathVariable final Long walletId,
                                              @Valid @RequestBody final ChargeRequest chargeRequest) {
         walletService.charge(walletId, chargeRequest.amount());
+        return ResponseEntity.status(CREATED).build();
+    }
+
+    @PatchMapping("/deduct")
+    public ResponseEntity<Void> deductWallet(@PathVariable final Long walletId,
+                                             @Valid @RequestBody final DeductRequest deductRequest) {
+        walletService.deduct(walletId, deductRequest.amount());
         return ResponseEntity.status(CREATED).build();
     }
 
