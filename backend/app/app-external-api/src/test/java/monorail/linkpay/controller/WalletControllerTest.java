@@ -29,8 +29,9 @@ public class WalletControllerTest extends ControllerTest {
     void 지갑_잔액을_조회한다() {
         when(walletService.read(anyLong())).thenReturn(new WalletResponse(50000));
 
+        // todo @WithMockUser 등 사용해야함, SecurityMockMvcRequestPostProcessors이것도 뭔진 모르겠는데 비슷한 용도 같으니 함 봐보시길
         docsGiven
-            .header("Authorization", "Bearer {access_token}")
+            .header("Authorization", "Bearer {access_token}") // todo SecurityFilter가 동작하지 않아서 발생하는 문제
             .when().get("/api/wallets")
             .then().log().all()
             .apply(document("wallets/read"))
