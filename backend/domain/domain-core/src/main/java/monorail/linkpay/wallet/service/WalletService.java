@@ -39,14 +39,16 @@ public class WalletService {
     public void charge(final Long memberId, final Long amount) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
         walletRepository.increaseWalletAmount(memberId, amount);
-        walletHistoryRecorder.record(wallet.getId(), amount, TransactionType.DEPOSIT);
+        Long remaining = wallet.getAmount() + amount;
+        walletHistoryRecorder.record(wallet, amount, remaining, TransactionType.DEPOSIT);
     }
 
     @Transactional
-    public void deduct(final Long id, final Long amount) {
-        Wallet wallet = walletFetcher.fetchById(id);
-        walletValidator.validateDeducting(wallet, amount);
-        walletRepository.decreaseWalletAmount(id, amount);
-        walletHistoryRecorder.record(id, amount, TransactionType.DEPOSIT);
+    public void deduct(final Long memberId, final Long amount) {
+        Wallet wallet = walletFetcher.fetchByMemberId(memberId);
+        walletValidator.validateDeducting(wallet.getAmount(), amount);
+        walletRepository.decreaseWalletAmount(wallet.getId(), amount);
+        Long remaining = wallet.getAmount() - amount;
+        walletHistoryRecorder.record(wallet, amount, remaining, TransactionType.DEPOSIT);
     }
 }
