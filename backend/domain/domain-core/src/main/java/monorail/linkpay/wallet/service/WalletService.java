@@ -37,7 +37,7 @@ public class WalletService {
     @Transactional
     public void charge(final Long id, final Long amount) {
         walletFetcher.checkExistsById(id);
-        walletHistoryRecorder.record(id, amount, TransactionType.DEPOSIT);
         walletRepository.increaseWalletAmount(id, amount);
+        walletHistoryRecorder.record(id, amount, TransactionType.DEPOSIT);
     }
 }
