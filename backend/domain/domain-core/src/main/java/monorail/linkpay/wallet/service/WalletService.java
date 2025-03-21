@@ -44,16 +44,16 @@ public class WalletService {
     @Transactional
     public void charge(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        walletRepository.increaseWalletAmount(memberId, point.getAmount());
         Point remaining = wallet.getPoint().add(point);
+        walletRepository.increaseWalletAmount(memberId, point.getAmount());
         walletHistoryRecorder.record(wallet, point, remaining, DEPOSIT);
     }
 
     @Transactional
     public void deduct(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        walletRepository.decreaseWalletAmount(wallet.getId(), point.getAmount());
         Point remaining = wallet.getPoint().subtract(point);
+        walletRepository.decreaseWalletAmount(wallet.getId(), point.getAmount());
         walletHistoryRecorder.record(wallet, point, remaining, WITHDRAWAL);
     }
 }

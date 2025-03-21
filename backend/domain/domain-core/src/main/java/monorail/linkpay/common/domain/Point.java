@@ -29,6 +29,9 @@ public class Point {
     }
 
     public Point subtract(final Point point) {
+        if (this.amount < point.amount) {
+            throw new LinkPayException(INVALID_REQUEST, "차감할 금액은 잔액보다 작거나 같은 값이어야 합니다.");
+        }
         return new Point(this.amount - point.amount);
     }
 

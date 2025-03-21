@@ -32,7 +32,7 @@ public class WalletController {
     public ResponseEntity<Void> deductWallet(@AuthenticationPrincipal final AuthPrincipal principal,
                                              @Valid @RequestBody final PointRequest pointRequest) {
         walletService.deduct(principal.memberId(), new Point(pointRequest.amount()));
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
