@@ -3,6 +3,7 @@ package monorail.linkpay.controller;
 import monorail.linkpay.auth.service.AuthService;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
+import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.security.WithCustomUser;
 import monorail.linkpay.wallet.service.WalletHistoryService;
 import monorail.linkpay.wallet.service.WalletService;
@@ -33,6 +34,8 @@ public abstract class ControllerTest {
     protected WalletService walletService;
     @MockitoBean
     protected WalletHistoryService walletHistoryService;
+    @MockitoBean
+    protected LinkCardService linkCardService;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,

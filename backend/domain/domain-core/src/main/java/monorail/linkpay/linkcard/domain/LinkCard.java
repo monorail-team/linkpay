@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
+import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkedwallet.domain.LinkedWallet;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.Wallet;
@@ -26,8 +27,11 @@ public class LinkCard extends BaseEntity {
     @Column(name = "link_card_id")
     private Long id;
 
-    @Column(nullable = true)
-    private Long limitPrice;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "amount", column = @Column(name = "limitPrice"))
+    })
+    private Point limitPrice;
 
     @Column(nullable = false, updatable = false)
     @Enumerated(STRING)
@@ -47,22 +51,28 @@ public class LinkCard extends BaseEntity {
     @Enumerated(STRING)
     private CardState state;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "amount", column = @Column(name = "usedPoint"))
+    })
+    private Point usedPoint;
+
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "linked_wallet_id", nullable = false)
+    @JoinColumn(name = "linked_wallet_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private LinkedWallet linkedWallet;
 
-    @JoinColumn(name = "wallet_id", nullable = false)
+    @JoinColumn(name = "wallet_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Wallet wallet;
 
     @Builder
     public LinkCard(
             final Long id,
-            final Long limitPrice,
+            final Point limitPrice,
             final CardType cardType,
             final CardColor cardColor,
             final String cardName,
@@ -70,7 +80,9 @@ public class LinkCard extends BaseEntity {
             final LocalDateTime expiredAt,
             final Member member,
             final LinkedWallet linkedWallet,
-            final Wallet wallet
+            final Wallet wallet,
+            final Point usedPoint,
+            final CardState state
     ) {
         this.id = id;
         this.limitPrice = limitPrice;
@@ -82,5 +94,7 @@ public class LinkCard extends BaseEntity {
         this.member = member;
         this.linkedWallet = linkedWallet;
         this.wallet = wallet;
+        this.usedPoint = usedPoint;
+        this.state = state;
     }
 }

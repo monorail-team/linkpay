@@ -24,4 +24,8 @@ public enum CardColor {
     PLUM("#d59ccf");
 
     private final String hexCode;
+
+    public static CardColor getRandomColor() {
+        return values()[(int) (Math.random() * values().length)];
+    }
 }
