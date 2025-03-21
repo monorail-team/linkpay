@@ -21,6 +21,9 @@ public class LinkedWallet extends BaseEntity {
     @Embedded
     private Point point;
 
+    @Version
+    private Integer version;
+
     @Builder
     public LinkedWallet(final Long id, final Point point) {
         this.id = id;
