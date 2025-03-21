@@ -6,7 +6,7 @@ export interface CardCreationModalProps {
   onClose: () => void;
   onConfirm: () => void;
   cardName: string;
-  cardLimit: string;
+  cardLimit: number;
   expiryDate: string;
 }
 
@@ -30,7 +30,7 @@ const CardCreationModal: React.FC<CardCreationModalProps> = ({
       <div className="mb-2 flex items-center gap-2">
         <label className="text-gray-600 text-sm w-24">개인한도</label>
         <span className="flex-1 p-2 border rounded-md bg-gray-100 text-gray-700 text-left max-w-full">
-            {cardLimit}
+            {cardLimit.toLocaleString()}원
           </span>
       </div>
 

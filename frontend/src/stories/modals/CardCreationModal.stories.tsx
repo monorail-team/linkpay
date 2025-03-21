@@ -19,6 +19,6 @@ Default.args = {
   onConfirm: () => alert(`확인`),
   onClose: () => alert('취소'),
   cardName: 'A105',         // ✅ 카드이름 동적 전달
-  cardLimit: '1,000,000원',     // ✅ 개인한도 동적 전달
+  cardLimit: 1000000,     // ✅ 개인한도 동적 전달
   expiryDate: '2025.03.20'  // ✅ 만료일 동적 전달
 };
