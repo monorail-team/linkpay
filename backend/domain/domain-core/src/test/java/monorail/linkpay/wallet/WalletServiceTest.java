@@ -107,12 +107,13 @@ class WalletServiceTest extends IntegrationTest {
         // given
         Point point = new Point(1000);
         walletRepository.save(createWallet(member));
+        int threadCount = 16;
+        int jobCount = 10000;
 
         // when
-        int threadCount = 10;
         try (ExecutorService executorService = Executors.newFixedThreadPool(threadCount)) {
-            CountDownLatch latch = new CountDownLatch(threadCount);
-            for (int i = 0; i < threadCount; i++) {
+            CountDownLatch latch = new CountDownLatch(jobCount);
+            for (int i = 0; i < jobCount; i++) {
                 executorService.submit(() -> {
                     try {
                         walletService.charge(member.getId(), point);
@@ -126,21 +127,22 @@ class WalletServiceTest extends IntegrationTest {
 
         // then
         WalletResponse response = walletService.read(member.getId());
-        assertThat(response.amount()).isEqualTo(10000L);
+        assertThat(response.amount()).isEqualTo(point.getAmount() * jobCount);
     }
 
     @Test
-    void 여러번_차감한다() throws InterruptedException {
+    void 지갑에서_여러번_차감한다() throws InterruptedException {
         // given
         Point point = new Point(1000);
         walletRepository.save(createWallet(member));
         walletService.charge(member.getId(), new Point(10000));
+        int threadCount = 16;
+        int jobCount = 10000;
 
         // when
-        int threadCount = 10;
         try (ExecutorService executorService = Executors.newFixedThreadPool(threadCount)) {
-            CountDownLatch latch = new CountDownLatch(threadCount);
-            for (int i = 0; i < threadCount; i++) {
+            CountDownLatch latch = new CountDownLatch(jobCount);
+            for (int i = 0; i < jobCount; i++) {
                 executorService.submit(() -> {
                     try {
                         walletService.deduct(member.getId(), point);

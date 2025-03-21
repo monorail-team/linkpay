@@ -29,6 +29,9 @@ public class Wallet extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @Version
+    private Long version;
+
     @Builder
     public Wallet(final Long id, final Point point, final Member member) {
         this.id = id;
@@ -38,5 +41,9 @@ public class Wallet extends BaseEntity {
 
     public long getAmount() {
         return point.getAmount();
+    }
+
+    public void deductPoint(Point point) {
+        this.point = this.point.subtract(point);
     }
 }

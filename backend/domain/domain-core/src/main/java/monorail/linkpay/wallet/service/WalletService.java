@@ -1,5 +1,6 @@
 package monorail.linkpay.wallet.service;
 
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.exception.LinkPayException;
@@ -25,7 +26,6 @@ public class WalletService {
     private final WalletHistoryRecorder walletHistoryRecorder;
     private final WalletFetcher walletFetcher;
     private final IdGenerator idGenerator;
-    private static final int MAX_RETRIES = 3;
 
     @Transactional
     public Long create(final Member member) {
@@ -52,8 +52,7 @@ public class WalletService {
     @Transactional
     public void deduct(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        Point remaining = wallet.getPoint().subtract(point);
-        walletRepository.decreaseWalletAmount(wallet.getId(), point.getAmount());
-        walletHistoryRecorder.record(wallet, point, remaining, WITHDRAWAL);
+        wallet.deductPoint(point);
+        walletHistoryRecorder.record(wallet, point, wallet.getPoint(), WITHDRAWAL);
     }
 }
