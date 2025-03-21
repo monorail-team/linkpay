@@ -3,7 +3,7 @@ package monorail.linkpay.acceptance;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import monorail.linkpay.controller.request.PointRequest;
-import monorail.linkpay.wallet.service.WalletResponse;
+import monorail.linkpay.wallet.dto.WalletResponse;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;

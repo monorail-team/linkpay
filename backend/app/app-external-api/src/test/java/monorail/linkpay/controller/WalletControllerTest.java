@@ -2,7 +2,7 @@ package monorail.linkpay.controller;
 
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.controller.request.PointRequest;
-import monorail.linkpay.wallet.service.WalletResponse;
+import monorail.linkpay.wallet.dto.WalletResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

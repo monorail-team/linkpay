@@ -7,7 +7,7 @@ import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.repository.WalletHistoryRepository;
 import monorail.linkpay.wallet.repository.WalletRepository;
-import monorail.linkpay.wallet.service.WalletResponse;
+import monorail.linkpay.wallet.dto.WalletResponse;
 import monorail.linkpay.wallet.service.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

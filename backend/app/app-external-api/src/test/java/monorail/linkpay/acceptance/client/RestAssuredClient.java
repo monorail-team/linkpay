@@ -49,8 +49,8 @@ public class RestAssuredClient {
     }
 
     public static ExtractableResponse<Response> sendPatchRequest(final String url,
-                                                               final String accessToken,
-                                                               final Object requestBody) {
+                                                                 final String accessToken,
+                                                                 final Object requestBody) {
         return RestAssured
                 .given().log().all()
                 .header(AUTHORIZATION, "Bearer " + accessToken)
