@@ -1,7 +1,7 @@
 package monorail.linkpay.controller;
 
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.wallet.service.WalletHistoryResponse;
+import monorail.linkpay.wallet.dto.WalletHistoryResponse;
 import monorail.linkpay.wallet.service.WalletHistoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

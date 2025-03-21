@@ -3,11 +3,11 @@ package monorail.linkpay.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
-import monorail.linkpay.controller.request.ChargeRequest;
-import monorail.linkpay.controller.request.DeductRequest;
-import monorail.linkpay.wallet.service.WalletHistoryListResponse;
+import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.controller.request.PointRequest;
+import monorail.linkpay.wallet.dto.WalletHistoryListResponse;
 import monorail.linkpay.wallet.service.WalletHistoryService;
-import monorail.linkpay.wallet.service.WalletResponse;
+import monorail.linkpay.wallet.dto.WalletResponse;
 import monorail.linkpay.wallet.service.WalletService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,15 +23,15 @@ public class WalletController {
 
     @PatchMapping("/charge")
     public ResponseEntity<Void> chargeWallet(@AuthenticationPrincipal final AuthPrincipal principal,
-                                             @Valid @RequestBody final ChargeRequest chargeRequest) {
-        walletService.charge(principal.memberId(), chargeRequest.amount());
+                                             @Valid @RequestBody final PointRequest pointRequest) {
+        walletService.charge(principal.memberId(), new Point(pointRequest.amount()));
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/deduct")
     public ResponseEntity<Void> deductWallet(@AuthenticationPrincipal final AuthPrincipal principal,
-                                             @Valid @RequestBody final DeductRequest deductRequest) {
-        walletService.deduct(principal.memberId(), deductRequest.amount());
+                                             @Valid @RequestBody final PointRequest pointRequest) {
+        walletService.deduct(principal.memberId(), new Point(pointRequest.amount()));
         return ResponseEntity.ok().build();
     }
 

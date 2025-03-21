@@ -2,6 +2,8 @@ package monorail.linkpay.wallet.service;
 
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.wallet.domain.WalletHistory;
+import monorail.linkpay.wallet.dto.WalletHistoryListResponse;
+import monorail.linkpay.wallet.dto.WalletHistoryResponse;
 import monorail.linkpay.wallet.repository.WalletHistoryRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

@@ -3,6 +3,7 @@ package monorail.linkpay.controller;
 import monorail.linkpay.auth.service.AuthService;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
+import monorail.linkpay.security.WithCustomUser;
 import monorail.linkpay.wallet.service.WalletHistoryService;
 import monorail.linkpay.wallet.service.WalletService;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
     AuthController.class,
     WalletController.class
 })
+@WithCustomUser
 @ExtendWith(RestDocumentationExtension.class)
 public abstract class ControllerTest {
 
