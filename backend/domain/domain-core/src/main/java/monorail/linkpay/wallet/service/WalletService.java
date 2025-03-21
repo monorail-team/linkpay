@@ -10,6 +10,8 @@ import monorail.linkpay.wallet.repository.WalletRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -36,19 +38,18 @@ public class WalletService {
     }
 
     @Transactional
-    public void charge(final Long memberId, final Long amount) {
+    public void charge(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        walletRepository.increaseWalletAmount(memberId, amount);
-        Long remaining = wallet.getAmount() + amount;
-        walletHistoryRecorder.record(wallet, amount, remaining, TransactionType.DEPOSIT);
+        walletRepository.increaseWalletAmount(memberId, point.getAmount());
+        Point remaining = wallet.getPoint().add(point);
+        walletHistoryRecorder.record(wallet, point, remaining, DEPOSIT);
     }
 
     @Transactional
-    public void deduct(final Long memberId, final Long amount) {
+    public void deduct(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        walletValidator.validateDeducting(wallet.getAmount(), amount);
-        walletRepository.decreaseWalletAmount(wallet.getId(), amount);
-        Long remaining = wallet.getAmount() - amount;
-        walletHistoryRecorder.record(wallet, amount, remaining, TransactionType.DEPOSIT);
+        walletRepository.decreaseWalletAmount(wallet.getId(), point.getAmount());
+        Point remaining = wallet.getPoint().subtract(point);
+        walletHistoryRecorder.record(wallet, point, remaining, DEPOSIT);
     }
 }

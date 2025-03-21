@@ -5,6 +5,7 @@ import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.wallet.domain.Wallet;
+import monorail.linkpay.wallet.repository.WalletHistoryRepository;
 import monorail.linkpay.wallet.repository.WalletRepository;
 import monorail.linkpay.wallet.service.WalletResponse;
 import monorail.linkpay.wallet.service.WalletService;
@@ -22,11 +23,14 @@ class WalletServiceTest extends IntegrationTest {
     private WalletRepository walletRepository;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private WalletHistoryRepository walletHistoryRepository;
 
     private Member member;
 
     @BeforeEach
     void setUp() {
+        walletHistoryRepository.deleteAllInBatch();
         walletRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
         member = memberRepository.save(createMember());
@@ -45,10 +49,11 @@ class WalletServiceTest extends IntegrationTest {
     @Test
     void 지갑을_충전하고_잔액을_확인한다() {
         // given
+        Point point = new Point(50000);
         walletRepository.save(createWallet(member));
 
         // when
-        walletService.charge(member.getId(), 50000L);
+        walletService.charge(member.getId(), point);
 
         // then
         WalletResponse response = walletService.read(member.getId());

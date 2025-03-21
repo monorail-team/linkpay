@@ -30,6 +30,7 @@ class MemberFetcherTest {
             String email = "email@email.com";
             memberRepository.save(Member.builder()
                     .id(1L)
+                    .username("link")
                     .email(email)
                     .build());
             MemberFetcher sut = new MemberFetcher(memberRepository);

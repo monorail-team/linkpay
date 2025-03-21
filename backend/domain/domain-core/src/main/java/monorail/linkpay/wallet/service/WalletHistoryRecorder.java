@@ -19,13 +19,13 @@ public class WalletHistoryRecorder {
     private final IdGenerator idGenerator;
 
     public Long record(final Wallet wallet,
-                       final Long amount,
-                       final Long remaining,
+                       final Point amount,
+                       final Point remaining,
                        final TransactionType transactionType) {
         return walletHistoryRepository.save(WalletHistory.builder()
             .id(idGenerator.generate())
-            .point(new Point(amount))
-            .remaining(new Point(remaining))
+            .point(amount)
+            .remaining(remaining)
             .wallet(wallet)
             .createdAt(LocalDateTime.now())
             .transactionType(transactionType)
