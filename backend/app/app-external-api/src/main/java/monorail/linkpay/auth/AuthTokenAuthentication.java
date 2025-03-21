@@ -23,7 +23,7 @@ public class AuthTokenAuthentication extends CustomAuthentication {
         super.setAuthenticated(false);
     }
 
-    public AuthTokenAuthentication(final AuthPrincipal principal,
+    private AuthTokenAuthentication(final AuthPrincipal principal,
                                     final Collection<? extends GrantedAuthority> authorities) {
         super(principal, authorities);
         this.credentials = null;

@@ -2,10 +2,9 @@ package monorail.linkpay.acceptance;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import monorail.linkpay.controller.request.ChargeRequest;
+import monorail.linkpay.controller.request.PointRequest;
 import monorail.linkpay.wallet.service.WalletResponse;
 import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
 
@@ -25,7 +24,7 @@ class WalletAcceptanceTest extends AcceptanceTest {
 
         return Stream.of(
             dynamicTest("지갑에 포인트를 충전한다", () -> {
-                ExtractableResponse<Response> response = 포인트_충전_요청(accessToken, new ChargeRequest(50000));
+                ExtractableResponse<Response> response = 포인트_충전_요청(accessToken, new PointRequest(50000));
                 assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
             }),
             dynamicTest("충전 후 지갑 잔액을 조회한다", () -> {
@@ -37,8 +36,8 @@ class WalletAcceptanceTest extends AcceptanceTest {
     }
 
     public static ExtractableResponse<Response> 포인트_충전_요청(final String accessToken,
-                                                             final ChargeRequest chargeRequest) {
-        return sendPatchRequest("/api/wallets/charge", accessToken, chargeRequest);
+                                                             final PointRequest pointRequest) {
+        return sendPatchRequest("/api/wallets/charge", accessToken, pointRequest);
     }
 
     public static ExtractableResponse<Response> 지갑_잔액_조회_요청(final String accessToken) {

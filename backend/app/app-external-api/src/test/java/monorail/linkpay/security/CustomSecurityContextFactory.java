@@ -8,6 +8,8 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 
 import java.util.Collections;
 
+import static monorail.linkpay.auth.AuthTokenAuthentication.authenticated;
+
 public class CustomSecurityContextFactory implements WithSecurityContextFactory<WithCustomUser> {
 
     @Override
@@ -15,7 +17,7 @@ public class CustomSecurityContextFactory implements WithSecurityContextFactory<
         long id = withCustomUser.id();
 
         AuthPrincipal principal = new AuthPrincipal(id);
-        AuthTokenAuthentication auth = new AuthTokenAuthentication(principal, Collections.emptyList());
+        AuthTokenAuthentication auth = authenticated(principal, Collections.emptySet());
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(auth);

@@ -1,7 +1,7 @@
 package monorail.linkpay.controller;
 
 import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.controller.request.ChargeRequest;
+import monorail.linkpay.controller.request.PointRequest;
 import monorail.linkpay.wallet.service.WalletResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ public class WalletControllerTest extends ControllerTest {
         docsGiven
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .header("Authorization", "Bearer {access_token}")
-            .body(new ChargeRequest(50000))
+            .body(new PointRequest(50000))
             .when().patch("/api/wallets/charge")
             .then().log().all()
             .apply(document("wallets/charge"))
