@@ -3,6 +3,7 @@ package monorail.linkpay.controller;
 import monorail.linkpay.auth.service.AuthService;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
+import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.security.WithCustomUser;
 import monorail.linkpay.wallet.service.WalletHistoryService;
 import monorail.linkpay.wallet.service.WalletService;
@@ -19,8 +20,9 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 
 @WebMvcTest({
-    AuthController.class,
-    WalletController.class
+        AuthController.class,
+        WalletController.class,
+        LinkCardController.class,
 })
 @WithCustomUser
 @ExtendWith(RestDocumentationExtension.class)
@@ -33,16 +35,18 @@ public abstract class ControllerTest {
     protected WalletService walletService;
     @MockitoBean
     protected WalletHistoryService walletHistoryService;
+    @MockitoBean
+    protected LinkCardService linkCardService;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
                RestDocumentationContextProvider restDocumentation) {
         docsGiven = RestAssuredMockMvc.given()
-            .mockMvc(MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation)
-                    .operationPreprocessors()
-                    .withRequestDefaults(prettyPrint())
-                    .withResponseDefaults(prettyPrint()))
-                .build()).log().all();
+                .mockMvc(MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                        .apply(documentationConfiguration(restDocumentation)
+                                .operationPreprocessors()
+                                .withRequestDefaults(prettyPrint())
+                                .withResponseDefaults(prettyPrint()))
+                        .build()).log().all();
     }
 }
