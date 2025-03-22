@@ -1,5 +1,7 @@
 package monorail.linkpay.auth.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.auth.dto.LoginRequest;
 import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.common.domain.Point;
@@ -7,8 +9,6 @@ import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.token.TokenType;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.repository.WalletRepository;
@@ -32,22 +32,20 @@ public class AuthService {
         log.debug("login process in progress : {}", request);
         var loginPrincipal = loginStrategyResolver.resolve(request);
         var loginMember = memberRepository.findByEmail(loginPrincipal.email())
-            .orElseGet(() -> {
-                Member member = memberRepository.save(Member.builder()
-                        .id(idGenerator.generate())
-                        .email(loginPrincipal.email())
-                        .username("")
-                        .build()
-                );
-                walletRepository.save(Wallet.builder()
-                        .id(idGenerator.generate())
-                        .point(new Point(0))
-                        .member(member)
-                        .build());
-                return member;
-            });
-
-
+                .orElseGet(() -> {
+                    Member member = memberRepository.save(Member.builder()
+                            .id(idGenerator.generate())
+                            .email(loginPrincipal.email())
+                            .username("")
+                            .build()
+                    );
+                    walletRepository.save(Wallet.builder()
+                            .id(idGenerator.generate())
+                            .point(new Point(0))
+                            .member(member)
+                            .build());
+                    return member;
+                });
 
         var accessToken = authTokenGenerator.generateFor(loginMember, TokenType.ACCESS);
 

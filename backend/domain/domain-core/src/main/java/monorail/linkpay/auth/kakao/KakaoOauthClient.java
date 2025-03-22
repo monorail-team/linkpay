@@ -1,9 +1,9 @@
 package monorail.linkpay.auth.kakao;
 
-import monorail.linkpay.auth.dto.KakaoUserResponse;
-import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import monorail.linkpay.auth.dto.KakaoUserResponse;
+import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

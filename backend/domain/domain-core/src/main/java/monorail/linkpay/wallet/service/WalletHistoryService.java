@@ -1,5 +1,7 @@
 package monorail.linkpay.wallet.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.wallet.domain.WalletHistory;
 import monorail.linkpay.wallet.dto.WalletHistoryListResponse;
@@ -10,9 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +32,8 @@ public class WalletHistoryService {
 
     public WalletHistoryListResponse readPage(final Long walletId, final Long lastId, final int size) {
         Pageable pageable = PageRequest.of(0, size);
-        Slice<WalletHistory> walletHistories = walletHistoryRepository.findByWalletIdWithLastId(walletId, lastId, pageable);
+        Slice<WalletHistory> walletHistories = walletHistoryRepository.findByWalletIdWithLastId(walletId, lastId,
+                pageable);
         List<WalletHistoryResponse> walletHistoryResponses = new ArrayList<>();
 
         for (WalletHistory walletHistory : walletHistories) {
@@ -46,7 +46,7 @@ public class WalletHistoryService {
         }
 
         return new WalletHistoryListResponse(
-            walletHistoryResponses,
-            walletHistories.hasNext());
+                walletHistoryResponses,
+                walletHistories.hasNext());
     }
 }

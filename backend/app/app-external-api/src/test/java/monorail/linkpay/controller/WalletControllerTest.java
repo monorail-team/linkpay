@@ -1,14 +1,17 @@
 package monorail.linkpay.controller;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.controller.request.PointRequest;
 import monorail.linkpay.wallet.dto.WalletResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 
 public class WalletControllerTest extends ControllerTest {
 
@@ -17,13 +20,13 @@ public class WalletControllerTest extends ControllerTest {
         doNothing().when(walletService).charge(anyLong(), any(Point.class));
 
         docsGiven
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .header("Authorization", "Bearer {access_token}")
-            .body(new PointRequest(50000))
-            .when().patch("/api/wallets/charge")
-            .then().log().all()
-            .apply(document("wallets/charge"))
-            .statusCode(HttpStatus.NO_CONTENT.value());
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer {access_token}")
+                .body(new PointRequest(50000))
+                .when().patch("/api/wallets/charge")
+                .then().log().all()
+                .apply(document("wallets/charge"))
+                .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
     @Test
@@ -31,10 +34,10 @@ public class WalletControllerTest extends ControllerTest {
         when(walletService.read(anyLong())).thenReturn(new WalletResponse(50000));
 
         docsGiven
-            .header("Authorization", "Bearer {access_token}")
-            .when().get("/api/wallets")
-            .then().log().all()
-            .apply(document("wallets/read"))
-            .statusCode(HttpStatus.OK.value());
+                .header("Authorization", "Bearer {access_token}")
+                .when().get("/api/wallets")
+                .then().log().all()
+                .apply(document("wallets/read"))
+                .statusCode(HttpStatus.OK.value());
     }
 }

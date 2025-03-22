@@ -1,11 +1,13 @@
 package monorail.linkpay.token;
 
+import static monorail.linkpay.jwt.JwtFixtures.idGenerator;
+import static monorail.linkpay.jwt.JwtFixtures.jwtProps;
+import static monorail.linkpay.jwt.JwtFixtures.jwtProvider;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import monorail.linkpay.token.dto.GeneratedToken;
 import monorail.linkpay.util.json.Json;
 import org.junit.jupiter.api.Test;
-
-import static monorail.linkpay.jwt.JwtFixtures.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class TokenGeneratorTest {
 

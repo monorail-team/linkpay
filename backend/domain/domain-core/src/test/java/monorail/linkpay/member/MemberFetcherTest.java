@@ -1,7 +1,9 @@
 package monorail.linkpay.member;
 
-import monorail.linkpay.exception.LinkPayException;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import monorail.linkpay.exception.ExceptionCode;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.member.service.MemberFetcher;
@@ -11,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
 @Transactional
@@ -48,7 +48,7 @@ class MemberFetcherTest {
             MemberFetcher sut = new MemberFetcher(memberRepository);
 
             //when, then
-            Assertions.assertThatThrownBy(()->sut.fetchByEmail("wrong@email.com"))
+            Assertions.assertThatThrownBy(() -> sut.fetchByEmail("wrong@email.com"))
                     .isInstanceOf(LinkPayException.class)
                     .extracting(e -> ((LinkPayException) e).getExceptionCode())
                     .isEqualTo(ExceptionCode.NOT_FOUND_RESOURCE);

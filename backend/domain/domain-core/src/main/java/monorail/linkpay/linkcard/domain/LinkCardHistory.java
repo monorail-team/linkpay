@@ -1,16 +1,23 @@
 package monorail.linkpay.linkcard.domain;
 
-import jakarta.persistence.*;
+import static jakarta.persistence.EnumType.STRING;
+import static lombok.AccessLevel.PROTECTED;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.Point;
-
-import java.time.LocalDateTime;
-
-import static jakarta.persistence.EnumType.STRING;
-import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "link_card_history")
 @Getter

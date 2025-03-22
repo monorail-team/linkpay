@@ -1,11 +1,19 @@
 package monorail.linkpay.linkedwallet.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import static lombok.AccessLevel.PROTECTED;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
-
-import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "linked_wallet")
 @Getter
