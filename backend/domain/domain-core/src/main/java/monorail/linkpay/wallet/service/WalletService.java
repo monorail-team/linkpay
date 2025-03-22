@@ -1,16 +1,21 @@
 package monorail.linkpay.wallet.service;
 
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.dto.WalletResponse;
 import monorail.linkpay.wallet.repository.WalletRepository;
+import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
+import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 
 @Service
 @RequiredArgsConstructor
@@ -39,16 +44,15 @@ public class WalletService {
     @Transactional
     public void charge(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        walletRepository.increaseWalletAmount(memberId, point.getAmount());
         Point remaining = wallet.getPoint().add(point);
+        walletRepository.increaseWalletAmount(memberId, point.getAmount());
         walletHistoryRecorder.record(wallet, point, remaining, DEPOSIT);
     }
 
     @Transactional
     public void deduct(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        walletRepository.decreaseWalletAmount(wallet.getId(), point.getAmount());
-        Point remaining = wallet.getPoint().subtract(point);
-        walletHistoryRecorder.record(wallet, point, remaining, DEPOSIT);
+        wallet.deductPoint(point);
+        walletHistoryRecorder.record(wallet, point, wallet.getPoint(), WITHDRAWAL);
     }
 }
