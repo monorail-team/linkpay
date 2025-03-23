@@ -18,6 +18,15 @@ const CreateCardPage: React.FC = () => {
     setIsCalendarOpen(false);
   };
 
+
+  // 버튼 클릭
+  const handleRegister = () => {
+    console.log('등록하기 클릭', { cardName, cardLimit, expireDate });
+  };
+
+  // 모든 필드가 입력되어야 버튼 활성화
+  const isFormComplete = cardName && cardLimit && expireDate;
+
   return (
     <div className="w-full h-full max-w-md mx-auto border flex flex-col">
       <Header headerType="back" onBackClick={() => console.log('뒤로가기')} />
@@ -115,6 +124,15 @@ const CreateCardPage: React.FC = () => {
             </button>
           </div>
         )}
+      </div>
+      <div className="p-4">
+        <button
+          className="block w-4/5 py-3 mx-auto bg-[#9CA1D7] text-white rounded-3xl disabled:bg-gray-300 dark:bg-[#252527] dark:text-white dark:disabled:text-gray-500"
+          onClick={handleRegister}
+          disabled={!isFormComplete}
+        >
+          등록하기
+        </button>
       </div>
     </div>
   );
