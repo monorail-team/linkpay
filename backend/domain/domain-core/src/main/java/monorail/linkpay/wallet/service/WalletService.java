@@ -34,15 +34,14 @@ public class WalletService {
 
     public WalletResponse read(final Long memberId) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        return new WalletResponse(wallet.getAmount());
+        return new WalletResponse(wallet.readAmount());
     }
 
     @Transactional
     public void charge(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        Point remaining = wallet.getPoint().add(point);
-        walletRepository.increaseWalletAmount(memberId, point.getAmount());
-        walletHistoryRecorder.record(wallet, point, remaining, DEPOSIT);
+        wallet.chargePoint(point);
+        walletHistoryRecorder.record(wallet, point, wallet.getPoint(), DEPOSIT);
     }
 
     @Transactional

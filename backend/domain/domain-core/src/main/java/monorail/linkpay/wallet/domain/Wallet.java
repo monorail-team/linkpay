@@ -47,8 +47,12 @@ public class Wallet extends BaseEntity {
         this.member = member;
     }
 
-    public long getAmount() {
+    public long readAmount() {
         return point.getAmount();
+    }
+
+    public void chargePoint(Point point) {
+        this.point = this.point.add(point);
     }
 
     public void deductPoint(Point point) {

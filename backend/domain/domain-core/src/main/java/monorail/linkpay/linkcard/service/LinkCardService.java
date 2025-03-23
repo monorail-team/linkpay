@@ -30,8 +30,8 @@ public class LinkCardService {
     @Transactional
     public void create(Long creatorId, CreateLinkCardServiceRequest request) {
         Wallet wallet = walletFetcher.fetchByMemberId(creatorId);
-
         Member member = memberFetcher.fetchById(creatorId);
+
         linkCardRepository.save(LinkCard.builder()
                 .id(idGenerator.generate())
                 .cardColor(CardColor.getRandomColor())

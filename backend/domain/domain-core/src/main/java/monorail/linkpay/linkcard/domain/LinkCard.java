@@ -37,9 +37,9 @@ public class LinkCard extends BaseEntity {
     private Long id;
 
     @Embedded
-    @AttributeOverrides({
+    @AttributeOverrides(
             @AttributeOverride(name = "amount", column = @Column(name = "limitPrice"))
-    })
+    )
     private Point limitPrice;
 
     @Column(nullable = false, updatable = false)
@@ -61,9 +61,9 @@ public class LinkCard extends BaseEntity {
     private CardState state;
 
     @Embedded
-    @AttributeOverrides({
+    @AttributeOverrides(
             @AttributeOverride(name = "amount", column = @Column(name = "usedPoint"))
-    })
+    )
     private Point usedPoint;
 
     @JoinColumn(name = "member_id", nullable = false)
