@@ -8,7 +8,8 @@ import backDarkIcon from '@/assets/icons/arrow-back-darkmode.png';
 import theme from '@/assets/icons/day-and-night.png';
 import arrowRightIcon from '@/assets/icons/arrow-right.png';
 import arrowLeftIcon from '@/assets/icons/arrow-left.png';
-
+import calander from '@/assets/icons/calendar.png';
+import canceltext from '@/assets/icons/cancel-text.png';
 // 아이콘 매핑: icon 이름과 해당 파일 경로를 매핑합니다.
 // 만약 추가 아이콘이 있다면 이 객체에 추가하면 됩니다.
 const iconMap: { [key: string]: string } = {
@@ -21,6 +22,8 @@ const iconMap: { [key: string]: string } = {
   theme: theme,
   arrowright: arrowRightIcon,
   arrowleft: arrowLeftIcon,
+  calander: calander,
+  canceltext: canceltext,
   // 예시: home: require('@/assets/icons/Home.png'),
   // 예시: search: require('@/assets/icons/Search.png'),
 };
