@@ -12,7 +12,8 @@ const KakaoCallback: React.FC = () => {
     if (!code) {
       return;
     }
-    navigate('/');
+    // todo 실제 로그인 연결 시, 로그인 된 사용자는 뒤로가기 못하도록 로그인 체크 후 '/' 혹은 만료된 페이지로 보내는 코드 작성
+    navigate('/', { replace: true });
   }, [searchParams]);
 
   return (
