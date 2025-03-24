@@ -1,16 +1,6 @@
 package monorail.linkpay.wallet.domain;
 
-import static lombok.AccessLevel.PROTECTED;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Version;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,6 +8,8 @@ import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.member.domain.Member;
+
+import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "wallet")
 @Getter
@@ -36,9 +28,6 @@ public class Wallet extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
     private Member member;
-
-    @Version
-    private Long version;
 
     @Builder
     public Wallet(final Long id, final Member member) {
