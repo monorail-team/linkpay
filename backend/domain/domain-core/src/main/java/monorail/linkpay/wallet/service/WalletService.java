@@ -1,8 +1,5 @@
 package monorail.linkpay.wallet.service;
 
-import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
-import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
-
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.member.domain.Member;
@@ -12,6 +9,9 @@ import monorail.linkpay.wallet.dto.WalletResponse;
 import monorail.linkpay.wallet.repository.WalletRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
+import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
 
 @Service
 @RequiredArgsConstructor
@@ -38,14 +38,14 @@ public class WalletService {
 
     @Transactional
     public void charge(final Long memberId, final Point point) {
-        Wallet wallet = walletFetcher.fetchByMemberId(memberId);
+        Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(memberId);
         wallet.chargePoint(point);
-        walletHistoryRecorder.record(wallet, point, wallet.getPoint(), DEPOSIT);
+        walletHistoryRecorder.record(wallet, point, wallet.getPoint(), DEPOSIT); // todo 카프카 도입 후 이벤트로 던지기
     }
 
     @Transactional
     public void deduct(final Long memberId, final Point point) {
-        Wallet wallet = walletFetcher.fetchByMemberId(memberId);
+        Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(memberId);
         wallet.deductPoint(point);
         walletHistoryRecorder.record(wallet, point, wallet.getPoint(), WITHDRAWAL);
     }
