@@ -2,7 +2,9 @@ package monorail.linkpay.controller;
 
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_CREATE_REQUEST;
+import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_REGISTRATION_REQUEST;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -47,9 +49,22 @@ public class LinkCardControllerTest extends ControllerTest {
         when(linkCardService.readUnregister(anyLong(), nullable(Long.class), eq(10))).thenReturn(LINK_CARDS_RESPONSE);
 
         docsGiven.header("Authorization", "Bearer {access_token}")
-                .when().get("/api/cards/unregister")
+                .when().get("/api/cards/deactivate")
                 .then().log().all()
-                .apply(document("cards/read/unregister"))
+                .apply(document("cards/read/deactivate"))
                 .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void 링크카드를_결제카드로_등록한다() {
+        doNothing().when(linkCardService).registLinkCard(anyList());
+
+        docsGiven.contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer {access_token}")
+                .body(LINK_CARD_REGISTRATION_REQUEST)
+                .when().patch("/api/cards/activate")
+                .then().log().all()
+                .apply(document("cards/activate"))
+                .statusCode(HttpStatus.NO_CONTENT.value());
     }
 }

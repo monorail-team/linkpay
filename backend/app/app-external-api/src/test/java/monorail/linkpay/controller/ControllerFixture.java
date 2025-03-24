@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
+import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.LinkedMemberCreateRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.PointRequest;
@@ -23,6 +24,8 @@ public class ControllerFixture {
 
     public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
             "테스트카드", 500000, LocalDate.of(2025, 5, 25));
+
+    public static final LinkCardRegistRequest LINK_CARD_REGISTRATION_REQUEST = new LinkCardRegistRequest(List.of(1L));
 
     public static final MemberResponse MEMBER_RESPONSE = new MemberResponse(1L, "link1", "linked@gmail.com");
 
