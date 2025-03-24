@@ -33,11 +33,11 @@ const MyWallet: React.FC = () => {
         {/* 입출금 내역 */}
         <div className="mt-12 mx-6">
           <h3 className="text-lg text-[#969595]">입출금 내역</h3>
-          <ul className="mt-2 border-t border-gray-200 dark:border-[#414141]">
+          <ul className="mt-2">
             {walletData.walletHistory.map((history: MyWalletHistory) => (
               <li
                 key={history.walletHistoryId}
-                className="py-3 border-b flex justify-between items-center text-lg dark:bg-[#3b3838]"
+                className="py-1.5 border-b flex justify-between items-center text-lg border-gray-300 dark:border-[#515151] dark:bg-[#3b3838]"
               >
                 {/* 날짜 & 카드 이름 */}
                 <div className="flex items-center w-1/2">

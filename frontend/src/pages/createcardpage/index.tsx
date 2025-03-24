@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Icon from '@/components/Icon';
+import { DayPicker, getDefaultClassNames } from "react-day-picker";
+import "react-day-picker/style.css";
+import { useThemeStore } from '@/store/themeStore';
 
 const CreateCardPage: React.FC = () => {
   const [cardName, setCardName] = useState('');
@@ -11,6 +14,7 @@ const CreateCardPage: React.FC = () => {
   const handleClearCardName = () => setCardName('');
   const handleClearCardLimit = () => setCardLimit('');
   const toggleCalendar = () => setIsCalendarOpen(prev => !prev);
+  const { theme } = useThemeStore();
 
   // 나중에 달력으로 대체할 선택 함수
   const handleDateSelect = (date: string) => {
@@ -24,40 +28,46 @@ const CreateCardPage: React.FC = () => {
     console.log('등록하기 클릭', { cardName, cardLimit, expireDate });
   };
 
+  const isCardNameValid = cardName.length <= 10;
+
   // 모든 필드가 입력되어야 버튼 활성화
-  const isFormComplete = cardName && cardLimit && expireDate;
+  const isFormComplete = cardName && cardLimit && expireDate && isCardNameValid;
+  const defaultClassNames = getDefaultClassNames();
 
   return (
-    <div className="w-full h-full max-w-md mx-auto border flex flex-col">
-      <Header headerType="back" onBackClick={() => console.log('뒤로가기')} />
+    <div className="w-full h-full max-w-md mx-auto flex flex-col dark:bg-black">
+      <Header headerType="menu" onBackClick={() => console.log('뒤로가기')} />
 
       <div className="p-4 flex-1 space-y-8 mx-4">
         
         {/* 카드 이름 입력 */}
         <div>
-          <span className="text-sm text-gray-600">카드 이름</span>
+          <span className="text-sm text-gray-600  dark:text-gray-400">카드 이름</span>
           <div className="relative">
             <input
               type="text"
               placeholder="카드 이름을 입력하세요."
               value={cardName}
               onChange={(e) => setCardName(e.target.value)}
-              className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0"
+              className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-white"
             />
             {cardName && (
               <button 
                 onClick={handleClearCardName}
                 className="absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-500"
-              >
-                <Icon name="canceltext" width={24} height={24} alt="입력취소" />
+              > 
+                <Icon name={theme === 'dark' ? "canceltextDarkIcon" : "canceltextIcon"} width={24} height={24} alt="입력취소" />
               </button>
             )}
           </div>
+          {cardName.length > 10 && (
+            <p className="mt-1 text-red-500 text-xs">카드 이름은 10자 내로 입력해 주세요.</p>
+          )}
         </div>
 
         {/* 카드 한도 입력 */}
         <div>
-        <span className="text-sm text-gray-600">카드 한도(결제 가능 총액)</span>
+        <span className="text-sm text-gray-600 dark:text-gray-400">카드 한도(결제 가능 총액)</span>
             <div className="relative">
                 <input
                 type="text"
@@ -65,24 +75,25 @@ const CreateCardPage: React.FC = () => {
                 value={cardLimit}
                 onChange={(e) => {
                     // 입력값에서 콤마 제거 후 숫자만 남김
-                    let value = e.target.value.replace(/,/g, '').replace(/\D/g, '');
-                    if (value === '') {
+                    const Rvalue = e.target.value.replace(/,/g, '').replace(/\D/g, '');
+                    if (Rvalue === '') {
                     setCardLimit('');
                     return;
                     }
-                    let num = Number(value);
+                    let num = Number(Rvalue);
                     if (num > 100000000) num = 100000000;
                     // 숫자를 콤마가 찍힌 문자열로 변환
                     setCardLimit(num.toLocaleString());
                 }}
-                className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0"
+                className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-white"
                 />
                 {cardLimit && (
                 <button 
                     onClick={handleClearCardLimit}
                     className="absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-500"
                 >
-                    <Icon name="canceltext" width={24} height={24} alt="입력취소" />
+                  
+                  <Icon name={theme === 'dark' ? "canceltextDarkIcon" : "canceltextIcon"} width={24} height={24} alt="입력취소" />
                 </button>
                 )}
             </div>
@@ -92,46 +103,56 @@ const CreateCardPage: React.FC = () => {
 
         {/* 만료일 입력 */}
         <div>
-          <span className="text-sm text-gray-600">만료일</span>
-          <div className="relative flex items-center">
-            <input
-              type="text"
-              placeholder="만료일을 선택하세요."
-              value={expireDate}
-              readOnly
-              className="w-full py-2 pl-0 pr-10 border-b border-gray-300 focus:outline-none focus:ring-0 cursor-pointer"
-              onClick={toggleCalendar}
-            />
-            <button 
-              onClick={toggleCalendar}
-              className="absolute right-0 text-gray-500"
-            >
-              <Icon name="calander" width={24} height={24} alt="달력 아이콘" />
-            </button>
-          </div>
+          <span className="text-sm text-gray-600 dark:text-gray-400">만료일</span>
+            <div className='relative'>
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  placeholder="만료일을 선택하세요."
+                  value={expireDate}
+                  readOnly
+                  className="w-full py-2 pl-0 pr-10 border-b border-gray-300 focus:outline-none focus:ring-0 cursor-pointer dark:bg-black dark:text-white dark:placeholder-white"
+                  onClick={toggleCalendar}
+                />
+                <button 
+                  onClick={toggleCalendar}
+                  className="absolute right-0 text-gray-500"
+                  style={{ anchorName: "--rdp" } as React.CSSProperties}
+                >
+                  <Icon name={theme === 'dark' ? 'calendarDarkIcon' : 'calandarIcon'} width={24} height={24} alt="달력 아이콘" />
+                </button>
+              </div>
+            </div>
         </div>
 
-        {/* 달력 컴포넌트 자리 (외부 컴포넌트로 교체 예정) */}
+         {/* 달력 컴포넌트 (daisyUI/DayPicker 적용) */}
         {isCalendarOpen && (
-          <div className="mt-4 border border-gray-300 rounded-lg p-4">
-            {/* <ExternalCalendar onSelect={handleDateSelect} /> */}
-            <p className="text-center text-gray-500">달력 컴포넌트 자리 (추후 교체)</p>
-            <button
-              onClick={() => handleDateSelect('2025-03-30')}
-              className="mt-2 block mx-auto px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              임시 날짜 선택
-            </button>
+          <div className="absolute left-1/2 transform -translate-x-1/2 ">
+            <DayPicker
+              mode="single"
+              selected={expireDate ? new Date(expireDate) : undefined}
+              onSelect={(selectedDate: Date | undefined) => {
+                if (selectedDate) {
+                  handleDateSelect(selectedDate.toLocaleDateString());
+                }
+              }}
+              classNames={{
+                today: 'bg-gray-300 text-white dark:bg-gray-400 rounded-lg', // Add a border to today's date
+                selected: `bg-indigo-500 border-amber-500 text-white rounded-lg`, // Highlight the selected day
+                root: `${defaultClassNames.root} shadow-lg p-5 dark:bg-[#010101] dark:text-white `, // Add a shadow to the root element
+                chevron: `${defaultClassNames.chevron} dark:fill-white` // Change the color of the chevron
+              }}
+            />                                                
           </div>
         )}
       </div>
       <div className="p-4">
         <button
-          className="block w-4/5 py-3 mx-auto bg-[#9CA1D7] text-white rounded-3xl disabled:bg-gray-300 dark:bg-[#252527] dark:text-white dark:disabled:text-gray-500"
+          className="font-bold block w-4/5 py-3 mx-auto bg-[#9CA1D7] text-white rounded-3xl disabled:bg-gray-300 dark:bg-[#252527] dark:text-white dark:disabled:text-gray-500"
           onClick={handleRegister}
           disabled={!isFormComplete}
         >
-          등록하기
+          생성하기
         </button>
       </div>
     </div>
