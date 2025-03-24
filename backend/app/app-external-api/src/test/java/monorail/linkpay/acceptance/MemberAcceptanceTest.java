@@ -13,10 +13,12 @@ import org.springframework.http.HttpStatus;
 
 public class MemberAcceptanceTest extends AcceptanceTest {
 
+    public static final String EMAIL = "email@kakao.com";
+
     @Test
     void 이메일을_통해_회원을_조회한다() {
         String accessToken = 엑세스_토큰();
-        ExtractableResponse<Response> response = 회원_조회_요청(accessToken, "email@kakao.com");
+        ExtractableResponse<Response> response = 회원_조회_요청(accessToken, EMAIL);
 
         MemberResponse memberResponse = response.as(MemberResponse.class);
         assertAll(

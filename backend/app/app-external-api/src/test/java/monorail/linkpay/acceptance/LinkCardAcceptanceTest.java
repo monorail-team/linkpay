@@ -20,24 +20,23 @@ import org.springframework.http.HttpStatus;
 
 public class LinkCardAcceptanceTest extends AcceptanceTest {
 
+    public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
+            "테스트카드", 500000, LocalDate.now().plusMonths(1));
+
     @Test
     void 내_지갑에서_링크카드를_생성한다() {
         String accessToken = 엑세스_토큰();
-        LinkCardCreateRequest request = new LinkCardCreateRequest(
-                "테스트카드", 500000, LocalDate.now().plusMonths(1));
-        ExtractableResponse<Response> response = 링크카드_생성_요청(accessToken, request);
+        ExtractableResponse<Response> response = 링크카드_생성_요청(accessToken, LINK_CARD_CREATE_REQUEST);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     }
 
     @TestFactory
     Stream<DynamicTest> 보유한_링크카드를_조회한다() {
         String accessToken = 엑세스_토큰();
-        LinkCardCreateRequest request = new LinkCardCreateRequest(
-                "테스트카드", 500000, LocalDate.now().plusMonths(1));
 
         return Stream.of(
                 dynamicTest("내 지갑에서 링크카드를 생성한다", () -> {
-                    ExtractableResponse<Response> response = 링크카드_생성_요청(accessToken, request);
+                    ExtractableResponse<Response> response = 링크카드_생성_요청(accessToken, LINK_CARD_CREATE_REQUEST);
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
                 }),
                 dynamicTest("보유한 링크카드를 조회한다", () -> {
