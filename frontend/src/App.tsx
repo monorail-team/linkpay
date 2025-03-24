@@ -27,7 +27,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home/>} />
           <Route path="/register" element={<Register />} />
-          <Route path="/mywallethistory" element={<MyWalletHistory />} />
+          <Route path="/mywallet" element={<MyWalletHistory />} />
           <Route path="/createcard" element={<CreateCardPage />} />
         </Routes>
       </Router>
