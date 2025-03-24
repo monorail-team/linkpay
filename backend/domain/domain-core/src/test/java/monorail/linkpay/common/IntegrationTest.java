@@ -43,6 +43,7 @@ public abstract class IntegrationTest {
                 .build());
     }
 
+    // todo TestFixtures
     protected Member createMember() {
         return Member.builder()
                 .id(idGenerator.generate())
