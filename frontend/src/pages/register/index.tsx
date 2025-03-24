@@ -1,12 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import Header from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import LinkCardItem from '@/components/LinkCardItem';
-import { cards } from '@/mocks/cards';
+
+
+interface LinkCard {
+  id: number;
+  limitPrice: number;
+  cardType: string;
+  cardColor: string;
+  cardName: string;
+  expiredAt: string;
+  usedPoint: number;
+}
 
 const Register: React.FC = () => {
-  // 선택된 카드 인덱스를 배열로 관리 (여러 개 선택 가능)
+
+
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [cards, setCards] = useState<LinkCard[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      setLoading(true);
+      try {
+        //일단 임시로 로컬스토리지에 엑세스 토큰
+        const token = localStorage.getItem('access_token');
+        const response = await fetch('http://localhost:8080/api/cards/unregister', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch cards');
+        }
+        const data = await response.json();
+        setCards(data.linkCards);
+      } catch (err) {
+        console.error(err);
+        setError('카드를 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCards();
+  }, []);
 
   const handleSelect = (index: number) => {
     setSelectedIndices((prev) => {
@@ -26,7 +68,7 @@ const Register: React.FC = () => {
     }
   };
 
-  const navigate = useNavigate();
+
 
   const handleBackClick = () => {
     // 뒤로가기 로직 (예: navigate(-1))
@@ -47,14 +89,14 @@ const Register: React.FC = () => {
          <div className="overflow-y-auto space-y-4 hide-scrollbar  max-h-[75vh]" >
           {cards.map((card) => (
             <label
-              key={card.linkCardId}
+              key={card.id}
               className="flex items-center cursor-pointer"
-              onClick={() => handleSelect(card.linkCardId)}
+              onClick={() => handleSelect(card.id)}
             >
               {/* 카드 영역: 선택된 경우 테두리 강조 */}
               <div
                 className={`my-1 box-border rounded-lg w-5/6 p-4 mx-auto bg-center h-[150px] ${
-                  selectedIndices.includes(card.linkCardId)
+                  selectedIndices.includes(card.id)
                     ? 'outline outline-4 outline-gray-400 brightness-90 dark:outline-white '
                     : ''
                 }`}
@@ -63,7 +105,7 @@ const Register: React.FC = () => {
                 <LinkCardItem
                   cardName={card.cardName}
                   limitPrice={card.limitPrice}
-                  expireAt={card.expireAt}
+                  expireAt={card.expiredAt}
                 />
               </div>
             </label>
