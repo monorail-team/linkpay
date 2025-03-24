@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from '@/pages';
 import Register from '@/pages/register';
 import MyWalletHistory from '@/pages/mywallet';
-import CreateCardPage from '@/pages/createcardpage';
+import CreateCard from '@/pages/createcard';
 
 import { useThemeStore } from '@/store/themeStore';
 const App: React.FC = () => {
@@ -28,7 +28,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Home/>} />
           <Route path="/register" element={<Register />} />
           <Route path="/mywallet" element={<MyWalletHistory />} />
-          <Route path="/createcard" element={<CreateCardPage />} />
+          <Route path="/createcard" element={<CreateCard />} />
         </Routes>
       </Router>
     </div>
