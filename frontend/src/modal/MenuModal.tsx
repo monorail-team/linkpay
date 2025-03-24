@@ -13,11 +13,11 @@ const MenuModal: React.FC<MenuModalProps> = ({ onClose }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-30 ${theme === 'dark' ? 'dark' : ''}`}>
+      className={`fixed inset-0 z-50 flex items-start justify-center bg-opacity-30 ${theme === 'dark' ? 'dark' : ''}`}>
       <div
-        className="w-full max-w-sm bg-white dark:bg-[#3b3838] text-black dark:text-white h-full rounded-lg overflow-hidden">
+        className="w-full max-w-sm bg-white dark:bg-[#3B3838] text-black dark:text-white h-full rounded-lg overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-4">
           <div className="text-xl font-bold text-gray-300 dark:text-white-500">LinkPay</div>
           <button onClick={onClose} aria-label="닫기" className="text-2xl">
             <Icon
@@ -35,7 +35,7 @@ const MenuModal: React.FC<MenuModalProps> = ({ onClose }) => {
           <div className="h-[calc(100vh-90px)] bg-white dark:bg-[#5a5757] border border-white dark:border-gray-600
             rounded-lg">
             {/* 메뉴 리스트 */}
-            <div className="flex flex-col divide-y divide-gray-200 dark:divide-gray-600 text-sm h-full">
+            <div className="flex flex-col divide-y divide-gray-200 dark:divide-none text-sm h-full">
               <button
                 onClick={() => {
                   navigate('/mywallethistory');
