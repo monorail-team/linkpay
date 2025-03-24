@@ -1,9 +1,39 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Header from '@/components/Header';
+import ChargeModal from '@/modal/ChargeModal';
 import { MyWalletHistory } from '@/model/MyWalletHistory';
 import { walletData } from '@/mocks/walletData';
 
 const MyWallet: React.FC = () => {
+  const [showChargeModal, setShowChargeModal] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(walletData.availablePoint);
+
+  // 충전 API 호출 함수
+  const handleCharge = async (amount: number) => {
+    try {
+      const accessToken = '사용자_토큰_여기'; 
+      const response = await fetch('/api/wallets/charge', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ amount }),
+      });
+      if (response.status === 204) {
+        // API 호출 성공 시 잔액 업데이트 및 모달 닫기
+        setWalletBalance(prev => prev + amount);
+        setShowChargeModal(false);
+      } else {
+        alert('충전에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Error charging wallet:', error);
+      alert('오류가 발생했습니다.');
+    }
+  };
+
+
   return (
     <div className='dark:bg-[#3b3838]'>
       <Header headerType="menu" />
@@ -25,7 +55,8 @@ const MyWallet: React.FC = () => {
             <button className="bg-white text-black py-2 px-4 ml-auto mr-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">
               카드 생성
             </button>
-            <button className="bg-white text-black py-2 px-4 mr-auto ml-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">
+            <button className="bg-white text-black py-2 px-4 mr-auto ml-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]"
+              onClick={() => setShowChargeModal(true)}>
               충전하기
             </button>
           </div>
@@ -65,6 +96,12 @@ const MyWallet: React.FC = () => {
           </ul>
         </div>
       </div>
+      {showChargeModal && (
+        <ChargeModal 
+          onClose={() => setShowChargeModal(false)}
+          onConfirm={handleCharge}
+        />
+      )}
     </div>
   );
 };
