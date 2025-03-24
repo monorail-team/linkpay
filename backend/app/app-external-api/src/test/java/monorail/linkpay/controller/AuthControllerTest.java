@@ -1,5 +1,6 @@
 package monorail.linkpay.controller;
 
+import static monorail.linkpay.controller.ControllerFixture.LOGIN_RESPONSE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -9,7 +10,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 
 import monorail.linkpay.auth.dto.KakaoLoginRequest;
-import monorail.linkpay.auth.dto.LoginResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -17,7 +17,7 @@ public class AuthControllerTest extends ControllerTest {
 
     @Test
     void 로그인한다() {
-        when(authService.login(any(KakaoLoginRequest.class))).thenReturn(new LoginResponse("accessToken"));
+        when(authService.login(any(KakaoLoginRequest.class))).thenReturn(LOGIN_RESPONSE);
 
         docsGiven
                 .when().post("api/auth/login/kakao?code=1")

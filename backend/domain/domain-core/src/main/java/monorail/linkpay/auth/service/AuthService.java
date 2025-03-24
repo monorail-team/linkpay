@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.auth.dto.LoginRequest;
 import monorail.linkpay.auth.dto.LoginResponse;
-import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.member.service.MemberFetcher;
@@ -41,7 +40,6 @@ public class AuthService {
                     );
                     walletRepository.save(Wallet.builder()
                             .id(idGenerator.generate())
-                            .point(new Point(0))
                             .member(member)
                             .build());
                     return member;

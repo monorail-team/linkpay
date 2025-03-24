@@ -2,18 +2,19 @@ package monorail.linkpay.member.service;
 
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.member.domain.Member;
-import monorail.linkpay.member.repository.MemberRepository;
+import monorail.linkpay.member.dto.MemberResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class MemberService {
 
-    private final MemberRepository memberRepository;
+    private final MemberFetcher memberFetcher;
 
-    public void create(final Member member) {
-        memberRepository.save(member);
+    public MemberResponse getMember(final String email) {
+        Member member = memberFetcher.fetchByEmail(email);
+        return MemberResponse.from(member);
     }
 }

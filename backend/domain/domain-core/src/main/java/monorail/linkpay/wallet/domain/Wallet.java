@@ -41,9 +41,9 @@ public class Wallet extends BaseEntity {
     private Long version;
 
     @Builder
-    public Wallet(final Long id, final Point point, final Member member) {
+    public Wallet(final Long id, final Member member) {
         this.id = id;
-        this.point = point;
+        this.point = new Point(0);
         this.member = member;
     }
 

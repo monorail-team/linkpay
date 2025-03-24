@@ -27,7 +27,6 @@ public class WalletService {
     public Long create(final Member member) {
         return walletRepository.save(Wallet.builder()
                 .id(idGenerator.generate())
-                .point(new Point(0))
                 .member(member)
                 .build()).getId();
     }

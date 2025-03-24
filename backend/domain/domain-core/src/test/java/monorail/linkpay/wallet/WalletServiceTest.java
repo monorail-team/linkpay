@@ -159,7 +159,6 @@ class WalletServiceTest extends IntegrationTest {
     private Wallet createWallet(Member member) {
         return Wallet.builder()
                 .id(1L)
-                .point(new Point(0))
                 .member(member)
                 .build();
     }

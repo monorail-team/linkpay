@@ -1,0 +1,12 @@
+[[Member]]
+== 회원
+
+=== 회원 이메일 조회
+
+==== HTTP Request
+
+include::{snippets}/members/read/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/members/read/http-response.adoc[]
