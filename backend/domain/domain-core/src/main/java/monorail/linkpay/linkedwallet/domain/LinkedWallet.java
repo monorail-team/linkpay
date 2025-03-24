@@ -54,4 +54,12 @@ public class LinkedWallet extends BaseEntity {
         linkedMembers.add(linkedMember);
         linkedMember.registerToWallet(this);
     }
+
+    public void chargePoint(Point point) {
+        this.point = this.point.add(point);
+    }
+
+    public void deductPoint(Point point) {
+        this.point = this.point.subtract(point);
+    }
 }
