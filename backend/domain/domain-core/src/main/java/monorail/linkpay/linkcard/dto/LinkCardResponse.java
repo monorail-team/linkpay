@@ -1,16 +1,7 @@
 package monorail.linkpay.linkcard.dto;
 
-import jakarta.persistence.*;
-import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.linkcard.domain.CardColor;
-import monorail.linkpay.linkcard.domain.CardState;
-import monorail.linkpay.linkcard.domain.CardType;
+import java.time.LocalDate;
 import monorail.linkpay.linkcard.domain.LinkCard;
-import monorail.linkpay.member.domain.Member;
-
-import java.time.LocalDateTime;
-
-import static jakarta.persistence.EnumType.STRING;
 
 public record LinkCardResponse(
         Long id,
@@ -18,7 +9,7 @@ public record LinkCardResponse(
         String cardType,
         String cardColor,
         String cardName,
-        LocalDateTime expiredAt,
+        LocalDate expiredAt,
         Long usedPoint
 ) {
     public static LinkCardResponse from(LinkCard linkCard) {
@@ -26,9 +17,9 @@ public record LinkCardResponse(
                 linkCard.getId(),
                 linkCard.getLimitPrice().getAmount(),
                 linkCard.getCardType().name(),
-                linkCard.getCardColor().name(),
+                linkCard.getCardColor().getHexCode(),
                 linkCard.getCardName(),
-                linkCard.getExpiredAt(),
+                linkCard.getExpiredAt().toLocalDate().minusDays(1),
                 linkCard.getUsedPoint().getAmount()
         );
     }

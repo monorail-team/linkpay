@@ -20,12 +20,16 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
             "WHERE l.wallet = :wallet " +
             "AND (:lastId IS NULL OR l.id < :lastId)" +
             "ORDER BY l.createdAt DESC ")
-    Slice<LinkCard> findByWalletWithLastId(@Param("wallet") Wallet wallet, @Param("lastId") Long lastId, Pageable pageable);
+    Slice<LinkCard> findByWalletWithLastId(@Param("wallet") Wallet wallet,
+                                           @Param("lastId") Long lastId,
+                                           Pageable pageable);
 
     @Query("SELECT l FROM LinkCard l " +
             "WHERE l.wallet = :wallet " +
             "AND l.state = 'UNREGISTERED' " +
             "AND (:lastId IS NULL OR l.id < :lastId)" +
             "ORDER BY l.createdAt DESC ")
-    Slice<LinkCard> findUnregisterByWalletWithLastId(@Param("wallet") Wallet wallet, @Param("lastId") Long lastId, Pageable pageable);
+    Slice<LinkCard> findUnregisterByWalletWithLastId(@Param("wallet") Wallet wallet,
+                                                     @Param("lastId") Long lastId,
+                                                     Pageable pageable);
 }

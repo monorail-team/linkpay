@@ -8,6 +8,7 @@ import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkcard.domain.LinkCard;
+import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.linkcard.service.request.CreateLinkCardServiceRequest;
@@ -60,7 +61,7 @@ public class LinkCardServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 카드만료일을_현재일_이전으로_설정시_오류가_발생한다(){
+    void 카드만료일을_현재일_이전으로_설정시_오류가_발생한다() {
         // given
         CreateLinkCardServiceRequest request = createCard(LocalDate.now().minusDays(1));
 
@@ -69,6 +70,32 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .isInstanceOf(LinkPayException.class)
                 .hasMessage("만료일은 현재일 이전으로 설정할 수 없습니다.");
 
+    }
+
+    @Test
+    void 보유한_링크카드를_조회한다() {
+        // given
+        CreateLinkCardServiceRequest request = createCard(LocalDate.now().plusDays(1));
+        linkCardService.create(member.getId(), request);
+
+        // when
+        LinkCardsResponse response = linkCardService.read(member.getId(), null, 10);
+
+        // then
+        assertThat(response.linkCards()).hasSize(1);
+    }
+
+    @Test
+    void 보유한_링크카드_중_등록안된_카드를_조회한다() {
+        // given
+        CreateLinkCardServiceRequest request = createCard(LocalDate.now().plusDays(1));
+        linkCardService.create(member.getId(), request);
+
+        // when
+        LinkCardsResponse response = linkCardService.readUnregister(member.getId(), null, 10);
+
+        // then
+        assertThat(response.linkCards()).hasSize(1);
     }
 
     private static CreateLinkCardServiceRequest createCard(LocalDate date) {
