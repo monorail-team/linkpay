@@ -1,17 +1,26 @@
 package monorail.linkpay.linkedwallet.domain;
 
-import jakarta.persistence.*;
+import static jakarta.persistence.EnumType.STRING;
+import static lombok.AccessLevel.PROTECTED;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.common.domain.TransactionType;
-
-import java.time.LocalDateTime;
-
-import static jakarta.persistence.EnumType.STRING;
-import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "linked_wallet_history")
 @Getter
@@ -25,15 +34,15 @@ public class LinkedWalletHistory {
     private Long id;
 
     @Embedded
-    @AttributeOverrides({
+    @AttributeOverrides(
             @AttributeOverride(name = "amount", column = @Column(name = "point"))
-    })
+    )
     private Point point;
 
     @Embedded
-    @AttributeOverrides({
+    @AttributeOverrides(
             @AttributeOverride(name = "amount", column = @Column(name = "remaining"))
-    })
+    )
     private Point remaining;
 
     @Column(nullable = false, updatable = false)

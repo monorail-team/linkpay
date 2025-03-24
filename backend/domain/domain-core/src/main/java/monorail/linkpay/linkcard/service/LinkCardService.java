@@ -1,5 +1,9 @@
 package monorail.linkpay.linkcard.service;
 
+import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
+import static monorail.linkpay.linkcard.domain.CardType.OWNED;
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
+
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.exception.LinkPayException;
@@ -23,10 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
-import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
-import static monorail.linkpay.linkcard.domain.CardType.OWNED;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -42,10 +42,9 @@ public class LinkCardService {
         if(request.expiratedAt().isBefore(LocalDate.now())){
             throw new LinkPayException(INVALID_REQUEST, "만료일은 현재일 이전으로 설정할 수 없습니다.");
         }
-
         Wallet wallet = walletFetcher.fetchByMemberId(creatorId);
-
         Member member = memberFetcher.fetchById(creatorId);
+
         linkCardRepository.save(LinkCard.builder()
                 .id(idGenerator.generate())
                 .cardColor(CardColor.getRandomColor())
