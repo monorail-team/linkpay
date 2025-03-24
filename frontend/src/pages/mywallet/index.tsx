@@ -2,8 +2,15 @@ import React from 'react';
 import Header from '@/components/Header';
 import { MyWalletHistory } from '@/model/MyWalletHistory';
 import { walletData } from '@/mocks/walletData';
+import { useNavigate } from 'react-router-dom';
 
 const MyWallet: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleCreateCard = () => {
+    navigate('/createcard');
+  };
+
   return (
     <div className='dark:bg-[#3b3838]'>
       <Header headerType="menu" />
@@ -22,7 +29,9 @@ const MyWallet: React.FC = () => {
             </p>
           </div>
           <div className="flex justify-between w-full">
-            <button className="bg-white text-black py-2 px-4 ml-auto mr-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">
+            <button
+            onClick={handleCreateCard} 
+            className="bg-white text-black py-2 px-4 ml-auto mr-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">
               카드 생성
             </button>
             <button className="bg-white text-black py-2 px-4 mr-auto ml-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">

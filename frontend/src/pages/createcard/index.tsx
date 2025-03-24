@@ -4,6 +4,7 @@ import Icon from '@/components/Icon';
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import "react-day-picker/style.css";
 import { useThemeStore } from '@/store/themeStore';
+import { useNavigate } from 'react-router-dom';
 
 const CreateCardPage: React.FC = () => {
   const [cardName, setCardName] = useState('');
@@ -22,15 +23,56 @@ const CreateCardPage: React.FC = () => {
     setIsCalendarOpen(false);
   };
 
+  const navigate = useNavigate();
+  
 
-  // 버튼 클릭
-  const handleRegister = () => {
+
+  const handleRegister = async () => {
     console.log('등록하기 클릭', { cardName, cardLimit, expireDate });
+    
+    // 카드 한도 문자열을 숫자로 변환 (콤마 제거)
+    const limitPriceNumber = Number(cardLimit.replace(/,/g, ''));
+    
+    
+    // 만료일을 Date 객체로 변환 후 [연, 월, 일] 배열 생성
+    const selectedDate = new Date(expireDate);
+    const expiredAt = [
+      selectedDate.getFullYear(), 
+      selectedDate.getMonth() + 1, // 월은 0부터 시작하므로 +1
+      selectedDate.getDate()
+    ];
+
+    // 임시 token
+    const accessToken = 'your_access_token';
+
+    try {
+      const response = await fetch('/api/cards', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          cardName,
+          limitPrice: limitPriceNumber,
+          expiredAt,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      console.log('카드 생성 성공');
+      navigate('/mywallet');
+    } catch (error) {
+      console.error('카드 생성 실패:', error);
+      
+    }
   };
 
-  const isCardNameValid = cardName.length <= 10;
 
-  // 모든 필드가 입력되어야 버튼 활성화
+  const isCardNameValid = cardName.length <= 10;
   const isFormComplete = cardName && cardLimit && expireDate && isCardNameValid;
   const defaultClassNames = getDefaultClassNames();
 
