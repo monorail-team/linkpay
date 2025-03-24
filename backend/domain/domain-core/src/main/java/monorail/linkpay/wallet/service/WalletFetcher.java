@@ -23,7 +23,8 @@ public class WalletFetcher {
     // 쓰기 용도: 락 걸고 조회
     public Wallet fetchByMemberIdForUpdate(Long memberId) {
         return walletRepository.findByMemberIdForUpdate(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("지갑이 존재하지 않습니다."));
+                .orElseThrow(() ->
+                        new LinkPayException(NOT_FOUND_RESOURCE, "요청한 멤버 아이디에 해당하는 지갑이 존재하지 않습니다."));
     }
 
     // 읽기 전용

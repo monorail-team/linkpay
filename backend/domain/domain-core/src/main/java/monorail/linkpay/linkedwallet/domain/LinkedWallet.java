@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Builder;
@@ -35,9 +34,6 @@ public class LinkedWallet extends BaseEntity {
 
     @Embedded
     private Point point;
-
-    @Version
-    private Integer version;
 
     @OneToMany(mappedBy = "linkedWallet", cascade = ALL, orphanRemoval = true)
     private Set<LinkedMember> linkedMembers = new HashSet<>();

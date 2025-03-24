@@ -31,8 +31,8 @@ public class LinkedWalletService {
     private final LinkedWalletFetcher linkedWalletFetcher;
     private final MemberRepository memberRepository;
     private final MemberFetcher memberFetcher;
-    private final IdGenerator idGenerator;
     private final LinkedMemberRepository linkedMemberRepository;
+    private final IdGenerator idGenerator;
 
     public LinkedWalletsResponse readLinkedWallets(final long memberId, final Long lastId, final int size) {
         Slice<LinkedWalletDto> linkedWalletDtos = linkedMemberRepository.findByMemberId(memberId, lastId,
@@ -40,7 +40,8 @@ public class LinkedWalletService {
 
         return new LinkedWalletsResponse(linkedWalletDtos.stream()
                 .map(LinkedWalletResponse::from)
-                .toList(), linkedWalletDtos.hasNext());
+                .toList(),
+                linkedWalletDtos.hasNext());
     }
 
     @Transactional
@@ -52,8 +53,8 @@ public class LinkedWalletService {
                 .build();
 
         linkedWallet.registerLinkedMember(LinkedMember.of(member, idGenerator.generate(), CREATOR));
-        memberRepository.findMembersByIdIn(memberIds).forEach(tuple ->
-                linkedWallet.registerLinkedMember(LinkedMember.of(tuple, idGenerator.generate(), PARTICIPANT)));
+        memberRepository.findMembersByIdIn(memberIds).forEach(tuple -> linkedWallet.registerLinkedMember(
+                LinkedMember.of(tuple, idGenerator.generate(), PARTICIPANT)));
 
         linkedWalletRepository.save(linkedWallet);
         return linkedWallet.getId();
@@ -61,13 +62,13 @@ public class LinkedWalletService {
 
     @Transactional
     public void chargeLinkedWallet(final long linkedWalletId, final Point point) {
-        LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
+        LinkedWallet linkedWallet = linkedWalletFetcher.fetchByIdForUpdate(linkedWalletId);
         linkedWallet.chargePoint(point);
     }
 
     @Transactional
     public void deductLinkedWallet(final long linkedWalletId, final Point point) {
-        LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
+        LinkedWallet linkedWallet = linkedWalletFetcher.fetchByIdForUpdate(linkedWalletId);
         linkedWallet.deductPoint(point);
     }
 }
