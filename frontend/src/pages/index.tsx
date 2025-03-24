@@ -13,7 +13,7 @@ const Home: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalCardsCount = cards.length + 1;
   const navigate = useNavigate();
- const { theme } = useThemeStore();
+  const { theme } = useThemeStore();
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
@@ -97,7 +97,7 @@ const Home: React.FC = () => {
       {/* 지문 아이콘 및 결제 문구 */}
       <footer className="flex flex-col items-center p-4 mt-10 min-h-[120px]">
       <Icon
-            name={theme === 'dark' ? 'fingerprintDarkIcon' : 'fingerprint'}
+            name={theme === 'dark' ? 'fingerprintDarkIcon' : 'fingerprintIcon'}
             width={78}
             height={78}
             alt="메뉴"
