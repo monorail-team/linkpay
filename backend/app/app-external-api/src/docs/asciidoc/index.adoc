@@ -11,6 +11,10 @@ endif::[]
 = LinkPay REST API 문서
 
 == Auth API
+
 include::auth.adoc[]
+include::member.adoc[]
 include::wallet.adoc[]
 include::linkcard.adoc[]
+include::linkedmember.adoc[]
+include::linkedwallet.adoc[]

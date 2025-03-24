@@ -12,5 +12,6 @@ public record KakaoUserResponse(
     }
 
     @Builder
-    public record KakaoAccount(String email) { }
+    public record KakaoAccount(String email) {
+    }
 }

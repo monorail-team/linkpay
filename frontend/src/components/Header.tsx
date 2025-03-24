@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({
       {headerType === 'back' ? (
         <button onClick={onBackClick} className="text-lg focus:outline-none">
           <Icon
-            name={theme === 'dark' ? 'backDarkIcon' : 'back'}
+            name={theme === 'dark' ? 'backDarkIcon' : 'backIcon'}
             width={24}
             height={24}
             alt="뒤로가기"
@@ -40,11 +40,11 @@ const Header: React.FC<HeaderProps> = ({
             onClick={toggleTheme}
             className="mr-2 text-sm focus:outline-none p-2 border rounded dark:text-gray-300"
           >
-            <Icon name="theme" width={24} height={24} alt="다크 모드 토글" />
+            <Icon name="themeIcon" width={24} height={24} alt="다크 모드 토글" />
           </button>
           <button onClick={onMenuClick} className="text-lg focus:outline-none">
           <Icon
-            name={theme === 'dark' ? 'menuDarkIcon' : 'menu'}
+            name={theme === 'dark' ? 'menuDarkIcon' : 'menuIcon'}
             width={24}
             height={24}
             alt="메뉴"

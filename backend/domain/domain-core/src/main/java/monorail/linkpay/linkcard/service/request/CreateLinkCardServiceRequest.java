@@ -1,9 +1,8 @@
 package monorail.linkpay.linkcard.service.request;
 
+import java.time.LocalDate;
 import lombok.Builder;
 import monorail.linkpay.common.domain.Point;
-
-import java.time.LocalDate;
 
 @Builder
 public record CreateLinkCardServiceRequest(

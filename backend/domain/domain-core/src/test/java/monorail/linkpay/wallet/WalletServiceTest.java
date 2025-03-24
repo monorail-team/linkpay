@@ -1,28 +1,25 @@
 package monorail.linkpay.wallet;
 
-import jakarta.persistence.OptimisticLockException;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.wallet.domain.Wallet;
+import monorail.linkpay.wallet.dto.WalletResponse;
 import monorail.linkpay.wallet.repository.WalletHistoryRepository;
 import monorail.linkpay.wallet.repository.WalletRepository;
-import monorail.linkpay.wallet.dto.WalletResponse;
 import monorail.linkpay.wallet.service.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class WalletServiceTest extends IntegrationTest {
 
@@ -161,17 +158,16 @@ class WalletServiceTest extends IntegrationTest {
 
     private Wallet createWallet(Member member) {
         return Wallet.builder()
-            .id(1L)
-            .point(new Point(0))
-            .member(member)
-            .build();
+                .id(1L)
+                .member(member)
+                .build();
     }
 
     private Member createMember() {
         return Member.builder()
-            .id(1L)
-            .email("linkpay@gmail.com")
-            .username("link1")
-            .build();
+                .id(1L)
+                .email("linkpay@gmail.com")
+                .username("link1")
+                .build();
     }
 }

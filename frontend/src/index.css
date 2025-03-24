@@ -40,3 +40,9 @@ code {
   background-color: #65558F;
   border-radius: 50%;
 }
+
+.rdp-root {
+  --rdp-day-height: 10px;  /* 날짜 셀 높이를 36px로 */
+  --rdp-day-width: 10px;   /* 날짜 셀 너비를 36px로 */
+  font-size: 16px;         /* 달력 전체 글자 크기를 16px로 */
+}

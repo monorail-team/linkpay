@@ -14,17 +14,19 @@ import cissorsIcon from '@/assets/icons/cissors.png';
 import cissorsDarkIcon from '@/assets/icons/cissors-darkmode.png';
 import personIcon from '@/assets/icons/person.png';
 import personDarkIcon from '@/assets/icons/person-drakmode.png';
-
+import calandarIcon from '@/assets/icons/calendar.png';
+import canceltextIcon from '@/assets/icons/cancel-text.png';
+import calendarDarkIcon from '@/assets/icons/calendar-darkmode.png';
+import canceltextDarkIcon from '@/assets/icons/cancel-text-darkmode.png';
 // 아이콘 매핑: icon 이름과 해당 파일 경로를 매핑합니다.
 // 만약 추가 아이콘이 있다면 이 객체에 추가하면 됩니다.
 const iconMap: { [key: string]: string } = {
-  fingerprint: fingerprintIcon,
+  fingerprintIcon: fingerprintIcon,
   fingerprintDarkIcon: fingerprintDarkIcon,
-  menu: menuIcon,
+  menuIcon: menuIcon,
   menuDarkIcon: menuDarkIcon,
-  back: backIcon,
+  backIcon: backIcon,
   backDarkIcon: backDarkIcon,
-  theme: theme,
   arrowright: arrowRightIcon,
   arrowleft: arrowLeftIcon,
   closeIcon: closeIcon,
@@ -32,7 +34,14 @@ const iconMap: { [key: string]: string } = {
   personIcon: personIcon,
   personDarkIcon: personDarkIcon,
   cissorsIcon: cissorsIcon,
-  cissorsDarkIcon: cissorsDarkIcon
+  cissorsDarkIcon: cissorsDarkIcon,
+  themeIcon: theme,
+  arrowrightIcon: arrowRightIcon,
+  arrowleftIcon: arrowLeftIcon,
+  calandarIcon: calandarIcon,
+  calendarDarkIcon: calendarDarkIcon,
+  canceltextIcon: canceltextIcon,
+  canceltextDarkIcon: canceltextDarkIcon,
   // 예시: home: require('@/assets/icons/Home.png'),
   // 예시: search: require('@/assets/icons/Search.png'),
 };

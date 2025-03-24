@@ -2,13 +2,21 @@
 == 지갑
 
 === 지갑충전
+
 ==== HTTP Request
+
 include::{snippets}/wallets/charge/http-request.adoc[]
+
 ==== HTTP Response
+
 include::{snippets}/wallets/charge/http-response.adoc[]
 
 === 지갑조회
+
 ==== HTTP Request
+
 include::{snippets}/wallets/read/http-request.adoc[]
+
 ==== HTTP Response
+
 include::{snippets}/wallets/read/http-response.adoc[]

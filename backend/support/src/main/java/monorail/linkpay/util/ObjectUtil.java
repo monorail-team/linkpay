@@ -1,10 +1,9 @@
 package monorail.linkpay.util;
 
-import lombok.NoArgsConstructor;
+import static lombok.AccessLevel.PRIVATE;
 
 import java.util.Objects;
-
-import static lombok.AccessLevel.PRIVATE;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class ObjectUtil {

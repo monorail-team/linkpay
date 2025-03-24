@@ -1,14 +1,13 @@
 package monorail.linkpay.common.domain;
 
+import static lombok.AccessLevel.PROTECTED;
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
+
 import jakarta.persistence.Embeddable;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.exception.LinkPayException;
-
-import java.util.Objects;
-
-import static lombok.AccessLevel.PROTECTED;
-import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 
 @Getter
 @Embeddable
@@ -36,14 +35,14 @@ public class Point {
     }
 
     public Point multiply(final long value) {
-        if(value < 1) {
+        if (value < 1) {
             throw new LinkPayException(INVALID_REQUEST, "곱할 값은 1 이상이어야 합니다.");
         }
         return new Point(this.amount * value);
     }
 
     public Point divide(final long value) {
-        if(value < 1) {
+        if (value < 1) {
             throw new LinkPayException(INVALID_REQUEST, "나눌 값은 1 이상이어야 합니다.");
         }
         return new Point(this.amount / value);
@@ -51,8 +50,12 @@ public class Point {
 
     @Override
     public boolean equals(final Object object) {
-        if (this == object) return true;
-        if (!(object instanceof final Point point)) return false;
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof final Point point)) {
+            return false;
+        }
         return amount == point.amount;
     }
 

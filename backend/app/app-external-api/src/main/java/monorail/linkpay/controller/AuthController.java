@@ -1,14 +1,18 @@
 package monorail.linkpay.controller;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.auth.dto.KakaoLoginRequest;
 import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.auth.service.AuthService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequestMapping("/api/auth")

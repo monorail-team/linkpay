@@ -1,5 +1,7 @@
 package monorail.linkpay.member.domain;
 
+import static lombok.AccessLevel.PROTECTED;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,8 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
-
-import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "member")
 @Getter

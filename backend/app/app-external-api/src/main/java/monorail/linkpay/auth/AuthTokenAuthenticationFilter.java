@@ -1,21 +1,20 @@
 package monorail.linkpay.auth;
 
+import static monorail.linkpay.auth.AuthTokenAuthentication.unauthenticated;
+import static monorail.linkpay.util.ObjectUtil.isNull;
+import static monorail.linkpay.util.StringUtil.substringAfter;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-
-import static monorail.linkpay.auth.AuthTokenAuthentication.unauthenticated;
-import static monorail.linkpay.util.ObjectUtil.isNull;
-import static monorail.linkpay.util.StringUtil.substringAfter;
 
 @Slf4j
 public class AuthTokenAuthenticationFilter extends OncePerRequestFilter {
