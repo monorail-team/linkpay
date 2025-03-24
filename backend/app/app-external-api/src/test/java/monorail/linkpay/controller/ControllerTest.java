@@ -1,9 +1,15 @@
 package monorail.linkpay.controller;
 
-import monorail.linkpay.auth.service.AuthService;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
+import monorail.linkpay.auth.service.AuthService;
 import monorail.linkpay.linkcard.service.LinkCardService;
+import monorail.linkpay.linkedwallet.service.LinkedMemberService;
+import monorail.linkpay.linkedwallet.service.LinkedWalletService;
+import monorail.linkpay.member.service.MemberService;
 import monorail.linkpay.security.WithCustomUser;
 import monorail.linkpay.wallet.service.WalletHistoryService;
 import monorail.linkpay.wallet.service.WalletService;
@@ -16,13 +22,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-
 @WebMvcTest({
         AuthController.class,
+        MemberController.class,
         WalletController.class,
         LinkCardController.class,
+        LinkedMemberController.class,
+        LinkedWalletController.class,
 })
 @WithCustomUser
 @ExtendWith(RestDocumentationExtension.class)
@@ -37,6 +43,12 @@ public abstract class ControllerTest {
     protected WalletHistoryService walletHistoryService;
     @MockitoBean
     protected LinkCardService linkCardService;
+    @MockitoBean
+    protected MemberService memberService;
+    @MockitoBean
+    protected LinkedMemberService linkedMemberService;
+    @MockitoBean
+    protected LinkedWalletService linkedWalletService;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,

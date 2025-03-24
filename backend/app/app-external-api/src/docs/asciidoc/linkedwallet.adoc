@@ -1,0 +1,12 @@
+[[LinkedWallet]]
+== 링크지갑
+
+=== 링크지갑 생성
+
+==== HTTP Request
+
+include::{snippets}/linkedwallets/create/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/linkedwallets/create/http-response.adoc[]

@@ -2,8 +2,11 @@
 == 링크카드
 
 === 링크카드 생성
+
 ==== HTTP Request
+
 include::{snippets}/cards/create/http-request.adoc[]
-include::{snippets}/cards/create/request-body.adoc[]
+
 ==== HTTP Response
+
 include::{snippets}/cards/create/http-response.adoc[]

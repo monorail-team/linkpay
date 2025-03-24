@@ -1,10 +1,9 @@
 package monorail.linkpay.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import static io.micrometer.common.util.StringUtils.isEmpty;
 import static lombok.AccessLevel.PRIVATE;
+
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class StringUtil {

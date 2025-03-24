@@ -1,13 +1,13 @@
 package monorail.linkpay.exception;
 
-import lombok.Getter;
-import java.time.ZonedDateTime;
+import static java.time.ZonedDateTime.now;
 
-import static java.time.ZonedDateTime.*;
+import java.time.ZonedDateTime;
+import lombok.Getter;
 
 @Getter
 public class ExceptionResponse {
-
+    
     private final int code;
     private final String message;
     private final ZonedDateTime timestamp;

@@ -1,8 +1,7 @@
 package monorail.linkpay.auth;
 
-import org.springframework.security.core.GrantedAuthority;
-
 import java.util.Collection;
+import org.springframework.security.core.GrantedAuthority;
 
 public class AuthTokenAuthentication extends CustomAuthentication {
 

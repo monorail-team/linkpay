@@ -1,5 +1,7 @@
 package monorail.linkpay.acceptance;
 
+import static org.mockito.Mockito.when;
+
 import io.restassured.RestAssured;
 import monorail.linkpay.auth.dto.KakaoUserResponse;
 import monorail.linkpay.auth.kakao.KakaoOauthClient;
@@ -10,9 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.jdbc.Sql;
-
-import static org.mockito.Mockito.when;
 
 //@Sql(value = {
 //    "/data/truncate.sql",
@@ -38,8 +37,8 @@ public abstract class AcceptanceTest {
 
     private void setUpKakaoOauthMock() {
         when(mockKakaoOauthClient.authorize(KAKAO_OAUTH_CODE))
-            .thenReturn(ResponseEntity.ok(KakaoOauthResponse.of(KAKAO_OAUTH_ACCESS_TOKEN)));
+                .thenReturn(ResponseEntity.ok(KakaoOauthResponse.of(KAKAO_OAUTH_ACCESS_TOKEN)));
         when(mockKakaoOauthClient.fetchUser(KAKAO_OAUTH_ACCESS_TOKEN))
-            .thenReturn(ResponseEntity.ok(KakaoUserResponse.of("email@kakao.com")));
+                .thenReturn(ResponseEntity.ok(KakaoUserResponse.of("email@kakao.com")));
     }
 }

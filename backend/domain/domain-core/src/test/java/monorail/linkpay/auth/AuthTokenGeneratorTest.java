@@ -1,13 +1,13 @@
 package monorail.linkpay.auth;
 
+import static monorail.linkpay.token.TokenFixtures.tokenGenerator;
+
 import monorail.linkpay.auth.dto.AuthToken;
 import monorail.linkpay.auth.service.AuthTokenGenerator;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.token.TokenType;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static monorail.linkpay.token.TokenFixtures.tokenGenerator;
 
 class AuthTokenGeneratorTest {
 

@@ -1,16 +1,16 @@
 package monorail.linkpay.auth;
 
-import monorail.linkpay.auth.dto.LoginPrincipal;
-import monorail.linkpay.auth.service.KakaoLoginProcessor;
-import monorail.linkpay.auth.kakao.KakaoOauthClient;
-import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
-import monorail.linkpay.auth.dto.KakaoUserResponse;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.ResponseEntity;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import monorail.linkpay.auth.dto.KakaoUserResponse;
+import monorail.linkpay.auth.dto.LoginPrincipal;
+import monorail.linkpay.auth.kakao.KakaoOauthClient;
+import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
+import monorail.linkpay.auth.service.KakaoLoginProcessor;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseEntity;
 
 class KakaoLoginProcessorTest {
 

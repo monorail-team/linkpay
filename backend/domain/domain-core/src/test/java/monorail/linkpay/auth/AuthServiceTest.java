@@ -1,13 +1,18 @@
 package monorail.linkpay.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import monorail.linkpay.auth.dto.KakaoLoginRequest;
 import monorail.linkpay.auth.dto.KakaoUserResponse;
 import monorail.linkpay.auth.dto.LoginResponse;
+import monorail.linkpay.auth.kakao.KakaoOauthClient;
+import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import monorail.linkpay.auth.service.AuthService;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.exception.LinkPayException;
-import monorail.linkpay.auth.kakao.KakaoOauthClient;
-import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import org.junit.jupiter.api.Nested;
@@ -15,11 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 class AuthServiceTest extends IntegrationTest {
 

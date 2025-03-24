@@ -1,19 +1,19 @@
 package monorail.linkpay.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import monorail.linkpay.auth.dto.KakaoLoginRequest;
 import monorail.linkpay.auth.dto.LoginPrincipal;
 import monorail.linkpay.auth.dto.LoginRequest;
 import monorail.linkpay.auth.service.KakaoLoginProcessor;
 import monorail.linkpay.auth.service.LoginStrategyResolver;
-import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.exception.ExceptionCode;
-import monorail.linkpay.auth.dto.KakaoLoginRequest;
+import monorail.linkpay.exception.LinkPayException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class LoginStrategyResolverTest {
 
@@ -40,7 +40,8 @@ class LoginStrategyResolverTest {
     public void 지원하지_않는_전략인_경우_예외를_반환한다() {
         //given
         LoginStrategyResolver sut = new LoginStrategyResolver(Mockito.mock(KakaoLoginProcessor.class));
-        LoginRequest 지원하지_않는_로그인_요청 = new LoginRequest() {};
+        LoginRequest 지원하지_않는_로그인_요청 = new LoginRequest() {
+        };
 
         //when, then
         Assertions.assertThatThrownBy(() -> sut.resolve(지원하지_않는_로그인_요청))

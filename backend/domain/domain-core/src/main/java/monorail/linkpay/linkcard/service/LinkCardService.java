@@ -1,5 +1,8 @@
 package monorail.linkpay.linkcard.service;
 
+import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
+import static monorail.linkpay.linkcard.domain.CardType.OWNED;
+
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.CardColor;
@@ -11,12 +14,8 @@ import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.service.WalletFetcher;
-import monorail.linkpay.wallet.service.WalletHistoryRecorder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
-import static monorail.linkpay.linkcard.domain.CardType.OWNED;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +30,8 @@ public class LinkCardService {
     @Transactional
     public void create(Long creatorId, CreateLinkCardServiceRequest request) {
         Wallet wallet = walletFetcher.fetchByMemberId(creatorId);
-
         Member member = memberFetcher.fetchById(creatorId);
+
         linkCardRepository.save(LinkCard.builder()
                 .id(idGenerator.generate())
                 .cardColor(CardColor.getRandomColor())

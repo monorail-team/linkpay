@@ -1,5 +1,6 @@
 package monorail.linkpay.wallet.service;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.common.domain.Point;
@@ -8,8 +9,6 @@ import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.domain.WalletHistory;
 import monorail.linkpay.wallet.repository.WalletHistoryRepository;
-
-import java.time.LocalDateTime;
 
 @SupportLayer
 @RequiredArgsConstructor
@@ -23,12 +22,12 @@ public class WalletHistoryRecorder {
                        final Point remaining,
                        final TransactionType transactionType) {
         return walletHistoryRepository.save(WalletHistory.builder()
-            .id(idGenerator.generate())
-            .point(amount)
-            .remaining(remaining)
-            .wallet(wallet)
-            .createdAt(LocalDateTime.now())
-            .transactionType(transactionType)
-            .build()).getId();
+                .id(idGenerator.generate())
+                .point(amount)
+                .remaining(remaining)
+                .wallet(wallet)
+                .createdAt(LocalDateTime.now())
+                .transactionType(transactionType)
+                .build()).getId();
     }
 }
