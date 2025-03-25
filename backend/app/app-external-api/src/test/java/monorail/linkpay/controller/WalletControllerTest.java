@@ -1,6 +1,6 @@
 package monorail.linkpay.controller;
 
-import static monorail.linkpay.controller.ControllerFixture.CHARGE_REQUEST;
+import static monorail.linkpay.controller.ControllerFixture.WALLET_POINT_REQUEST;
 import static monorail.linkpay.controller.ControllerFixture.WALLET_RESPONSE;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
@@ -22,7 +22,7 @@ public class WalletControllerTest extends ControllerTest {
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer {access_token}")
-                .body(CHARGE_REQUEST)
+                .body(WALLET_POINT_REQUEST)
                 .when().patch("/api/wallets/charge")
                 .then().log().all()
                 .apply(document("wallets/charge"))

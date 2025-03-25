@@ -13,6 +13,8 @@ import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardType;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
+import monorail.linkpay.linkedwallet.dto.LinkedWalletResponse;
+import monorail.linkpay.linkedwallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.member.dto.MemberResponse;
 import monorail.linkpay.wallet.dto.WalletResponse;
 
@@ -20,32 +22,45 @@ public class ControllerFixture {
 
     public static final LoginResponse LOGIN_RESPONSE = new LoginResponse("accessToken");
 
-    public static final WalletPointRequest CHARGE_REQUEST = new WalletPointRequest(50000);
+    public static final MemberResponse MEMBER_RESPONSE = new MemberResponse(
+            1L, "link1", "linked@gmail.com");
+    public static final WalletResponse WALLET_RESPONSE = new WalletResponse(50000);
+
+    public static final WalletPointRequest WALLET_POINT_REQUEST = new WalletPointRequest(50000);
 
     public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
             "테스트카드", 500000, LocalDate.of(2025, 5, 25));
 
     public static final LinkCardRegistRequest LINK_CARD_REGISTRATION_REQUEST = new LinkCardRegistRequest(List.of(1L));
 
-    public static final MemberResponse MEMBER_RESPONSE = new MemberResponse(1L, "link1", "linked@gmail.com");
-
-    public static final WalletResponse WALLET_RESPONSE = new WalletResponse(50000);
+    public static final LinkedMemberCreateRequest LINKED_MEMBER_CREATE_REQUEST = new LinkedMemberCreateRequest(1L);
 
     public static final LinkedWalletCreateRequest LINKED_WALLET_CREATE_REQUEST = new LinkedWalletCreateRequest(
             "링크지갑1", Set.of(1L, 2L, 3L));
 
-    public static final LinkedMemberCreateRequest LINKED_MEMBER_CREATE_REQUEST = new LinkedMemberCreateRequest(1L);
-
-    public static final LinkCardResponse LINK_CARD_RESPONSE = new LinkCardResponse(1L, 500000L,
+    public static final LinkCardResponse LINK_CARD_RESPONSE_1 = new LinkCardResponse(1L, 500000L,
             CardType.OWNED.name(),
             CardColor.getRandomColor().getHexCode(),
-            "test card",
+            "test card1",
             LocalDate.now().plusMonths(1),
             0L);
 
-    public static final LinkCardsResponse LINK_CARDS_RESPONSE = getLinkCardsResponse(List.of(LINK_CARD_RESPONSE));
+    public static final LinkCardResponse LINK_CARD_RESPONSE_2 = new LinkCardResponse(1L, 500000L,
+            CardType.OWNED.name(),
+            CardColor.getRandomColor().getHexCode(),
+            "test card2",
+            LocalDate.now().plusMonths(1),
+            0L);
 
-    public static LinkCardsResponse getLinkCardsResponse(List<LinkCardResponse> linkCardResponse) {
-        return new LinkCardsResponse(linkCardResponse, false);
-    }
+    public static final LinkCardsResponse LINK_CARDS_RESPONSE = new LinkCardsResponse(
+            List.of(LINK_CARD_RESPONSE_1, LINK_CARD_RESPONSE_2), false);
+
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_1 = new LinkedWalletResponse(1L, "링크지갑1", 40000L);
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_2 = new LinkedWalletResponse(2L, "링크지갑2", 50000L);
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_3 = new LinkedWalletResponse(3L, "링크지갑3", 60000L);
+
+    public static final LinkedWalletsResponse LINKED_WALLETS_RESPONSE = new LinkedWalletsResponse(
+            List.of(LINKED_WALLET_RESPONSE_1, LINKED_WALLET_RESPONSE_2, LINKED_WALLET_RESPONSE_3),
+            false
+    );
 }
