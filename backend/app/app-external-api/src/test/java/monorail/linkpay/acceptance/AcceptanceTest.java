@@ -12,12 +12,12 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.jdbc.Sql;
 
-//@Sql(value = {
-//    "/data/truncate.sql",
-//    "/data/member.sql",
-//    "/data/wallet.sql"
-//})
+@Sql(value = {
+        "/data/truncate.sql",
+        "/data/member.sql",
+})
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public abstract class AcceptanceTest {
 

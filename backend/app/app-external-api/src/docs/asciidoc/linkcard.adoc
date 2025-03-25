@@ -21,12 +21,32 @@ include::{snippets}/cards/read/http-request.adoc[]
 
 include::{snippets}/cards/read/http-response.adoc[]
 
-=== 등록안된 링크카드 조회
+=== 결제카드로 등록안된 링크카드 조회
 
 ==== HTTP Request
 
-include::{snippets}/cards/read/unregister/http-request.adoc[]
+include::{snippets}/cards/read/deactivate/http-request.adoc[]
 
 ==== HTTP Response
 
-include::{snippets}/cards/read/unregister/http-response.adoc[]
+include::{snippets}/cards/read/deactivate/http-response.adoc[]
+
+=== 결제카드로 등록된 링크카드 조회
+
+==== HTTP Request
+
+include::{snippets}/cards/read/activate/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/read/activate/http-response.adoc[]
+
+=== 결제카드로 등록
+
+==== HTTP Request
+
+include::{snippets}/cards/activate/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/activate/http-response.adoc[]
