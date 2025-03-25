@@ -16,11 +16,6 @@ import monorail.linkpay.linkcard.service.request.CreateLinkCardServiceRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 public class LinkCardServiceTest extends IntegrationTest {
 
     @Autowired
@@ -70,7 +65,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkCardService.create(member.getId(), request);
 
         // when
-        LinkCardsResponse response = linkCardService.readUnregister(member.getId(), null, 10);
+        LinkCardsResponse response = linkCardService.readByState(member.getId(), null, 10, "unregistered");
 
         // then
         assertThat(response.linkCards()).hasSize(1);
@@ -81,7 +76,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         // given
         CreateLinkCardServiceRequest request = createCard(LocalDate.now().plusDays(1));
         linkCardService.create(member.getId(), request);
-        LinkCardsResponse unregisteredCards = linkCardService.readUnregister(member.getId(), null, 10);
+        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, "unregistered");
 
         // when
         linkCardService.registLinkCard(List.of(unregisteredCards.linkCards().getFirst().id()));
@@ -89,6 +84,21 @@ public class LinkCardServiceTest extends IntegrationTest {
         // then
         LinkCard result = linkCardRepository.findByMember(member).orElseThrow();
         assertThat(result.getState()).isEqualTo(CardState.REGISTERED);
+    }
+
+    @Test
+    void 결제카드로_등록된_링크카드를_조회한다() {
+        // given
+        CreateLinkCardServiceRequest request = createCard(LocalDate.now().plusDays(1));
+        linkCardService.create(member.getId(), request);
+        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, "unregistered");
+        linkCardService.registLinkCard(List.of(unregisteredCards.linkCards().getFirst().id()));
+
+        // when
+        LinkCardsResponse registeredCards = linkCardService.readByState(member.getId(), null, 10, "registered");
+
+        // then
+        assertThat(registeredCards.linkCards()).hasSize(1);
     }
 
     private static CreateLinkCardServiceRequest createCard(LocalDate date) {

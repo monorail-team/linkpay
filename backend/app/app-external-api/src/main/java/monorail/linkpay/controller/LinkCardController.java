@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,11 +41,12 @@ public class LinkCardController {
         return ResponseEntity.ok(linkCardService.read(principal.memberId(), lastId, size));
     }
 
-    @GetMapping("/deactivate")
-    public ResponseEntity<LinkCardsResponse> unregisterLinkCard(@AuthenticationPrincipal final AuthPrincipal principal,
-                                                                @RequestParam(required = false) final Long lastId,
-                                                                @RequestParam(defaultValue = "10") final int size) {
-        return ResponseEntity.ok(linkCardService.readUnregister(principal.memberId(), lastId, size));
+    @GetMapping("/{state}")
+    public ResponseEntity<LinkCardsResponse> getLinkCardsByState(@AuthenticationPrincipal final AuthPrincipal principal,
+                                                                 @RequestParam(required = false) final Long lastId,
+                                                                 @RequestParam(defaultValue = "10") final int size,
+                                                                 @PathVariable final String state) {
+        return ResponseEntity.ok(linkCardService.readByState(principal.memberId(), lastId, size, state));
     }
 
     @PatchMapping("/activate")

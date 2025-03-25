@@ -68,11 +68,11 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
                 }),
                 dynamicTest("생성한 카드 중 결제카드로 등록되지 않은 카드를 조회한다", () -> {
-                    ExtractableResponse<Response> response = 등록되지_않은_카드_조회(accessToken);
+                    ExtractableResponse<Response> response = 등록된_카드_조회(accessToken);
                     unregisteredLinkCardsResponse.set(response.as(LinkCardsResponse.class));
                     assertAll(
                             () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                            () -> assertThat(unregisteredLinkCardsResponse.get().linkCards()).hasSize(0)
+                            () -> assertThat(unregisteredLinkCardsResponse.get().linkCards()).hasSize(1)
                     );
                 })
         );
@@ -83,7 +83,11 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
     }
 
     private ExtractableResponse<Response> 등록되지_않은_카드_조회(String accessToken) {
-        return sendGetRequest("/api/cards/deactivate", accessToken);
+        return sendGetRequest("/api/cards/unregistered", accessToken);
+    }
+
+    private ExtractableResponse<Response> 등록된_카드_조회(String accessToken) {
+        return sendGetRequest("/api/cards/registered", accessToken);
     }
 
     private ExtractableResponse<Response> 링크카드_조회_요청(String accessToken) {
