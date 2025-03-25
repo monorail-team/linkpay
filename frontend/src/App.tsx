@@ -30,6 +30,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/callback/login/kakao" element={<KakaoCallback />} />
+          
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
