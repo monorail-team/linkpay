@@ -6,7 +6,7 @@ import Register from '@/pages/register';
 import MyWalletHistory from '@/pages/mywallet';
 import Login from '@/pages/login';
 import KakaoCallback from '@/pages/login/KakaoCallback';
-import CreateCardPage from '@/pages/createcardpage';
+import CreateCardPage from '@/pages/createcard';
 import { useThemeStore } from '@/store/themeStore';
 import PrivateRoute from './components/PrivateRoute';
 
