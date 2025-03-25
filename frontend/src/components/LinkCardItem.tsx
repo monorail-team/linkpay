@@ -1,12 +1,12 @@
 // src/components/LinkCardItem.tsx
 import React from 'react';
 import {Card} from '@/model/Card';
-type LinkCardItemProps = Pick<Card, 'cardName' | 'limitPrice' | 'expireAt'>;
+type LinkCardItemProps = Pick<Card, 'cardName' | 'limitPrice' | 'expiredAt'>;
 
 const LinkCardItem: React.FC<LinkCardItemProps> = ({
   cardName,
   limitPrice,
-  expireAt,
+  expiredAt,
 }) => {
   return (
     <div className="flex justify-between items-center h-full">
@@ -36,7 +36,7 @@ const LinkCardItem: React.FC<LinkCardItemProps> = ({
         {/* 만료일 값 (네 번째 줄) */}
         <div className="flex justify-between">
           <div className="w-1/2" /> {/* 왼쪽 빈 공간 */}
-          <div className="text-sm text-gray-500">{expireAt}</div>
+          <div className="text-sm text-gray-500">{expiredAt}</div>
         </div>
       </div>
     </div>

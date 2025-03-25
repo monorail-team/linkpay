@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/Icon';
 import { useThemeStore } from '@/store/themeStore';
 
@@ -14,7 +15,12 @@ const Header: React.FC<HeaderProps> = ({
   onMenuClick,
 }) => {
 
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useThemeStore();
+
+  const handleLinkPayClick = () => {
+    navigate('/');
+  };
 
   return (
     <header className="flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200 dark:bg-[#3b3838] dark:border-gray-700">
@@ -29,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({
           />
         </button>
       ) : (
-        <div className="text-xl font-bold text-gray-300  dark:text-white-500">LinkPay</div>
+        <div className="text-xl font-bold text-gray-300  dark:text-white-500" onClick={handleLinkPayClick}>LinkPay</div>
       )}
 
       {/* 메뉴 버튼이 있는 헤더 */}

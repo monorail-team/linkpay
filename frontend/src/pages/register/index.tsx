@@ -105,7 +105,7 @@ const Register: React.FC = () => {
                 <LinkCardItem
                   cardName={card.cardName}
                   limitPrice={card.limitPrice}
-                  expireAt={card.expiredAt}
+                  expiredAt={card.expiredAt}
                 />
               </div>
             </label>

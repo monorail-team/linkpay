@@ -19,7 +19,6 @@ import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
 public class WalletService {
 
     private final WalletRepository walletRepository;
-    private final WalletHistoryRecorder walletHistoryRecorder;
     private final WalletFetcher walletFetcher;
     private final IdGenerator idGenerator;
 
@@ -40,13 +39,11 @@ public class WalletService {
     public void charge(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(memberId);
         wallet.chargePoint(point);
-        walletHistoryRecorder.record(wallet, point, wallet.getPoint(), DEPOSIT); // todo 카프카 도입 후 이벤트로 던지기
     }
 
     @Transactional
     public void deduct(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(memberId);
         wallet.deductPoint(point);
-        walletHistoryRecorder.record(wallet, point, wallet.getPoint(), WITHDRAWAL);
     }
 }
