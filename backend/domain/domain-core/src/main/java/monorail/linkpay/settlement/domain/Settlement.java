@@ -1,6 +1,20 @@
 package monorail.linkpay.settlement.domain;
 
-import jakarta.persistence.*;
+import static jakarta.persistence.EnumType.STRING;
+import static lombok.AccessLevel.PROTECTED;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,11 +23,6 @@ import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkedwallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.Wallet;
-
-import java.time.LocalDateTime;
-
-import static jakarta.persistence.EnumType.STRING;
-import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "settlement")
 @Getter
@@ -26,22 +35,21 @@ public class Settlement {
     @Column(name = "settle_id")
     private Long id;
 
-    @Column(nullable = true)
     private String merchantName;
 
     @Embedded
     @AttributeOverrides(
-        @AttributeOverride(
-            name = "amount",
-            column = @Column(name = "amount", nullable = false, updatable = false))
+            @AttributeOverride(
+                    name = "amount",
+                    column = @Column(name = "amount", nullable = false, updatable = false))
     )
     private Point amount;
 
     @Embedded
     @AttributeOverrides(
-        @AttributeOverride(
-            name = "amount",
-            column = @Column(name = "remaining", nullable = false, updatable = false))
+            @AttributeOverride(
+                    name = "amount",
+                    column = @Column(name = "remaining", nullable = false, updatable = false))
     )
     private Point remaining;
 
@@ -56,11 +64,11 @@ public class Settlement {
     @Column(nullable = false, updatable = false)
     private LocalDateTime settleDate;
 
-    @JoinColumn(name = "link_card_id", nullable = true)
+    @JoinColumn(name = "link_card_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private LinkCard linkCard;
 
-    @JoinColumn(name = "wallet_id", nullable = true)
+    @JoinColumn(name = "wallet_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Wallet wallet;
 

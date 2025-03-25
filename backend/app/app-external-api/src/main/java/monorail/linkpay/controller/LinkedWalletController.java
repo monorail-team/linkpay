@@ -28,7 +28,7 @@ public class LinkedWalletController {
     private final LinkedWalletService linkedWalletService;
 
     @GetMapping
-    public ResponseEntity<LinkedWalletsResponse> getLinkedWallets(@RequestParam final Long lastId,
+    public ResponseEntity<LinkedWalletsResponse> getLinkedWallets(@RequestParam(required = false) final Long lastId,
                                                                   @RequestParam(defaultValue = "10") final int size,
                                                                   @AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(linkedWalletService.readLinkedWallets(principal.memberId(), lastId, size));
