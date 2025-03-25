@@ -1,7 +1,7 @@
 export interface Card {
     id: number;
     cardName: string;
-    expireAt: string;
+    expiredAt: string;
     usedpoint: number;
     limitPrice: number;
     cardColor: string;

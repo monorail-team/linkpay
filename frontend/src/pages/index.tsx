@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { useNavigate } from 'react-router-dom';
+
 import Header from '@/components/Header';
 import CardComponent from '@/components/Card';
 import Icon from '@/components/Icon';
-import { wallets } from '@/mocks/wallets';
 import AddLinkCard from '@/components/AddLinkCard';
+import MenuModal from '@/modal/MenuModal';
 import { useThemeStore } from '@/store/themeStore';
 import { Card } from '@/model/Card';
 import axios from 'axios';
@@ -13,9 +14,20 @@ import axios from 'axios';
 const Home: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cards, setCards] = useState<Card[]>([]);
+  const [walletInfo, setWalletInfo] = useState<{ amount: number } | null>(null);
   const navigate = useNavigate();
   const { theme } = useThemeStore();
 
+
+  const [showMenu, setShowMenu] = useState(false);
+  
+    const handleMenuClick = () => {
+      setShowMenu(true);
+    };
+  
+    const handleMenuClose = () => {
+      setShowMenu(false);
+    };
 
   // 카드 API 호출
   useEffect(() => {
@@ -26,7 +38,7 @@ const Home: React.FC = () => {
           console.error('accessToken이 없습니다.');
           return;
         }
-        const response = await axios.get('http://localhost:8080/api/cards', {
+        const response = await axios.get('http://localhost:8080/api/cards/registered', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const cardsData = response.data.linkCards as Card[];
@@ -36,6 +48,27 @@ const Home: React.FC = () => {
       }
     };
     fetchCards();
+  }, []);
+
+
+   // 지갑 API 호출
+   useEffect(() => {
+    const fetchWallet = async () => {
+      try {
+        const token = sessionStorage.getItem('accessToken');
+        if (!token) {
+          console.error('accessToken이 없습니다.');
+          return;
+        }
+        const response = await axios.get('http://localhost:8080/api/wallets', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setWalletInfo(response.data);
+      } catch (error) {
+        console.error('지갑 정보를 불러오는데 실패했습니다.', error);
+      }
+    };
+    fetchWallet();
   }, []);
 
   //카드의 개수
@@ -57,18 +90,6 @@ const Home: React.FC = () => {
   const cardTotalWidthPercent = 110; // 카드 너비 78% + gap 3.5% = 81.5%
   const translatePercent = containerPositionPercent - currentIndex * cardTotalWidthPercent;
 
-  // 현재 카드가 있으면, 카드 타입에 따라 지갑 정보 추출
-  let walletInfo: { remainingPoints: number } | undefined = undefined;
-  if (currentIndex < cards.length) {
-    const currentCard = cards[currentIndex];
-    if (currentCard.cardType === 'SHARED' && currentCard.linkedWalletId) {
-      // SHARED인 경우 linkedWalletId로 연결된 지갑 정보 조회
-      walletInfo = wallets.find(wallet => wallet.id === currentCard.linkedWalletId);
-    } else {
-      // OWNED인 경우 내 지갑 정보
-      walletInfo = wallets.find(wallet => wallet.type === currentCard.cardType);
-    }
-  }
 
 
 
@@ -79,7 +100,8 @@ const Home: React.FC = () => {
 
   return (
     <div className='dark:bg-[#3b3838] overflow-hidden'>
-    <Header headerType="menu" onMenuClick={() => console.log('메뉴 클릭')} />
+    <Header headerType="menu" onMenuClick={handleMenuClick} />
+      {showMenu && <MenuModal onClose={handleMenuClose} />}
 
     <div className="relative w-4/5 max:w-[456px] mx-auto  mt-20 rounded-lg">
       <div className='p-4 
@@ -116,9 +138,9 @@ const Home: React.FC = () => {
 
             {/* my link 섹션 */}
             <div className="flex flex-col flex-1 items-center justify-center mt-10 min-h-[80px]">
-              {currentIndex < cards.length && walletInfo ? (
+              {walletInfo?.amount !== undefined ?(
                 <div className="text-2xl font-medium mb-2 text-center dark:text-white">
-                  지갑 잔액 {walletInfo.remainingPoints.toLocaleString()} 원
+                  지갑 잔액 {walletInfo.amount.toLocaleString()} 원
                 </div>
               ) : 
               (
