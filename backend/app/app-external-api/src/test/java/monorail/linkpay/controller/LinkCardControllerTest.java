@@ -1,9 +1,15 @@
 package monorail.linkpay.controller;
 
+import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_CREATE_REQUEST;
+import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_REGISTRATION_REQUEST;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 
 import monorail.linkpay.linkcard.service.request.CreateLinkCardServiceRequest;
@@ -12,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 public class LinkCardControllerTest extends ControllerTest {
-
 
     @Test
     void 링크카드를_생성한다() {
@@ -26,5 +31,40 @@ public class LinkCardControllerTest extends ControllerTest {
                 .then().log().all()
                 .apply(document("cards/create"))
                 .statusCode(HttpStatus.CREATED.value());
+    }
+
+    @Test
+    void 보유한_링크카드를_조회한다() {
+        when(linkCardService.read(anyLong(), nullable(Long.class), eq(10))).thenReturn(LINK_CARDS_RESPONSE);
+
+        docsGiven.header("Authorization", "Bearer {access_token}")
+                .when().get("/api/cards")
+                .then().log().all()
+                .apply(document("cards/read"))
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void 보유한_링크카드_중_등록안된_링크카드를_조회한다() {
+        when(linkCardService.readUnregister(anyLong(), nullable(Long.class), eq(10))).thenReturn(LINK_CARDS_RESPONSE);
+
+        docsGiven.header("Authorization", "Bearer {access_token}")
+                .when().get("/api/cards/deactivate")
+                .then().log().all()
+                .apply(document("cards/read/deactivate"))
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void 링크카드를_결제카드로_등록한다() {
+        doNothing().when(linkCardService).registLinkCard(anyList());
+
+        docsGiven.contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer {access_token}")
+                .body(LINK_CARD_REGISTRATION_REQUEST)
+                .when().patch("/api/cards/activate")
+                .then().log().all()
+                .apply(document("cards/activate"))
+                .statusCode(HttpStatus.NO_CONTENT.value());
     }
 }

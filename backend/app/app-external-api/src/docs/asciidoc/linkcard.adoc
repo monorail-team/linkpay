@@ -10,3 +10,33 @@ include::{snippets}/cards/create/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/cards/create/http-response.adoc[]
+
+=== 링크카드 조회
+
+==== HTTP Request
+
+include::{snippets}/cards/read/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/read/http-response.adoc[]
+
+=== 등록안된 링크카드 조회
+
+==== HTTP Request
+
+include::{snippets}/cards/read/deactivate/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/read/deactivate/http-response.adoc[]
+
+=== 결제카드로 등록
+
+==== HTTP Request
+
+include::{snippets}/cards/activate/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/activate/http-response.adoc[]

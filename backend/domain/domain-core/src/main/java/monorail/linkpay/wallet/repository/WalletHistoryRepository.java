@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
 public interface WalletHistoryRepository extends JpaRepository<WalletHistory, Long> {
 
     @Query("SELECT w FROM WalletHistory w " +
-            "WHERE w.id = :walletId " +
+            "WHERE w.wallet.id = :walletId " +
             "AND (:lastId IS NULL OR w.id < :lastId) " +
-            "ORDER BY w.createdAt DESC")
+            "ORDER BY w.id DESC")
     Slice<WalletHistory> findByWalletIdWithLastId(@Param("walletId") Long walletId,
                                                   @Param("lastId") Long lastId,
                                                   Pageable pageable

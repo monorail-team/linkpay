@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 import Home from '@/pages';
 import Register from '@/pages/register';
-import { useThemeStore } from '@/store/themeStore';
 import MyWalletHistory from '@/pages/mywallet';
 import Login from '@/pages/login';
 import KakaoCallback from '@/pages/login/KakaoCallback';
+import CreateCardPage from '@/pages/createcardpage';
+import { useThemeStore } from '@/store/themeStore';
 
 const App: React.FC = () => {
 
@@ -30,6 +32,8 @@ const App: React.FC = () => {
           <Route path="/mywallethistory" element={<MyWalletHistory />} />
           <Route path="/login" element={<Login />} />
           <Route path="/callback/oauth/kakao" element={<KakaoCallback />} />
+          <Route path="/mywallet" element={<MyWalletHistory />} />
+          <Route path="/createcard" element={<CreateCardPage />} />
         </Routes>
       </Router>
     </div>
