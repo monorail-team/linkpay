@@ -64,7 +64,7 @@ public class Settlement {
     @ManyToOne(fetch = FetchType.LAZY)
     private Wallet wallet;
 
-    @JoinColumn(name = "linked_member_id", nullable = false)
+    @JoinColumn(name = "linked_member_id", nullable = true)
     @ManyToOne(fetch = FetchType.LAZY)
     private LinkedMember linkedMember;
 

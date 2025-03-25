@@ -5,7 +5,9 @@ import static org.springframework.http.HttpStatus.CREATED;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
+import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
+import monorail.linkpay.controller.request.LinkCardPayRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
@@ -52,6 +54,17 @@ public class LinkCardController {
     @PatchMapping("/activate")
     public ResponseEntity<Void> registLinkCard(@Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest) {
         linkCardService.registLinkCard(linkCardRegistRequest.linkCardIds());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/pay")
+    public ResponseEntity<Void> pay(@AuthenticationPrincipal final AuthPrincipal principal,
+                                    @Valid @RequestBody final LinkCardPayRequest linkCardPayRequest) {
+        linkCardService.pay(
+                principal.memberId(),
+                new Point(linkCardPayRequest.amount()),
+                linkCardPayRequest.linkCardId(),
+                linkCardPayRequest.merchantName());
         return ResponseEntity.noContent().build();
     }
 }
