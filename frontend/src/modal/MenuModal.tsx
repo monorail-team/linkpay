@@ -15,7 +15,7 @@ const MenuModal: React.FC<MenuModalProps> = ({ onClose }) => {
     <div
       className={`fixed inset-0 z-50 flex items-start justify-center bg-opacity-30 ${theme === 'dark' ? 'dark' : ''}`}>
       <div
-        className="w-full max-w-sm bg-white dark:bg-[#3B3838] text-black dark:text-white h-full rounded-lg overflow-hidden">
+        className="w-full max-w-md mx-auto h-full bg-white dark:bg-[#3B3838] text-black dark:text-white rounded-lg overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4">
           <div className="text-xl font-bold text-gray-300 dark:text-white-500">LinkPay</div>
