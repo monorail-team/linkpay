@@ -6,27 +6,31 @@ import MenuModal from '@/modal/MenuModal';
 import { MyWalletHistory } from '@/model/MyWalletHistory';
 import { walletData } from '@/mocks/walletData';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const MyWallet: React.FC = () => {
   const [showChargeModal, setShowChargeModal] = useState(false);
-  const [ setWalletBalance] = useState(walletData.availablePoint);
+  const [walletBalance, setWalletBalance] = useState(walletData.availablePoint);
 
   // 충전 API 호출 함수
   const handleCharge = async (amount: number) => {
     try {
-      const accessToken = '사용자_토큰_여기'; 
-      const response = await fetch('/api/wallets/charge', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ amount }),
-      });
+      const token = sessionStorage.getItem('accessToken');
+      const response = await axios.patch('http://localhost:8080/api/wallets/charge', 
+        { amount: amount },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          }
+      );
       if (response.status === 204) {
         // API 호출 성공 시 잔액 업데이트 및 모달 닫기
         setWalletBalance(prev => prev + amount);
+        console.log('충전 성공');
         setShowChargeModal(false);
+        navigate('/mywallet');
       } else {
         alert('충전에 실패했습니다.');
       }
