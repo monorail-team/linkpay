@@ -4,19 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDate;
+import java.util.List;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
-import monorail.linkpay.linkcard.repository.LinkCardRepository;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.linkcard.service.request.CreateLinkCardServiceRequest;
-import monorail.linkpay.member.domain.Member;
-import monorail.linkpay.member.repository.MemberRepository;
-import monorail.linkpay.wallet.repository.WalletRepository;
-import monorail.linkpay.wallet.service.WalletService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,29 +20,6 @@ public class LinkCardServiceTest extends IntegrationTest {
 
     @Autowired
     private LinkCardService linkCardService;
-
-    @Autowired
-    private LinkCardRepository linkCardRepository;
-
-    @Autowired
-    private WalletService walletService;
-
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private WalletRepository walletRepository;
-
-    private Member member;
-
-    @BeforeEach
-    void setUp() {
-        linkCardRepository.deleteAllInBatch();
-        walletRepository.deleteAllInBatch();
-        memberRepository.deleteAllInBatch();
-        member = memberRepository.save(createMember());
-        walletService.create(member);
-    }
 
     @Test
     void 내_지갑에서_카드를_생성한다() {
@@ -92,10 +65,40 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkCardService.create(member.getId(), request);
 
         // when
-        LinkCardsResponse response = linkCardService.readUnregister(member.getId(), null, 10);
+        LinkCardsResponse response = linkCardService.readByState(member.getId(), null, 10, "unregistered");
 
         // then
         assertThat(response.linkCards()).hasSize(1);
+    }
+
+    @Test
+    void 보유한_링크카드_중_일부를_결제카드로_등록한다() {
+        // given
+        CreateLinkCardServiceRequest request = createCard(LocalDate.now().plusDays(1));
+        linkCardService.create(member.getId(), request);
+        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, "unregistered");
+
+        // when
+        linkCardService.registLinkCard(List.of(unregisteredCards.linkCards().getFirst().id()));
+
+        // then
+        LinkCard result = linkCardRepository.findByMember(member).orElseThrow();
+        assertThat(result.getState()).isEqualTo(CardState.REGISTERED);
+    }
+
+    @Test
+    void 결제카드로_등록된_링크카드를_조회한다() {
+        // given
+        CreateLinkCardServiceRequest request = createCard(LocalDate.now().plusDays(1));
+        linkCardService.create(member.getId(), request);
+        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, "unregistered");
+        linkCardService.registLinkCard(List.of(unregisteredCards.linkCards().getFirst().id()));
+
+        // when
+        LinkCardsResponse registeredCards = linkCardService.readByState(member.getId(), null, 10, "registered");
+
+        // then
+        assertThat(registeredCards.linkCards()).hasSize(1);
     }
 
     private static CreateLinkCardServiceRequest createCard(LocalDate date) {
@@ -103,14 +106,6 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .cardName("test card")
                 .expiratedAt(date)
                 .limitPrice(new Point(500000))
-                .build();
-    }
-
-    private Member createMember() {
-        return Member.builder()
-                .id(1L)
-                .email("linkpay@gmail.com")
-                .username("link1")
                 .build();
     }
 }
