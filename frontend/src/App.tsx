@@ -34,7 +34,6 @@ const App: React.FC = () => {
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/mywallethistory" element={<MyWalletHistory />} />
             <Route path="/mywallet" element={<MyWalletHistory />} />
             <Route path="/createcard" element={<CreateCardPage />} />
           </Route>
