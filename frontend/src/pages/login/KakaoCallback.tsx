@@ -1,6 +1,6 @@
-// src/pages/KakaoCallback.tsx
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 
 const KakaoCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -8,13 +8,33 @@ const KakaoCallback: React.FC = () => {
 
   useEffect(() => {
     const code = searchParams.get('code');
-    console.log('발급받은 코드=' + code);
     if (!code) {
       return;
     }
-    // todo 실제 로그인 연결 시, 로그인 된 사용자는 뒤로가기 못하도록 로그인 체크 후 '/' 혹은 만료된 페이지로 보내는 코드 작성
-    navigate('/', { replace: true });
-  }, [searchParams]);
+    const fetchAccessToken = async () => {
+      try {
+        // POST 요청 시 body가 필요 없으면 null을 전달
+        const response = await axios.post(
+          `http://localhost:8080/api/auth/login/kakao?code=${code}`,
+          null,
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          }
+        );
+        const { accessToken } = response.data;
+        console.log('Access Token:', accessToken);
+        sessionStorage.setItem('accessToken', accessToken);
+        navigate('/', { replace: true });
+      } catch (error) {
+        console.error('로그인 실패:', error);
+        // 에러 처리 로직 추가 가능
+      }
+    };
+
+    fetchAccessToken();
+  }, [searchParams, navigate]);
 
   return (
     <div className="flex justify-center items-center h-screen text-white bg-black">

@@ -8,6 +8,7 @@ import Login from '@/pages/login';
 import KakaoCallback from '@/pages/login/KakaoCallback';
 import CreateCardPage from '@/pages/createcardpage';
 import { useThemeStore } from '@/store/themeStore';
+import PrivateRoute from './components/PrivateRoute';
 
 const App: React.FC = () => {
 
@@ -27,13 +28,15 @@ const App: React.FC = () => {
     <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto border">
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/mywallethistory" element={<MyWalletHistory />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/callback/oauth/kakao" element={<KakaoCallback />} />
-          <Route path="/mywallet" element={<MyWalletHistory />} />
-          <Route path="/createcard" element={<CreateCardPage />} />
+          <Route path="/callback/login/kakao" element={<KakaoCallback />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/mywallethistory" element={<MyWalletHistory />} />
+            <Route path="/mywallet" element={<MyWalletHistory />} />
+            <Route path="/createcard" element={<CreateCardPage />} />
+          </Route>
         </Routes>
       </Router>
     </div>
