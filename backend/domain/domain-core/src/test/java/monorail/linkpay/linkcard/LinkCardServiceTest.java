@@ -1,5 +1,6 @@
 package monorail.linkpay.linkcard;
 
+import static monorail.linkpay.linkcard.domain.CardState.REGISTERED;
 import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,12 +10,13 @@ import java.util.List;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.exception.LinkPayException;
-import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
 import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequest;
+import monorail.linkpay.linkedwallet.dto.LinkedWalletsResponse;
+import monorail.linkpay.linkedwallet.service.LinkedWalletService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +24,8 @@ public class LinkCardServiceTest extends IntegrationTest {
 
     @Autowired
     private LinkCardService linkCardService;
+    @Autowired
+    private LinkedWalletService linkedWalletService;
 
     @Test
     void 내_지갑에서_카드를_생성한다() {
@@ -35,18 +39,20 @@ public class LinkCardServiceTest extends IntegrationTest {
         assertThat(result).isNotNull();
     }
 
-//    @Test
-//    void 링크지갑에서_카드를_생성한다() {
-//        // given
-//        // todo: 링크 지갑 생성
-//        SharedLinkCardCreateServiceRequest request = createSharedCard(LocalDate.now().plusDays(1));
-//
-//        // when
-//        linkCardService.createShared(request);
-//
-//        LinkCard result = linkCardRepository.findByMember(member).orElseThrow();
-//        assertThat(result).isNotNull();
-//    }
+    @Test
+    void 링크지갑에서_카드를_생성한다() {
+        // given
+        linkedWalletService.createLinkedWallet(member.getId(), "링크지갑", null);
+        LinkedWalletsResponse walletRes = linkedWalletService.readLinkedWallets(member.getId(), null, 10);
+        SharedLinkCardCreateServiceRequest request = createSharedCard(LocalDate.now().plusDays(1),
+                walletRes.linkedWallets().getFirst().linkedWalletId(), member.getId());
+
+        // when
+        linkCardService.createShared(request);
+
+        LinkCard result = linkCardRepository.findByMember(member).orElseThrow();
+        assertThat(result).isNotNull();
+    }
 
     @Test
     void 카드만료일을_현재일_이전으로_설정시_오류가_발생한다() {
@@ -98,7 +104,7 @@ public class LinkCardServiceTest extends IntegrationTest {
 
         // then
         LinkCard result = linkCardRepository.findByMember(member).orElseThrow();
-        assertThat(result.getState()).isEqualTo(CardState.REGISTERED);
+        assertThat(result.getState()).isEqualTo(REGISTERED);
     }
 
     @Test
@@ -110,7 +116,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkCardService.registLinkCard(List.of(Long.parseLong(unregisteredCards.linkCards().getFirst().id())));
 
         // when
-        LinkCardsResponse registeredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED);
+        LinkCardsResponse registeredCards = linkCardService.readByState(member.getId(), null, 10, REGISTERED);
 
         // then
         assertThat(registeredCards.linkCards()).hasSize(1);
@@ -124,13 +130,13 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .build();
     }
 
-    private static SharedLinkCardCreateServiceRequest createSharedCard(LocalDate date) {
+    private static SharedLinkCardCreateServiceRequest createSharedCard(LocalDate date, long walletId, long memberId) {
         return SharedLinkCardCreateServiceRequest.builder()
                 .cardName("test card")
                 .expiratedAt(date)
                 .limitPrice(new Point(500000))
-                .memberIds(List.of(1L))
-                .linkedWalletId(1L)
+                .memberIds(List.of(memberId))
+                .linkedWalletId(walletId)
                 .build();
     }
 }

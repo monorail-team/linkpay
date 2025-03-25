@@ -4,33 +4,67 @@ import Icon from '@/components/Icon';
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import "react-day-picker/style.css";
 import { useThemeStore } from '@/store/themeStore';
-
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 const CreateCardPage: React.FC = () => {
   const [cardName, setCardName] = useState('');
   const [cardLimit, setCardLimit] = useState('');
   const [expireDate, setExpireDate] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
+  const navigate = useNavigate();
   const handleClearCardName = () => setCardName('');
   const handleClearCardLimit = () => setCardLimit('');
   const toggleCalendar = () => setIsCalendarOpen(prev => !prev);
   const { theme } = useThemeStore();
 
-  // 나중에 달력으로 대체할 선택 함수
+  // 달력 선택 함수수
   const handleDateSelect = (date: string) => {
     setExpireDate(date);
     setIsCalendarOpen(false);
   };
-
-
+  
   // 버튼 클릭
-  const handleRegister = () => {
-    console.log('등록하기 클릭', { cardName, cardLimit, expireDate });
+  const handleRegister = async () => {
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+      console.error('Access token not found');
+      return;
+    }
+
+    // 카드 한도 문자열에서 콤마 제거 후 숫자로 변환
+    const limitPrice = Number(cardLimit.replace(/,/g, ''));
+
+    // expireDate 문자열을 Date 객체로 변환 (날짜 형식에 따라 파싱이 달라질 수 있으므로 형식에 주의)
+    const dateObj = new Date(expireDate);
+    const year = dateObj.getFullYear();
+    const month = dateObj.getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
+    const day = dateObj.getDate();
+
+    const payload = {
+      cardName,
+      limitPrice,
+      expiredAt: [year, month, day],
+    };
+    console.log('payload:', payload);
+    try {
+      const response = await axios.post('http://localhost:8080/api/cards', payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (response.status === 201) {
+        // 카드 생성 성공 시 mywallet 페이지로 이동
+        navigate('/mywallet');
+      }
+    } catch (error) {
+      console.error('Failed to create card:', error);
+    }
   };
 
-  const isCardNameValid = cardName.length <= 10;
 
-  // 모든 필드가 입력되어야 버튼 활성화
+  const isCardNameValid = cardName.length <= 10;
   const isFormComplete = cardName && cardLimit && expireDate && isCardNameValid;
   const defaultClassNames = getDefaultClassNames();
 

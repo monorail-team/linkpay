@@ -1,7 +1,7 @@
 [[Wallet]]
 == 지갑
 
-=== 지갑충전
+=== 지갑 충전
 
 ==== HTTP Request
 
@@ -11,7 +11,17 @@ include::{snippets}/wallets/charge/http-request.adoc[]
 
 include::{snippets}/wallets/charge/http-response.adoc[]
 
-=== 지갑조회
+=== 지갑 차감
+
+==== HTTP Request
+
+include::{snippets}/wallets/deduct/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/wallets/deduct/http-response.adoc[]
+
+=== 지갑 조회
 
 ==== HTTP Request
 

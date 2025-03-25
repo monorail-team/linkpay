@@ -1,6 +1,6 @@
 package monorail.linkpay.controller;
 
-import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE;
+import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE_2;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_CREATE_REQUEST;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_REGISTRATION_REQUEST;
 import static monorail.linkpay.controller.ControllerFixture.SHARED_LINK_CARD_CREATE_REQUEST;
@@ -52,7 +52,7 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 보유한_링크카드를_조회한다() {
-        when(linkCardService.read(anyLong(), nullable(Long.class), eq(10))).thenReturn(LINK_CARDS_RESPONSE);
+        when(linkCardService.read(anyLong(), nullable(Long.class), eq(10))).thenReturn(LINK_CARDS_RESPONSE_2);
 
         docsGiven.header("Authorization", "Bearer {access_token}")
                 .when().get("/api/cards")
@@ -64,7 +64,7 @@ public class LinkCardControllerTest extends ControllerTest {
     @Test
     void 보유한_링크카드_중_등록안된_링크카드를_조회한다() {
         when(linkCardService.readByState(anyLong(), nullable(Long.class), eq(10), eq(UNREGISTERED))).thenReturn(
-                LINK_CARDS_RESPONSE);
+                LINK_CARDS_RESPONSE_2);
 
         docsGiven.header("Authorization", "Bearer {access_token}")
                 .when().get("/api/cards/unregistered")
@@ -89,7 +89,7 @@ public class LinkCardControllerTest extends ControllerTest {
     @Test
     void 결제카드로_등록된_링크카드를_조회한다() {
         when(linkCardService.readByState(anyLong(), nullable(Long.class), eq(10), eq(UNREGISTERED))).thenReturn(
-                LINK_CARDS_RESPONSE);
+                LINK_CARDS_RESPONSE_2);
 
         docsGiven.header("Authorization", "Bearer {access_token}")
                 .when().get("/api/cards/registered")
