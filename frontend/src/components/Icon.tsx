@@ -8,6 +8,12 @@ import backDarkIcon from '@/assets/icons/arrow-back-darkmode.png';
 import theme from '@/assets/icons/day-and-night.png';
 import arrowRightIcon from '@/assets/icons/arrow-right.png';
 import arrowLeftIcon from '@/assets/icons/arrow-left.png';
+import closeIcon from '@/assets/icons/x-close.png';
+import closeDarkIcon from '@/assets/icons/x-close-darkmode.png';
+import cissorsIcon from '@/assets/icons/cissors.png';
+import cissorsDarkIcon from '@/assets/icons/cissors-darkmode.png';
+import personIcon from '@/assets/icons/person.png';
+import personDarkIcon from '@/assets/icons/person-drakmode.png';
 import calandarIcon from '@/assets/icons/calendar.png';
 import canceltextIcon from '@/assets/icons/cancel-text.png';
 import calendarDarkIcon from '@/assets/icons/calendar-darkmode.png';
@@ -21,6 +27,14 @@ const iconMap: { [key: string]: string } = {
   menuDarkIcon: menuDarkIcon,
   backIcon: backIcon,
   backDarkIcon: backDarkIcon,
+  arrowright: arrowRightIcon,
+  arrowleft: arrowLeftIcon,
+  closeIcon: closeIcon,
+  closeDarkIcon: closeDarkIcon,
+  personIcon: personIcon,
+  personDarkIcon: personDarkIcon,
+  cissorsIcon: cissorsIcon,
+  cissorsDarkIcon: cissorsDarkIcon,
   themeIcon: theme,
   arrowrightIcon: arrowRightIcon,
   arrowleftIcon: arrowLeftIcon,

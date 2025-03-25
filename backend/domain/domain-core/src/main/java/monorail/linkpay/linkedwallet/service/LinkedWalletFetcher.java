@@ -19,9 +19,15 @@ public class LinkedWalletFetcher {
             throw new LinkPayException(NOT_FOUND_RESOURCE, "요청한 아이디에 해당하는 링크지갑이 존재하지 않습니다.");
         }
     }
-    
+
     public LinkedWallet fetchById(final Long id) {
         return linkedWalletRepository.findById(id)
+                .orElseThrow(() ->
+                        new LinkPayException(NOT_FOUND_RESOURCE, "요청한 아이디에 해당하는 링크지갑이 존재하지 않습니다."));
+    }
+
+    public LinkedWallet fetchByIdForUpdate(final Long id) {
+        return linkedWalletRepository.findByIdForUpdate(id)
                 .orElseThrow(() ->
                         new LinkPayException(NOT_FOUND_RESOURCE, "요청한 아이디에 해당하는 링크지갑이 존재하지 않습니다."));
     }

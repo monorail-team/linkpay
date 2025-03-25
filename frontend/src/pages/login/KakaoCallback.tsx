@@ -1,0 +1,46 @@
+import React, { useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import axios from 'axios';
+
+const KakaoCallback: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const code = searchParams.get('code');
+    if (!code) {
+      return;
+    }
+    const fetchAccessToken = async () => {
+      try {
+        // POST 요청 시 body가 필요 없으면 null을 전달
+        const response = await axios.post(
+          `http://localhost:8080/api/auth/login/kakao?code=${code}`,
+          null,
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          }
+        );
+        const { accessToken } = response.data;
+        console.log('Access Token:', accessToken);
+        sessionStorage.setItem('accessToken', accessToken);
+        navigate('/', { replace: true });
+      } catch (error) {
+        console.error('로그인 실패:', error);
+        // 에러 처리 로직 추가 가능
+      }
+    };
+
+    fetchAccessToken();
+  }, [searchParams, navigate]);
+
+  return (
+    <div className="flex justify-center items-center h-screen text-white bg-black">
+      로그인 중입니다...
+    </div>
+  );
+};
+
+export default KakaoCallback;
