@@ -10,3 +10,33 @@ include::{snippets}/linkedwallets/create/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/linkedwallets/create/http-response.adoc[]
+
+=== 링크지갑 조회
+
+==== HTTP Request
+
+include::{snippets}/linkedwallets/read/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/linkedwallets/read/http-response.adoc[]
+
+=== 링크지갑 충전
+
+==== HTTP Request
+
+include::{snippets}/linkedwallets/charge/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/linkedwallets/charge/http-response.adoc[]
+
+=== 링크지갑 차감
+
+==== HTTP Request
+
+include::{snippets}/linkedwallets/deduct/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/linkedwallets/deduct/http-response.adoc[]

@@ -27,7 +27,7 @@ public class MemberAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    private ExtractableResponse<Response> 회원_조회_요청(final String accessToken, final String email) {
+    public ExtractableResponse<Response> 회원_조회_요청(final String accessToken, final String email) {
         return sendGetRequest("/api/members?email=%s".formatted(email), accessToken);
     }
 }
