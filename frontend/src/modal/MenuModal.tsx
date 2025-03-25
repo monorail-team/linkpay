@@ -32,7 +32,7 @@ const MenuModal: React.FC<MenuModalProps> = ({ onClose }) => {
         {/* Body */}
         <div className="p-4">
           {/*메뉴 박스 영역*/}
-          <div className="h-[calc(100vh-90px)] bg-white dark:bg-[#5a5757] border border-white dark:border-gray-600
+          <div className="h-[calc(100vh-90px)] bg-white dark:bg-[#5a5757] border border-white dark:border-[#3B3838]
             rounded-lg">
             {/* 메뉴 리스트 */}
             <div className="flex flex-col divide-y divide-gray-200 dark:divide-none text-sm h-full">
