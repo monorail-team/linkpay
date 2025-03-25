@@ -1,5 +1,6 @@
 package monorail.linkpay.controller;
 
+import static monorail.linkpay.linkcard.domain.CardState.getCardState;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import jakarta.validation.Valid;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
+import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +31,15 @@ public class LinkCardController {
 
     @PostMapping
     public ResponseEntity<Void> createLinkCard(@AuthenticationPrincipal final AuthPrincipal principal,
-                                               @Valid @RequestBody final LinkCardCreateRequest createLinkCardRequest) {
-        linkCardService.create(principal.memberId(), createLinkCardRequest.toServiceRequest());
+                                               @Valid @RequestBody final LinkCardCreateRequest linkCardCreateRequest) {
+        linkCardService.create(principal.memberId(), linkCardCreateRequest.toServiceRequest());
+        return ResponseEntity.status(CREATED).build();
+    }
+
+    @PostMapping("/shared")
+    public ResponseEntity<Void> createSharedLinkCard(
+            @Valid @RequestBody final SharedLinkCardCreateRequest sharedLinkCardCreateRequest) {
+        linkCardService.createShared(sharedLinkCardCreateRequest.toServiceRequest());
         return ResponseEntity.status(CREATED).build();
     }
 
@@ -46,7 +55,7 @@ public class LinkCardController {
                                                                  @RequestParam(required = false) final Long lastId,
                                                                  @RequestParam(defaultValue = "10") final int size,
                                                                  @PathVariable final String state) {
-        return ResponseEntity.ok(linkCardService.readByState(principal.memberId(), lastId, size, state));
+        return ResponseEntity.ok(linkCardService.readByState(principal.memberId(), lastId, size, getCardState(state)));
     }
 
     @PatchMapping("/activate")

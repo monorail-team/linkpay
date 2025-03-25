@@ -8,6 +8,7 @@ import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.LinkedMemberCreateRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
+import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardType;
@@ -24,6 +25,9 @@ public class ControllerFixture {
 
     public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
             "테스트카드", 500000, LocalDate.of(2025, 5, 25));
+
+    public static final SharedLinkCardCreateRequest SHARED_LINK_CARD_CREATE_REQUEST = new SharedLinkCardCreateRequest(
+            "테스트카드", 500000, LocalDate.of(2025, 5, 25), List.of(1L), 1L);
 
     public static final LinkCardRegistRequest LINK_CARD_REGISTRATION_REQUEST = new LinkCardRegistRequest(List.of(1L));
 
@@ -43,7 +47,15 @@ public class ControllerFixture {
             LocalDate.now().plusMonths(1),
             0L);
 
-    public static final LinkCardsResponse LINK_CARDS_RESPONSE = getLinkCardsResponse(List.of(LINK_CARD_RESPONSE));
+    public static final LinkCardResponse SHARED_LINK_CARD_RESPONSE = new LinkCardResponse(2L, 500000L,
+            CardType.SHARED.name(),
+            CardColor.getRandomColor().getHexCode(),
+            "test card2",
+            LocalDate.now().plusMonths(1),
+            0L);
+
+    public static final LinkCardsResponse LINK_CARDS_RESPONSE = getLinkCardsResponse(
+            List.of(LINK_CARD_RESPONSE, SHARED_LINK_CARD_RESPONSE));
 
     public static LinkCardsResponse getLinkCardsResponse(List<LinkCardResponse> linkCardResponse) {
         return new LinkCardsResponse(linkCardResponse, false);

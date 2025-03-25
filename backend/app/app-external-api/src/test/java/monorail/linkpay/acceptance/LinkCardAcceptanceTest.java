@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
+import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -27,12 +28,25 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
     public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
             "테스트카드", 500000, LocalDate.now().plusMonths(1));
 
+    public static final SharedLinkCardCreateRequest SHARED_LINK_CARD_CREATE_REQUEST = new SharedLinkCardCreateRequest(
+            "테스트카드", 500000, LocalDate.now().plusMonths(1), List.of(1L), 1L);
+
+
     @Test
     void 내_지갑에서_링크카드를_생성한다() {
         String accessToken = 엑세스_토큰();
         ExtractableResponse<Response> response = 링크카드_생성_요청(accessToken, LINK_CARD_CREATE_REQUEST);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     }
+
+    @Test
+    void 링크지갑에서_링크카드를_생성한다() {
+        String accessToken = 엑세스_토큰();
+        // todo: 링크 지갑 연결
+        ExtractableResponse<Response> response = 링크지갑에서_링크카드_생성_요청(accessToken, SHARED_LINK_CARD_CREATE_REQUEST);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+    }
+
 
     @TestFactory
     Stream<DynamicTest> 보유한_링크카드를_조회하고_결제카드로_등록한다() {
@@ -67,7 +81,7 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                             new LinkCardRegistRequest(List.of(cardId)));
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
                 }),
-                dynamicTest("생성한 카드 중 결제카드로 등록되지 않은 카드를 조회한다", () -> {
+                dynamicTest("생성한 카드 중 결제카드로 등록된 카드를 조회한다", () -> {
                     ExtractableResponse<Response> response = 등록된_카드_조회(accessToken);
                     unregisteredLinkCardsResponse.set(response.as(LinkCardsResponse.class));
                     assertAll(
@@ -78,19 +92,20 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    private ExtractableResponse<Response> 카드_등록(String accessToken, LinkCardRegistRequest linkCardRegistRequest) {
+    private ExtractableResponse<Response> 카드_등록(final String accessToken,
+                                                final LinkCardRegistRequest linkCardRegistRequest) {
         return sendPatchRequest("api/cards/activate", accessToken, linkCardRegistRequest);
     }
 
-    private ExtractableResponse<Response> 등록되지_않은_카드_조회(String accessToken) {
+    private ExtractableResponse<Response> 등록되지_않은_카드_조회(final String accessToken) {
         return sendGetRequest("/api/cards/unregistered", accessToken);
     }
 
-    private ExtractableResponse<Response> 등록된_카드_조회(String accessToken) {
+    private ExtractableResponse<Response> 등록된_카드_조회(final String accessToken) {
         return sendGetRequest("/api/cards/registered", accessToken);
     }
 
-    private ExtractableResponse<Response> 링크카드_조회_요청(String accessToken) {
+    private ExtractableResponse<Response> 링크카드_조회_요청(final String accessToken) {
         return sendGetRequest("/api/cards", accessToken);
     }
 
@@ -98,5 +113,9 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
         return sendPostRequest("/api/cards", accessToken, request);
     }
 
+    private ExtractableResponse<Response> 링크지갑에서_링크카드_생성_요청(final String accessToken,
+                                                            final SharedLinkCardCreateRequest request) {
+        return sendPostRequest("/api/cards/shared", accessToken, request);
+    }
 
 }
