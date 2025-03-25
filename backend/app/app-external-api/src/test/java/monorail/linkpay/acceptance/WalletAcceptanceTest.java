@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.stream.Stream;
-import monorail.linkpay.controller.request.PointRequest;
+import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.wallet.dto.WalletResponse;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -23,7 +23,7 @@ class WalletAcceptanceTest extends AcceptanceTest {
 
         return Stream.of(
                 dynamicTest("지갑에 포인트를 충전한다", () -> {
-                    ExtractableResponse<Response> response = 포인트_충전_요청(accessToken, new PointRequest(50000));
+                    ExtractableResponse<Response> response = 포인트_충전_요청(accessToken, new WalletPointRequest(50000));
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
                 }),
                 dynamicTest("충전 후 지갑 잔액을 조회한다", () -> {
@@ -35,7 +35,7 @@ class WalletAcceptanceTest extends AcceptanceTest {
     }
 
     public static ExtractableResponse<Response> 포인트_충전_요청(final String accessToken,
-                                                          final PointRequest pointRequest) {
+                                                          final WalletPointRequest pointRequest) {
         return sendPatchRequest("/api/wallets/charge", accessToken, pointRequest);
     }
 

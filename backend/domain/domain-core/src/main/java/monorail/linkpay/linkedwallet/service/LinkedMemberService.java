@@ -1,9 +1,9 @@
 package monorail.linkpay.linkedwallet.service;
 
-import static java.time.LocalDateTime.now;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.linkedwallet.domain.Role.PARTICIPANT;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.exception.LinkPayException;
@@ -28,24 +28,24 @@ public class LinkedMemberService {
     private final IdGenerator idGenerator;
 
     public void createLinkedMember(final Long linkedWalletId, final Long memberId, final Long participantId) {
-        validateCreatorPermission(memberId);
-
-        LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
+        validateCreatorPermission(linkedWalletId, memberId);
         Member member = memberFetcher.fetchById(participantId);
+        LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
         LinkedMember linkedMember = LinkedMember.of(member, idGenerator.generate(), PARTICIPANT);
 
         linkedWallet.registerLinkedMember(linkedMember);
         linkedMemberRepository.save(linkedMember);
     }
 
-    public void deleteLinkedMember(final Long linkedWalletId, final Set<Long> linkedMemberIds, final Long memberId) {
-        validateCreatorPermission(memberId);
+    public void deleteLinkedMember(final Long linkedWalletId, final Set<Long> linkedMemberIds,
+                                   final Long memberId, LocalDateTime now) {
+        validateCreatorPermission(linkedWalletId, memberId);
         linkedWalletFetcher.checkExistsById(linkedWalletId);
-        linkedMemberRepository.deleteByIds(linkedMemberIds, now());
+        linkedMemberRepository.deleteByIds(linkedMemberIds, now);
     }
 
-    private void validateCreatorPermission(Long memberId) {
-        LinkedMember linkedMember = linkedMemberFetcher.fetchByMemberId(memberId);
+    private void validateCreatorPermission(final Long linkedWalletId, final Long memberId) {
+        LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
         if (!linkedMember.isCreator()) {
             throw new LinkPayException(INVALID_REQUEST, "지갑 생성자만 참여자를 관리할 수 있습니다.");
         }
