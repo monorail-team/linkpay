@@ -2,49 +2,32 @@ import React, { useState, useEffect} from 'react';
 import Header from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import LinkCardItem from '@/components/LinkCardItem';
+import axios from 'axios';
+import { Card } from '@/model/Card';
 
-
-interface LinkCard {
-  id: number;
-  limitPrice: number;
-  cardType: string;
-  cardColor: string;
-  cardName: string;
-  expiredAt: string;
-  usedPoint: number;
-}
 
 const Register: React.FC = () => {
 
 
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-  const [cards, setCards] = useState<LinkCard[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [cards, setCards] = useState<Card[]>([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCards = async () => {
-      setLoading(true);
       try {
-        //일단 임시로 로컬스토리지에 엑세스 토큰
-        const token = localStorage.getItem('access_token');
-        const response = await fetch('http://localhost:8080/api/cards/unregister', {
+        const token = sessionStorage.getItem('accessToken');
+        const response = await axios.get('http://localhost:8080/api/cards/unregistered', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
-        if (!response.ok) {
-          throw new Error('Failed to fetch cards');
-        }
-        const data = await response.json();
-        setCards(data.linkCards);
+        setCards(response.data.linkCards);
       } catch (err) {
         console.error(err);
-        setError('카드를 불러오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
+        
+      } 
     };
 
     fetchCards();
@@ -62,9 +45,26 @@ const Register: React.FC = () => {
     });
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (selectedIndices.length > 0) {
-      alert(`선택된 카드: ${selectedIndices.map(i => i + 1).join(', ')}`);
+      try {
+        const token = sessionStorage.getItem('accessToken');
+        await axios.patch(
+          'http://localhost:8080/api/cards/activate',
+          { linkCardIds: selectedIndices },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          }
+        );
+        alert('카드 등록이 완료되었습니다.');
+        navigate('/');
+      } catch (error) {
+        console.error(error);
+        alert('카드 등록 중 에러가 발생했습니다.');
+      }
     }
   };
 
