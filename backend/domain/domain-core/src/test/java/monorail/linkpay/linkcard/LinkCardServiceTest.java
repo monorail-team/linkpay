@@ -1,8 +1,14 @@
 package monorail.linkpay.linkcard;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.time.LocalDate;
+import java.util.List;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
@@ -68,6 +74,21 @@ public class LinkCardServiceTest extends IntegrationTest {
 
         // then
         assertThat(response.linkCards()).hasSize(1);
+    }
+
+    @Test
+    void 보유한_링크카드_중_일부를_결제카드로_등록한다() {
+        // given
+        CreateLinkCardServiceRequest request = createCard(LocalDate.now().plusDays(1));
+        linkCardService.create(member.getId(), request);
+        LinkCardsResponse unregisteredCards = linkCardService.readUnregister(member.getId(), null, 10);
+
+        // when
+        linkCardService.registLinkCard(List.of(unregisteredCards.linkCards().getFirst().id()));
+
+        // then
+        LinkCard result = linkCardRepository.findByMember(member).orElseThrow();
+        assertThat(result.getState()).isEqualTo(CardState.REGISTERED);
     }
 
     private static CreateLinkCardServiceRequest createCard(LocalDate date) {
