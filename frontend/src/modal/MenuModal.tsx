@@ -38,7 +38,7 @@ const MenuModal: React.FC<MenuModalProps> = ({ onClose }) => {
             <div className="flex flex-col divide-y divide-gray-200 dark:divide-none text-sm h-full">
               <button
                 onClick={() => {
-                  navigate('/mywallethistory');
+                  navigate('/mywallet');
                   onClose();
                 }}
                 className="flex items-center gap-2 px-4 py-4 hover:bg-gray-100 dark:hover:bg-[#3c3c3c]"
