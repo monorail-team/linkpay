@@ -33,7 +33,7 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
             "AND l.state = :state " +
             "AND (:lastId IS NULL OR l.id < :lastId)" +
             "AND l.deletedAt IS NULL " +
-            "AND l.expiredAt > CAST(CURRENT_DATE AS TIMESTAMP) " +
+            "AND l.expiredAt > FUNCTION('STR_TO_DATE', CURRENT_DATE, '%Y-%m-%d %H:%i:%s')  " +
             "ORDER BY l.id DESC ")
     Slice<LinkCard> findByStateWithLastId(@Param("memberId") Long memberId,
                                           @Param("lastId") Long lastId,
