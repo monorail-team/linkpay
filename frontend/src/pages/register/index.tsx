@@ -47,14 +47,14 @@ const Register: React.FC = () => {
          <div className="overflow-y-auto space-y-4 hide-scrollbar  max-h-[75vh]" >
           {cards.map((card) => (
             <label
-              key={card.linkCardId}
+              key={card.id}
               className="flex items-center cursor-pointer"
-              onClick={() => handleSelect(card.linkCardId)}
+              onClick={() => handleSelect(card.id)}
             >
               {/* 카드 영역: 선택된 경우 테두리 강조 */}
               <div
                 className={`my-1 box-border rounded-lg w-5/6 p-4 mx-auto bg-center h-[150px] ${
-                  selectedIndices.includes(card.linkCardId)
+                  selectedIndices.includes(card.id)
                     ? 'outline outline-4 outline-gray-400 brightness-90 dark:outline-white '
                     : ''
                 }`}
@@ -63,7 +63,7 @@ const Register: React.FC = () => {
                 <LinkCardItem
                   cardName={card.cardName}
                   limitPrice={card.limitPrice}
-                  expireAt={card.expireAt}
+                  expiredAt={card.expiredAt}
                 />
               </div>
             </label>

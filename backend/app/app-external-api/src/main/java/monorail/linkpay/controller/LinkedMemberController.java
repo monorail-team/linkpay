@@ -1,5 +1,6 @@
 package monorail.linkpay.controller;
 
+import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import jakarta.validation.Valid;
@@ -38,7 +39,7 @@ public class LinkedMemberController {
     public ResponseEntity<Void> deleteLinkedMember(@PathVariable final Long linkedWalletId,
                                                    @RequestParam final Set<Long> linkedMemberIds,
                                                    @AuthenticationPrincipal final AuthPrincipal principal) {
-        linkedMemberService.deleteLinkedMember(linkedWalletId, linkedMemberIds, principal.memberId());
+        linkedMemberService.deleteLinkedMember(linkedWalletId, linkedMemberIds, principal.memberId(), now());
         return ResponseEntity.noContent().build();
     }
 }

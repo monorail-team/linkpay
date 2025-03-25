@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.Set;
 import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
+import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.LinkedMemberCreateRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
-import monorail.linkpay.controller.request.PointRequest;
+import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardType;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
@@ -19,10 +20,12 @@ public class ControllerFixture {
 
     public static final LoginResponse LOGIN_RESPONSE = new LoginResponse("accessToken");
 
-    public static final PointRequest CHARGE_REQUEST = new PointRequest(50000);
+    public static final WalletPointRequest CHARGE_REQUEST = new WalletPointRequest(50000);
 
     public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
             "테스트카드", 500000, LocalDate.of(2025, 5, 25));
+
+    public static final LinkCardRegistRequest LINK_CARD_REGISTRATION_REQUEST = new LinkCardRegistRequest(List.of(1L));
 
     public static final MemberResponse MEMBER_RESPONSE = new MemberResponse(1L, "link1", "linked@gmail.com");
 
@@ -43,7 +46,6 @@ public class ControllerFixture {
     public static final LinkCardsResponse LINK_CARDS_RESPONSE = getLinkCardsResponse(List.of(LINK_CARD_RESPONSE));
 
     public static LinkCardsResponse getLinkCardsResponse(List<LinkCardResponse> linkCardResponse) {
-        LinkCardsResponse response = new LinkCardsResponse(linkCardResponse, false);
-        return response;
+        return new LinkCardsResponse(linkCardResponse, false);
     }
 }

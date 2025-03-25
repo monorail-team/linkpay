@@ -2,9 +2,11 @@ package monorail.linkpay.linkcard.service;
 
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
+import static monorail.linkpay.linkcard.domain.CardState.getCardState;
 import static monorail.linkpay.linkcard.domain.CardType.OWNED;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
@@ -61,7 +63,7 @@ public class LinkCardService {
     public LinkCardsResponse read(final Long memberId, final Long lastId, final int size) {
         Pageable pageable = PageRequest.of(0, size);
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
-        Slice<LinkCard> linkCards = linkCardRepository.findByWalletWithLastId(wallet, lastId, pageable);
+        Slice<LinkCard> linkCards = linkCardRepository.findByWalletWithLastId(wallet.getId(), lastId, pageable);
         // todo: 링크지갑 만들면 해당 지갑 연결된 카드도 들고오기
         return new LinkCardsResponse(
                 getLinkCardResponses(linkCards),
@@ -69,11 +71,13 @@ public class LinkCardService {
         );
     }
 
-    public LinkCardsResponse readUnregister(final long memberId, final Long lastId, final int size) {
+    public LinkCardsResponse readByState(final long memberId, final Long lastId, final int size,
+                                         final String state) {
         Pageable pageable = PageRequest.of(0, size);
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
         // todo: 링크지갑 만들면 해당 지갑 연결된 카드도 들고오기
-        Slice<LinkCard> linkCards = linkCardRepository.findUnregisterByWalletWithLastId(wallet, lastId, pageable);
+        Slice<LinkCard> linkCards = linkCardRepository.findByStateAndWalletWithLastId(wallet.getId(), lastId,
+                pageable, getCardState(state));
         return new LinkCardsResponse(
                 getLinkCardResponses(linkCards),
                 linkCards.hasNext()
@@ -84,5 +88,10 @@ public class LinkCardService {
         return linkCards.stream()
                 .map(LinkCardResponse::from)
                 .toList();
+    }
+
+    @Transactional
+    public void registLinkCard(final List<Long> linkCardIds) {
+        linkCardRepository.updateStateById(new HashSet<>(linkCardIds));
     }
 }
