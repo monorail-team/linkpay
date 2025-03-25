@@ -11,7 +11,6 @@ import monorail.linkpay.linkedwallet.service.LinkedMemberService;
 import monorail.linkpay.linkedwallet.service.LinkedWalletService;
 import monorail.linkpay.member.service.MemberService;
 import monorail.linkpay.security.WithCustomUser;
-import monorail.linkpay.wallet.service.WalletHistoryService;
 import monorail.linkpay.wallet.service.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,8 +38,6 @@ public abstract class ControllerTest {
     protected AuthService authService;
     @MockitoBean
     protected WalletService walletService;
-    @MockitoBean
-    protected WalletHistoryService walletHistoryService;
     @MockitoBean
     protected LinkCardService linkCardService;
     @MockitoBean
