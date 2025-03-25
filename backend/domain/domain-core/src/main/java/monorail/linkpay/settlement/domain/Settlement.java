@@ -31,13 +31,17 @@ public class Settlement {
 
     @Embedded
     @AttributeOverrides(
-            @AttributeOverride(name = "amount", column = @Column(name = "amount", nullable = false))
+        @AttributeOverride(
+            name = "amount",
+            column = @Column(name = "amount", nullable = false, updatable = false))
     )
     private Point amount;
 
     @Embedded
     @AttributeOverrides(
-            @AttributeOverride(name = "amount", column = @Column(name = "remaining", nullable = false))
+        @AttributeOverride(
+            name = "amount",
+            column = @Column(name = "remaining", nullable = false, updatable = false))
     )
     private Point remaining;
 
@@ -45,7 +49,7 @@ public class Settlement {
     @Enumerated(STRING)
     private SettleType settleType;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     @Enumerated(STRING)
     private SettleStatus settleStatus;
 
