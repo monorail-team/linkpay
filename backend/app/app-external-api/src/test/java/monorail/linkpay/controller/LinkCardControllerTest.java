@@ -46,10 +46,11 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 보유한_링크카드_중_등록안된_링크카드를_조회한다() {
-        when(linkCardService.readUnregister(anyLong(), nullable(Long.class), eq(10))).thenReturn(LINK_CARDS_RESPONSE);
+        when(linkCardService.readByState(anyLong(), nullable(Long.class), eq(10), eq("unregistered"))).thenReturn(
+                LINK_CARDS_RESPONSE);
 
         docsGiven.header("Authorization", "Bearer {access_token}")
-                .when().get("/api/cards/deactivate")
+                .when().get("/api/cards/unregistered")
                 .then().log().all()
                 .apply(document("cards/read/deactivate"))
                 .statusCode(HttpStatus.OK.value());
@@ -66,5 +67,17 @@ public class LinkCardControllerTest extends ControllerTest {
                 .then().log().all()
                 .apply(document("cards/activate"))
                 .statusCode(HttpStatus.NO_CONTENT.value());
+    }
+
+    @Test
+    void 결제카드로_등록된_링크카드를_조회한다() {
+        when(linkCardService.readByState(anyLong(), nullable(Long.class), eq(10), eq("registered"))).thenReturn(
+                LINK_CARDS_RESPONSE);
+
+        docsGiven.header("Authorization", "Bearer {access_token}")
+                .when().get("/api/cards/registered")
+                .then().log().all()
+                .apply(document("cards/read/activate"))
+                .statusCode(HttpStatus.OK.value());
     }
 }

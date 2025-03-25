@@ -2,6 +2,7 @@ package monorail.linkpay.linkcard.service;
 
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
+import static monorail.linkpay.linkcard.domain.CardState.getCardState;
 import static monorail.linkpay.linkcard.domain.CardType.OWNED;
 
 import java.time.LocalDate;
@@ -70,12 +71,13 @@ public class LinkCardService {
         );
     }
 
-    public LinkCardsResponse readUnregister(final long memberId, final Long lastId, final int size) {
+    public LinkCardsResponse readByState(final long memberId, final Long lastId, final int size,
+                                         final String state) {
         Pageable pageable = PageRequest.of(0, size);
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
         // todo: 링크지갑 만들면 해당 지갑 연결된 카드도 들고오기
-        Slice<LinkCard> linkCards = linkCardRepository.findUnregisterByWalletWithLastId(wallet.getId(), lastId,
-                pageable);
+        Slice<LinkCard> linkCards = linkCardRepository.findByStateAndWalletWithLastId(wallet.getId(), lastId,
+                pageable, getCardState(state));
         return new LinkCardsResponse(
                 getLinkCardResponses(linkCards),
                 linkCards.hasNext()
