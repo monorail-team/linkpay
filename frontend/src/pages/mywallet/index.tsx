@@ -37,7 +37,7 @@ const MyWallet: React.FC = () => {
     const fetchWalletBalance = async () => {
       try {
         const accessToken = '사용자_토큰_여기';
-        const response = await fetch('/api/wallets', {
+        const response = await fetch('http://localhost:8080/api/wallets', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
