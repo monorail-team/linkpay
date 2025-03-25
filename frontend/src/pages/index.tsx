@@ -1,20 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import Card from '../components/Card';
-import Icon from '../components/Icon';
-import { cards } from '@/mocks/cards';
+import Header from '@/components/Header';
+import CardComponent from '@/components/Card';
+import Icon from '@/components/Icon';
 import { wallets } from '@/mocks/wallets';
 import AddLinkCard from '@/components/AddLinkCard';
 import { useThemeStore } from '@/store/themeStore';
+import { Card } from '@/model/Card';
+import axios from 'axios';
 
 const Home: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const totalCardsCount = cards.length + 1;
+  const [cards, setCards] = useState<Card[]>([]);
   const navigate = useNavigate();
   const { theme } = useThemeStore();
 
+
+  // 카드 API 호출
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const token = sessionStorage.getItem('accessToken');
+        if (!token) {
+          console.error('accessToken이 없습니다.');
+          return;
+        }
+        const response = await axios.get('http://localhost:8080/api/cards', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const cardsData = response.data.linkCards as Card[];
+        setCards(cardsData);
+      } catch (error) {
+        console.error('카드 정보를 불러오는데 실패했습니다.', error);
+      }
+    };
+    fetchCards();
+  }, []);
+
+  //카드의 개수
+  const totalCardsCount = cards.length + 1;
+
+  // 스와이프 함수
   const handlers = useSwipeable({
     onSwipedLeft: () => {
       if (currentIndex < totalCardsCount - 1) setCurrentIndex(currentIndex + 1);
@@ -25,22 +52,31 @@ const Home: React.FC = () => {
     trackMouse: true,
   });
 
-  // 상대 단위로 계산 (퍼센트)
+  // 카드 위치 계산
   const containerPositionPercent = 0; // (100 - 78) / 2
   const cardTotalWidthPercent = 110; // 카드 너비 78% + gap 3.5% = 81.5%
   const translatePercent = containerPositionPercent - currentIndex * cardTotalWidthPercent;
 
-  let currentCardType: string | null = null;
+  // 현재 카드가 있으면, 카드 타입에 따라 지갑 정보 추출
+  let walletInfo: { remainingPoints: number } | undefined = undefined;
   if (currentIndex < cards.length) {
-    currentCardType = cards[currentIndex].cardType;
+    const currentCard = cards[currentIndex];
+    if (currentCard.cardType === 'SHARED' && currentCard.linkedWalletId) {
+      // SHARED인 경우 linkedWalletId로 연결된 지갑 정보 조회
+      walletInfo = wallets.find(wallet => wallet.id === currentCard.linkedWalletId);
+    } else {
+      // OWNED인 경우 내 지갑 정보
+      walletInfo = wallets.find(wallet => wallet.type === currentCard.cardType);
+    }
   }
-  const walletInfo = wallets.find(wallet => wallet.type === currentCardType);
+
 
 
   // 플러스 카드 클릭 시 호출
   const handleAddLinkClick = () => {
     navigate('/register');
   };
+
   return (
     <div className='dark:bg-[#3b3838] overflow-hidden'>
     <Header headerType="menu" onMenuClick={() => console.log('메뉴 클릭')} />
@@ -59,11 +95,11 @@ const Home: React.FC = () => {
             {/* 실제 카드들을 화면에 표시 */}
             {cards.map((card) => (
               <div 
-                key={card.linkCardId} 
+                key={card.id} 
                 className="flex-shrink-0 mr-[10%] last:mr-0 transition-opacity duration-300 w-full"
                 style={{ opacity: Math.abs(currentIndex - cards.indexOf(card)) > 1 ? 0.5 : 1 }}
               >
-                <Card {...card} />
+                <CardComponent {...card} />
               </div>
             ))}
 
@@ -80,7 +116,7 @@ const Home: React.FC = () => {
 
             {/* my link 섹션 */}
             <div className="flex flex-col flex-1 items-center justify-center mt-10 min-h-[80px]">
-              {currentCardType && currentCardType !== 'otherWallet' && walletInfo ? (
+              {currentIndex < cards.length && walletInfo ? (
                 <div className="text-2xl font-medium mb-2 text-center dark:text-white">
                   지갑 잔액 {walletInfo.remainingPoints.toLocaleString()} 원
                 </div>
@@ -96,7 +132,7 @@ const Home: React.FC = () => {
 
       {/* 지문 아이콘 및 결제 문구 */}
       <footer className="flex flex-col items-center p-4 mt-10 min-h-[120px]">
-      <Icon
+          <Icon
             name={theme === 'dark' ? 'fingerprintDarkIcon' : 'fingerprintIcon'}
             width={78}
             height={78}

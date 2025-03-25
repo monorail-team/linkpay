@@ -2,7 +2,7 @@ import React from 'react';
 import {Card as CardModel} from '@/model/Card';
 
 
-const Card: React.FC<CardModel> = ({ cardName, expireAt, point, limitPrice ,cardColor}) => {
+const Card: React.FC<CardModel> = ({ cardName, expireAt, usedpoint, limitPrice ,cardColor}) => {
   const backgroundStyle = {
     backgroundColor: cardColor,
   };
@@ -22,7 +22,7 @@ const Card: React.FC<CardModel> = ({ cardName, expireAt, point, limitPrice ,card
       <div>
         <div className="text-sm text-gray-500 mt-2">사용금액</div>
         <div className="text-3xl font-medium text-gray-800 text-center mt-3 ml-1">
-          {point.toLocaleString()}원
+          {usedpoint.toLocaleString()}원
           <span className="text-3xl text-gray-500 ml-1">
             / {limitPrice.toLocaleString()}원
           </span>
