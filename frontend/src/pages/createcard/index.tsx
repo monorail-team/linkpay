@@ -4,70 +4,62 @@ import Icon from '@/components/Icon';
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import "react-day-picker/style.css";
 import { useThemeStore } from '@/store/themeStore';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
 const CreateCardPage: React.FC = () => {
   const [cardName, setCardName] = useState('');
   const [cardLimit, setCardLimit] = useState('');
   const [expireDate, setExpireDate] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
+  const navigate = useNavigate();
   const handleClearCardName = () => setCardName('');
   const handleClearCardLimit = () => setCardLimit('');
   const toggleCalendar = () => setIsCalendarOpen(prev => !prev);
   const { theme } = useThemeStore();
 
-  // 나중에 달력으로 대체할 선택 함수
+  // 달력 선택 함수수
   const handleDateSelect = (date: string) => {
     setExpireDate(date);
     setIsCalendarOpen(false);
   };
-
-  const navigate = useNavigate();
   
-
-
+  // 버튼 클릭
   const handleRegister = async () => {
-    console.log('등록하기 클릭', { cardName, cardLimit, expireDate });
-    
-    // 카드 한도 문자열을 숫자로 변환 (콤마 제거)
-    const limitPriceNumber = Number(cardLimit.replace(/,/g, ''));
-    
-    
-    // 만료일을 Date 객체로 변환 후 [연, 월, 일] 배열 생성
-    const selectedDate = new Date(expireDate);
-    const expiredAt = [
-      selectedDate.getFullYear(), 
-      selectedDate.getMonth() + 1, // 월은 0부터 시작하므로 +1
-      selectedDate.getDate()
-    ];
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+      console.error('Access token not found');
+      return;
+    }
 
-    // 임시 token
-    const accessToken = 'your_access_token';
+    // 카드 한도 문자열에서 콤마 제거 후 숫자로 변환
+    const limitPrice = Number(cardLimit.replace(/,/g, ''));
 
+    // expireDate 문자열을 Date 객체로 변환 (날짜 형식에 따라 파싱이 달라질 수 있으므로 형식에 주의)
+    const dateObj = new Date(expireDate);
+    const year = dateObj.getFullYear();
+    const month = dateObj.getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
+    const day = dateObj.getDate();
+
+    const payload = {
+      cardName,
+      limitPrice,
+      expiredAt: [year, month, day],
+    };
+    console.log('payload:', payload);
     try {
-      const response = await fetch('/api/cards', {
-        method: 'POST',
+      const response = await axios.post('http://localhost:8080/api/cards', payload, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({
-          cardName,
-          limitPrice: limitPriceNumber,
-          expiredAt,
-        }),
       });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (response.status === 201) {
+        // 카드 생성 성공 시 mywallet 페이지로 이동
+        navigate('/mywallet');
       }
-      
-      console.log('카드 생성 성공');
-      navigate('/mywallet');
     } catch (error) {
-      console.error('카드 생성 실패:', error);
-      
+      console.error('Failed to create card:', error);
     }
   };
 

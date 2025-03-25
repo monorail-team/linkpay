@@ -4,7 +4,15 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from '@/pages';
 import Register from '@/pages/register';
 import MyWalletHistory from '@/pages/mywallet';
+<<<<<<< Updated upstream
 import CreateCard from '@/pages/createcard';
+=======
+import Login from '@/pages/login';
+import KakaoCallback from '@/pages/login/KakaoCallback';
+import CreateCardPage from '@/pages/createcard';
+import { useThemeStore } from '@/store/themeStore';
+import PrivateRoute from './components/PrivateRoute';
+>>>>>>> Stashed changes
 
 import { useThemeStore } from '@/store/themeStore';
 const App: React.FC = () => {

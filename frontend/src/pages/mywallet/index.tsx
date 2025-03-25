@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
+import MenuModal from '@/modal/MenuModal';
+
 import { MyWalletHistory } from '@/model/MyWalletHistory';
 import { walletData } from '@/mocks/walletData';
 import { useNavigate } from 'react-router-dom';
@@ -11,9 +13,19 @@ const MyWallet: React.FC = () => {
     navigate('/createcard');
   };
 
+  const [showMenu, setShowMenu] = useState(false);
+
+  const handleMenuClick = () => {
+    setShowMenu(true);
+  };
+
+  const handleMenuClose = () => {
+    setShowMenu(false);
+  };
   return (
     <div className='dark:bg-[#3b3838]'>
-      <Header headerType="menu" />
+      <Header headerType="menu" onMenuClick={handleMenuClick} />
+      {showMenu && <MenuModal onClose={handleMenuClose} />}
       <div className="w-full max-w-md mx-auto p-4" style={{ height: 'calc(100vh - 64px)' }}>
         {/* 내 지갑 정보 */}
         <div className="w-4/5 h-1/4 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
