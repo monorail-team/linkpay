@@ -77,13 +77,13 @@ const LinkWalletListPage: React.FC = () => {
         setShowMenu(false);
     };
   return (
-    <div className="w-full h-screen max-w-md mx-auto dark:bg-black flex flex-col">
+    <div className="w-full h-screen max-w-md mx-auto flex flex-col dark:bg-[#3b3838]">
       {/* 헤더 */}
       <Header headerType="menu" onMenuClick={handleMenuClick} />
       {showMenu && <MenuModal onClose={handleMenuClose} />}
 
       {/* 탭 영역 */}
-      <div className="flex justify-around items-center border-b border-gray-200 dark:border-gray-700 text-sm mx-10">
+      <div className="flex justify-around items-center border-b border-gray-200  dark:border-gray-700 text-sm mx-10">
         <button
           className={`py-3 w-full 
             ${
@@ -113,7 +113,7 @@ const LinkWalletListPage: React.FC = () => {
         {getWalletList().map((wallet) => (
             <div
                 key={wallet.id}
-                className="relative my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] dark:bg-[#3F3F3F] dark:border-[#706E6E]"
+                className="relative my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] dark:bg-[#3b3838] dark:border-[#706E6E]"
                 onClick={() => handleLinkWallet(wallet.id)}
             >
                 {/* 왼쪽: 지갑명과 참여자 수 (수직 중앙) */}
@@ -159,7 +159,7 @@ const LinkWalletListPage: React.FC = () => {
         {/* 플러스카드 (새 링크지갑 생성용) */}
         <div
           onClick={handleCreateLinkWallet}
-          className="my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] flex items-center justify-center cursor-pointer bg-[#F2F2F2] dark:bg-black dark:border-[#706E6E]"
+          className="my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] flex items-center justify-center cursor-pointer bg-[#F2F2F2] dark:bg-[#3b3838] dark:border-[#706E6E]"
         >
           <span className="text-4xl text-gray-500">+</span>
         </div>
