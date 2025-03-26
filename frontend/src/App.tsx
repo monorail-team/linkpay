@@ -7,6 +7,8 @@ import MyWalletHistory from '@/pages/mywallet';
 import Login from '@/pages/login';
 import KakaoCallback from '@/pages/login/KakaoCallback';
 import CreateCard from '@/pages/createcard';
+import LinkWalletList from '@/pages/linkwalletlist';
+
 import { useThemeStore } from '@/store/themeStore';
 import PrivateRoute from './components/PrivateRoute';
 
@@ -36,6 +38,7 @@ const App: React.FC = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/mywallet" element={<MyWalletHistory />} />
             <Route path="/createcard" element={<CreateCard />} />
+            <Route path="/linkwalletlist" element={<LinkWalletList />} />
           </Route>
         </Routes>
       </Router>
