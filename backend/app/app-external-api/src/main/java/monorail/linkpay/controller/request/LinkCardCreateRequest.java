@@ -1,5 +1,6 @@
 package monorail.linkpay.controller.request;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ public record LinkCardCreateRequest(
         @Max(value = 10000000, message = "한도 금액은 최대 1,000만원까지 가능합니다.")
         long limitPrice,
 
+        @FutureOrPresent(message = "만료일은 현재일 이전으로 설정할 수 없습니다.")
         @NotNull(message = "카드 만료일을 입력해주세요.")
         LocalDate expiredAt
 ) {

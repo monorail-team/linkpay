@@ -33,7 +33,6 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
     public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
             "테스트카드", 500000, LocalDate.now().plusMonths(1));
 
-
     @Test
     void 내_지갑에서_링크카드를_생성한다() {
         String accessToken = 엑세스_토큰();
