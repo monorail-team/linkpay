@@ -7,4 +7,6 @@ public interface LinkedWalletDto {
     String getLinkedWalletName();
 
     Long getAmount();
+
+    int getParticipantCount();
 }

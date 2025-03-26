@@ -55,9 +55,12 @@ public class ControllerFixture {
     public static final LinkCardsResponse LINK_CARDS_RESPONSE = new LinkCardsResponse(
             List.of(LINK_CARD_RESPONSE_1, LINK_CARD_RESPONSE_2), false);
 
-    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_1 = new LinkedWalletResponse(1L, "링크지갑1", 40000L);
-    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_2 = new LinkedWalletResponse(2L, "링크지갑2", 50000L);
-    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_3 = new LinkedWalletResponse(3L, "링크지갑3", 60000L);
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_1 = new LinkedWalletResponse(1L, "링크지갑1", 40000L,
+            1);
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_2 = new LinkedWalletResponse(2L, "링크지갑2", 50000L,
+            2);
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_3 = new LinkedWalletResponse(3L, "링크지갑3", 60000L,
+            3);
 
     public static final LinkedWalletsResponse LINKED_WALLETS_RESPONSE = new LinkedWalletsResponse(
             List.of(LINKED_WALLET_RESPONSE_1, LINKED_WALLET_RESPONSE_2, LINKED_WALLET_RESPONSE_3),
