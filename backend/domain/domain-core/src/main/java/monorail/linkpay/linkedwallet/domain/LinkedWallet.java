@@ -39,11 +39,10 @@ public class LinkedWallet extends BaseEntity {
     private Set<LinkedMember> linkedMembers = new HashSet<>();
 
     @Builder
-    public LinkedWallet(final Long id, final String name, final Set<LinkedMember> linkedMembers) {
+    public LinkedWallet(final Long id, final String name) {
         this.id = id;
         this.name = name;
         this.point = new Point(0);
-        this.linkedMembers = linkedMembers;
     }
 
     public void registerLinkedMember(final LinkedMember linkedMember) {

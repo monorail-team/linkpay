@@ -5,7 +5,7 @@ import lombok.Builder;
 import monorail.linkpay.common.domain.Point;
 
 @Builder
-public record CreateLinkCardServiceRequest(
+public record LinkCardCreateServiceRequest(
         String cardName,
         Point limitPrice,
         LocalDate expiratedAt

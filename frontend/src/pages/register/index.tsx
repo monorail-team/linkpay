@@ -1,12 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import Header from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import LinkCardItem from '@/components/LinkCardItem';
-import { cards } from '@/mocks/cards';
+import axios from 'axios';
+import { Card } from '@/model/Card';
+
 
 const Register: React.FC = () => {
-  // 선택된 카드 인덱스를 배열로 관리 (여러 개 선택 가능)
+
+
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const token = sessionStorage.getItem('accessToken');
+        const response = await axios.get('http://localhost:8080/api/cards/unregistered', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        setCards(response.data.linkCards);
+      } catch (err) {
+        console.error(err);
+        
+      } 
+    };
+
+    fetchCards();
+  }, []);
 
   const handleSelect = (index: number) => {
     setSelectedIndices((prev) => {
@@ -20,13 +45,30 @@ const Register: React.FC = () => {
     });
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (selectedIndices.length > 0) {
-      alert(`선택된 카드: ${selectedIndices.map(i => i + 1).join(', ')}`);
+      try {
+        const token = sessionStorage.getItem('accessToken');
+        await axios.patch(
+          'http://localhost:8080/api/cards/activate',
+          { linkCardIds: selectedIndices },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          }
+        );
+        alert('카드 등록이 완료되었습니다.');
+        navigate('/');
+      } catch (error) {
+        console.error(error);
+        alert('카드 등록 중 에러가 발생했습니다.');
+      }
     }
   };
 
-  const navigate = useNavigate();
+
 
   const handleBackClick = () => {
     // 뒤로가기 로직 (예: navigate(-1))

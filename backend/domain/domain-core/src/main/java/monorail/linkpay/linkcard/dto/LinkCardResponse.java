@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import monorail.linkpay.linkcard.domain.LinkCard;
 
 public record LinkCardResponse(
-        Long id,
+        String id,
         Long limitPrice,
         String cardType,
         String cardColor,
@@ -14,7 +14,7 @@ public record LinkCardResponse(
 ) {
     public static LinkCardResponse from(LinkCard linkCard) {
         return new LinkCardResponse(
-                linkCard.getId(),
+                linkCard.getId().toString(),
                 linkCard.getLimitPrice().getAmount(),
                 linkCard.getCardType().name(),
                 linkCard.getCardColor().getHexCode(),
