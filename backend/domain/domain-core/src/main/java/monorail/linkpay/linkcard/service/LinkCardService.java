@@ -1,5 +1,6 @@
 package monorail.linkpay.linkcard.service;
 
+import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
 import static monorail.linkpay.linkcard.domain.CardState.getCardState;
@@ -7,12 +8,12 @@ import static monorail.linkpay.linkcard.domain.CardType.OWNED;
 import static monorail.linkpay.linkcard.domain.CardType.SHARED;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.history.service.PaymentRecorder;
 import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
@@ -25,8 +26,7 @@ import monorail.linkpay.linkedwallet.service.LinkedMemberFetcher;
 import monorail.linkpay.linkedwallet.service.LinkedWalletFetcher;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
-import monorail.linkpay.settlement.domain.SettleType;
-import monorail.linkpay.settlement.service.SettlementRecorder;
+import monorail.linkpay.history.service.WalletHistoryRecorder;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.service.WalletFetcher;
@@ -47,7 +47,8 @@ public class LinkCardService {
     private final WalletFetcher walletFetcher;
     private final MemberFetcher memberFetcher;
     private final IdGenerator idGenerator;
-    private final SettlementRecorder settleRecorder;
+    private final WalletHistoryRecorder walletHistoryRecorder;
+    private final PaymentRecorder paymentRecorder;
     private final LinkedMemberFetcher linkedMemberFetcher;
 
     @Transactional
@@ -110,24 +111,19 @@ public class LinkCardService {
     @Transactional
     public void pay(final Long memberId, final Point point, final Long linkCardId, final String merchantName) {
         Member member = memberFetcher.fetchById(memberId);
-        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
-        if (!linkCard.getMember().equals(member)) {
-            throw new LinkPayException(INVALID_REQUEST, "카드의 소유자가 아닌 사용자의 결제 시도입니다.");
-        }
-        if (linkCard.getExpiredAt().isBefore(LocalDateTime.now())) {
-            throw new LinkPayException(INVALID_REQUEST, "만료된 카드로 결제를 시도했습니다.");
-        }
-        linkCard.getLimitPrice().subtract(linkCard.getUsedPoint().add(point));
+        LinkCard linkCard = linkCardFetcher.fetchByOwnerId(linkCardId, member);
+        linkCard.usePoint(point);
 
         if (linkCard.getCardType().equals(OWNED)) {
             Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(memberId);
             wallet.deductPoint(point);
-            settleRecorder.recordWallet(SettleType.WITHDRAWAL, wallet, point);
+            walletHistoryRecorder.recordWallet(WITHDRAWAL, wallet, point);
         } else if (linkCard.getCardType().equals(SHARED)) {
             LinkedWallet linkedWallet = linkedWalletFetcher.fetchByIdForUpdate(linkCard.getLinkedWallet().getId());
             linkedWallet.deductPoint(point);
             LinkedMember linkedMember = linkedMemberFetcher.fetchByMemberId(memberId);
-            settleRecorder.recordLinkedWallet(SettleType.WITHDRAWAL, linkCard, linkedWallet, linkedMember, point, merchantName);
+            walletHistoryRecorder.recordLinkedWallet(WITHDRAWAL, linkCard, linkedWallet, linkedMember, point, merchantName);
         }
+        paymentRecorder.record(linkCard, point, merchantName);
     }
 }
