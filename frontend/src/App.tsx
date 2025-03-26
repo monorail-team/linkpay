@@ -9,6 +9,8 @@ import KakaoCallback from '@/pages/login/KakaoCallback';
 import CreateCard from '@/pages/createcard';
 import { useThemeStore } from '@/store/themeStore';
 import PrivateRoute from './components/PrivateRoute';
+import Payment from '@/pages/payment';
+import ExamplePage from '@/pages/payment/example';
 
 const App: React.FC = () => {
 
@@ -30,12 +32,14 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/callback/login/kakao" element={<KakaoCallback />} />
-          
+
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/mywallet" element={<MyWalletHistory />} />
             <Route path="/createcard" element={<CreateCard />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/example" element={<ExamplePage />} />
           </Route>
         </Routes>
       </Router>
