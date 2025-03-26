@@ -44,6 +44,15 @@ public class LinkedWalletService {
                 linkedWalletDtos.hasNext());
     }
 
+    public LinkedWalletResponse readLinkedWallet(final Long linkedWalletId) {
+        LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
+        return new LinkedWalletResponse(
+                linkedWalletId,
+                linkedWallet.getName(),
+                linkedWallet.getAmount(),
+                linkedMemberRepository.countByLinkedWalletId(linkedWalletId));
+    }
+
     @Transactional
     public Long createLinkedWallet(final long memberId, final String walletName, final Set<Long> memberIds) {
         Member member = memberFetcher.fetchById(memberId);

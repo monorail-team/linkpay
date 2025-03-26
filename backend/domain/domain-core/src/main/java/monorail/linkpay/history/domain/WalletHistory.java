@@ -23,11 +23,15 @@ import monorail.linkpay.common.domain.TransactionType;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkedwallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.Wallet;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "wallet_history")
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
+@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("deleted_at is null")
 @Entity
 public class WalletHistory {
 

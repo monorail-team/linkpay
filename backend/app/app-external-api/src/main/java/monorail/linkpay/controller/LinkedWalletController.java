@@ -7,6 +7,7 @@ import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
+import monorail.linkpay.linkedwallet.dto.LinkedWalletResponse;
 import monorail.linkpay.linkedwallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.linkedwallet.service.LinkedWalletService;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,11 @@ public class LinkedWalletController {
                                                                   @RequestParam(defaultValue = "10") final int size,
                                                                   @AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(linkedWalletService.readLinkedWallets(principal.memberId(), lastId, size));
+    }
+
+    @GetMapping("/{linkedWalletId}")
+    public ResponseEntity<LinkedWalletResponse> getLinkedWallet(@PathVariable final Long linkedWalletId) {
+        return ResponseEntity.ok(linkedWalletService.readLinkedWallet(linkedWalletId));
     }
 
     @PostMapping

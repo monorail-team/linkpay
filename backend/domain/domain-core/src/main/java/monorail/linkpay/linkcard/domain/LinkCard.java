@@ -27,11 +27,15 @@ import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkedwallet.domain.LinkedWallet;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.Wallet;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "link_card")
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
+@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("deleted_at is null")
 @Entity
 public class LinkCard extends BaseEntity {
 

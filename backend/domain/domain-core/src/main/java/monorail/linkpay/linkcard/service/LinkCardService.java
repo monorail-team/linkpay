@@ -1,18 +1,15 @@
 package monorail.linkpay.linkcard.service;
 
 import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
-import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
 import static monorail.linkpay.linkcard.domain.CardType.OWNED;
 import static monorail.linkpay.linkcard.domain.CardType.SHARED;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.history.service.PaymentRecorder;
 import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardState;
@@ -55,9 +52,6 @@ public class LinkCardService {
 
     @Transactional
     public void create(Long creatorId, LinkCardCreateServiceRequest request) {
-        if (request.expiratedAt().isBefore(LocalDate.now())) {
-            throw new LinkPayException(INVALID_REQUEST, "만료일은 현재일 이전으로 설정할 수 없습니다.");
-        }
         Wallet wallet = walletFetcher.fetchByMemberId(creatorId);
         Member member = memberFetcher.fetchById(creatorId);
 
@@ -77,9 +71,6 @@ public class LinkCardService {
 
     @Transactional
     public void createShared(SharedLinkCardCreateServiceRequest request) {
-        if (request.expiratedAt().isBefore(LocalDate.now())) {
-            throw new LinkPayException(INVALID_REQUEST, "만료일은 현재일 이전으로 설정할 수 없습니다.");
-        }
         LinkedWallet linkedwallet = linkedWalletFetcher.fetchById(request.linkedWalletId());
 
         for (long memberId : request.memberIds()) {

@@ -11,7 +11,7 @@ include::{snippets}/linkedwallets/create/http-request.adoc[]
 
 include::{snippets}/linkedwallets/create/http-response.adoc[]
 
-=== 링크지갑 조회
+=== 링크지갑 목록 조회
 
 ==== HTTP Request
 
@@ -20,6 +20,16 @@ include::{snippets}/linkedwallets/read/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/linkedwallets/read/http-response.adoc[]
+
+=== 링크지갑 단건 조회
+
+==== HTTP Request
+
+include::{snippets}/linkedwallets/read/one/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/linkedwallets/read/one/http-response.adoc[]
 
 === 링크지갑 충전
 
