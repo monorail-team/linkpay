@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class WalletService {
+public class MyWalletService {
 
     private final MyWalletRepository myWalletRepository;
     private final WalletFetcher walletFetcher;

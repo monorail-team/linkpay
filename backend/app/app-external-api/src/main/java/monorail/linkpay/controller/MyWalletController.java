@@ -6,7 +6,7 @@ import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.wallet.dto.WalletResponse;
-import monorail.linkpay.wallet.service.WalletService;
+import monorail.linkpay.wallet.service.MyWalletService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,26 +18,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/wallets")
-public class WalletController {
+public class MyWalletController {
 
-    private final WalletService walletService;
+    private final MyWalletService myWalletService;
 
     @PatchMapping("/charge")
     public ResponseEntity<Void> chargeWallet(@AuthenticationPrincipal final AuthPrincipal principal,
                                              @Valid @RequestBody final WalletPointRequest pointRequest) {
-        walletService.charge(principal.memberId(), new Point(pointRequest.amount()));
+        myWalletService.charge(principal.memberId(), new Point(pointRequest.amount()));
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/deduct")
     public ResponseEntity<Void> deductWallet(@AuthenticationPrincipal final AuthPrincipal principal,
                                              @Valid @RequestBody final WalletPointRequest pointRequest) {
-        walletService.deduct(principal.memberId(), new Point(pointRequest.amount()));
+        myWalletService.deduct(principal.memberId(), new Point(pointRequest.amount()));
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public ResponseEntity<WalletResponse> getWallet(@AuthenticationPrincipal final AuthPrincipal principal) {
-        return ResponseEntity.ok(walletService.read(principal.memberId()));
+        return ResponseEntity.ok(myWalletService.read(principal.memberId()));
     }
 }

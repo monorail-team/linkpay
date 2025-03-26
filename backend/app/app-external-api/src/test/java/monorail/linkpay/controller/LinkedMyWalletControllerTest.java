@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-public class LinkedWalletControllerTest extends ControllerTest {
+public class LinkedMyWalletControllerTest extends ControllerTest {
 
 
     @Test

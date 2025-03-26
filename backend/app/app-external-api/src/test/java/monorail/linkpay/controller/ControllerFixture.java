@@ -8,6 +8,7 @@ import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.LinkedMemberCreateRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
+import monorail.linkpay.controller.request.PaymentsRequest;
 import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.linkcard.domain.CardColor;
@@ -81,4 +82,6 @@ public class ControllerFixture {
             List.of(LINKED_WALLET_RESPONSE_1, LINKED_WALLET_RESPONSE_2, LINKED_WALLET_RESPONSE_3),
             false
     );
+
+    public static final PaymentsRequest PAYMENT_REQUEST = new PaymentsRequest(10000, 1L, 2L);
 }

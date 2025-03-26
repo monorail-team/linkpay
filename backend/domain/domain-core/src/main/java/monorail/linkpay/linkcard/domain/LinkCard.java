@@ -104,8 +104,10 @@ public class LinkCard extends BaseEntity {
         this.state = state;
     }
 
-    public boolean isExpired() {
-        return this.getExpiredAt().isBefore(LocalDateTime.now());
+    public void validateExpiredDate() {
+        if (this.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new LinkPayException(INVALID_REQUEST, "만료된 링크카드입니다.");
+        }
     }
 
     public void usePoint(final Point point) {

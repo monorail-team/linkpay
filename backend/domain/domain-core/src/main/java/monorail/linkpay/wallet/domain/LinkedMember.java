@@ -22,7 +22,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "linked_member",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"linked_wallet_id", "member_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"wallet_id", "member_id"})
+)
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -39,7 +40,7 @@ public class LinkedMember extends BaseEntity {
     @Enumerated(STRING)
     private Role role;
 
-    @JoinColumn(name = "linked_wallet_id", nullable = false)
+    @JoinColumn(name = "wallet_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private LinkedWallet linkedWallet;
 

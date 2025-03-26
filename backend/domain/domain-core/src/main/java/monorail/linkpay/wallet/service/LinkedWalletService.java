@@ -76,7 +76,7 @@ public class LinkedWalletService {
                         .id(idGenerator.generate())
                         .role(PARTICIPANT)
                         .linkedWallet(linkedWallet)
-                        .member(member).build())
+                        .member(tuple).build())
         );
         return linkedWallet.getId();
     }

@@ -8,10 +8,11 @@ import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
 import monorail.linkpay.auth.service.AuthService;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.member.service.MemberService;
+import monorail.linkpay.payment.service.PaymentService;
 import monorail.linkpay.security.WithCustomUser;
 import monorail.linkpay.wallet.service.LinkedMemberService;
 import monorail.linkpay.wallet.service.LinkedWalletService;
-import monorail.linkpay.wallet.service.WalletService;
+import monorail.linkpay.wallet.service.MyWalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,10 +25,11 @@ import org.springframework.web.context.WebApplicationContext;
 @WebMvcTest({
         AuthController.class,
         MemberController.class,
-        WalletController.class,
+        MyWalletController.class,
         LinkCardController.class,
         LinkedMemberController.class,
         LinkedWalletController.class,
+        PaymentController.class,
 })
 @WithCustomUser
 @ExtendWith(RestDocumentationExtension.class)
@@ -37,7 +39,7 @@ public abstract class ControllerTest {
     @MockitoBean
     protected AuthService authService;
     @MockitoBean
-    protected WalletService walletService;
+    protected MyWalletService myWalletService;
     @MockitoBean
     protected LinkCardService linkCardService;
     @MockitoBean
@@ -46,6 +48,8 @@ public abstract class ControllerTest {
     protected LinkedMemberService linkedMemberService;
     @MockitoBean
     protected LinkedWalletService linkedWalletService;
+    @MockitoBean
+    protected PaymentService paymentService;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
