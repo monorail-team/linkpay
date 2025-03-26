@@ -52,16 +52,20 @@ public class LinkedWalletController {
     }
 
     @PatchMapping("/charge/{linkedWalletId}")
-    public ResponseEntity<Void> chargeLinkedWallet(@PathVariable final Long linkedWalletId,
+    public ResponseEntity<Void> chargeLinkedWallet(@AuthenticationPrincipal final AuthPrincipal principal,
+                                                   @PathVariable final Long linkedWalletId,
                                                    @Valid @RequestBody final WalletPointRequest walletPointRequest) {
-        linkedWalletService.chargeLinkedWallet(linkedWalletId, new Point(walletPointRequest.amount()));
+        linkedWalletService.chargeLinkedWallet(linkedWalletId, new Point(walletPointRequest.amount()),
+                principal.memberId());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/deduct/{linkedWalletId}")
-    public ResponseEntity<Void> deductLinkedWallet(@PathVariable final Long linkedWalletId,
+    public ResponseEntity<Void> deductLinkedWallet(@AuthenticationPrincipal final AuthPrincipal principal,
+                                                   @PathVariable final Long linkedWalletId,
                                                    @Valid @RequestBody final WalletPointRequest walletPointRequest) {
-        linkedWalletService.deductLinkedWallet(linkedWalletId, new Point(walletPointRequest.amount()));
+        linkedWalletService.deductLinkedWallet(linkedWalletId, new Point(walletPointRequest.amount()),
+                principal.memberId());
         return ResponseEntity.noContent().build();
     }
 }

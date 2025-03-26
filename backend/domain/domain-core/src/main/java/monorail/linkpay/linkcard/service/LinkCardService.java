@@ -24,8 +24,9 @@ import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequ
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.payment.service.PaymentRecorder;
+import monorail.linkpay.store.domain.Store;
+import monorail.linkpay.store.service.StoreFetcher;
 import monorail.linkpay.util.id.IdGenerator;
-import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.LinkedWallet;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.service.LinkedMemberFetcher;
@@ -51,6 +52,7 @@ public class LinkCardService {
     private final WalletHistoryRecorder walletHistoryRecorder;
     private final PaymentRecorder paymentRecorder;
     private final LinkedMemberFetcher linkedMemberFetcher;
+    private final StoreFetcher storeFetcher;
 
     @Transactional
     public void create(Long creatorId, LinkCardCreateServiceRequest request) {
@@ -83,7 +85,7 @@ public class LinkCardService {
                     .cardColor(CardColor.getRandomColor())
                     .cardName(request.cardName())
                     .cardType(SHARED)
-                    .linkedWallet(linkedwallet)
+                    .wallet(linkedwallet)
                     .limitPrice(request.limitPrice())
                     .member(member)
                     .expiredAt(request.expiratedAt().plusDays(1).atStartOfDay())
@@ -124,25 +126,18 @@ public class LinkCardService {
     }
 
     @Transactional
-    public void pay(final Long memberId, final Point point, final Long linkCardId, final String merchantName) {
+    public void pay(final Long memberId, final Point point, final Long linkCardId, final Long storeId) {
         Member member = memberFetcher.fetchById(memberId);
         LinkCard linkCard = linkCardFetcher.fetchByOwnerId(linkCardId, member);
+        Store store = storeFetcher.fetchById(storeId);
         if (linkCard.isExpired()) {
             throw new LinkPayException(INVALID_REQUEST, "만료된 링크카드입니다.");
         }
         linkCard.usePoint(point);
+        Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(linkCard.getWallet().getId());
+        wallet.deductPoint(point);
 
-        if (linkCard.getCardType().equals(OWNED)) {
-            Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(memberId);
-            wallet.deductPoint(point);
-            walletHistoryRecorder.recordWallet(WITHDRAWAL, wallet, point);
-        } else if (linkCard.getCardType().equals(SHARED)) {
-            LinkedWallet linkedWallet = linkedWalletFetcher.fetchByIdForUpdate(linkCard.getLinkedWallet().getId());
-            linkedWallet.deductPoint(point);
-            LinkedMember linkedMember = linkedMemberFetcher.fetchByMemberId(memberId);
-            walletHistoryRecorder.recordLinkedWallet(WITHDRAWAL, linkCard, linkedWallet, linkedMember, point,
-                    merchantName);
-        }
-        paymentRecorder.record(linkCard, point, merchantName);
+        walletHistoryRecorder.recordHistory(WITHDRAWAL, wallet, point, linkCard.getMember());
+        paymentRecorder.recordPayment(linkCard, point, store);
     }
 }

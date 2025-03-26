@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,7 +36,6 @@ public abstract sealed class Wallet extends BaseEntity permits MyWallet, LinkedW
     @Embedded
     private Point point;
 
-    @Builder
     public Wallet(final Long id) {
         this.id = id;
         this.point = new Point(0);

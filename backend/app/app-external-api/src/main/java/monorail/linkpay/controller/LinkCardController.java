@@ -75,7 +75,7 @@ public class LinkCardController {
                 principal.memberId(),
                 new Point(linkCardPayRequest.amount()),
                 linkCardPayRequest.linkCardId(),
-                linkCardPayRequest.merchantName());
+                linkCardPayRequest.storeId());
         return ResponseEntity.noContent().build();
     }
 }

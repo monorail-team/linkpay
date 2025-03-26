@@ -9,8 +9,8 @@ import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.token.TokenType;
 import monorail.linkpay.util.id.IdGenerator;
-import monorail.linkpay.wallet.domain.Wallet;
-import monorail.linkpay.wallet.repository.WalletRepository;
+import monorail.linkpay.wallet.domain.MyWallet;
+import monorail.linkpay.wallet.repository.MyWalletRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +23,7 @@ public class AuthService {
     private final LoginStrategyResolver loginStrategyResolver;
     private final MemberFetcher memberFetcher;
     private final MemberRepository memberRepository;
-    private final WalletRepository walletRepository;
+    private final MyWalletRepository myWalletRepository;
     private final AuthTokenGenerator authTokenGenerator;
     private final IdGenerator idGenerator;
 
@@ -38,7 +38,7 @@ public class AuthService {
                             .username("")
                             .build()
                     );
-                    walletRepository.save(Wallet.builder()
+                    myWalletRepository.save(MyWallet.builder()
                             .id(idGenerator.generate())
                             .member(member)
                             .build());

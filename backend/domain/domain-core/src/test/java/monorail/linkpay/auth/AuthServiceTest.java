@@ -14,7 +14,6 @@ import monorail.linkpay.auth.service.AuthService;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.member.domain.Member;
-import monorail.linkpay.member.repository.MemberRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,6 @@ class AuthServiceTest extends IntegrationTest {
     AuthService sut;
     @Autowired
     KakaoOauthClient mockKakaoOauthClient;
-    @Autowired
-    MemberRepository memberRepository;
 
     /**
      * @설명 로그인에 대한 테스트

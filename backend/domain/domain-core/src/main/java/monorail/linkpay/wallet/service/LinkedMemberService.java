@@ -33,7 +33,12 @@ public class LinkedMemberService {
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
         LinkedMember linkedMember = LinkedMember.of(member, idGenerator.generate(), PARTICIPANT);
 
-        linkedWallet.registerLinkedMember(linkedMember);
+        linkedMemberRepository.save(LinkedMember.builder()
+                .id(idGenerator.generate())
+                .role(PARTICIPANT)
+                .linkedWallet(linkedWallet)
+                .member(member).build());
+
         linkedMemberRepository.save(linkedMember);
     }
 
