@@ -62,7 +62,7 @@ const LinkCardListPage: React.FC = () => {
       {showMenu && <MenuModal onClose={handleMenuClose} />}
 
       {/* 탭 영역 */}
-      <div className="flex justify-around items-center border-b border-gray-200 dark:border-gray-700 text-sm">
+      <div className="flex justify-around items-center border-b border-gray-200 dark:border-gray-700 text-sm mx-10">
         <button
           className={`py-3 w-full 
             ${activeTab === TAB_CREATED ? 'text-[#76558F] dark:text-[#D8D5F8] first-letter:font-bold border-b-2 border-[#76558F] dark:border-[#D8D5F8]' : 'text-gray-500 dark:text-white'}`}
