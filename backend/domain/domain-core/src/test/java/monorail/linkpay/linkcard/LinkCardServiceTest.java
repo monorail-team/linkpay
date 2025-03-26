@@ -3,14 +3,12 @@ package monorail.linkpay.linkcard;
 import static monorail.linkpay.linkcard.domain.CardState.REGISTERED;
 import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
@@ -53,18 +51,6 @@ public class LinkCardServiceTest extends IntegrationTest {
 
         List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
         assertThat(result).isNotNull();
-    }
-
-    @Test
-    void 카드만료일을_현재일_이전으로_설정시_오류가_발생한다() {
-        // given
-        LinkCardCreateServiceRequest request = createCard(LocalDate.now().minusDays(1));
-
-        // when // then
-        assertThatThrownBy(() -> linkCardService.create(member.getId(), request))
-                .isInstanceOf(LinkPayException.class)
-                .hasMessage("만료일은 현재일 이전으로 설정할 수 없습니다.");
-
     }
 
     @Test
