@@ -99,7 +99,7 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         return sendPostRequest("/api/linked-wallets", accessToken, linkedWalletCreateRequest);
     }
 
-    private ExtractableResponse<Response> 링크지갑_목록_조회_요청(final String accessToken) {
+    public static ExtractableResponse<Response> 링크지갑_목록_조회_요청(final String accessToken) {
         return sendGetRequest("/api/linked-wallets", accessToken);
     }
 }

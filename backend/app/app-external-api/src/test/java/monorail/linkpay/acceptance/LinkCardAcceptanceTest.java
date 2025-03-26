@@ -2,7 +2,7 @@ package monorail.linkpay.acceptance;
 
 import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
 import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_생성_요청;
-import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_조회_요청;
+import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_목록_조회_요청;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPatchRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPostRequest;
@@ -45,7 +45,7 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
         String accessToken = 엑세스_토큰();
         링크지갑_생성_요청(accessToken,
                 new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
-        ExtractableResponse<Response> walletResponse = 링크지갑_조회_요청(accessToken);
+        ExtractableResponse<Response> walletResponse = 링크지갑_목록_조회_요청(accessToken);
         LinkedWalletsResponse linkedWalletsResponse = walletResponse.as(LinkedWalletsResponse.class);
 
         SharedLinkCardCreateRequest sharedLinkCardCreateRequest = new SharedLinkCardCreateRequest(
