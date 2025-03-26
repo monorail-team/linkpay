@@ -40,4 +40,6 @@ public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long
             + "where m.id in :linkedMemberIds")
     void deleteByIds(@Param("linkedMemberIds") Set<Long> linkedMemberIds,
                      @Param("deletedAt") LocalDateTime deletedAt);
+
+    Optional<LinkedMember> findOneByMemberId(Long memberId);
 }
