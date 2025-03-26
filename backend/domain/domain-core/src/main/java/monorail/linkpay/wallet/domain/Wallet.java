@@ -3,12 +3,12 @@ package monorail.linkpay.wallet.domain;
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -16,7 +16,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.member.domain.Member;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -24,10 +23,12 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
-@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE wallet SET deleted_at = CURRENT_TIMESTAMP WHERE wallet_id = ?")
 @SQLRestriction("deleted_at is null")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "wallet_type")
 @Entity
-public class Wallet extends BaseEntity {
+public abstract sealed class Wallet extends BaseEntity permits MyWallet, LinkedWallet {
 
     @Id
     @Column(name = "wallet_id")
@@ -36,15 +37,10 @@ public class Wallet extends BaseEntity {
     @Embedded
     private Point point;
 
-    @JoinColumn(name = "member_id", nullable = false)
-    @OneToOne(fetch = FetchType.LAZY)
-    private Member member;
-
     @Builder
-    public Wallet(final Long id, final Member member) {
+    public Wallet(final Long id) {
         this.id = id;
         this.point = new Point(0);
-        this.member = member;
     }
 
     public long readAmount() {

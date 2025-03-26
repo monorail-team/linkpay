@@ -14,9 +14,9 @@ import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardType;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
-import monorail.linkpay.linkedwallet.dto.LinkedWalletResponse;
-import monorail.linkpay.linkedwallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.member.dto.MemberResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.wallet.dto.WalletResponse;
 
 public class ControllerFixture {

@@ -1,14 +1,14 @@
 package monorail.linkpay.common;
 
 import monorail.linkpay.MockTestConfiguration;
+import monorail.linkpay.history.repository.WalletHistoryRepository;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
-import monorail.linkpay.linkedwallet.repository.LinkedMemberRepository;
-import monorail.linkpay.linkedwallet.repository.LinkedWalletRepository;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.Wallet;
-import monorail.linkpay.history.repository.WalletHistoryRepository;
+import monorail.linkpay.wallet.repository.LinkedMemberRepository;
+import monorail.linkpay.wallet.repository.LinkedWalletRepository;
 import monorail.linkpay.wallet.repository.WalletRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,18 +1,18 @@
-package monorail.linkpay.linkedwallet.service;
+package monorail.linkpay.wallet.service;
 
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
-import static monorail.linkpay.linkedwallet.domain.Role.PARTICIPANT;
+import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.exception.LinkPayException;
-import monorail.linkpay.linkedwallet.domain.LinkedMember;
-import monorail.linkpay.linkedwallet.domain.LinkedWallet;
-import monorail.linkpay.linkedwallet.repository.LinkedMemberRepository;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.util.id.IdGenerator;
+import monorail.linkpay.wallet.domain.LinkedMember;
+import monorail.linkpay.wallet.domain.LinkedWallet;
+import monorail.linkpay.wallet.repository.LinkedMemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
