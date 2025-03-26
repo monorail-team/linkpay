@@ -6,6 +6,7 @@ import static monorail.linkpay.linkcard.domain.CardType.OWNED;
 import static monorail.linkpay.linkcard.domain.CardType.SHARED;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -102,7 +103,8 @@ public class LinkCardService {
     public LinkCardsResponse readByState(final long memberId, final Long lastId, final int size,
                                          final CardState state) {
         Pageable pageable = PageRequest.of(0, size);
-        Slice<LinkCard> linkCards = linkCardRepository.findByStateWithLastId(memberId, lastId, pageable, state);
+        Slice<LinkCard> linkCards = linkCardRepository.findByStateWithLastId(memberId, lastId, pageable, state,
+                LocalDateTime.now());
         return new LinkCardsResponse(
                 getLinkCardResponses(linkCards),
                 linkCards.hasNext()

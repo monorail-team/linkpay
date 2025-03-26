@@ -1,5 +1,6 @@
 package monorail.linkpay.linkcard.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 import monorail.linkpay.linkcard.domain.CardState;
@@ -33,12 +34,13 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
             "AND l.state = :state " +
             "AND (:lastId IS NULL OR l.id < :lastId)" +
             "AND l.deletedAt IS NULL " +
-            "AND l.expiredAt > FUNCTION('STR_TO_DATE', CURRENT_DATE, '%Y-%m-%d %H:%i:%s')  " +
+            "AND l.expiredAt > :current  " +
             "ORDER BY l.id DESC ")
     Slice<LinkCard> findByStateWithLastId(@Param("memberId") Long memberId,
                                           @Param("lastId") Long lastId,
                                           Pageable pageable,
-                                          @Param("state") CardState state);
+                                          @Param("state") CardState state,
+                                          @Param("current") LocalDateTime current);
 
     @Modifying
     @Query("UPDATE LinkCard l "
