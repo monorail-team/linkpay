@@ -94,12 +94,12 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         return sendPatchRequest("/api/linked-wallets/charge/%s".formatted(linkedWalletId), accessToken, pointRequest);
     }
 
-    private ExtractableResponse<Response> 링크지갑_생성_요청(final String accessToken,
-                                                     final LinkedWalletCreateRequest linkedWalletCreateRequest) {
+    public static ExtractableResponse<Response> 링크지갑_생성_요청(final String accessToken,
+                                                           final LinkedWalletCreateRequest linkedWalletCreateRequest) {
         return sendPostRequest("/api/linked-wallets", accessToken, linkedWalletCreateRequest);
     }
 
-    private ExtractableResponse<Response> 링크지갑_조회_요청(final String accessToken) {
+    public static ExtractableResponse<Response> 링크지갑_조회_요청(final String accessToken) {
         return sendGetRequest("/api/linked-wallets", accessToken);
     }
 }
