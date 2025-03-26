@@ -3,11 +3,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface PaymentState {
+  cardId: string; // id값이 javascript number범위 넘어갈 수 있음
   cardName: string;
   description: string;
-  expireDate: string;
+  expireAt: string;
   guideText: string;
-  initialTime?: number;
+  cardColor: string;
+  initialTime: number;
 }
 
 const Payment: React.FC = () => {
@@ -18,9 +20,10 @@ const Payment: React.FC = () => {
   const {
     cardName,
     description,
-    expireDate,
+    expireAt,
     guideText,
-    initialTime = 45
+    initialTime = 45,
+    cardColor
   } = state || {};
 
   const [timeLeft, setTimeLeft] = useState(initialTime);
@@ -56,11 +59,16 @@ const Payment: React.FC = () => {
     };
   }, [navigate, showBackWarning]);
 
+  const backgroundStyle = {
+    backgroundColor: cardColor
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-[#938F99] text-white px-4 relative">
+    <div className="flex flex-col items-center justify-center h-screen text-white px-4 relative bg-[#938F99]">
       {/* 카드 */}
       <div
-        className="bg-[#F5F5F5] text-center text-black rounded-2xl shadow-lg w-[249px] h-[384px] mb-12 flex flex-col justify-between p-6">
+        className="text-center text-black rounded-2xl shadow-lg w-[249px] h-[384px] mb-12 flex flex-col justify-between p-6"
+        style={backgroundStyle}>
         <div className="flex flex-col justify-center mt-24 items-start ml-4">
           <p
             className="text-sm text-gray-700 mb-1 truncate w-full text-left">{cardName}</p>
@@ -71,7 +79,7 @@ const Payment: React.FC = () => {
 
         {/* 만료일 */}
         <div className="mt-auto text-xs text-gray-500 text-right">
-          만료일 {expireDate}
+          만료일 {expireAt}
         </div>
       </div>
 

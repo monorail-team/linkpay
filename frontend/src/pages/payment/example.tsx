@@ -10,9 +10,10 @@ const ExamplePage: React.FC = () => {
       state: {
         cardName: 'A105',
         description: 'Description',
-        expireDate: '25.12.23',
+        expireAt: '25.12.23',
         guideText: '디바이스의 뒷면을 카드 리더기에 대세요.',
-        initialTime: 45
+        initialTime: 45,
+        cardColor: '#ff11ff'
       }
     });
   };
