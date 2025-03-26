@@ -60,7 +60,6 @@ public class JwtProvider {
     public DecodedJWT decode(String jwt) throws JwtValidationException {
         try {
             return jwtVerifier.verify(jwt);
-
         } catch (JWTVerificationException e) {
             if (e instanceof TokenExpiredException) {
                 throw new JwtValidationException("만료된 토큰입니다");

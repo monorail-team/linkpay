@@ -17,11 +17,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "linked_wallet")
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode(of = "id", callSuper = false)
+@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("deleted_at is null")
 @Entity
 public class LinkedWallet extends BaseEntity {
 
@@ -56,5 +60,9 @@ public class LinkedWallet extends BaseEntity {
 
     public void deductPoint(Point point) {
         this.point = this.point.subtract(point);
+    }
+
+    public long getAmount() {
+        return point.getAmount();
     }
 }
