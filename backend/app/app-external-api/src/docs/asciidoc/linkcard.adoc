@@ -3,13 +3,25 @@
 
 === 링크카드 생성
 
-==== HTTP Request
+==== 내 지갑에서 생성
+
+===== HTTP Request
 
 include::{snippets}/cards/create/http-request.adoc[]
 
-==== HTTP Response
+===== HTTP Response
 
 include::{snippets}/cards/create/http-response.adoc[]
+
+==== 링크 지갑에서 생성
+
+===== HTTP Request
+
+include::{snippets}/cards/create/shared/http-request.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/cards/create/shared/http-response.adoc[]
 
 === 링크카드 조회
 

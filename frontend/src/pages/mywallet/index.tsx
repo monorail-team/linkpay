@@ -1,12 +1,65 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Header from '@/components/Header';
+import ChargeModal from '@/modal/ChargeModal';
+import MenuModal from '@/modal/MenuModal';
+
 import { MyWalletHistory } from '@/model/MyWalletHistory';
 import { walletData } from '@/mocks/walletData';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const MyWallet: React.FC = () => {
+  const [showChargeModal, setShowChargeModal] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(walletData.availablePoint);
+
+  // 충전 API 호출 함수
+  const handleCharge = async (amount: number) => {
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      const response = await axios.patch('http://localhost:8080/api/wallets/charge', 
+        { amount: amount },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          }
+      );
+      if (response.status === 204) {
+        // API 호출 성공 시 잔액 업데이트 및 모달 닫기
+        setWalletBalance(prev => prev + amount);
+        console.log('충전 성공');
+        setShowChargeModal(false);
+        navigate('/mywallet');
+      } else {
+        alert('충전에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Error charging wallet:', error);
+      alert('오류가 발생했습니다.');
+    }
+  };
+
+
+  const navigate = useNavigate();
+
+  const handleCreateCard = () => {
+    navigate('/createcard');
+  };
+
+  const [showMenu, setShowMenu] = useState(false);
+
+  const handleMenuClick = () => {
+    setShowMenu(true);
+  };
+
+  const handleMenuClose = () => {
+    setShowMenu(false);
+  };
   return (
     <div className='dark:bg-[#3b3838]'>
-      <Header headerType="menu" />
+      <Header headerType="menu" onMenuClick={handleMenuClick} />
+      {showMenu && <MenuModal onClose={handleMenuClose} />}
       <div className="w-full max-w-md mx-auto p-4" style={{ height: 'calc(100vh - 64px)' }}>
         {/* 내 지갑 정보 */}
         <div className="w-4/5 h-1/4 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
@@ -22,10 +75,13 @@ const MyWallet: React.FC = () => {
             </p>
           </div>
           <div className="flex justify-between w-full">
-            <button className="bg-white text-black py-2 px-4 ml-auto mr-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">
+            <button
+            onClick={handleCreateCard} 
+            className="bg-white text-black py-2 px-4 ml-auto mr-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">
               카드 생성
             </button>
-            <button className="bg-white text-black py-2 px-4 mr-auto ml-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">
+            <button className="bg-white text-black py-2 px-4 mr-auto ml-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]"
+              onClick={() => setShowChargeModal(true)}>
               충전하기
             </button>
           </div>
@@ -65,6 +121,12 @@ const MyWallet: React.FC = () => {
           </ul>
         </div>
       </div>
+      {showChargeModal && (
+        <ChargeModal 
+          onClose={() => setShowChargeModal(false)}
+          onConfirm={handleCharge}
+        />
+      )}
     </div>
   );
 };
