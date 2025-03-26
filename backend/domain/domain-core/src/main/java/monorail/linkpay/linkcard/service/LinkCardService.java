@@ -101,10 +101,9 @@ public class LinkCardService {
     }
 
     public LinkCardsResponse readByState(final long memberId, final Long lastId, final int size,
-                                         final CardState state) {
+                                         final CardState state, final LocalDateTime now) {
         Pageable pageable = PageRequest.of(0, size);
-        Slice<LinkCard> linkCards = linkCardRepository.findByStateWithLastId(memberId, lastId, pageable, state,
-                LocalDateTime.now());
+        Slice<LinkCard> linkCards = linkCardRepository.findByStateWithLastId(memberId, lastId, pageable, state, now);
         return new LinkCardsResponse(
                 getLinkCardResponses(linkCards),
                 linkCards.hasNext()

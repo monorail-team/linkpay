@@ -1,7 +1,7 @@
 package monorail.linkpay.linkcard.repository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
 
-    Optional<LinkCard> findByMember(Member member);
+    List<LinkCard> findLinkCardsByMember(Member member);
 
     @Query("SELECT l FROM LinkCard l " +
             "WHERE l.member.id = :memberId " +

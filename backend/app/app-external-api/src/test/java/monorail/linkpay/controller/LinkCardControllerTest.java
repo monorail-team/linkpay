@@ -14,6 +14,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 
+import java.time.LocalDateTime;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
 import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequest;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,8 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 보유한_링크카드_중_등록안된_링크카드를_조회한다() {
-        when(linkCardService.readByState(anyLong(), nullable(Long.class), eq(10), eq(UNREGISTERED))).thenReturn(
+        when(linkCardService.readByState(anyLong(), nullable(Long.class), eq(10), eq(UNREGISTERED),
+                any(LocalDateTime.class))).thenReturn(
                 LINK_CARDS_RESPONSE_2);
 
         docsGiven.header("Authorization", "Bearer {access_token}")
@@ -88,7 +90,8 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 결제카드로_등록된_링크카드를_조회한다() {
-        when(linkCardService.readByState(anyLong(), nullable(Long.class), eq(10), eq(UNREGISTERED))).thenReturn(
+        when(linkCardService.readByState(anyLong(), nullable(Long.class), eq(10), eq(UNREGISTERED),
+                any(LocalDateTime.class))).thenReturn(
                 LINK_CARDS_RESPONSE_2);
 
         docsGiven.header("Authorization", "Bearer {access_token}")

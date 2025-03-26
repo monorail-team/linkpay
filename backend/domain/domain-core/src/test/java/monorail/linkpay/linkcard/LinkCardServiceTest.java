@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
@@ -35,7 +36,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         // when
         linkCardService.create(member.getId(), request);
 
-        LinkCard result = linkCardRepository.findByMember(member).orElseThrow();
+        List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
         assertThat(result).isNotNull();
     }
 
@@ -50,7 +51,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         // when
         linkCardService.createShared(request);
 
-        LinkCard result = linkCardRepository.findByMember(member).orElseThrow();
+        List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
         assertThat(result).isNotNull();
     }
 
@@ -86,7 +87,8 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkCardService.create(member.getId(), request);
 
         // when
-        LinkCardsResponse response = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED);
+        LinkCardsResponse response = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
+                LocalDateTime.now());
 
         // then
         assertThat(response.linkCards()).hasSize(1);
@@ -97,14 +99,15 @@ public class LinkCardServiceTest extends IntegrationTest {
         // given
         LinkCardCreateServiceRequest request = createCard(LocalDate.now().plusDays(1));
         linkCardService.create(member.getId(), request);
-        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED);
+        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
+                LocalDateTime.now());
 
         // when
         linkCardService.registLinkCard(List.of(Long.parseLong(unregisteredCards.linkCards().getFirst().id())));
 
         // then
-        LinkCard result = linkCardRepository.findByMember(member).orElseThrow();
-        assertThat(result.getState()).isEqualTo(REGISTERED);
+        List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
+        assertThat(result.getFirst().getState()).isEqualTo(REGISTERED);
     }
 
     @Test
@@ -112,14 +115,32 @@ public class LinkCardServiceTest extends IntegrationTest {
         // given
         LinkCardCreateServiceRequest request = createCard(LocalDate.now().plusDays(1));
         linkCardService.create(member.getId(), request);
-        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED);
+        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
+                LocalDateTime.now());
         linkCardService.registLinkCard(List.of(Long.parseLong(unregisteredCards.linkCards().getFirst().id())));
 
         // when
-        LinkCardsResponse registeredCards = linkCardService.readByState(member.getId(), null, 10, REGISTERED);
+        LinkCardsResponse registeredCards = linkCardService.readByState(member.getId(), null, 10, REGISTERED,
+                LocalDateTime.now());
 
         // then
         assertThat(registeredCards.linkCards()).hasSize(1);
+    }
+
+    @Test
+    void 등록여부에_따른_카드검색시_만료일이_지난_카드는_조회되지_않는다() {
+        // given
+        LinkCardCreateServiceRequest request = createCard(LocalDate.now());
+        linkCardService.create(member.getId(), request);
+
+        // when
+        LinkCardsResponse response = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
+                LocalDateTime.now().plusDays(1));
+
+        // then
+        assertThat(response.linkCards()).hasSize(0);
+        List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
+        assertThat(result).hasSize(1);
     }
 
     private static LinkCardCreateServiceRequest createCard(LocalDate date) {

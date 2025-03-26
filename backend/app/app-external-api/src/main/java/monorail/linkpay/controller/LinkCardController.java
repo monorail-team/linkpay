@@ -4,6 +4,7 @@ import static monorail.linkpay.linkcard.domain.CardState.getCardState;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
@@ -55,7 +56,8 @@ public class LinkCardController {
                                                                  @RequestParam(required = false) final Long lastId,
                                                                  @RequestParam(defaultValue = "10") final int size,
                                                                  @PathVariable final String state) {
-        return ResponseEntity.ok(linkCardService.readByState(principal.memberId(), lastId, size, getCardState(state)));
+        return ResponseEntity.ok(linkCardService.readByState(principal.memberId(), lastId, size, getCardState(state),
+                LocalDateTime.now()));
     }
 
     @PatchMapping("/activate")
