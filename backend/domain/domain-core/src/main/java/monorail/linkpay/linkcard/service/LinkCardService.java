@@ -1,5 +1,6 @@
 package monorail.linkpay.linkcard.service;
 
+import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
 import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
 import static monorail.linkpay.linkcard.domain.CardType.OWNED;
 import static monorail.linkpay.linkcard.domain.CardType.SHARED;
@@ -9,18 +10,22 @@ import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.history.service.PaymentRecorder;
 import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
+import monorail.linkpay.linkedwallet.domain.LinkedMember;
+import monorail.linkpay.linkedwallet.domain.LinkedWallet;
+import monorail.linkpay.linkedwallet.service.LinkedMemberFetcher;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
 import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequest;
-import monorail.linkpay.linkedwallet.domain.LinkedWallet;
 import monorail.linkpay.linkedwallet.service.LinkedWalletFetcher;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
+import monorail.linkpay.history.service.WalletHistoryRecorder;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.service.WalletFetcher;
@@ -36,10 +41,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class LinkCardService {
 
     private final LinkCardRepository linkCardRepository;
+    private final LinkCardFetcher linkCardFetcher;
+    private final LinkedWalletFetcher linkedWalletFetcher;
     private final WalletFetcher walletFetcher;
     private final MemberFetcher memberFetcher;
     private final IdGenerator idGenerator;
-    private final LinkedWalletFetcher linkedWalletFetcher;
+    private final WalletHistoryRecorder walletHistoryRecorder;
+    private final PaymentRecorder paymentRecorder;
+    private final LinkedMemberFetcher linkedMemberFetcher;
 
     @Transactional
     public void create(Long creatorId, LinkCardCreateServiceRequest request) {
@@ -112,5 +121,22 @@ public class LinkCardService {
         linkCardRepository.updateStateById(new HashSet<>(linkCardIds));
     }
 
+    @Transactional
+    public void pay(final Long memberId, final Point point, final Long linkCardId, final String merchantName) {
+        Member member = memberFetcher.fetchById(memberId);
+        LinkCard linkCard = linkCardFetcher.fetchByOwnerId(linkCardId, member);
+        linkCard.usePoint(point);
 
+        if (linkCard.getCardType().equals(OWNED)) {
+            Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(memberId);
+            wallet.deductPoint(point);
+            walletHistoryRecorder.recordWallet(WITHDRAWAL, wallet, point);
+        } else if (linkCard.getCardType().equals(SHARED)) {
+            LinkedWallet linkedWallet = linkedWalletFetcher.fetchByIdForUpdate(linkCard.getLinkedWallet().getId());
+            linkedWallet.deductPoint(point);
+            LinkedMember linkedMember = linkedMemberFetcher.fetchByMemberId(memberId);
+            walletHistoryRecorder.recordLinkedWallet(WITHDRAWAL, linkCard, linkedWallet, linkedMember, point, merchantName);
+        }
+        paymentRecorder.record(linkCard, point, merchantName);
+    }
 }

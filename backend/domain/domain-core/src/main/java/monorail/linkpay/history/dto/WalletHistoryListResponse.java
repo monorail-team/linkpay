@@ -1,4 +1,4 @@
-package monorail.linkpay.wallet.dto;
+package monorail.linkpay.history.dto;
 
 import java.util.List;
 

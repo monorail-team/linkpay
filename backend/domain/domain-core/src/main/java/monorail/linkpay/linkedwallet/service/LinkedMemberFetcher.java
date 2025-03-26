@@ -19,4 +19,10 @@ public class LinkedMemberFetcher {
                 .orElseThrow(() ->
                         new LinkPayException(NOT_FOUND_RESOURCE, "요청한 멤버 아이디에 해당하는 링크 멤버가 존재하지 않습니다."));
     }
+
+    public LinkedMember fetchByMemberId(Long memberId) {
+        return linkedMemberRepository.findOneByMemberId(memberId)
+                .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE,
+                        "요청한 멤버 아이디에 해당하는 링크 멤버가 존재하지 않습니다."));
+    }
 }

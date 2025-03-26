@@ -2,6 +2,7 @@ package monorail.linkpay.linkcard.domain;
 
 import static jakarta.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -21,6 +22,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.exception.ExceptionCode;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkedwallet.domain.LinkedWallet;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.Wallet;
@@ -109,5 +112,12 @@ public class LinkCard extends BaseEntity {
         this.wallet = wallet;
         this.usedPoint = usedPoint;
         this.state = state;
+    }
+
+    public void usePoint(Point point) {
+        if (this.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new LinkPayException(INVALID_REQUEST, "만료된 링크카드입니다.");
+        }
+        this.getLimitPrice().subtract(this.getUsedPoint().add(point));
     }
 }

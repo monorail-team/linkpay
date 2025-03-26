@@ -8,7 +8,7 @@ import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.Wallet;
-import monorail.linkpay.wallet.repository.WalletHistoryRepository;
+import monorail.linkpay.history.repository.WalletHistoryRepository;
 import monorail.linkpay.wallet.repository.WalletRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
