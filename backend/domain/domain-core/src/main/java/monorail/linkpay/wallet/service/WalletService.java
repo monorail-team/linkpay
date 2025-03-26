@@ -2,6 +2,7 @@ package monorail.linkpay.wallet.service;
 
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.history.service.WalletHistoryRecorder;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.Wallet;
@@ -21,6 +22,7 @@ public class WalletService {
     private final WalletRepository walletRepository;
     private final WalletFetcher walletFetcher;
     private final IdGenerator idGenerator;
+    private final WalletHistoryRecorder walletHistoryRecorder;
 
     @Transactional
     public Long create(final Member member) {
@@ -39,11 +41,13 @@ public class WalletService {
     public void charge(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(memberId);
         wallet.chargePoint(point);
+        walletHistoryRecorder.recordWallet(DEPOSIT, wallet, point);
     }
 
     @Transactional
     public void deduct(final Long memberId, final Point point) {
         Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(memberId);
         wallet.deductPoint(point);
+        walletHistoryRecorder.recordWallet(WITHDRAWAL, wallet, point);
     }
 }
