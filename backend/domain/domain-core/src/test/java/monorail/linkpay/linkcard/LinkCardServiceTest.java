@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.LinkCard;
@@ -41,7 +42,7 @@ public class LinkCardServiceTest extends IntegrationTest {
     @Test
     void 링크지갑에서_카드를_생성한다() {
         // given
-        linkedWalletService.createLinkedWallet(member.getId(), "링크지갑", null);
+        linkedWalletService.createLinkedWallet(member.getId(), "링크지갑", Set.of());
         LinkedWalletsResponse walletRes = linkedWalletService.readLinkedWallets(member.getId(), null, 10);
         SharedLinkCardCreateServiceRequest request = createSharedCard(LocalDate.now().plusDays(1),
                 walletRes.linkedWallets().getFirst().linkedWalletId(), member.getId());

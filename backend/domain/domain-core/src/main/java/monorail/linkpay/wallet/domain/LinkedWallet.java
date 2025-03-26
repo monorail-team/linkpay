@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public final class LinkedWallet extends Wallet {
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String name;
 
     @Builder

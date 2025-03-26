@@ -27,7 +27,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "wallet_type")
 @Entity
-public abstract sealed class Wallet extends BaseEntity permits MyWallet, LinkedWallet {
+public abstract class Wallet extends BaseEntity {
 
     @Id
     @Column(name = "wallet_id")

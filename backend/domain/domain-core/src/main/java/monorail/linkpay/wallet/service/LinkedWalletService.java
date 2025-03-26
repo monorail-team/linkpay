@@ -63,6 +63,7 @@ public class LinkedWalletService {
                 .id(idGenerator.generate())
                 .name(walletName)
                 .build();
+        linkedWalletRepository.save(linkedWallet);
 
         linkedMemberRepository.save(LinkedMember.builder()
                 .id(idGenerator.generate())
@@ -77,8 +78,6 @@ public class LinkedWalletService {
                         .linkedWallet(linkedWallet)
                         .member(member).build())
         );
-
-        linkedWalletRepository.save(linkedWallet);
         return linkedWallet.getId();
     }
 
