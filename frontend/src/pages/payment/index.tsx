@@ -59,11 +59,22 @@ const Payment: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-[#938F99] text-white px-4 relative">
       {/* 카드 */}
-      <div className="bg-[#F5F5F5] text-center text-black px-6 py-8 rounded-2xl shadow-lg w-[249px] h-[384px] mb-12">
-        <p className="text-sm text-gray-700 mb-1">{cardName}</p>
-        <h2 className="text-2xl font-semibold text-gray-600 mb-4">{description}</h2>
-        <p className="text-xs text-right text-gray-500">만료일 {expireDate}</p>
+      <div
+        className="bg-[#F5F5F5] text-center text-black rounded-2xl shadow-lg w-[249px] h-[384px] mb-12 flex flex-col justify-between p-6">
+        <div className="flex flex-col justify-center mt-24 items-start ml-4">
+          <p
+            className="text-sm text-gray-700 mb-1 truncate w-full text-left">{cardName}</p>
+          <h2
+            className="text-2xl font-semibold text-gray-600 truncate w-full text-left">{description}</h2>
+        </div>
+
+
+        {/* 만료일 */}
+        <div className="mt-auto text-xs text-gray-500 text-right">
+          만료일 {expireDate}
+        </div>
       </div>
+
 
       {/* 카운트다운 및 안내 */}
       <div className="text-center">
