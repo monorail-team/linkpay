@@ -15,7 +15,7 @@ const LinkCardItem: React.FC<LinkCardItemProps> = ({
           <div className="text-base text-gray-600">{cardName}</div>
         </div>
         
-      <div className="w-1/3 flex flex-col ">
+      <div className="w-1/2 flex flex-col ">
         {/* 한도 라벨 (첫 번째 줄) */}
         <div className="flex justify-between">
           <div className="text-xs text-gray-800">한도</div>
