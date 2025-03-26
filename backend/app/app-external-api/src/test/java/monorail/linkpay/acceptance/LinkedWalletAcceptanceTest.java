@@ -12,8 +12,8 @@ import io.restassured.response.Response;
 import java.util.Set;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
-import monorail.linkpay.linkedwallet.dto.LinkedWalletResponse;
-import monorail.linkpay.linkedwallet.dto.LinkedWalletsResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 

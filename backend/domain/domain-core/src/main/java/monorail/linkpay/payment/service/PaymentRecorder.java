@@ -1,14 +1,13 @@
-package monorail.linkpay.history.service;
+package monorail.linkpay.payment.service;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.history.domain.Payment;
-import monorail.linkpay.history.repository.PaymentRepository;
 import monorail.linkpay.linkcard.domain.LinkCard;
+import monorail.linkpay.payment.domain.Payment;
+import monorail.linkpay.payment.repository.PaymentRepository;
 import monorail.linkpay.util.id.IdGenerator;
-
-import java.time.LocalDateTime;
 
 @SupportLayer
 @RequiredArgsConstructor

@@ -1,6 +1,6 @@
-package monorail.linkpay.history.repository;
+package monorail.linkpay.payment.repository;
 
-import monorail.linkpay.history.domain.Payment;
+import monorail.linkpay.payment.domain.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

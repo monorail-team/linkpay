@@ -1,6 +1,6 @@
-package monorail.linkpay.linkedwallet.dto;
+package monorail.linkpay.wallet.dto;
 
-import monorail.linkpay.linkedwallet.repository.dto.LinkedWalletDto;
+import monorail.linkpay.wallet.repository.dto.LinkedWalletDto;
 
 public record LinkedWalletResponse(
         Long linkedWalletId,

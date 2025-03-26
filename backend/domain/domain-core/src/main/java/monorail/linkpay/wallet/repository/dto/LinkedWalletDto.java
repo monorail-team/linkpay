@@ -1,4 +1,4 @@
-package monorail.linkpay.linkedwallet.repository.dto;
+package monorail.linkpay.wallet.repository.dto;
 
 public interface LinkedWalletDto {
 

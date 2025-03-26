@@ -14,8 +14,8 @@ import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
 import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequest;
-import monorail.linkpay.linkedwallet.dto.LinkedWalletsResponse;
-import monorail.linkpay.linkedwallet.service.LinkedWalletService;
+import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
+import monorail.linkpay.wallet.service.LinkedWalletService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

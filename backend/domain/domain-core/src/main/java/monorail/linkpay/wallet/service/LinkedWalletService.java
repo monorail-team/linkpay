@@ -1,22 +1,22 @@
-package monorail.linkpay.linkedwallet.service;
+package monorail.linkpay.wallet.service;
 
-import static monorail.linkpay.linkedwallet.domain.Role.CREATOR;
-import static monorail.linkpay.linkedwallet.domain.Role.PARTICIPANT;
+import static monorail.linkpay.wallet.domain.Role.CREATOR;
+import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.linkedwallet.domain.LinkedMember;
-import monorail.linkpay.linkedwallet.domain.LinkedWallet;
-import monorail.linkpay.linkedwallet.dto.LinkedWalletResponse;
-import monorail.linkpay.linkedwallet.dto.LinkedWalletsResponse;
-import monorail.linkpay.linkedwallet.repository.LinkedMemberRepository;
-import monorail.linkpay.linkedwallet.repository.LinkedWalletRepository;
-import monorail.linkpay.linkedwallet.repository.dto.LinkedWalletDto;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.util.id.IdGenerator;
+import monorail.linkpay.wallet.domain.LinkedMember;
+import monorail.linkpay.wallet.domain.LinkedWallet;
+import monorail.linkpay.wallet.dto.LinkedWalletResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
+import monorail.linkpay.wallet.repository.LinkedMemberRepository;
+import monorail.linkpay.wallet.repository.LinkedWalletRepository;
+import monorail.linkpay.wallet.repository.dto.LinkedWalletDto;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;

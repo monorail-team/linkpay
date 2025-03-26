@@ -1,4 +1,4 @@
-package monorail.linkpay.linkedwallet.domain;
+package monorail.linkpay.wallet.domain;
 
 import static jakarta.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
@@ -26,7 +26,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode(of = "id", callSuper = false)
-@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE linked_member SET deleted_at = CURRENT_TIMESTAMP WHERE linked_member_id = ?")
 @SQLRestriction("deleted_at is null")
 @Entity
 public class LinkedMember extends BaseEntity {
@@ -48,7 +48,7 @@ public class LinkedMember extends BaseEntity {
     private Member member;
 
     @Builder
-    public LinkedMember(final Long id, final Role role, final LinkedWallet linkedWallet, final Member member) {
+    private LinkedMember(final Long id, final Role role, final LinkedWallet linkedWallet, final Member member) {
         this.id = id;
         this.role = role;
         this.linkedWallet = linkedWallet;
@@ -61,10 +61,6 @@ public class LinkedMember extends BaseEntity {
                 .role(role)
                 .member(member)
                 .build();
-    }
-
-    public void registerToWallet(final LinkedWallet linkedWallet) {
-        this.linkedWallet = linkedWallet;
     }
 
     public boolean isCreator() {

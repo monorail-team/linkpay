@@ -1,4 +1,4 @@
-package monorail.linkpay.linkedwallet.domain;
+package monorail.linkpay.wallet.domain;
 
 public enum Role {
     CREATOR,

@@ -1,8 +1,8 @@
 package monorail.linkpay.acceptance;
 
 import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
-import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_생성_요청;
 import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_목록_조회_요청;
+import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_생성_요청;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPatchRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPostRequest;
@@ -22,7 +22,7 @@ import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
-import monorail.linkpay.linkedwallet.dto.LinkedWalletsResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;

@@ -8,7 +8,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.controller.request.LinkedMemberCreateRequest;
-import monorail.linkpay.linkedwallet.service.LinkedMemberService;
+import monorail.linkpay.wallet.service.LinkedMemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;

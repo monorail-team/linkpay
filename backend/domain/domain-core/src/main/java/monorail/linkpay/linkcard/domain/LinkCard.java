@@ -22,9 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
-import monorail.linkpay.linkedwallet.domain.LinkedWallet;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.Wallet;
 import org.hibernate.annotations.SQLDelete;
@@ -34,7 +32,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
-@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE link_card SET deleted_at = CURRENT_TIMESTAMP WHERE link_card_id = ?")
 @SQLRestriction("deleted_at is null")
 @Entity
 public class LinkCard extends BaseEntity {
@@ -77,25 +75,19 @@ public class LinkCard extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "linked_wallet_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private LinkedWallet linkedWallet;
-
-    @JoinColumn(name = "wallet_id")
+    @JoinColumn(name = "wallet_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Wallet wallet;
 
     @Builder
-    public LinkCard(
+    private LinkCard(
             final Long id,
             final Point limitPrice,
             final CardType cardType,
             final CardColor cardColor,
             final String cardName,
-            final LocalDateTime deletedAt,
             final LocalDateTime expiredAt,
             final Member member,
-            final LinkedWallet linkedWallet,
             final Wallet wallet,
             final Point usedPoint,
             final CardState state
@@ -105,19 +97,26 @@ public class LinkCard extends BaseEntity {
         this.cardType = cardType;
         this.cardColor = cardColor;
         this.cardName = cardName;
-        this.deletedAt = deletedAt;
         this.expiredAt = expiredAt;
         this.member = member;
-        this.linkedWallet = linkedWallet;
         this.wallet = wallet;
         this.usedPoint = usedPoint;
         this.state = state;
     }
 
-    public void usePoint(Point point) {
-        if (this.getExpiredAt().isBefore(LocalDateTime.now())) {
-            throw new LinkPayException(INVALID_REQUEST, "만료된 링크카드입니다.");
+    public boolean isExpired() {
+        return this.getExpiredAt().isBefore(LocalDateTime.now());
+    }
+
+    public void usePoint(final Point point) {
+        Point totalUsedPoint = this.usedPoint.add(point);
+        validateLimitPriceNotExceed(totalUsedPoint);
+        this.usedPoint = totalUsedPoint;
+    }
+
+    public void validateLimitPriceNotExceed(final Point point) {
+        if (this.limitPrice.getAmount() < point.getAmount()) {
+            throw new LinkPayException(INVALID_REQUEST, "사용금액이 한도를 초과했습니다.");
         }
-        this.getLimitPrice().subtract(this.getUsedPoint().add(point));
     }
 }
