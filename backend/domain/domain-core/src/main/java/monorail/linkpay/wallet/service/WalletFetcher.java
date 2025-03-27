@@ -1,12 +1,12 @@
 package monorail.linkpay.wallet.service;
 
+import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
+
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.repository.WalletRepository;
 import org.springframework.stereotype.Repository;
-
-import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
 
 @Repository
 @RequiredArgsConstructor

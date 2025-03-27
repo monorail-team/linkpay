@@ -18,5 +18,4 @@ public class WalletHistoryFetcher {
         return walletHistoryRepository.findById(id)
                 .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "아이디에 해당하는 내역이 존재하지 않습니다."));
     }
-
 }

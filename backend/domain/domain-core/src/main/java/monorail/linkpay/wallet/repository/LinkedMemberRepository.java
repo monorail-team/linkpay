@@ -1,6 +1,5 @@
 package monorail.linkpay.wallet.repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,7 +39,7 @@ public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long
                                                           Pageable pageable);
 
     @Query("select lm from LinkedMember lm "
-            + "join fetch lm.member m "
+            + "join fetch lm.member "
             + "where lm.linkedWallet.id = :linkedWalletId "
             + "and (:lastId is null or lm.id < :lastId)")
     Slice<LinkedMember> findAllByLinkedWalletId(@Param("linkedWalletId") Long linkedWalletId,
@@ -51,6 +50,5 @@ public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long
     @Query("update LinkedMember m "
             + "set m.deletedAt = CURRENT_TIMESTAMP "
             + "where m.id in :linkedMemberIds")
-    void deleteByIds(@Param("linkedMemberIds") Set<Long> linkedMemberIds,
-                     @Param("deletedAt") LocalDateTime deletedAt);
+    void deleteByIds(@Param("linkedMemberIds") Set<Long> linkedMemberIds);
 }

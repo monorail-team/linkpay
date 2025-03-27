@@ -1,14 +1,14 @@
 package monorail.linkpay.wallet.service;
 
+import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
+import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
+
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.history.service.WalletHistoryRecorder;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.Wallet;
-
-import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
-import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
 
 @SupportLayer
 @RequiredArgsConstructor

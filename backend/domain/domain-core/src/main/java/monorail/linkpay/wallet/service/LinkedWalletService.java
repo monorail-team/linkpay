@@ -3,7 +3,6 @@ package monorail.linkpay.wallet.service;
 import static monorail.linkpay.wallet.domain.Role.CREATOR;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -107,14 +106,14 @@ public class LinkedWalletService {
     }
 
     @Transactional
-    public void deleteLinkedWallet(final Long linkedWalletId, LocalDateTime now) {
+    public void deleteLinkedWallet(final Long linkedWalletId) {
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
         linkCardFetcher.checkNotExistsByWalletId(linkedWalletId);
         List<Long> linkedMemberIds = linkedMemberRepository.findByLinkedWalletId(linkedWalletId).stream()
                 .map(LinkedMember::getId)
                 .toList();
 
-        linkedMemberRepository.deleteByIds(new HashSet<>(linkedMemberIds), now);
+        linkedMemberRepository.deleteByIds(new HashSet<>(linkedMemberIds));
         linkedWalletRepository.delete(linkedWallet);
     }
 }

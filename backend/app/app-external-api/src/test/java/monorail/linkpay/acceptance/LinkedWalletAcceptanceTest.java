@@ -28,6 +28,22 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    void 특정_링크지갑을_조회한다() {
+        String accessToken = 엑세스_토큰();
+        String location = 링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest(
+                "링크지갑1", Set.of(1L, 2L, 3L))).header("Location");
+        Long linkedWalletId = Long.valueOf(location.substring(location.lastIndexOf("/") + 1));
+
+        ExtractableResponse<Response> response = 링크지갑_조회_요청(accessToken, linkedWalletId);
+        LinkedWalletResponse linkedWalletResponse = response.as(LinkedWalletResponse.class);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(linkedWalletResponse).isEqualTo(new LinkedWalletResponse(
+                        linkedWalletId.toString(), "링크지갑1", 0L, 4))
+        );
+    }
+
+    @Test
     void 나의_링크지갑들을_조회한다() {
         String accessToken = 엑세스_토큰();
         링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
@@ -101,5 +117,9 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
 
     public static ExtractableResponse<Response> 링크지갑_목록_조회_요청(final String accessToken) {
         return sendGetRequest("/api/linked-wallets", accessToken);
+    }
+
+    public static ExtractableResponse<Response> 링크지갑_조회_요청(final String accessToken, Long linkedWalletId) {
+        return sendGetRequest("/api/linked-wallets/%s".formatted(linkedWalletId), accessToken);
     }
 }

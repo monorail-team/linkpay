@@ -3,7 +3,6 @@ package monorail.linkpay.wallet.service;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.exception.LinkPayException;
@@ -45,23 +44,19 @@ public class LinkedMemberService {
         validateCreatorPermission(linkedWalletId, memberId);
         Member member = memberFetcher.fetchById(participantId);
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
-        LinkedMember linkedMember = LinkedMember.of(idGenerator.generate(), PARTICIPANT, member);
 
         linkedMemberRepository.save(LinkedMember.builder()
                 .id(idGenerator.generate())
                 .role(PARTICIPANT)
                 .linkedWallet(linkedWallet)
                 .member(member).build());
-
-        linkedMemberRepository.save(linkedMember);
     }
 
     @Transactional
-    public void deleteLinkedMember(final Long linkedWalletId, final Set<Long> linkedMemberIds,
-                                   final Long memberId, LocalDateTime now) {
+    public void deleteLinkedMember(final Long linkedWalletId, final Set<Long> linkedMemberIds, final Long memberId) {
         validateCreatorPermission(linkedWalletId, memberId);
         linkedWalletFetcher.checkExistsById(linkedWalletId);
-        linkedMemberRepository.deleteByIds(linkedMemberIds, now);
+        linkedMemberRepository.deleteByIds(linkedMemberIds);
     }
 
     private void validateCreatorPermission(final Long linkedWalletId, final Long memberId) {

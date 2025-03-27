@@ -13,7 +13,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 
-import java.time.LocalDateTime;
 import monorail.linkpay.common.domain.Point;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -90,7 +89,7 @@ public class LinkedWalletControllerTest extends ControllerTest {
 
     @Test
     void 링크지갑을_삭제한다() {
-        doNothing().when(linkedWalletService).deleteLinkedWallet(anyLong(), any(LocalDateTime.class));
+        doNothing().when(linkedWalletService).deleteLinkedWallet(anyLong());
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")

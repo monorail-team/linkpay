@@ -1,7 +1,5 @@
 package monorail.linkpay.controller;
 
-import static java.time.LocalDateTime.now;
-
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +72,7 @@ public class LinkedWalletController {
 
     @DeleteMapping("/{linkedWalletId}")
     public ResponseEntity<Void> deleteLinkedWallet(@PathVariable final Long linkedWalletId) {
-        linkedWalletService.deleteLinkedWallet(linkedWalletId, now());
+        linkedWalletService.deleteLinkedWallet(linkedWalletId);
         return ResponseEntity.noContent().build();
     }
 }

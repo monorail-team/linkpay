@@ -2,7 +2,6 @@ package monorail.linkpay.controller;
 
 import static monorail.linkpay.controller.ControllerFixture.LINKED_MEMBERS_RESPONSE;
 import static monorail.linkpay.controller.ControllerFixture.LINKED_MEMBER_CREATE_REQUEST;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -10,13 +9,12 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 public class LinkedMemberControllerTest extends ControllerTest {
-    
+
     @Test
     void 링크멤버를_조회한다() {
         when(linkedMemberService.getLinkedMembers(anyLong(), anyLong(), anyInt())).thenReturn(LINKED_MEMBERS_RESPONSE);
@@ -46,7 +44,7 @@ public class LinkedMemberControllerTest extends ControllerTest {
     @Test
     void 링크멤버를_삭제한다() {
         doNothing().when(linkedMemberService)
-                .deleteLinkedMember(anyLong(), anySet(), anyLong(), any(LocalDateTime.class));
+                .deleteLinkedMember(anyLong(), anySet(), anyLong());
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")

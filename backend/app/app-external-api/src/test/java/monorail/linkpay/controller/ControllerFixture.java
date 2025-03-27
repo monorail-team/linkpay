@@ -38,8 +38,8 @@ public class ControllerFixture {
     public static final SharedLinkCardCreateRequest SHARED_LINK_CARD_CREATE_REQUEST = new SharedLinkCardCreateRequest(
             "테스트카드", 500000, LocalDate.of(2025, 5, 25), List.of(1L), 1L);
 
-    public static final LinkCardRegistRequest LINK_CARD_REGISTRATION_REQUEST = new LinkCardRegistRequest(List.of(1L));
-
+    public static final LinkCardRegistRequest LINK_CARD_REGISTRATION_REQUEST = new LinkCardRegistRequest(
+            List.of(1L));
     public static final LinkedMemberCreateRequest LINKED_MEMBER_CREATE_REQUEST = new LinkedMemberCreateRequest(1L);
 
     public static final LinkedWalletCreateRequest LINKED_WALLET_CREATE_REQUEST = new LinkedWalletCreateRequest(
@@ -73,26 +73,25 @@ public class ControllerFixture {
     public static final LinkCardsResponse LINK_CARDS_RESPONSE_2 = new LinkCardsResponse(
             List.of(LINK_CARD_RESPONSE_1, SHARED_LINK_CARD_RESPONSE), false);
 
-    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_1 = new LinkedWalletResponse("1", "링크지갑1", 40000L,
-            1);
-    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_2 = new LinkedWalletResponse("2", "링크지갑2", 50000L,
-            2);
-    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_3 = new LinkedWalletResponse("3", "링크지갑3", 60000L,
-            3);
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_1 = new LinkedWalletResponse(
+            "1", "링크지갑1", 40000L, 1);
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_2 = new LinkedWalletResponse(
+            "2", "링크지갑2", 50000L, 2);
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_3 = new LinkedWalletResponse(
+            "3", "링크지갑3", 60000L, 3);
 
     public static final LinkedWalletsResponse LINKED_WALLETS_RESPONSE = new LinkedWalletsResponse(
-            List.of(LINKED_WALLET_RESPONSE_1, LINKED_WALLET_RESPONSE_2, LINKED_WALLET_RESPONSE_3),
-            false
+            List.of(LINKED_WALLET_RESPONSE_1, LINKED_WALLET_RESPONSE_2, LINKED_WALLET_RESPONSE_3), false
     );
 
     public static final PaymentsRequest PAYMENT_REQUEST = new PaymentsRequest(10000, 1L, 2L);
 
-    public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_1 = new LinkedMemberResponse("1", "링크멤버1",
-            "link1@gmail.com");
-    public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_2 = new LinkedMemberResponse("2", "링크멤버2",
-            "link2@gmail.com");
-    public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_3 = new LinkedMemberResponse("3", "링크멤버3",
-            "link3@gmail.com");
+    public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_1 = new LinkedMemberResponse(
+            "1", "링크멤버1", "link1@gmail.com");
+    public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_2 = new LinkedMemberResponse(
+            "2", "링크멤버2", "link2@gmail.com");
+    public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_3 = new LinkedMemberResponse(
+            "3", "링크멤버3", "link3@gmail.com");
 
     public static final LinkedMembersResponse LINKED_MEMBERS_RESPONSE = new LinkedMembersResponse(
             List.of(LINKED_MEMBER_RESPONSE_1, LINKED_MEMBER_RESPONSE_2, LINKED_MEMBER_RESPONSE_3), false
