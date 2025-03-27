@@ -27,15 +27,6 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
 
     @Query("SELECT l FROM LinkCard l " +
             "WHERE l.member.id = :memberId " +
-            "AND (:lastId IS NULL OR l.id < :lastId) " +
-            "ORDER BY l.id DESC ")
-    Slice<LinkCard> findWithLastId(@Param("memberId") Long memberId,
-                                   @Param("lastId") Long lastId,
-                                   Pageable pageable);
-
-
-    @Query("SELECT l FROM LinkCard l " +
-            "WHERE l.member.id = :memberId " +
             "AND l.state = :state " +
             "AND (:lastId IS NULL OR l.id < :lastId) " +
             "AND l.expiredAt > :current " +
