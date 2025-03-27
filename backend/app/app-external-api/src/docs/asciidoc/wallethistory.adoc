@@ -1,0 +1,22 @@
+[[WalletHistory]]
+== 지갑 내역
+
+=== 지갑 내역 목록
+
+==== HTTP Request
+
+include::{snippets}/wallethistories/read/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/wallethistories/read/http-response.adoc[]
+
+=== 지갑 내역 세부사항
+
+==== HTTP Request
+
+include::{snippets}/wallethistories/read/one/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/wallethistories/read/one/http-response.adoc[]
