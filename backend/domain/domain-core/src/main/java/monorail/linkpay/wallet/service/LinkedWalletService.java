@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.common.domain.TransactionType;
 import monorail.linkpay.history.service.WalletHistoryRecorder;
 import monorail.linkpay.linkcard.service.LinkCardFetcher;
 import monorail.linkpay.member.domain.Member;
@@ -43,6 +42,7 @@ public class LinkedWalletService {
     private final IdGenerator idGenerator;
     private final WalletHistoryRecorder walletHistoryRecorder;
     private final LinkedMemberFetcher linkedMemberFetcher;
+    private final WalletUpdater walletUpdater;
 
     public LinkedWalletsResponse readLinkedWallets(final long memberId, final Long lastId, final int size) {
         Slice<LinkedWalletDto> linkedWalletDtos = linkedMemberRepository.findLinkedWalletDtosByMemberId(
@@ -95,17 +95,15 @@ public class LinkedWalletService {
     @Transactional
     public void chargeLinkedWallet(final long linkedWalletId, final Point point, final Long memberId) {
         Member member = memberFetcher.fetchById(memberId);
-        LinkedWallet linkedWallet = linkedWalletFetcher.fetchByIdForUpdate(linkedWalletId);
-        linkedWallet.chargePoint(point);
-        walletHistoryRecorder.recordHistory(TransactionType.DEPOSIT, linkedWallet, point, member);
+        LinkedWallet wallet = linkedWalletFetcher.fetchByIdForUpdate(linkedWalletId);
+        walletUpdater.chargePoint(wallet, point, member);
     }
 
     @Transactional
     public void deductLinkedWallet(final long linkedWalletId, final Point point, final Long memberId) {
         Member member = memberFetcher.fetchById(memberId);
-        LinkedWallet linkedWallet = linkedWalletFetcher.fetchByIdForUpdate(linkedWalletId);
-        linkedWallet.deductPoint(point);
-        walletHistoryRecorder.recordHistory(TransactionType.DEPOSIT, linkedWallet, point, member);
+        LinkedWallet wallet = linkedWalletFetcher.fetchByIdForUpdate(linkedWalletId);
+        walletUpdater.deductPoint(wallet, point, member);
     }
 
     @Transactional

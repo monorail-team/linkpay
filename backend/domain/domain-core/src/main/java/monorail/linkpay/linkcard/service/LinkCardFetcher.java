@@ -25,4 +25,9 @@ public class LinkCardFetcher {
         return linkCardRepository.findById(linkCardId)
                 .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "링크카드 아이디에 해당하는 링크카드가 없습니다."));
     }
+
+    public LinkCard fetchByIdForUpdate(Long linkCardId) {
+        return linkCardRepository.findByIdForUpdate(linkCardId)
+                .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "링크카드 아이디에 해당하는 링크카드가 없습니다."));
+    }
 }
