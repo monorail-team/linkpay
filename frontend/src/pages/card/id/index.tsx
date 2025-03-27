@@ -6,7 +6,7 @@ import ButtonModal from '@/modal/ButtonModal';
 import axios from 'axios';
 
 interface CardData {
-  id: number;
+  linkCardId: number;
   cardName: string;
   expiredAt: string;
   usedpoint: number;
@@ -23,7 +23,7 @@ interface UsageItem {
 
 // 목 데이터 정의
 const mockCardData: CardData = {
-    id: 1,
+    linkCardId: 1,
     cardName: "카드 1",
     expiredAt: "25.12.23",
     usedpoint: 54000,
@@ -31,12 +31,12 @@ const mockCardData: CardData = {
     cardColor: "#DAD8FC",
   };
   
-  const mockUsageHistory: UsageItem[] = [
-    { detail: "음식 결제", date: "2023.07.01", point: 12000 },
-    { detail: "쇼핑 결제", date: "2023.07.03", point: 18000 },
-    { detail: "교통비", date: "2023.07.05", point: 6000 },
-  ]
-
+const mockUsageHistory: UsageItem[] = [
+  { detail: "음식 결제", date: "2023.07.01", point: 12000 },
+  { detail: "쇼핑 결제", date: "2023.07.03", point: 18000 },
+  { detail: "교통비", date: "2023.07.05", point: 6000 },
+]
+const base_url = process.env.REACT_APP_API_URL;
 
 const CardDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // 카드 id를 URL 파라미터로 받음
@@ -53,7 +53,7 @@ const CardDetailPage: React.FC = () => {
 //       try {
 //         const token = sessionStorage.getItem('accessToken');
 //         if (!token) return;
-//         const response = await axios.get(`http://localhost:8080/api/cards/${id}`, {
+//         const response = await axios.get(`${base_url}/api/cards/${id}`, {
 //           headers: { Authorization: `Bearer ${token}` },
 //         });
 //         // response.data 예시: { card: {...}, usageHistory: [...] }
@@ -74,7 +74,7 @@ const CardDetailPage: React.FC = () => {
 //     try {
 //       const token = sessionStorage.getItem('accessToken');
 //       if (!token) return;
-//       await axios.delete(`http://localhost:8080/api/cards/${id}`, {
+//       await axios.delete(`${base_url}/api/cards/${id}`, {
 //         headers: { Authorization: `Bearer ${token}` },
 //       });
 //       alert('카드가 폐기되었습니다.');

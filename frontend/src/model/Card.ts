@@ -1,5 +1,5 @@
 export interface Card {
-    id: number;
+    linkCardId: number;
     cardName: string;
     expiredAt: string;
     usedpoint: number;
