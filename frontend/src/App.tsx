@@ -7,6 +7,7 @@ import MyWalletHistory from '@/pages/mywallet';
 import Login from '@/pages/login';
 import KakaoCallback from '@/pages/login/KakaoCallback';
 import CreateCard from '@/pages/createcard';
+import LinkWalletList from '@/pages/linkwalletlist';
 import LinkCardList from '@/pages/linkcardlist';
 import CardDetail from '@/pages/card/id';
 
@@ -39,6 +40,7 @@ const App: React.FC = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/mywallet" element={<MyWalletHistory />} />
             <Route path="/createcard" element={<CreateCard />} />
+            <Route path="/linkwalletlist" element={<LinkWalletList />} />
             <Route path="/linkcardlist" element={<LinkCardList />} />
             <Route path="/cards/:id" element={<CardDetail />} />
           </Route>
