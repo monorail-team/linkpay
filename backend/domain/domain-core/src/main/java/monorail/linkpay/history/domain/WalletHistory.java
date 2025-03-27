@@ -18,10 +18,10 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.common.domain.TransactionType;
-import monorail.linkpay.linkcard.domain.LinkCard;
-import monorail.linkpay.linkedwallet.domain.LinkedMember;
+import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.Wallet;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -30,16 +30,14 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
-@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "UPDATE wallet_history SET deleted_at = CURRENT_TIMESTAMP WHERE wallet_history_id = ?")
 @SQLRestriction("deleted_at is null")
 @Entity
-public class WalletHistory {
+public class WalletHistory extends BaseEntity {
 
     @Id
     @Column(name = "wallet_history_id")
     private Long id;
-
-    private String merchantName;
 
     @Embedded
     @AttributeOverride(name = "amount", column = @Column(name = "amount", nullable = false, updatable = false))
@@ -56,37 +54,30 @@ public class WalletHistory {
     @Column(nullable = false, updatable = false)
     private LocalDateTime historyDate;
 
-    @JoinColumn(name = "link_card_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private LinkCard linkCard;
-
-    @JoinColumn(name = "wallet_id")
+    @JoinColumn(name = "wallet_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Wallet wallet;
 
-    @JoinColumn(name = "linked_member_id", nullable = true)
+    @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private LinkedMember linkedMember;
+    private Member member;
 
     @Builder
-    public WalletHistory(
+    private WalletHistory(
             final Long id,
-            final String merchantName,
             final Point amount,
+            final Point remaining,
             final TransactionType transactionType,
             final LocalDateTime historyDate,
-            final Point remaining,
-            final LinkCard linkCard,
             final Wallet wallet,
-            final LinkedMember linkedMember) {
+            final Member member
+    ) {
         this.id = id;
-        this.merchantName = merchantName;
         this.amount = amount;
+        this.remaining = remaining;
         this.transactionType = transactionType;
         this.historyDate = historyDate;
-        this.remaining = remaining;
-        this.linkCard = linkCard;
         this.wallet = wallet;
-        this.linkedMember = linkedMember;
+        this.member = member;
     }
 }

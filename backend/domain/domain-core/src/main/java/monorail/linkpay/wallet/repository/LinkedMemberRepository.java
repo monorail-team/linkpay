@@ -1,10 +1,10 @@
-package monorail.linkpay.linkedwallet.repository;
+package monorail.linkpay.wallet.repository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
-import monorail.linkpay.linkedwallet.domain.LinkedMember;
-import monorail.linkpay.linkedwallet.repository.dto.LinkedWalletDto;
+import monorail.linkpay.wallet.domain.LinkedMember;
+import monorail.linkpay.wallet.repository.dto.LinkedWalletDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;

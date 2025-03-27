@@ -1,4 +1,4 @@
-package monorail.linkpay.member.domain;
+package monorail.linkpay.store.domain;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -14,29 +14,25 @@ import monorail.linkpay.common.domain.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-@Table(name = "member")
+@Table(name = "store")
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
-@SQLDelete(sql = "UPDATE member SET deleted_at = CURRENT_TIMESTAMP WHERE member_id = ?")
+@SQLDelete(sql = "UPDATE store SET deleted_at = CURRENT_TIMESTAMP WHERE store_id = ?")
 @SQLRestriction("deleted_at is null")
 @Entity
-public class Member extends BaseEntity {
+public class Store extends BaseEntity {
 
     @Id
-    @Column(name = "member_id")
+    @Column(name = "store_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
     @Column(nullable = false)
-    private String username;
+    private String name;
 
     @Builder
-    private Member(final Long id, final String email, final String username) {
+    private Store(final Long id, final String name) {
         this.id = id;
-        this.email = email;
-        this.username = username;
+        this.name = name;
     }
 }
