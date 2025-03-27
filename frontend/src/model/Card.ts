@@ -5,7 +5,7 @@ export interface Card {
     usedpoint: number;
     limitPrice: number;
     cardColor: string;
-    cardType: 'OWNED' | 'SHARED' | 'RECEIVED';
+    cardType?: 'OWNED' | 'SHARED' | 'RECEIVED';
     isRegistered?: boolean;
     linkedWalletId?: number;
   }
