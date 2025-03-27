@@ -2,13 +2,17 @@ package monorail.linkpay.linkcard.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+
+import jakarta.persistence.LockModeType;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.member.domain.Member;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -45,4 +49,8 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
             + "SET l.state = 'REGISTERED' "
             + "WHERE l.id in :linkCardIds")
     void updateStateByIds(@Param("linkCardIds") Set<Long> linkCardIds);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "select l from LinkCard l where l.id = :linkCardId")
+    Optional<LinkCard> findByIdForUpdate(@Param("linkCardId") Long linkCardId);
 }
