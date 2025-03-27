@@ -8,10 +8,12 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.controller.request.LinkedMemberCreateRequest;
+import monorail.linkpay.wallet.dto.LinkedMembersResponse;
 import monorail.linkpay.wallet.service.LinkedMemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class LinkedMemberController {
 
     private final LinkedMemberService linkedMemberService;
+
+    @GetMapping
+    public ResponseEntity<LinkedMembersResponse> getLinkedMembers(@PathVariable final Long linkedWalletId,
+                                                                  @RequestParam(required = false) final Long lastId,
+                                                                  @RequestParam(defaultValue = "10") final int size) {
+        return ResponseEntity.ok(linkedMemberService.getLinkedMembers(linkedWalletId, lastId, size));
+    }
 
     @PostMapping
     public ResponseEntity<Void> createLinkedMember(@PathVariable final Long linkedWalletId,

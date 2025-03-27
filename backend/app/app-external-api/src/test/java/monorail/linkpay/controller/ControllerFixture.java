@@ -16,6 +16,8 @@ import monorail.linkpay.linkcard.domain.CardType;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.member.dto.MemberResponse;
+import monorail.linkpay.wallet.dto.LinkedMemberResponse;
+import monorail.linkpay.wallet.dto.LinkedMembersResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.wallet.dto.WalletResponse;
@@ -84,4 +86,15 @@ public class ControllerFixture {
     );
 
     public static final PaymentsRequest PAYMENT_REQUEST = new PaymentsRequest(10000, 1L, 2L);
+
+    public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_1 = new LinkedMemberResponse("1", "링크멤버1",
+            "link1@gmail.com");
+    public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_2 = new LinkedMemberResponse("2", "링크멤버2",
+            "link2@gmail.com");
+    public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_3 = new LinkedMemberResponse("3", "링크멤버3",
+            "link3@gmail.com");
+
+    public static final LinkedMembersResponse LINKED_MEMBERS_RESPONSE = new LinkedMembersResponse(
+            List.of(LINKED_MEMBER_RESPONSE_1, LINKED_MEMBER_RESPONSE_2, LINKED_MEMBER_RESPONSE_3), false
+    );
 }

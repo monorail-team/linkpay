@@ -1,5 +1,6 @@
 package monorail.linkpay.linkcard.service;
 
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
 
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,12 @@ import monorail.linkpay.linkcard.repository.LinkCardRepository;
 public class LinkCardFetcher {
 
     private final LinkCardRepository linkCardRepository;
+
+    public void checkNotExistsByWalletId(final Long walletId) {
+        if (linkCardRepository.existsByWalletId(walletId)) {
+            throw new LinkPayException(INVALID_REQUEST, "해당 지갑에 링크카드가 존재합니다.");
+        }
+    }
 
     public LinkCard fetchById(final Long linkCardId) {
         return linkCardRepository.findById(linkCardId)

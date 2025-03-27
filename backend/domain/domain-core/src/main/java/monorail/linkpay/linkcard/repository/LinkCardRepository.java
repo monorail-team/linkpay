@@ -17,6 +17,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
 
+    boolean existsByWalletId(Long walletId);
+
     List<LinkCard> findLinkCardsByMember(Member member);
 
     @Query("SELECT l FROM LinkCard l " +

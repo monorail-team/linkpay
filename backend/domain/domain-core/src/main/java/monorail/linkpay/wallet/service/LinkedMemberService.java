@@ -12,13 +12,17 @@ import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.LinkedWallet;
+import monorail.linkpay.wallet.dto.LinkedMemberResponse;
+import monorail.linkpay.wallet.dto.LinkedMembersResponse;
 import monorail.linkpay.wallet.repository.LinkedMemberRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class LinkedMemberService {
 
     private final LinkedMemberRepository linkedMemberRepository;
@@ -27,6 +31,16 @@ public class LinkedMemberService {
     private final MemberFetcher memberFetcher;
     private final IdGenerator idGenerator;
 
+    public LinkedMembersResponse getLinkedMembers(final Long linkedWalletId, final Long lastId, final int size) {
+        Slice<LinkedMember> linkedMembers = linkedMemberRepository.findAllByLinkedWalletId(
+                linkedWalletId, lastId, PageRequest.of(0, size));
+        return new LinkedMembersResponse(linkedMembers.stream()
+                .map(LinkedMemberResponse::from)
+                .toList(),
+                linkedMembers.hasNext());
+    }
+
+    @Transactional
     public void createLinkedMember(final Long linkedWalletId, final Long memberId, final Long participantId) {
         validateCreatorPermission(linkedWalletId, memberId);
         Member member = memberFetcher.fetchById(participantId);
@@ -42,6 +56,7 @@ public class LinkedMemberService {
         linkedMemberRepository.save(linkedMember);
     }
 
+    @Transactional
     public void deleteLinkedMember(final Long linkedWalletId, final Set<Long> linkedMemberIds,
                                    final Long memberId, LocalDateTime now) {
         validateCreatorPermission(linkedWalletId, memberId);

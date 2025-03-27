@@ -3,12 +3,15 @@ package monorail.linkpay.wallet.service;
 import static monorail.linkpay.wallet.domain.Role.CREATOR;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.common.domain.TransactionType;
 import monorail.linkpay.history.service.WalletHistoryRecorder;
+import monorail.linkpay.linkcard.service.LinkCardFetcher;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.member.service.MemberFetcher;
@@ -33,11 +36,13 @@ public class LinkedWalletService {
 
     private final LinkedWalletRepository linkedWalletRepository;
     private final LinkedWalletFetcher linkedWalletFetcher;
+    private final LinkCardFetcher linkCardFetcher;
     private final MemberRepository memberRepository;
     private final MemberFetcher memberFetcher;
     private final LinkedMemberRepository linkedMemberRepository;
     private final IdGenerator idGenerator;
     private final WalletHistoryRecorder walletHistoryRecorder;
+    private final LinkedMemberFetcher linkedMemberFetcher;
 
     public LinkedWalletsResponse readLinkedWallets(final long memberId, final Long lastId, final int size) {
         Slice<LinkedWalletDto> linkedWalletDtos = linkedMemberRepository.findLinkedWalletDtosByMemberId(
@@ -70,13 +75,21 @@ public class LinkedWalletService {
 
         linkedWalletRepository.save(linkedWallet);
         linkedMemberRepository.save(getLinkedMember(member, linkedWallet, CREATOR));
-
         List<LinkedMember> linkedMembers = memberRepository.findMembersByIdIn(memberIds).stream()
                 .map(tuple -> getLinkedMember(tuple, linkedWallet, PARTICIPANT))
                 .toList();
 
         linkedMemberRepository.saveAll(linkedMembers);
         return linkedWallet.getId();
+    }
+
+    private LinkedMember getLinkedMember(final Member member, final LinkedWallet linkedWallet, final Role role) {
+        return LinkedMember.builder()
+                .id(idGenerator.generate())
+                .role(role)
+                .linkedWallet(linkedWallet)
+                .member(member)
+                .build();
     }
 
     @Transactional
@@ -95,12 +108,15 @@ public class LinkedWalletService {
         walletHistoryRecorder.recordHistory(TransactionType.DEPOSIT, linkedWallet, point, member);
     }
 
-    private LinkedMember getLinkedMember(final Member member, final LinkedWallet linkedWallet, final Role role) {
-        return LinkedMember.builder()
-                .id(idGenerator.generate())
-                .role(role)
-                .linkedWallet(linkedWallet)
-                .member(member)
-                .build();
+    @Transactional
+    public void deleteLinkedWallet(final Long linkedWalletId, LocalDateTime now) {
+        LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
+        linkCardFetcher.checkNotExistsByWalletId(linkedWalletId);
+        List<Long> linkedMemberIds = linkedMemberRepository.findByLinkedWalletId(linkedWalletId).stream()
+                .map(LinkedMember::getId)
+                .toList();
+
+        linkedMemberRepository.deleteByIds(new HashSet<>(linkedMemberIds), now);
+        linkedWalletRepository.delete(linkedWallet);
     }
 }
