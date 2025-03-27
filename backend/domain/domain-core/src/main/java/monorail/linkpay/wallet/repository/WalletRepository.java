@@ -1,7 +1,7 @@
 package monorail.linkpay.wallet.repository;
 
 import jakarta.persistence.LockModeType;
-import monorail.linkpay.wallet.domain.MyWallet;
+import monorail.linkpay.wallet.domain.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -11,11 +11,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface MyWalletRepository extends JpaRepository<MyWallet, Long> {
-
-    Optional<MyWallet> findByMemberId(@Param("memberId") Long memberId);
+public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query(value = "select mw from MyWallet mw where mw.member.id = :memberId")
-    Optional<MyWallet> findByMemberIdForUpdate(@Param("memberId") Long memberId);
+    @Query(value = "select w from Wallet w where w.id = :walletId")
+    Optional<Wallet> findByIdForUpdate(@Param("walletId") Long walletId);
 }

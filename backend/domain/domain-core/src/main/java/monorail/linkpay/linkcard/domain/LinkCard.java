@@ -104,6 +104,10 @@ public class LinkCard extends BaseEntity {
         this.state = state;
     }
 
+    public void usePoint(final Point point) {
+        this.usedPoint = this.usedPoint.add(point);
+    }
+
     public void validateOwnership(final Member member) {
         if (!this.member.equals(member)) {
             throw new LinkPayException(INVALID_REQUEST, "카드의 소유자가 아닙니다.");
@@ -116,13 +120,7 @@ public class LinkCard extends BaseEntity {
         }
     }
 
-    public void usePoint(final Point point) {
-        Point totalUsedPoint = this.usedPoint.add(point);
-        validateLimitPriceNotExceed(totalUsedPoint);
-        this.usedPoint = totalUsedPoint;
-    }
-
-    private void validateLimitPriceNotExceed(final Point point) {
+    public void validateLimitPriceNotExceed(final Point point) {
         if (this.limitPrice.getAmount() < point.getAmount()) {
             throw new LinkPayException(INVALID_REQUEST, "사용금액이 한도를 초과했습니다.");
         }
