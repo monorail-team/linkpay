@@ -6,6 +6,8 @@ import monorail.linkpay.linkcard.repository.LinkCardRepository;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.payment.repository.PaymentRepository;
+import monorail.linkpay.store.domain.Store;
+import monorail.linkpay.store.repository.StoreRepository;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.MyWallet;
 import monorail.linkpay.wallet.repository.LinkedMemberRepository;
@@ -34,6 +36,8 @@ public abstract class IntegrationTest {
     protected LinkedMemberRepository linkedMemberRepository;
     @Autowired
     protected PaymentRepository paymentRepository;
+    @Autowired
+    protected StoreRepository storeRepository;
 
     protected Member member;
 
@@ -43,6 +47,7 @@ public abstract class IntegrationTest {
     @BeforeEach
     void setUp() {
         paymentRepository.deleteAllInBatch();
+        storeRepository.deleteAllInBatch();
         linkCardRepository.deleteAllInBatch();
         linkedMemberRepository.deleteAllInBatch();
         linkedWalletRepository.deleteAllInBatch();
@@ -54,6 +59,7 @@ public abstract class IntegrationTest {
                 .id(idGenerator.generate())
                 .member(member)
                 .build());
+        storeRepository.save(createStore());
     }
 
     // todo TestFixtures
@@ -65,4 +71,10 @@ public abstract class IntegrationTest {
                 .build();
     }
 
+    protected Store createStore() {
+        return Store.builder()
+                .id(1L)
+                .name("store1")
+                .build();
+    }
 }
