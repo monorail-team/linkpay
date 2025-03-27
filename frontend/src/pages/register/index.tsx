@@ -102,11 +102,13 @@ const Register: React.FC = () => {
                 }`}
                 style={{ backgroundColor: card.cardColor }}
               >
-                <LinkCardItem
-                  cardName={card.cardName}
-                  limitPrice={card.limitPrice}
-                  expiredAt={card.expiredAt}
-                />
+                 <LinkCardItem
+                    cardName={card.cardName}
+                    usedpoint={card.usedpoint}
+                    limitPrice={card.limitPrice}
+                    expiredAt={card.expiredAt}
+                    isRegistered={card.linkedWalletId !== undefined}
+                  />
               </div>
             </label>
           ))}

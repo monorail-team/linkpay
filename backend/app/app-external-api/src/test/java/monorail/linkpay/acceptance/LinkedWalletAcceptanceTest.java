@@ -12,8 +12,8 @@ import io.restassured.response.Response;
 import java.util.Set;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
-import monorail.linkpay.linkedwallet.dto.LinkedWalletResponse;
-import monorail.linkpay.linkedwallet.dto.LinkedWalletsResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -34,7 +34,7 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑2", Set.of(1L, 2L, 3L)));
         링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑3", Set.of(1L, 2L, 3L)));
 
-        ExtractableResponse<Response> response = 링크지갑_조회_요청(accessToken);
+        ExtractableResponse<Response> response = 링크지갑_목록_조회_요청(accessToken);
         LinkedWalletsResponse linkedWalletsResponse = response.as(LinkedWalletsResponse.class);
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
@@ -47,12 +47,12 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         String accessToken = 엑세스_토큰();
         링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
 
-        Long linkedWalletId = 링크지갑_조회_요청(accessToken).as(LinkedWalletsResponse.class).linkedWallets()
+        Long linkedWalletId = 링크지갑_목록_조회_요청(accessToken).as(LinkedWalletsResponse.class).linkedWallets()
                 .getFirst().linkedWalletId();
 
         ExtractableResponse<Response> response = 링크지갑_충전_요청(accessToken, linkedWalletId,
                 new WalletPointRequest(10000L));
-        LinkedWalletResponse linkedWalletResponse = 링크지갑_조회_요청(accessToken).as(LinkedWalletsResponse.class)
+        LinkedWalletResponse linkedWalletResponse = 링크지갑_목록_조회_요청(accessToken).as(LinkedWalletsResponse.class)
                 .linkedWallets().getFirst();
 
         assertAll(
@@ -67,14 +67,14 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         String accessToken = 엑세스_토큰();
         링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
 
-        Long linkedWalletId = 링크지갑_조회_요청(accessToken).as(LinkedWalletsResponse.class).linkedWallets()
+        Long linkedWalletId = 링크지갑_목록_조회_요청(accessToken).as(LinkedWalletsResponse.class).linkedWallets()
                 .getFirst().linkedWalletId();
 
         링크지갑_충전_요청(accessToken, linkedWalletId, new WalletPointRequest(50000L));
 
         ExtractableResponse<Response> response = 링크지갑_차감_요청(accessToken, linkedWalletId,
                 new WalletPointRequest(20000L));
-        LinkedWalletResponse linkedWalletResponse = 링크지갑_조회_요청(accessToken).as(LinkedWalletsResponse.class)
+        LinkedWalletResponse linkedWalletResponse = 링크지갑_목록_조회_요청(accessToken).as(LinkedWalletsResponse.class)
                 .linkedWallets().getFirst();
 
         assertAll(
@@ -94,12 +94,12 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         return sendPatchRequest("/api/linked-wallets/charge/%s".formatted(linkedWalletId), accessToken, pointRequest);
     }
 
-    private ExtractableResponse<Response> 링크지갑_생성_요청(final String accessToken,
-                                                     final LinkedWalletCreateRequest linkedWalletCreateRequest) {
+    public static ExtractableResponse<Response> 링크지갑_생성_요청(final String accessToken,
+                                                           final LinkedWalletCreateRequest linkedWalletCreateRequest) {
         return sendPostRequest("/api/linked-wallets", accessToken, linkedWalletCreateRequest);
     }
 
-    private ExtractableResponse<Response> 링크지갑_조회_요청(final String accessToken) {
+    public static ExtractableResponse<Response> 링크지갑_목록_조회_요청(final String accessToken) {
         return sendGetRequest("/api/linked-wallets", accessToken);
     }
 }

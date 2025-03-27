@@ -2,6 +2,7 @@ package monorail.linkpay.controller;
 
 import static monorail.linkpay.controller.ControllerFixture.LINKED_WALLETS_RESPONSE;
 import static monorail.linkpay.controller.ControllerFixture.LINKED_WALLET_CREATE_REQUEST;
+import static monorail.linkpay.controller.ControllerFixture.LINKED_WALLET_RESPONSE_1;
 import static monorail.linkpay.controller.ControllerFixture.WALLET_POINT_REQUEST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -35,7 +36,7 @@ public class LinkedWalletControllerTest extends ControllerTest {
     }
 
     @Test
-    void 링크지갑을_조회한다() {
+    void 링크지갑_목록을_조회한다() {
         when(linkedWalletService.readLinkedWallets(anyLong(), anyLong(), anyInt())).thenReturn(LINKED_WALLETS_RESPONSE);
 
         docsGiven
@@ -43,6 +44,18 @@ public class LinkedWalletControllerTest extends ControllerTest {
                 .when().get("/api/linked-wallets?lastId=1&size=10")
                 .then().log().all()
                 .apply(document("linkedwallets/read"))
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void 링크지갑_단건_조회한다() {
+        when(linkedWalletService.readLinkedWallet(anyLong())).thenReturn(LINKED_WALLET_RESPONSE_1);
+
+        docsGiven
+                .header("Authorization", "Bearer {access_token}")
+                .when().get("/api/linked-wallets/1")
+                .then().log().all()
+                .apply(document("linkedwallets/read/one"))
                 .statusCode(HttpStatus.OK.value());
     }
 

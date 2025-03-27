@@ -11,11 +11,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "member")
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
+@SQLDelete(sql = "UPDATE member SET deleted_at = CURRENT_TIMESTAMP WHERE member_id = ?")
+@SQLRestriction("deleted_at is null")
 @Entity
 public class Member extends BaseEntity {
 
@@ -30,7 +34,7 @@ public class Member extends BaseEntity {
     private String username;
 
     @Builder
-    public Member(final Long id, final String email, final String username) {
+    private Member(final Long id, final String email, final String username) {
         this.id = id;
         this.email = email;
         this.username = username;

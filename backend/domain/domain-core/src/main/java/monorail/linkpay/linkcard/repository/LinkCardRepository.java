@@ -1,6 +1,7 @@
 package monorail.linkpay.linkcard.repository;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
@@ -16,26 +17,30 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
 
-    Optional<LinkCard> findByMember(Member member);
+    List<LinkCard> findLinkCardsByMember(Member member);
 
     @Query("SELECT l FROM LinkCard l " +
-            "WHERE l.wallet.id = :walletId " +
-            "AND (:lastId IS NULL OR l.id < :lastId)" +
+            "WHERE l.member.id = :memberId " +
+            "AND (:lastId IS NULL OR l.id < :lastId) " +
+            "AND l.deletedAt IS NULL " +
             "ORDER BY l.id DESC ")
-    Slice<LinkCard> findByWalletWithLastId(@Param("walletId") Long walletId,
-                                           @Param("lastId") Long lastId,
-                                           Pageable pageable);
+    Slice<LinkCard> findWithLastId(@Param("memberId") Long memberId,
+                                   @Param("lastId") Long lastId,
+                                   Pageable pageable);
 
 
     @Query("SELECT l FROM LinkCard l " +
-            "WHERE l.wallet.id = :walletId " +
+            "WHERE l.member.id = :memberId " +
             "AND l.state = :state " +
             "AND (:lastId IS NULL OR l.id < :lastId)" +
+            "AND l.deletedAt IS NULL " +
+            "AND l.expiredAt > :current  " +
             "ORDER BY l.id DESC ")
-    Slice<LinkCard> findByStateAndWalletWithLastId(@Param("walletId") Long walletId,
-                                                   @Param("lastId") Long lastId,
-                                                   Pageable pageable,
-                                                   @Param("state") CardState state);
+    Slice<LinkCard> findByStateWithLastId(@Param("memberId") Long memberId,
+                                          @Param("lastId") Long lastId,
+                                          Pageable pageable,
+                                          @Param("state") CardState state,
+                                          @Param("current") LocalDateTime current);
 
     @Modifying
     @Query("UPDATE LinkCard l "

@@ -1,7 +1,6 @@
 package monorail.linkpay.auth;
 
 import static monorail.linkpay.auth.AuthTokenAuthentication.unauthenticated;
-import static monorail.linkpay.util.ObjectUtil.isNull;
 import static monorail.linkpay.util.StringUtil.substringAfter;
 
 import jakarta.servlet.FilterChain;
@@ -9,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -53,7 +53,7 @@ public class AuthTokenAuthenticationFilter extends OncePerRequestFilter {
 
     private String extractToken(final HttpServletRequest request) {
         String authHeader = request.getHeader(header);
-        if (isNull(authHeader) || !authHeader.startsWith(scheme)) {
+        if (Objects.isNull(authHeader) || !authHeader.startsWith(scheme)) {
             throw new AuthenticationException("인증 헤더를 포함시켜 요청해주세요: 인증 헤더 = " + authHeader) {
             };
         }
