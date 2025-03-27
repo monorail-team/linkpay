@@ -30,7 +30,7 @@ public class PaymentService {
     private final IdGenerator idGenerator;
 
     @Transactional
-    public synchronized void createPayment(final Long memberId, final Point point, final Long linkCardId,
+    public void createPayment(final Long memberId, final Point point, final Long linkCardId,
                                            final Long storeId) {
         Member member = memberFetcher.fetchById(memberId);
 

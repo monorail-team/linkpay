@@ -1,21 +1,6 @@
 package monorail.linkpay.linkcard.domain;
 
-import static jakarta.persistence.EnumType.STRING;
-import static lombok.AccessLevel.PROTECTED;
-import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
-
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,6 +12,12 @@ import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.Wallet;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.time.LocalDateTime;
+
+import static jakarta.persistence.EnumType.STRING;
+import static lombok.AccessLevel.PROTECTED;
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 
 @Table(name = "link_card")
 @Getter
@@ -42,9 +33,7 @@ public class LinkCard extends BaseEntity {
     private Long id;
 
     @Embedded
-    @AttributeOverrides(
-            @AttributeOverride(name = "amount", column = @Column(name = "limitPrice"))
-    )
+    @AttributeOverride(name = "amount", column = @Column(name = "limitPrice", nullable = false))
     private Point limitPrice;
 
     @Column(nullable = false, updatable = false)
@@ -66,9 +55,7 @@ public class LinkCard extends BaseEntity {
     private CardState state;
 
     @Embedded
-    @AttributeOverrides(
-            @AttributeOverride(name = "amount", column = @Column(name = "usedPoint"))
-    )
+    @AttributeOverride(name = "amount", column = @Column(name = "usedPoint"))
     private Point usedPoint;
 
     @JoinColumn(name = "member_id", nullable = false)

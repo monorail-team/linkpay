@@ -1,10 +1,6 @@
 package monorail.linkpay.linkcard.service;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.history.service.WalletHistoryRecorder;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
@@ -15,17 +11,19 @@ import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequ
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.member.service.MemberFetcher;
-import monorail.linkpay.store.service.StoreFetcher;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.LinkedWallet;
 import monorail.linkpay.wallet.domain.Wallet;
-import monorail.linkpay.wallet.service.LinkedMemberFetcher;
 import monorail.linkpay.wallet.service.LinkedWalletFetcher;
 import monorail.linkpay.wallet.service.MyWalletFetcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
