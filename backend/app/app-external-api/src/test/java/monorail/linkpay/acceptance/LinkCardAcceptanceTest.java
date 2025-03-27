@@ -3,6 +3,7 @@ package monorail.linkpay.acceptance;
 import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
 import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_목록_조회_요청;
 import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_생성_요청;
+import static monorail.linkpay.acceptance.MemberAcceptanceTest.회원_조회_요청;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPatchRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPostRequest;
@@ -22,6 +23,7 @@ import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
+import monorail.linkpay.member.dto.MemberResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,8 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
 
     public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
             "테스트카드", 500000, LocalDate.now().plusMonths(1));
+
+    public static final String EMAIL = "email@kakao.com";
 
     @Test
     void 내_지갑에서_링크카드를_생성한다() {
@@ -48,8 +52,11 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> walletResponse = 링크지갑_목록_조회_요청(accessToken);
         LinkedWalletsResponse linkedWalletsResponse = walletResponse.as(LinkedWalletsResponse.class);
 
+        ExtractableResponse<Response> memberRes = 회원_조회_요청(accessToken, EMAIL);
+        MemberResponse memberResponse = memberRes.as(MemberResponse.class);
+
         SharedLinkCardCreateRequest sharedLinkCardCreateRequest = new SharedLinkCardCreateRequest(
-                "테스트카드", 500000, LocalDate.now().plusMonths(1), List.of(1L),
+                "테스트카드", 500000, LocalDate.now().plusMonths(1), List.of(Long.parseLong(memberResponse.memberId()), 1L),
                 Long.parseLong(linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId()));
 
         ExtractableResponse<Response> response = 링크지갑에서_링크카드_생성_요청(accessToken, sharedLinkCardCreateRequest);
@@ -67,8 +74,26 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                     ExtractableResponse<Response> response = 링크카드_생성_요청(accessToken, LINK_CARD_CREATE_REQUEST);
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
                 }),
-                dynamicTest("보유한 링크카드를 조회한다", () -> {
-                    ExtractableResponse<Response> response = 링크카드_조회_요청(accessToken);
+                dynamicTest("링크 지갑에서 링크카드를 생성한다", () -> {
+                    링크지갑_생성_요청(accessToken,
+                            new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
+                    ExtractableResponse<Response> walletResponse = 링크지갑_목록_조회_요청(accessToken);
+                    LinkedWalletsResponse linkedWalletsResponse = walletResponse.as(LinkedWalletsResponse.class);
+
+                    ExtractableResponse<Response> memberRes = 회원_조회_요청(accessToken, EMAIL);
+                    MemberResponse memberResponse = memberRes.as(MemberResponse.class);
+
+                    SharedLinkCardCreateRequest sharedLinkCardCreateRequest = new SharedLinkCardCreateRequest(
+                            "테스트카드", 500000, LocalDate.now().plusMonths(1),
+                            List.of(Long.parseLong(memberResponse.memberId()), 1L, 2L, 3L),
+                            Long.parseLong(linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId()));
+
+                    ExtractableResponse<Response> response = 링크지갑에서_링크카드_생성_요청(accessToken,
+                            sharedLinkCardCreateRequest);
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+                }),
+                dynamicTest("보유한 내 지갑 링크카드를 조회한다", () -> {
+                    ExtractableResponse<Response> response = 링크카드_조회_요청(accessToken, "owned");
 
                     LinkCardsResponse linkCardsResponse = response.as(LinkCardsResponse.class);
                     assertAll(
@@ -76,12 +101,30 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                             () -> assertThat(linkCardsResponse.linkCards()).hasSize(1)
                     );
                 }),
+                dynamicTest("보유한 링크지갑 링크카드를 조회한다", () -> {
+                    ExtractableResponse<Response> response = 링크카드_조회_요청(accessToken, "linked");
+
+                    LinkCardsResponse linkCardsResponse = response.as(LinkCardsResponse.class);
+                    assertAll(
+                            () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                            () -> assertThat(linkCardsResponse.linkCards()).hasSize(1)
+                    );
+                }),
+                dynamicTest("공유한 링크카드를 조회한다", () -> {
+                    ExtractableResponse<Response> response = 링크카드_조회_요청(accessToken, "shared");
+
+                    LinkCardsResponse linkCardsResponse = response.as(LinkCardsResponse.class);
+                    assertAll(
+                            () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                            () -> assertThat(linkCardsResponse.linkCards()).hasSize(3)
+                    );
+                }),
                 dynamicTest("생성한 카드 중 결제카드로 등록되지 않은 카드를 조회한다", () -> {
                     ExtractableResponse<Response> response = 등록되지_않은_카드_조회(accessToken);
                     unregisteredLinkCardsResponse.set(response.as(LinkCardsResponse.class));
                     assertAll(
                             () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                            () -> assertThat(unregisteredLinkCardsResponse.get().linkCards()).hasSize(1)
+                            () -> assertThat(unregisteredLinkCardsResponse.get().linkCards()).hasSize(2)
                     );
                 }),
                 dynamicTest("링크카드를 결제카드로 등록한다", () -> {
@@ -115,8 +158,8 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
         return sendGetRequest("/api/cards/registered", accessToken);
     }
 
-    private ExtractableResponse<Response> 링크카드_조회_요청(final String accessToken) {
-        return sendGetRequest("/api/cards", accessToken);
+    private ExtractableResponse<Response> 링크카드_조회_요청(final String accessToken, final String type) {
+        return sendGetRequest("/api/cards?type=" + type, accessToken);
     }
 
     private ExtractableResponse<Response> 링크카드_생성_요청(final String accessToken, final LinkCardCreateRequest request) {

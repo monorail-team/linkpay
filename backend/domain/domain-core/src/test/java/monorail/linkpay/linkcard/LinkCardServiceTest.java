@@ -3,29 +3,36 @@ package monorail.linkpay.linkcard;
 import static java.time.LocalDateTime.now;
 import static monorail.linkpay.linkcard.domain.CardState.REGISTERED;
 import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
+import static monorail.linkpay.linkcard.domain.CardType.OWNED;
+import static monorail.linkpay.linkcard.domain.CardType.SHARED;
+import static monorail.linkpay.wallet.domain.Role.CREATOR;
+import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.linkcard.domain.CardColor;
+import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
 import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequest;
-import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
-import monorail.linkpay.wallet.service.LinkedWalletService;
+import monorail.linkpay.member.domain.Member;
+import monorail.linkpay.wallet.domain.LinkedMember;
+import monorail.linkpay.wallet.domain.LinkedWallet;
+import monorail.linkpay.wallet.domain.Wallet;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Slf4j
 public class LinkCardServiceTest extends IntegrationTest {
 
     @Autowired
     private LinkCardService linkCardService;
-    @Autowired
-    private LinkedWalletService linkedWalletService;
 
     @Test
     void 내_지갑에서_카드를_생성한다() {
@@ -42,36 +49,97 @@ public class LinkCardServiceTest extends IntegrationTest {
     @Test
     void 링크지갑에서_카드를_생성한다() {
         // given
-        linkedWalletService.createLinkedWallet(member.getId(), "링크지갑", Set.of());
-        LinkedWalletsResponse walletRes = linkedWalletService.readLinkedWallets(member.getId(), null, 10);
-        SharedLinkCardCreateServiceRequest request = createSharedCard(LocalDate.now().plusDays(1),
-                Long.parseLong(walletRes.linkedWallets().getFirst().linkedWalletId()), member.getId());
+        Member member1 = saveMember(1L, "test@email.com", "u1");
+        memberRepository.saveAll(List.of(member1));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
+        linkedMemberRepository.saveAll(List.of(
+                LinkedMember.builder().id(1L).role(CREATOR).member(member).linkedWallet(linkedWallet).build(),
+                LinkedMember.builder().id(2L).role(PARTICIPANT).member(member1).linkedWallet(linkedWallet)
+                        .build()));
+        SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
+                linkedWallet.getId(),
+                List.of(member.getId(), 1L, 2L, 3L));
 
         // when
         linkCardService.createShared(request);
 
         List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
         assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
     }
 
     @Test
-    void 보유한_링크카드를_조회한다() {
+    void 보유한_링크카드_중_내지갑카드를_조회한다() {
         // given
-        LinkCardCreateServiceRequest request = createCard(LocalDate.now().plusDays(1));
-        linkCardService.create(member.getId(), request);
+        Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
+        linkCardRepository.save(saveMyWalletCard(1L, wallet, member, UNREGISTERED));
 
         // when
-        LinkCardsResponse response = linkCardService.read(member.getId(), null, 10);
+        LinkCardsResponse response = linkCardService.read(member.getId(), null, 10, "owned");
 
         // then
         assertThat(response.linkCards()).hasSize(1);
     }
 
     @Test
+    void 보유한_링크카드_중_링크지갑카드를_조회한다() {
+        // given
+        Member member1 = saveMember(1L, "test@email.com", "u1");
+
+        memberRepository.saveAll(List.of(member1));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
+        linkedMemberRepository.saveAll(List.of(
+                LinkedMember.builder().id(1L).role(CREATOR).member(member).linkedWallet(linkedWallet).build(),
+                LinkedMember.builder().id(2L).role(PARTICIPANT).member(member1).linkedWallet(linkedWallet)
+                        .build()));
+        linkCardRepository.saveAll(
+                List.of(saveLinkWalletCard(1L, linkedWallet, member),
+                        saveLinkWalletCard(2L, linkedWallet, member1)));
+
+        // when
+        LinkCardsResponse response = linkCardService.read(member.getId(), null, 10, "linked");
+
+        // then
+        assertThat(response.linkCards()).hasSize(1);
+    }
+
+    @Test
+    void 공유한_링크카드를_조회한다() {
+        // given
+        Member member1 = saveMember(1L, "test@email.com", "u1");
+        Member member2 = saveMember(2L, "test2@email.com", "u2");
+        Member member3 = saveMember(3L, "test3@email.com", "u3");
+
+        memberRepository.saveAll(List.of(member1, member2, member3));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
+        linkedMemberRepository.saveAll(List.of(
+                LinkedMember.builder().id(1L).role(CREATOR).member(member).linkedWallet(linkedWallet).build(),
+                LinkedMember.builder().id(2L).role(PARTICIPANT).member(member1).linkedWallet(linkedWallet)
+                        .build(),
+                LinkedMember.builder().id(3L).role(PARTICIPANT).member(member2).linkedWallet(linkedWallet)
+                        .build(),
+                LinkedMember.builder().id(4L).role(PARTICIPANT).member(member3).linkedWallet(linkedWallet)
+                        .build()));
+        linkCardRepository.saveAll(
+                List.of(saveLinkWalletCard(1L, linkedWallet, member1),
+                        saveLinkWalletCard(2L, linkedWallet, member2),
+                        saveLinkWalletCard(3L, linkedWallet, member3)));
+
+        // when
+        LinkCardsResponse response = linkCardService.read(member.getId(), null, 10, "shared");
+
+        // then
+        assertThat(response.linkCards()).hasSize(3);
+    }
+
+    @Test
     void 보유한_링크카드_중_등록안된_카드를_조회한다() {
         // given
-        LinkCardCreateServiceRequest request = createCard(LocalDate.now().plusDays(1));
-        linkCardService.create(member.getId(), request);
+        Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
+        linkCardRepository.save(saveMyWalletCard(1L, wallet, member, UNREGISTERED));
 
         // when
         LinkCardsResponse response = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
@@ -84,8 +152,8 @@ public class LinkCardServiceTest extends IntegrationTest {
     @Test
     void 보유한_링크카드_중_일부를_결제카드로_등록한다() {
         // given
-        LinkCardCreateServiceRequest request = createCard(LocalDate.now().plusDays(1));
-        linkCardService.create(member.getId(), request);
+        Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
+        linkCardRepository.save(saveMyWalletCard(1L, wallet, member, UNREGISTERED));
         LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
                 now());
 
@@ -101,12 +169,8 @@ public class LinkCardServiceTest extends IntegrationTest {
     @Test
     void 결제카드로_등록된_링크카드를_조회한다() {
         // given
-        LinkCardCreateServiceRequest request = createCard(LocalDate.now().plusDays(1));
-        linkCardService.create(member.getId(), request);
-        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
-                now());
-        linkCardService.activateLinkCard(
-                List.of(Long.parseLong(unregisteredCards.linkCards().getFirst().linkCardId())));
+        Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
+        linkCardRepository.save(saveMyWalletCard(1L, wallet, member, REGISTERED));
 
         // when
         LinkCardsResponse registeredCards = linkCardService.readByState(member.getId(), null, 10, REGISTERED,
@@ -119,8 +183,8 @@ public class LinkCardServiceTest extends IntegrationTest {
     @Test
     void 등록여부에_따른_카드검색시_만료일이_지난_카드는_조회되지_않는다() {
         // given
-        LinkCardCreateServiceRequest request = createCard(LocalDate.now());
-        linkCardService.create(member.getId(), request);
+        Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
+        linkCardRepository.save(saveMyWalletCard(1L, wallet, member, UNREGISTERED));
 
         // when
         LinkCardsResponse response = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
@@ -140,13 +204,44 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .build();
     }
 
-    private static SharedLinkCardCreateServiceRequest createSharedCard(LocalDate date, long walletId, long memberId) {
+    private static SharedLinkCardCreateServiceRequest createSharedCards(LocalDate date, long walletId,
+                                                                        List<Long> memberIds) {
         return SharedLinkCardCreateServiceRequest.builder()
                 .cardName("test card")
                 .expiredAt(date)
                 .limitPrice(new Point(500000))
-                .memberIds(List.of(memberId))
+                .memberIds(memberIds)
                 .linkedWalletId(walletId)
                 .build();
+    }
+
+    private static Member saveMember(long id, String mail, String u1) {
+        return Member.builder().id(id).email(mail).username(u1).build();
+    }
+
+    private static LinkCard saveLinkWalletCard(Long id, LinkedWallet linkedWallet, Member member) {
+        return LinkCard.builder().id(id)
+                .cardColor(CardColor.getRandomColor())
+                .cardName("cardName")
+                .cardType(SHARED)
+                .wallet(linkedWallet)
+                .limitPrice(new Point(50000000))
+                .member(member)
+                .expiredAt(LocalDate.now().plusDays(1).atStartOfDay())
+                .usedPoint(new Point(0))
+                .state(UNREGISTERED).build();
+    }
+
+    private static LinkCard saveMyWalletCard(Long id, Wallet wallet, Member member, CardState cardState) {
+        return LinkCard.builder().id(id)
+                .cardColor(CardColor.getRandomColor())
+                .cardName("cardName")
+                .cardType(OWNED)
+                .wallet(wallet)
+                .limitPrice(new Point(50000000))
+                .member(member)
+                .expiredAt(LocalDate.now().plusDays(1).atStartOfDay())
+                .usedPoint(new Point(0))
+                .state(cardState).build();
     }
 }
