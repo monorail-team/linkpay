@@ -31,9 +31,14 @@ public class LinkedMemberService {
         validateCreatorPermission(linkedWalletId, memberId);
         Member member = memberFetcher.fetchById(participantId);
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
-        LinkedMember linkedMember = LinkedMember.of(member, idGenerator.generate(), PARTICIPANT);
+        LinkedMember linkedMember = LinkedMember.of(idGenerator.generate(), PARTICIPANT, member);
 
-        linkedWallet.registerLinkedMember(linkedMember);
+        linkedMemberRepository.save(LinkedMember.builder()
+                .id(idGenerator.generate())
+                .role(PARTICIPANT)
+                .linkedWallet(linkedWallet)
+                .member(member).build());
+
         linkedMemberRepository.save(linkedMember);
     }
 

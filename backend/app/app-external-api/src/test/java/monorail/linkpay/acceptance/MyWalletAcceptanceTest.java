@@ -15,7 +15,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
 
-class WalletAcceptanceTest extends AcceptanceTest {
+class MyWalletAcceptanceTest extends AcceptanceTest {
 
     @TestFactory
     Stream<DynamicTest> 지갑_포인트_충전과_잔액_조회_시나리오() {
@@ -36,10 +36,10 @@ class WalletAcceptanceTest extends AcceptanceTest {
 
     public static ExtractableResponse<Response> 포인트_충전_요청(final String accessToken,
                                                           final WalletPointRequest pointRequest) {
-        return sendPatchRequest("/api/wallets/charge", accessToken, pointRequest);
+        return sendPatchRequest("/api/my-wallets/charge", accessToken, pointRequest);
     }
 
     public static ExtractableResponse<Response> 지갑_잔액_조회_요청(final String accessToken) {
-        return sendGetRequest("/api/wallets", accessToken);
+        return sendGetRequest("/api/my-wallets", accessToken);
     }
 }

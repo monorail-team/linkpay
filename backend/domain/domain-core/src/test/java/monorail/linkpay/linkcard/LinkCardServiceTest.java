@@ -1,12 +1,13 @@
 package monorail.linkpay.linkcard;
 
+import static java.time.LocalDateTime.now;
 import static monorail.linkpay.linkcard.domain.CardState.REGISTERED;
 import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.LinkCard;
@@ -41,10 +42,10 @@ public class LinkCardServiceTest extends IntegrationTest {
     @Test
     void 링크지갑에서_카드를_생성한다() {
         // given
-        linkedWalletService.createLinkedWallet(member.getId(), "링크지갑", null);
+        linkedWalletService.createLinkedWallet(member.getId(), "링크지갑", Set.of());
         LinkedWalletsResponse walletRes = linkedWalletService.readLinkedWallets(member.getId(), null, 10);
         SharedLinkCardCreateServiceRequest request = createSharedCard(LocalDate.now().plusDays(1),
-                walletRes.linkedWallets().getFirst().linkedWalletId(), member.getId());
+                Long.parseLong(walletRes.linkedWallets().getFirst().linkedWalletId()), member.getId());
 
         // when
         linkCardService.createShared(request);
@@ -74,7 +75,7 @@ public class LinkCardServiceTest extends IntegrationTest {
 
         // when
         LinkCardsResponse response = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
-                LocalDateTime.now());
+                now());
 
         // then
         assertThat(response.linkCards()).hasSize(1);
@@ -86,10 +87,11 @@ public class LinkCardServiceTest extends IntegrationTest {
         LinkCardCreateServiceRequest request = createCard(LocalDate.now().plusDays(1));
         linkCardService.create(member.getId(), request);
         LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
-                LocalDateTime.now());
+                now());
 
         // when
-        linkCardService.registLinkCard(List.of(Long.parseLong(unregisteredCards.linkCards().getFirst().id())));
+        linkCardService.activateLinkCard(
+                List.of(Long.parseLong(unregisteredCards.linkCards().getFirst().linkCardId())));
 
         // then
         List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
@@ -102,12 +104,13 @@ public class LinkCardServiceTest extends IntegrationTest {
         LinkCardCreateServiceRequest request = createCard(LocalDate.now().plusDays(1));
         linkCardService.create(member.getId(), request);
         LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
-                LocalDateTime.now());
-        linkCardService.registLinkCard(List.of(Long.parseLong(unregisteredCards.linkCards().getFirst().id())));
+                now());
+        linkCardService.activateLinkCard(
+                List.of(Long.parseLong(unregisteredCards.linkCards().getFirst().linkCardId())));
 
         // when
         LinkCardsResponse registeredCards = linkCardService.readByState(member.getId(), null, 10, REGISTERED,
-                LocalDateTime.now());
+                now());
 
         // then
         assertThat(registeredCards.linkCards()).hasSize(1);
@@ -121,10 +124,10 @@ public class LinkCardServiceTest extends IntegrationTest {
 
         // when
         LinkCardsResponse response = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
-                LocalDateTime.now().plusDays(1));
+                now().plusDays(1));
 
         // then
-        assertThat(response.linkCards()).hasSize(0);
+        assertThat(response.linkCards()).isEmpty();
         List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
         assertThat(result).hasSize(1);
     }
@@ -132,7 +135,7 @@ public class LinkCardServiceTest extends IntegrationTest {
     private static LinkCardCreateServiceRequest createCard(LocalDate date) {
         return LinkCardCreateServiceRequest.builder()
                 .cardName("test card")
-                .expiratedAt(date)
+                .expiredAt(date)
                 .limitPrice(new Point(500000))
                 .build();
     }
@@ -140,7 +143,7 @@ public class LinkCardServiceTest extends IntegrationTest {
     private static SharedLinkCardCreateServiceRequest createSharedCard(LocalDate date, long walletId, long memberId) {
         return SharedLinkCardCreateServiceRequest.builder()
                 .cardName("test card")
-                .expiratedAt(date)
+                .expiredAt(date)
                 .limitPrice(new Point(500000))
                 .memberIds(List.of(memberId))
                 .linkedWalletId(walletId)

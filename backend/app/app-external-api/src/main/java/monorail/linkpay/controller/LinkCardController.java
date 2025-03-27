@@ -7,9 +7,7 @@ import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
-import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
-import monorail.linkpay.controller.request.LinkCardPayRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
@@ -47,35 +45,25 @@ public class LinkCardController {
     }
 
     @GetMapping
-    public ResponseEntity<LinkCardsResponse> getLinkCards(@AuthenticationPrincipal final AuthPrincipal principal,
-                                                          @RequestParam(required = false) final Long lastId,
-                                                          @RequestParam(defaultValue = "10") final int size) {
+    public ResponseEntity<LinkCardsResponse> getLinkCards(@RequestParam(required = false) final Long lastId,
+                                                          @RequestParam(defaultValue = "10") final int size,
+                                                          @AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(linkCardService.read(principal.memberId(), lastId, size));
     }
 
     @GetMapping("/{state}")
-    public ResponseEntity<LinkCardsResponse> getLinkCardsByState(@AuthenticationPrincipal final AuthPrincipal principal,
+    public ResponseEntity<LinkCardsResponse> getLinkCardsByState(@PathVariable final String state,
                                                                  @RequestParam(required = false) final Long lastId,
                                                                  @RequestParam(defaultValue = "10") final int size,
-                                                                 @PathVariable final String state) {
+                                                                 @AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(linkCardService.readByState(principal.memberId(), lastId, size, getCardState(state),
                 LocalDateTime.now()));
     }
 
     @PatchMapping("/activate")
-    public ResponseEntity<Void> registLinkCard(@Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest) {
-        linkCardService.registLinkCard(linkCardRegistRequest.linkCardIds());
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/pay")
-    public ResponseEntity<Void> pay(@AuthenticationPrincipal final AuthPrincipal principal,
-                                    @Valid @RequestBody final LinkCardPayRequest linkCardPayRequest) {
-        linkCardService.pay(
-                principal.memberId(),
-                new Point(linkCardPayRequest.amount()),
-                linkCardPayRequest.linkCardId(),
-                linkCardPayRequest.merchantName());
+    public ResponseEntity<Void> activateLinkCard(
+            @Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest) {
+        linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds());
         return ResponseEntity.noContent().build();
     }
 }

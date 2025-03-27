@@ -28,7 +28,7 @@ public record LinkCardCreateRequest(
         return LinkCardCreateServiceRequest.builder()
                 .cardName(cardName)
                 .limitPrice(new Point(limitPrice))
-                .expiratedAt(expiredAt)
+                .expiredAt(expiredAt)
                 .build();
     }
 }

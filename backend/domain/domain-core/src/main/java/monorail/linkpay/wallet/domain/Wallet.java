@@ -10,8 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
@@ -21,14 +19,13 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "wallet")
 @Getter
-@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE wallet SET deleted_at = CURRENT_TIMESTAMP WHERE wallet_id = ?")
 @SQLRestriction("deleted_at is null")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "wallet_type")
 @Entity
-public abstract sealed class Wallet extends BaseEntity permits MyWallet, LinkedWallet {
+public abstract class Wallet extends BaseEntity {
 
     @Id
     @Column(name = "wallet_id")
@@ -37,7 +34,6 @@ public abstract sealed class Wallet extends BaseEntity permits MyWallet, LinkedW
     @Embedded
     private Point point;
 
-    @Builder
     public Wallet(final Long id) {
         this.id = id;
         this.point = new Point(0);
@@ -47,11 +43,11 @@ public abstract sealed class Wallet extends BaseEntity permits MyWallet, LinkedW
         return point.getAmount();
     }
 
-    public void chargePoint(Point point) {
+    public void chargePoint(final Point point) {
         this.point = this.point.add(point);
     }
 
-    public void deductPoint(Point point) {
+    public void deductPoint(final Point point) {
         this.point = this.point.subtract(point);
     }
 }

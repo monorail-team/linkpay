@@ -13,45 +13,45 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-public class WalletControllerTest extends ControllerTest {
+public class MyWalletControllerTest extends ControllerTest {
 
     @Test
     void 지갑을_충전한다() {
-        doNothing().when(walletService).charge(anyLong(), any(Point.class));
+        doNothing().when(myWalletService).charge(anyLong(), any(Point.class));
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer {access_token}")
                 .body(WALLET_POINT_REQUEST)
-                .when().patch("/api/wallets/charge")
+                .when().patch("/api/my-wallets/charge")
                 .then().log().all()
-                .apply(document("wallets/charge"))
+                .apply(document("mywallets/charge"))
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
     @Test
     void 지갑잔액을_차감한다() {
-        doNothing().when(walletService).deduct(anyLong(), any(Point.class));
+        doNothing().when(myWalletService).deduct(anyLong(), any(Point.class));
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer {access_token}")
                 .body(WALLET_POINT_REQUEST)
-                .when().patch("/api/wallets/deduct")
+                .when().patch("/api/my-wallets/deduct")
                 .then().log().all()
-                .apply(document("wallets/deduct"))
+                .apply(document("mywallets/deduct"))
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
     @Test
     void 지갑_잔액을_조회한다() {
-        when(walletService.read(anyLong())).thenReturn(WALLET_RESPONSE);
+        when(myWalletService.read(anyLong())).thenReturn(WALLET_RESPONSE);
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")
-                .when().get("/api/wallets")
+                .when().get("/api/my-wallets")
                 .then().log().all()
-                .apply(document("wallets/read"))
+                .apply(document("mywallets/read"))
                 .statusCode(HttpStatus.OK.value());
     }
 }

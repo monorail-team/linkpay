@@ -61,7 +61,7 @@ public class LinkedWalletControllerTest extends ControllerTest {
 
     @Test
     void 링크지갑을_충전한다() {
-        doNothing().when(linkedWalletService).chargeLinkedWallet(anyLong(), any(Point.class));
+        doNothing().when(linkedWalletService).chargeLinkedWallet(anyLong(), any(Point.class), anyLong());
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -75,7 +75,7 @@ public class LinkedWalletControllerTest extends ControllerTest {
 
     @Test
     void 링크지갑의_잔액을_차감한다() {
-        doNothing().when(linkedWalletService).deductLinkedWallet(anyLong(), any(Point.class));
+        doNothing().when(linkedWalletService).deductLinkedWallet(anyLong(), any(Point.class), anyLong());
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

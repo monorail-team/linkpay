@@ -22,7 +22,6 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
     @Query("SELECT l FROM LinkCard l " +
             "WHERE l.member.id = :memberId " +
             "AND (:lastId IS NULL OR l.id < :lastId) " +
-            "AND l.deletedAt IS NULL " +
             "ORDER BY l.id DESC ")
     Slice<LinkCard> findWithLastId(@Param("memberId") Long memberId,
                                    @Param("lastId") Long lastId,
@@ -32,19 +31,18 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
     @Query("SELECT l FROM LinkCard l " +
             "WHERE l.member.id = :memberId " +
             "AND l.state = :state " +
-            "AND (:lastId IS NULL OR l.id < :lastId)" +
-            "AND l.deletedAt IS NULL " +
-            "AND l.expiredAt > :current  " +
+            "AND (:lastId IS NULL OR l.id < :lastId) " +
+            "AND l.expiredAt > :current " +
             "ORDER BY l.id DESC ")
     Slice<LinkCard> findByStateWithLastId(@Param("memberId") Long memberId,
                                           @Param("lastId") Long lastId,
-                                          Pageable pageable,
                                           @Param("state") CardState state,
-                                          @Param("current") LocalDateTime current);
+                                          @Param("current") LocalDateTime current,
+                                          Pageable pageable);
 
     @Modifying
     @Query("UPDATE LinkCard l "
             + "SET l.state = 'REGISTERED' "
             + "WHERE l.id in :linkCardIds")
-    void updateStateById(@Param("linkCardIds") Set<Long> linkCardIds);
+    void updateStateByIds(@Param("linkCardIds") Set<Long> linkCardIds);
 }

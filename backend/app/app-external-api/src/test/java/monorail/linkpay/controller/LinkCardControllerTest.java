@@ -77,7 +77,7 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 링크카드를_결제카드로_등록한다() {
-        doNothing().when(linkCardService).registLinkCard(anyList());
+        doNothing().when(linkCardService).activateLinkCard(anyList());
 
         docsGiven.contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer {access_token}")

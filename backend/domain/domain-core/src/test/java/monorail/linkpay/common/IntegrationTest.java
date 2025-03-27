@@ -5,11 +5,12 @@ import monorail.linkpay.history.repository.WalletHistoryRepository;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
+import monorail.linkpay.payment.repository.PaymentRepository;
 import monorail.linkpay.util.id.IdGenerator;
-import monorail.linkpay.wallet.domain.Wallet;
+import monorail.linkpay.wallet.domain.MyWallet;
 import monorail.linkpay.wallet.repository.LinkedMemberRepository;
 import monorail.linkpay.wallet.repository.LinkedWalletRepository;
-import monorail.linkpay.wallet.repository.WalletRepository;
+import monorail.linkpay.wallet.repository.MyWalletRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,8 +19,9 @@ import org.springframework.context.annotation.Import;
 @Import(MockTestConfiguration.class)
 @SpringBootTest
 public abstract class IntegrationTest {
+
     @Autowired
-    protected WalletRepository walletRepository;
+    protected MyWalletRepository myWalletRepository;
     @Autowired
     protected MemberRepository memberRepository;
     @Autowired
@@ -30,6 +32,8 @@ public abstract class IntegrationTest {
     protected LinkedWalletRepository linkedWalletRepository;
     @Autowired
     protected LinkedMemberRepository linkedMemberRepository;
+    @Autowired
+    protected PaymentRepository paymentRepository;
 
     protected Member member;
 
@@ -38,14 +42,15 @@ public abstract class IntegrationTest {
 
     @BeforeEach
     void setUp() {
+        paymentRepository.deleteAllInBatch();
         linkCardRepository.deleteAllInBatch();
         linkedMemberRepository.deleteAllInBatch();
         linkedWalletRepository.deleteAllInBatch();
         walletHistoryRepository.deleteAllInBatch();
-        walletRepository.deleteAllInBatch();
+        myWalletRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
         member = memberRepository.save(createMember());
-        walletRepository.save(Wallet.builder()
+        myWalletRepository.save(MyWallet.builder()
                 .id(idGenerator.generate())
                 .member(member)
                 .build());

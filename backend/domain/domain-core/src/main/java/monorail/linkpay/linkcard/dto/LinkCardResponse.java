@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import monorail.linkpay.linkcard.domain.LinkCard;
 
 public record LinkCardResponse(
-        String id,
+        String linkCardId,
         Long limitPrice,
         String cardType,
         String cardColor,
@@ -12,7 +12,7 @@ public record LinkCardResponse(
         LocalDate expiredAt,
         Long usedPoint
 ) {
-    public static LinkCardResponse from(LinkCard linkCard) {
+    public static LinkCardResponse from(final LinkCard linkCard) {
         return new LinkCardResponse(
                 linkCard.getId().toString(),
                 linkCard.getLimitPrice().getAmount(),

@@ -5,6 +5,7 @@ import static lombok.AccessLevel.PROTECTED;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,14 +14,33 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 @DiscriminatorValue("LINKED")
 @Entity
-public final class LinkedWallet extends Wallet {
+public class LinkedWallet extends Wallet {
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String name;
 
     @Builder
     private LinkedWallet(final Long id, final String name) {
         super(id);
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof final LinkedWallet linkedWallet)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        return Objects.equals(getId(), linkedWallet.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

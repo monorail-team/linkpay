@@ -16,6 +16,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long> {
 
+    int countByLinkedWalletId(@Param("linkedWalletId") Long linkedWalletId);
+
+    Optional<LinkedMember> findByMemberId(Long memberId);
+
     Optional<LinkedMember> findByLinkedWalletIdAndMemberId(Long linkedWalletId, Long memberId);
 
     @Query("select count(lm) as participantCount, "
@@ -28,11 +32,9 @@ public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long
             + "and (:lastId is null or lw.id < :lastId) "
             + "group by lw.id, lw.name, lw.point.amount "
             + "order by lw.id desc")
-    Slice<LinkedWalletDto> findByMemberId(@Param("memberId") Long memberId,
-                                          @Param("lastId") Long lastId,
-                                          Pageable pageable);
-
-    int countByLinkedWalletId(@Param("linkedWalletId") Long linkedWalletId);
+    Slice<LinkedWalletDto> findLinkedWalletDtosByMemberId(@Param("memberId") Long memberId,
+                                                          @Param("lastId") Long lastId,
+                                                          Pageable pageable);
 
     @Modifying
     @Query("update LinkedMember m "
@@ -40,6 +42,4 @@ public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long
             + "where m.id in :linkedMemberIds")
     void deleteByIds(@Param("linkedMemberIds") Set<Long> linkedMemberIds,
                      @Param("deletedAt") LocalDateTime deletedAt);
-
-    Optional<LinkedMember> findOneByMemberId(Long memberId);
 }

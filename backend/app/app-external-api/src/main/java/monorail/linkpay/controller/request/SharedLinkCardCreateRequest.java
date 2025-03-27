@@ -35,7 +35,7 @@ public record SharedLinkCardCreateRequest(
         return SharedLinkCardCreateServiceRequest.builder()
                 .cardName(cardName)
                 .limitPrice(new Point(limitPrice))
-                .expiratedAt(expiredAt)
+                .expiredAt(expiredAt)
                 .memberIds(memberIds)
                 .linkedWalletId(linkedWalletId)
                 .build();

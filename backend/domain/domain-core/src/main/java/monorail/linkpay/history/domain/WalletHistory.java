@@ -13,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -51,9 +50,6 @@ public class WalletHistory extends BaseEntity {
     @Enumerated(STRING)
     private TransactionType transactionType;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime historyDate;
-
     @JoinColumn(name = "wallet_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Wallet wallet;
@@ -68,7 +64,6 @@ public class WalletHistory extends BaseEntity {
             final Point amount,
             final Point remaining,
             final TransactionType transactionType,
-            final LocalDateTime historyDate,
             final Wallet wallet,
             final Member member
     ) {
@@ -76,7 +71,6 @@ public class WalletHistory extends BaseEntity {
         this.amount = amount;
         this.remaining = remaining;
         this.transactionType = transactionType;
-        this.historyDate = historyDate;
         this.wallet = wallet;
         this.member = member;
     }
