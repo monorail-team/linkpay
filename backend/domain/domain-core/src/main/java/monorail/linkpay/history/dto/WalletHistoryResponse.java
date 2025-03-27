@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import monorail.linkpay.history.domain.WalletHistory;
 
 public record WalletHistoryResponse(
-        String id,
+        String walletHistoryId,
         Long amount,
         Long remaining,
         String transactionType,

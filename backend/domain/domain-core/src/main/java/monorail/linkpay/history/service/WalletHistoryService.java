@@ -1,5 +1,6 @@
 package monorail.linkpay.history.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.history.domain.WalletHistory;
 import monorail.linkpay.history.dto.WalletHistoryListResponse;
@@ -9,8 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +32,7 @@ public class WalletHistoryService {
                 .map(WalletHistoryResponse::from)
                 .toList();
 
-        return new WalletHistoryListResponse(
-                walletHistoryResponses,
-                walletHistories.hasNext());
+        return new WalletHistoryListResponse(walletHistoryResponses, walletHistories.hasNext());
     }
 
 }

@@ -11,7 +11,6 @@ import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.payment.domain.Payment;
 import monorail.linkpay.payment.repository.PaymentRepository;
-import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.store.service.StoreFetcher;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.Wallet;
@@ -32,22 +31,28 @@ public class PaymentService {
     private final StoreFetcher storeFetcher;
     private final IdGenerator idGenerator;
 
-    public void pay(final Long memberId, final Point point, final Long linkCardId, final Long storeId) {
+    public synchronized void createPayment(final Long memberId, final Point point, final Long linkCardId,
+                                           final Long storeId) {
         Member member = memberFetcher.fetchById(memberId);
-        LinkCard linkCard = linkCardFetcher.fetchByOwnerId(linkCardId, member);
+        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
+        linkCard.validateOwnership(member);
         linkCard.validateExpiredDate();
-        Store store = storeFetcher.fetchById(storeId);
+
         linkCard.usePoint(point);
-        Wallet wallet = walletFetcher.fetchByMemberIdForUpdate(linkCard.getWallet().getId());
+        Wallet wallet = linkCard.getWallet();
         wallet.deductPoint(point);
 
         walletHistoryRecorder.recordHistory(WITHDRAWAL, wallet, point, linkCard.getMember());
-        paymentRepository.save(Payment.builder()
+        paymentRepository.save(getPayment(linkCard, point, storeId));
+    }
+
+    private Payment getPayment(final LinkCard linkCard, final Point point, final Long storeId) {
+        return Payment.builder()
                 .id(idGenerator.generate())
                 .linkCard(linkCard)
                 .member(linkCard.getMember())
                 .amount(point)
-                .store(store)
-                .build());
+                .store(storeFetcher.fetchById(storeId))
+                .build();
     }
 }

@@ -47,10 +47,10 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         String accessToken = 엑세스_토큰();
         링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
 
-        Long linkedWalletId = 링크지갑_목록_조회_요청(accessToken).as(LinkedWalletsResponse.class).linkedWallets()
+        String linkedWalletId = 링크지갑_목록_조회_요청(accessToken).as(LinkedWalletsResponse.class).linkedWallets()
                 .getFirst().linkedWalletId();
 
-        ExtractableResponse<Response> response = 링크지갑_충전_요청(accessToken, linkedWalletId,
+        ExtractableResponse<Response> response = 링크지갑_충전_요청(accessToken, Long.valueOf(linkedWalletId),
                 new WalletPointRequest(10000L));
         LinkedWalletResponse linkedWalletResponse = 링크지갑_목록_조회_요청(accessToken).as(LinkedWalletsResponse.class)
                 .linkedWallets().getFirst();
@@ -67,8 +67,8 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         String accessToken = 엑세스_토큰();
         링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
 
-        Long linkedWalletId = 링크지갑_목록_조회_요청(accessToken).as(LinkedWalletsResponse.class).linkedWallets()
-                .getFirst().linkedWalletId();
+        Long linkedWalletId = Long.valueOf(링크지갑_목록_조회_요청(accessToken).as(LinkedWalletsResponse.class).linkedWallets()
+                .getFirst().linkedWalletId());
 
         링크지갑_충전_요청(accessToken, linkedWalletId, new WalletPointRequest(50000L));
 
@@ -79,7 +79,7 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
 
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
-                () -> assertThat(linkedWalletResponse.linkedWalletId()).isEqualTo(linkedWalletId),
+                () -> assertThat(linkedWalletResponse.linkedWalletId()).isEqualTo(linkedWalletId.toString()),
                 () -> assertThat(linkedWalletResponse.amount()).isEqualTo(30000L)
         );
     }

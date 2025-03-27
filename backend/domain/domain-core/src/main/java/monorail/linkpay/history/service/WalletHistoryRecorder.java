@@ -17,10 +17,8 @@ public class WalletHistoryRecorder {
     private final WalletHistoryRepository walletHistoryRepository;
     private final IdGenerator idGenerator;
 
-    public void recordHistory(final TransactionType transactionType,
-                              final Wallet wallet,
-                              final Point point,
-                              final Member member) {
+    public void recordHistory(final TransactionType transactionType, final Wallet wallet,
+                              final Point point, final Member member) {
         walletHistoryRepository.save(WalletHistory.builder()
                 .id(idGenerator.generate())
                 .amount(point)

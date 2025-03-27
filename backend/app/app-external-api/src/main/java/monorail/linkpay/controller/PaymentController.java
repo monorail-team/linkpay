@@ -23,9 +23,9 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping
-    public ResponseEntity<Void> pay(@AuthenticationPrincipal final AuthPrincipal principal,
-                                    @Valid @RequestBody final PaymentsRequest paymentsRequest) {
-        paymentService.pay(
+    public ResponseEntity<Void> createPayment(@AuthenticationPrincipal final AuthPrincipal principal,
+                                              @Valid @RequestBody final PaymentsRequest paymentsRequest) {
+        paymentService.createPayment(
                 principal.memberId(),
                 new Point(paymentsRequest.amount()),
                 paymentsRequest.linkCardId(),

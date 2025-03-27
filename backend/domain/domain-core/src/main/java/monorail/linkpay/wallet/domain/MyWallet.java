@@ -1,5 +1,6 @@
 package monorail.linkpay.wallet.domain;
 
+import static java.util.Objects.requireNonNull;
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.DiscriminatorValue;
@@ -17,7 +18,7 @@ import monorail.linkpay.member.domain.Member;
 @NoArgsConstructor(access = PROTECTED)
 @DiscriminatorValue("MY")
 @Entity
-public final class MyWallet extends Wallet {
+public class MyWallet extends Wallet {
 
     @JoinColumn(name = "member_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,7 +27,26 @@ public final class MyWallet extends Wallet {
     @Builder
     private MyWallet(final Long id, final Member member) {
         super(id);
-        Objects.requireNonNull(member);
+        requireNonNull(member);
         this.member = member;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof final MyWallet myWallet)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        return Objects.equals(getId(), myWallet.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

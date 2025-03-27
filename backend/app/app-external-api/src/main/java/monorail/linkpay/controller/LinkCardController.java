@@ -45,24 +45,25 @@ public class LinkCardController {
     }
 
     @GetMapping
-    public ResponseEntity<LinkCardsResponse> getLinkCards(@AuthenticationPrincipal final AuthPrincipal principal,
-                                                          @RequestParam(required = false) final Long lastId,
-                                                          @RequestParam(defaultValue = "10") final int size) {
+    public ResponseEntity<LinkCardsResponse> getLinkCards(@RequestParam(required = false) final Long lastId,
+                                                          @RequestParam(defaultValue = "10") final int size,
+                                                          @AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(linkCardService.read(principal.memberId(), lastId, size));
     }
 
     @GetMapping("/{state}")
-    public ResponseEntity<LinkCardsResponse> getLinkCardsByState(@AuthenticationPrincipal final AuthPrincipal principal,
+    public ResponseEntity<LinkCardsResponse> getLinkCardsByState(@PathVariable final String state,
                                                                  @RequestParam(required = false) final Long lastId,
                                                                  @RequestParam(defaultValue = "10") final int size,
-                                                                 @PathVariable final String state) {
+                                                                 @AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(linkCardService.readByState(principal.memberId(), lastId, size, getCardState(state),
                 LocalDateTime.now()));
     }
 
     @PatchMapping("/activate")
-    public ResponseEntity<Void> registLinkCard(@Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest) {
-        linkCardService.registLinkCard(linkCardRegistRequest.linkCardIds());
+    public ResponseEntity<Void> activateLinkCard(
+            @Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest) {
+        linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds());
         return ResponseEntity.noContent().build();
     }
 }

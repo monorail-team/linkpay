@@ -14,7 +14,7 @@ endif::[]
 
 include::auth.adoc[]
 include::member.adoc[]
-include::wallet.adoc[]
+include::mywallet.adoc[]
 include::linkcard.adoc[]
 include::linkedmember.adoc[]
 include::linkedwallet.adoc[]

@@ -25,7 +25,7 @@ public class ControllerFixture {
     public static final LoginResponse LOGIN_RESPONSE = new LoginResponse("accessToken");
 
     public static final MemberResponse MEMBER_RESPONSE = new MemberResponse(
-            1L, "link1", "linked@gmail.com");
+            "1", "link1", "linked@gmail.com");
     public static final WalletResponse WALLET_RESPONSE = new WalletResponse(50000);
 
     public static final WalletPointRequest WALLET_POINT_REQUEST = new WalletPointRequest(50000);
@@ -71,11 +71,11 @@ public class ControllerFixture {
     public static final LinkCardsResponse LINK_CARDS_RESPONSE_2 = new LinkCardsResponse(
             List.of(LINK_CARD_RESPONSE_1, SHARED_LINK_CARD_RESPONSE), false);
 
-    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_1 = new LinkedWalletResponse(1L, "링크지갑1", 40000L,
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_1 = new LinkedWalletResponse("1", "링크지갑1", 40000L,
             1);
-    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_2 = new LinkedWalletResponse(2L, "링크지갑2", 50000L,
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_2 = new LinkedWalletResponse("2", "링크지갑2", 50000L,
             2);
-    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_3 = new LinkedWalletResponse(3L, "링크지갑3", 60000L,
+    public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_3 = new LinkedWalletResponse("3", "링크지갑3", 60000L,
             3);
 
     public static final LinkedWalletsResponse LINKED_WALLETS_RESPONSE = new LinkedWalletsResponse(

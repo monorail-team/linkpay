@@ -50,7 +50,7 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
 
         SharedLinkCardCreateRequest sharedLinkCardCreateRequest = new SharedLinkCardCreateRequest(
                 "테스트카드", 500000, LocalDate.now().plusMonths(1), List.of(1L),
-                linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId());
+                Long.parseLong(linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId()));
 
         ExtractableResponse<Response> response = 링크지갑에서_링크카드_생성_요청(accessToken, sharedLinkCardCreateRequest);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -85,7 +85,8 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                     );
                 }),
                 dynamicTest("링크카드를 결제카드로 등록한다", () -> {
-                    Long cardId = Long.parseLong(unregisteredLinkCardsResponse.get().linkCards().getFirst().id());
+                    Long cardId = Long.parseLong(
+                            unregisteredLinkCardsResponse.get().linkCards().getFirst().linkCardId());
                     ExtractableResponse<Response> response = 카드_등록(accessToken,
                             new LinkCardRegistRequest(List.of(cardId)));
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());

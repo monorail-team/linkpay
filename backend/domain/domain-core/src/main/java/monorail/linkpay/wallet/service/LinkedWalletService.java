@@ -3,6 +3,7 @@ package monorail.linkpay.wallet.service;
 import static monorail.linkpay.wallet.domain.Role.CREATOR;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
+import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
@@ -14,6 +15,7 @@ import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.LinkedWallet;
+import monorail.linkpay.wallet.domain.Role;
 import monorail.linkpay.wallet.dto.LinkedWalletResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.wallet.repository.LinkedMemberRepository;
@@ -38,9 +40,11 @@ public class LinkedWalletService {
     private final WalletHistoryRecorder walletHistoryRecorder;
 
     public LinkedWalletsResponse readLinkedWallets(final long memberId, final Long lastId, final int size) {
-        Slice<LinkedWalletDto> linkedWalletDtos = linkedMemberRepository.findByMemberId(memberId, lastId,
-                PageRequest.of(0, size));
-
+        Slice<LinkedWalletDto> linkedWalletDtos = linkedMemberRepository.findLinkedWalletDtosByMemberId(
+                memberId,
+                lastId,
+                PageRequest.of(0, size)
+        );
         return new LinkedWalletsResponse(linkedWalletDtos.stream()
                 .map(LinkedWalletResponse::from)
                 .toList(),
@@ -50,7 +54,7 @@ public class LinkedWalletService {
     public LinkedWalletResponse readLinkedWallet(final Long linkedWalletId) {
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
         return new LinkedWalletResponse(
-                linkedWalletId,
+                linkedWalletId.toString(),
                 linkedWallet.getName(),
                 linkedWallet.readAmount(),
                 linkedMemberRepository.countByLinkedWalletId(linkedWalletId));
@@ -63,21 +67,15 @@ public class LinkedWalletService {
                 .id(idGenerator.generate())
                 .name(walletName)
                 .build();
+
         linkedWalletRepository.save(linkedWallet);
+        linkedMemberRepository.save(getLinkedMember(member, linkedWallet, CREATOR));
 
-        linkedMemberRepository.save(LinkedMember.builder()
-                .id(idGenerator.generate())
-                .role(CREATOR)
-                .linkedWallet(linkedWallet)
-                .member(member).build());
+        List<LinkedMember> linkedMembers = memberRepository.findMembersByIdIn(memberIds).stream()
+                .map(tuple -> getLinkedMember(tuple, linkedWallet, PARTICIPANT))
+                .toList();
 
-        memberRepository.findMembersByIdIn(memberIds).forEach(tuple ->
-                linkedMemberRepository.save(LinkedMember.builder()
-                        .id(idGenerator.generate())
-                        .role(PARTICIPANT)
-                        .linkedWallet(linkedWallet)
-                        .member(tuple).build())
-        );
+        linkedMemberRepository.saveAll(linkedMembers);
         return linkedWallet.getId();
     }
 
@@ -95,5 +93,14 @@ public class LinkedWalletService {
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchByIdForUpdate(linkedWalletId);
         linkedWallet.deductPoint(point);
         walletHistoryRecorder.recordHistory(TransactionType.DEPOSIT, linkedWallet, point, member);
+    }
+
+    private LinkedMember getLinkedMember(final Member member, final LinkedWallet linkedWallet, final Role role) {
+        return LinkedMember.builder()
+                .id(idGenerator.generate())
+                .role(role)
+                .linkedWallet(linkedWallet)
+                .member(member)
+                .build();
     }
 }

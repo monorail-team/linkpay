@@ -15,7 +15,7 @@ public class PaymentControllerTest extends ControllerTest {
 
     @Test
     void 링크카드로_결제한다() {
-        doNothing().when(paymentService).pay(anyLong(), any(Point.class), anyLong(), anyLong());
+        doNothing().when(paymentService).createPayment(anyLong(), any(Point.class), anyLong(), anyLong());
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

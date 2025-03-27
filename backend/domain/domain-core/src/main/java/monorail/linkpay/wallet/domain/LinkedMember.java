@@ -56,7 +56,7 @@ public class LinkedMember extends BaseEntity {
         this.member = member;
     }
 
-    public static LinkedMember of(final Member member, final Long id, final Role role) {
+    public static LinkedMember of(final Long id, final Role role, final Member member) {
         return LinkedMember.builder()
                 .id(id)
                 .role(role)

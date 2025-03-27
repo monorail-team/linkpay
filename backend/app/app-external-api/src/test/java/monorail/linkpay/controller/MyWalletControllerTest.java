@@ -23,9 +23,9 @@ public class MyWalletControllerTest extends ControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer {access_token}")
                 .body(WALLET_POINT_REQUEST)
-                .when().patch("/api/wallets/charge")
+                .when().patch("/api/my-wallets/charge")
                 .then().log().all()
-                .apply(document("wallets/charge"))
+                .apply(document("mywallets/charge"))
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
@@ -37,9 +37,9 @@ public class MyWalletControllerTest extends ControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer {access_token}")
                 .body(WALLET_POINT_REQUEST)
-                .when().patch("/api/wallets/deduct")
+                .when().patch("/api/my-wallets/deduct")
                 .then().log().all()
-                .apply(document("wallets/deduct"))
+                .apply(document("mywallets/deduct"))
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
@@ -49,9 +49,9 @@ public class MyWalletControllerTest extends ControllerTest {
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")
-                .when().get("/api/wallets")
+                .when().get("/api/my-wallets")
                 .then().log().all()
-                .apply(document("wallets/read"))
+                .apply(document("mywallets/read"))
                 .statusCode(HttpStatus.OK.value());
     }
 }
