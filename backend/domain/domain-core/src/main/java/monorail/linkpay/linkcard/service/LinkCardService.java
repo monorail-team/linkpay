@@ -9,6 +9,8 @@ import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
+import monorail.linkpay.linkcard.repository.LinkCardQueryFactory;
+import monorail.linkpay.linkcard.repository.LinkCardQueryRepository;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
 import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequest;
@@ -33,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LinkCardService {
 
     private final LinkCardRepository linkCardRepository;
+    private final LinkCardQueryRepository linkCardQueryRepository;
     private final MemberRepository memberRepository;
     private final LinkCardFetcher linkCardFetcher;
     private final LinkedWalletFetcher linkedWalletFetcher;
@@ -60,8 +63,9 @@ public class LinkCardService {
         linkCardRepository.saveAll(linkCards);
     }
 
-    public LinkCardsResponse read(final Long memberId, final Long lastId, final int size) {
-        Slice<LinkCard> linkCards = linkCardRepository.findWithLastId(memberId, lastId, PageRequest.of(0, size));
+    public LinkCardsResponse read(final Long memberId, final Long lastId, final int size, final String type) {
+        Slice<LinkCard> linkCards = linkCardQueryRepository.findLinkCardsByMemberId(LinkCardQueryFactory.from(type),
+                memberId, lastId, PageRequest.of(0, size));
         return new LinkCardsResponse(getLinkCardResponses(linkCards), linkCards.hasNext());
     }
 

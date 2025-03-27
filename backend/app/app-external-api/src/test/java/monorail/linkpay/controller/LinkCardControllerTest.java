@@ -1,9 +1,13 @@
 package monorail.linkpay.controller;
 
+import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE_1;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE_2;
+import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE_3;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_CREATE_REQUEST;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_REGISTRATION_REQUEST;
+import static monorail.linkpay.controller.ControllerFixture.REGISTERED_LINK_CARDS_RESPONSE;
 import static monorail.linkpay.controller.ControllerFixture.SHARED_LINK_CARD_CREATE_REQUEST;
+import static monorail.linkpay.linkcard.domain.CardState.REGISTERED;
 import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -52,13 +56,41 @@ public class LinkCardControllerTest extends ControllerTest {
     }
 
     @Test
-    void 보유한_링크카드를_조회한다() {
-        when(linkCardService.read(anyLong(), nullable(Long.class), eq(10))).thenReturn(LINK_CARDS_RESPONSE_2);
+    void 보유한_링크카드_중_내지갑_카드를_조회한다() {
+        when(linkCardService.read(anyLong(), nullable(Long.class), eq(10), eq("owned"))).thenReturn(
+                LINK_CARDS_RESPONSE_1);
 
-        docsGiven.header("Authorization", "Bearer {access_token}")
-                .when().get("/api/cards")
+        docsGiven
+                .header("Authorization", "Bearer {access_token}")
+                .when().get("/api/cards?type=owned&lastId=1&size=10")
                 .then().log().all()
                 .apply(document("cards/read"))
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void 보유한_링크카드_중_링크지갑_카드를_조회한다() {
+        when(linkCardService.read(anyLong(), nullable(Long.class), eq(10), eq("linked"))).thenReturn(
+                LINK_CARDS_RESPONSE_3);
+
+        docsGiven
+                .header("Authorization", "Bearer {access_token}")
+                .when().get("/api/cards?type=linked&lastId=1&size=10")
+                .then().log().all()
+                .apply(document("cards/read/linked"))
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void 공유한_링크카드를_조회한다() {
+        when(linkCardService.read(anyLong(), nullable(Long.class), eq(10), eq("shared"))).thenReturn(
+                LINK_CARDS_RESPONSE_3);
+
+        docsGiven
+                .header("Authorization", "Bearer {access_token}")
+                .when().get("/api/cards?type=shared&lastId=1&size=10")
+                .then().log().all()
+                .apply(document("cards/read/shared"))
                 .statusCode(HttpStatus.OK.value());
     }
 
@@ -68,7 +100,8 @@ public class LinkCardControllerTest extends ControllerTest {
                 any(LocalDateTime.class))).thenReturn(
                 LINK_CARDS_RESPONSE_2);
 
-        docsGiven.header("Authorization", "Bearer {access_token}")
+        docsGiven
+                .header("Authorization", "Bearer {access_token}")
                 .when().get("/api/cards/unregistered")
                 .then().log().all()
                 .apply(document("cards/read/deactivate"))
@@ -79,7 +112,8 @@ public class LinkCardControllerTest extends ControllerTest {
     void 링크카드를_결제카드로_등록한다() {
         doNothing().when(linkCardService).activateLinkCard(anyList());
 
-        docsGiven.contentType(MediaType.APPLICATION_JSON_VALUE)
+        docsGiven
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer {access_token}")
                 .body(LINK_CARD_REGISTRATION_REQUEST)
                 .when().patch("/api/cards/activate")
@@ -90,11 +124,12 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 결제카드로_등록된_링크카드를_조회한다() {
-        when(linkCardService.readByState(anyLong(), nullable(Long.class), eq(10), eq(UNREGISTERED),
+        when(linkCardService.readByState(anyLong(), nullable(Long.class), eq(10), eq(REGISTERED),
                 any(LocalDateTime.class))).thenReturn(
-                LINK_CARDS_RESPONSE_2);
+                REGISTERED_LINK_CARDS_RESPONSE);
 
-        docsGiven.header("Authorization", "Bearer {access_token}")
+        docsGiven
+                .header("Authorization", "Bearer {access_token}")
                 .when().get("/api/cards/registered")
                 .then().log().all()
                 .apply(document("cards/read/activate"))

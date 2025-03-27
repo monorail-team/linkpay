@@ -43,19 +43,35 @@ public class ControllerFixture {
     public static final LinkedWalletCreateRequest LINKED_WALLET_CREATE_REQUEST = new LinkedWalletCreateRequest(
             "링크지갑1", Set.of(1L, 2L, 3L));
 
+    public static final LinkCardResponse REGISTERED_LINK_CARD_RESPONSE = new LinkCardResponse("1", 500000L,
+            CardType.OWNED.name(),
+            CardColor.getRandomColor().getHexCode(),
+            "test card1",
+            LocalDate.now().plusMonths(1),
+            0L, "유저", "REGISTERED");
+
+    public static final LinkCardResponse REGISTERED_SHARED_LINK_CARD_RESPONSE = new LinkCardResponse(
+            "3",
+            500000L,
+            CardType.SHARED.name(),
+            CardColor.getRandomColor().getHexCode(),
+            "test card2",
+            LocalDate.now().plusMonths(1),
+            0L, "유저", "REGISTERED");
+
     public static final LinkCardResponse LINK_CARD_RESPONSE_1 = new LinkCardResponse("1", 500000L,
             CardType.OWNED.name(),
             CardColor.getRandomColor().getHexCode(),
             "test card1",
             LocalDate.now().plusMonths(1),
-            0L);
+            0L, "유저", "UNREGISTERED");
 
     public static final LinkCardResponse LINK_CARD_RESPONSE_2 = new LinkCardResponse("2", 500000L,
             CardType.OWNED.name(),
             CardColor.getRandomColor().getHexCode(),
             "test card2",
             LocalDate.now().plusMonths(1),
-            0L);
+            0L, "유저", "UNREGISTERED");
 
     public static final LinkCardResponse SHARED_LINK_CARD_RESPONSE = new LinkCardResponse(
             "3",
@@ -64,12 +80,25 @@ public class ControllerFixture {
             CardColor.getRandomColor().getHexCode(),
             "test card2",
             LocalDate.now().plusMonths(1),
-            0L);
+            0L, "유저", "UNREGISTERED");
+
+    public static final LinkCardResponse SHARED_LINK_CARD_RESPONSE_2 = new LinkCardResponse(
+            "4",
+            500000L,
+            CardType.SHARED.name(),
+            CardColor.getRandomColor().getHexCode(),
+            "test card2",
+            LocalDate.now().plusMonths(1),
+            0L, "유저", "UNREGISTERED");
 
     public static final LinkCardsResponse LINK_CARDS_RESPONSE_1 = new LinkCardsResponse(
             List.of(LINK_CARD_RESPONSE_1, LINK_CARD_RESPONSE_2), false);
     public static final LinkCardsResponse LINK_CARDS_RESPONSE_2 = new LinkCardsResponse(
             List.of(LINK_CARD_RESPONSE_1, SHARED_LINK_CARD_RESPONSE), false);
+    public static final LinkCardsResponse REGISTERED_LINK_CARDS_RESPONSE = new LinkCardsResponse(
+            List.of(REGISTERED_LINK_CARD_RESPONSE, REGISTERED_SHARED_LINK_CARD_RESPONSE), false);
+    public static final LinkCardsResponse LINK_CARDS_RESPONSE_3 = new LinkCardsResponse(
+            List.of(SHARED_LINK_CARD_RESPONSE, SHARED_LINK_CARD_RESPONSE_2), false);
 
     public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_1 = new LinkedWalletResponse("1", "링크지갑1", 40000L,
             1);

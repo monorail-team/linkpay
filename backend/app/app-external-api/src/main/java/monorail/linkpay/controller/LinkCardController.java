@@ -44,11 +44,13 @@ public class LinkCardController {
         return ResponseEntity.status(CREATED).build();
     }
 
+
     @GetMapping
     public ResponseEntity<LinkCardsResponse> getLinkCards(@RequestParam(required = false) final Long lastId,
                                                           @RequestParam(defaultValue = "10") final int size,
+                                                          @RequestParam final String type,
                                                           @AuthenticationPrincipal final AuthPrincipal principal) {
-        return ResponseEntity.ok(linkCardService.read(principal.memberId(), lastId, size));
+        return ResponseEntity.ok(linkCardService.read(principal.memberId(), lastId, size, type));
     }
 
     @GetMapping("/{state}")

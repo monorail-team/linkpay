@@ -10,7 +10,9 @@ public record LinkCardResponse(
         String cardColor,
         String cardName,
         LocalDate expiredAt,
-        Long usedPoint
+        Long usedPoint,
+        String username,
+        String state
 ) {
     public static LinkCardResponse from(final LinkCard linkCard) {
         return new LinkCardResponse(
@@ -20,7 +22,9 @@ public record LinkCardResponse(
                 linkCard.getCardColor().getHexCode(),
                 linkCard.getCardName(),
                 linkCard.getExpiredAt().toLocalDate().minusDays(1),
-                linkCard.getUsedPoint().getAmount()
+                linkCard.getUsedPoint().getAmount(),
+                linkCard.getMember().getUsername(),
+                linkCard.getState().toString()
         );
     }
 }
