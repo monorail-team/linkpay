@@ -1,10 +1,10 @@
 package monorail.linkpay.controller;
 
+import static java.time.LocalDateTime.now;
 import static monorail.linkpay.linkcard.domain.CardState.getCardState;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import jakarta.validation.Valid;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
@@ -14,6 +14,7 @@ import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +45,6 @@ public class LinkCardController {
         return ResponseEntity.status(CREATED).build();
     }
 
-
     @GetMapping
     public ResponseEntity<LinkCardsResponse> getLinkCards(@RequestParam(required = false) final Long lastId,
                                                           @RequestParam(defaultValue = "10") final int size,
@@ -59,13 +59,20 @@ public class LinkCardController {
                                                                  @RequestParam(defaultValue = "10") final int size,
                                                                  @AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(linkCardService.readByState(principal.memberId(), lastId, size, getCardState(state),
-                LocalDateTime.now()));
+                now()));
     }
 
     @PatchMapping("/activate")
     public ResponseEntity<Void> activateLinkCard(
             @Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest) {
         linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteLinkCard(@RequestParam final Long linkCardId,
+                                               @AuthenticationPrincipal final AuthPrincipal principal) {
+        linkCardService.deleteLinkCard(linkCardId, principal.memberId());
         return ResponseEntity.noContent().build();
     }
 }

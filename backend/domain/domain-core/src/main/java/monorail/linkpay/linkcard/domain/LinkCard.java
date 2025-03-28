@@ -1,6 +1,21 @@
 package monorail.linkpay.linkcard.domain;
 
-import jakarta.persistence.*;
+import static jakarta.persistence.EnumType.STRING;
+import static lombok.AccessLevel.PROTECTED;
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
+import static monorail.linkpay.linkcard.domain.CardType.SHARED;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,12 +27,6 @@ import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.Wallet;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.time.LocalDateTime;
-
-import static jakarta.persistence.EnumType.STRING;
-import static lombok.AccessLevel.PROTECTED;
-import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 
 @Table(name = "link_card")
 @Getter
@@ -95,6 +104,10 @@ public class LinkCard extends BaseEntity {
         this.usedPoint = this.usedPoint.add(point);
     }
 
+    public boolean isSharedCard() {
+        return this.getCardType().equals(SHARED);
+    }
+
     public void validateOwnership(final Member member) {
         if (!this.member.equals(member)) {
             throw new LinkPayException(INVALID_REQUEST, "카드의 소유자가 아닙니다.");
@@ -111,5 +124,9 @@ public class LinkCard extends BaseEntity {
         if (this.limitPrice.getAmount() < point.getAmount()) {
             throw new LinkPayException(INVALID_REQUEST, "사용금액이 한도를 초과했습니다.");
         }
+    }
+
+    public Long getWalletId() {
+        return wallet.getId();
     }
 }

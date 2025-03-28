@@ -160,7 +160,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         // when
         linkCardService.activateLinkCard(
                 List.of(Long.parseLong(unregisteredCards.linkCards().getFirst().linkCardId())));
-
+        
         // then
         List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
         assertThat(result.getFirst().getState()).isEqualTo(REGISTERED);
@@ -194,6 +194,65 @@ public class LinkCardServiceTest extends IntegrationTest {
         assertThat(response.linkCards()).isEmpty();
         List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
         assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void 내_지갑_링크카드를_삭제한다() {
+        // given
+        Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
+        linkCardRepository.save(saveMyWalletCard(1L, wallet, member, UNREGISTERED));
+
+        // when
+        linkCardService.deleteLinkCard(1L, member.getId());
+
+        // then
+        assertThat(linkCardRepository.findLinkCardsByMember(member).size()).isEqualTo(0);
+    }
+
+    @Test
+    void 링크_지갑_링크카드를_삭제한다() {
+        // given
+        Member member1 = saveMember(1L, "test@email.com", "u1");
+
+        memberRepository.saveAll(List.of(member1));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
+        linkedMemberRepository.saveAll(List.of(
+                LinkedMember.builder().id(1L).role(CREATOR).member(member).linkedWallet(linkedWallet).build(),
+                LinkedMember.builder().id(2L).role(PARTICIPANT).member(member1).linkedWallet(linkedWallet)
+                        .build()));
+        linkCardRepository.saveAll(
+                List.of(saveLinkWalletCard(1L, linkedWallet, member),
+                        saveLinkWalletCard(2L, linkedWallet, member1)));
+
+        // when
+        linkCardService.deleteLinkCard(1L, member.getId());
+
+        // then
+        assertThat(linkCardRepository.findLinkCardsByMember(member).size()).isEqualTo(0);
+    }
+
+    @Test
+    void 링크지갑_공유한_카드를_삭제한다() {
+        // given
+        Member member1 = saveMember(1L, "test@email.com", "u1");
+
+        memberRepository.saveAll(List.of(member1));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
+        linkedMemberRepository.saveAll(List.of(
+                LinkedMember.builder().id(1L).role(CREATOR).member(member).linkedWallet(linkedWallet).build(),
+                LinkedMember.builder().id(2L).role(PARTICIPANT).member(member1).linkedWallet(linkedWallet)
+                        .build()));
+        linkCardRepository.saveAll(
+                List.of(saveLinkWalletCard(1L, linkedWallet, member),
+                        saveLinkWalletCard(2L, linkedWallet, member1)));
+
+        // when
+        linkCardService.deleteLinkCard(2L, member1.getId());
+
+        // then
+        assertThat(linkCardRepository.findLinkCardsByMember(member1).size()).isEqualTo(0);
     }
 
     private static LinkCardCreateServiceRequest createCard(LocalDate date) {
