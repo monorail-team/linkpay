@@ -30,17 +30,13 @@ public class WalletHistoryService {
                                                              final int size) {
         Wallet wallet = walletFetcher.fetchByMemberId(memberId);
         Slice<WalletHistory> walletHistories = walletHistoryFetcher.fetchPageByWalletId(wallet.getId(), lastId, size);
-        List<WalletHistoryResponse> walletHistoryResponses = walletHistories.stream()
-                .map(WalletHistoryResponse::from).toList();
-        return new WalletHistoryListResponse(walletHistoryResponses, walletHistories.hasNext());
+        return WalletHistoryListResponse.from(walletHistories);
     }
 
     public WalletHistoryListResponse readLinkedWalletHistoryPage(final Long walletId,
                                                                  final Long lastId,
                                                                  final int size) {
         Slice<WalletHistory> walletHistories = walletHistoryFetcher.fetchPageByWalletId(walletId, lastId, size);
-        List<WalletHistoryResponse> walletHistoryResponses = walletHistories.stream()
-                .map(WalletHistoryResponse::from).toList();
-        return new WalletHistoryListResponse(walletHistoryResponses, walletHistories.hasNext());
+        return WalletHistoryListResponse.from(walletHistories);
     }
 }
