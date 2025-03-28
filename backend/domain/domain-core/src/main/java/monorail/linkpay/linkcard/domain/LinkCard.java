@@ -3,6 +3,7 @@ package monorail.linkpay.linkcard.domain;
 import static jakarta.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
+import static monorail.linkpay.linkcard.domain.CardType.SHARED;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -103,6 +104,10 @@ public class LinkCard extends BaseEntity {
         this.usedPoint = this.usedPoint.add(point);
     }
 
+    public boolean isSharedCard() {
+        return this.getCardType().equals(SHARED);
+    }
+
     public void validateOwnership(final Member member) {
         if (!this.member.equals(member)) {
             throw new LinkPayException(INVALID_REQUEST, "카드의 소유자가 아닙니다.");
@@ -119,5 +124,9 @@ public class LinkCard extends BaseEntity {
         if (this.limitPrice.getAmount() < point.getAmount()) {
             throw new LinkPayException(INVALID_REQUEST, "사용금액이 한도를 초과했습니다.");
         }
+    }
+
+    public Long getWalletId() {
+        return wallet.getId();
     }
 }

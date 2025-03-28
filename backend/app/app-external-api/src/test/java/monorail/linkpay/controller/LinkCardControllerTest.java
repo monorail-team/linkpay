@@ -135,4 +135,16 @@ public class LinkCardControllerTest extends ControllerTest {
                 .apply(document("cards/read/activate"))
                 .statusCode(HttpStatus.OK.value());
     }
+
+    @Test
+    void 링크카드를_삭제한다() {
+        doNothing().when(linkCardService).deleteLinkCard(anyLong(), anyLong());
+
+        docsGiven
+                .header("Authorization", "Bearer {access_token}")
+                .when().delete("/api/cards?linkCardId=1")
+                .then().log().all()
+                .apply(document("cards/delete"))
+                .statusCode(HttpStatus.NO_CONTENT.value());
+    }
 }

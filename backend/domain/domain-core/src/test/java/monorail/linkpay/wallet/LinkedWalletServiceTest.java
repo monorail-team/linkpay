@@ -88,7 +88,7 @@ class LinkedWalletServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 링크지갑을_삭제할때_지갑과_연동된_링크카드가_하나라도_존재하면_예외가_발생한다() {
+    void 링크지갑을_삭제할_때_지갑과_연동된_링크카드가_하나라도_존재하면_예외가_발생한다() {
         // given
         Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
         Member member2 = memberRepository.save(createMember("tiger@gmail.com", "tiger"));

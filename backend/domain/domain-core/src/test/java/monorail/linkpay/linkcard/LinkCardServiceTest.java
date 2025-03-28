@@ -201,6 +201,65 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .build();
     }
 
+    @Test
+    void 내_지갑_링크카드를_삭제한다() {
+        // given
+        Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
+        linkCardRepository.save(createMyWalletCard(1L, wallet, member, UNREGISTERED));
+
+        // when
+        linkCardService.deleteLinkCard(1L, member.getId());
+
+        // then
+        assertThat(linkCardRepository.findLinkCardsByMember(member).size()).isEqualTo(0);
+    }
+
+    @Test
+    void 링크_지갑_링크카드를_삭제한다() {
+        // given
+        Member member1 = createMember(1L, "test@email.com", "u1");
+
+        memberRepository.saveAll(List.of(member1));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
+        linkedMemberRepository.saveAll(List.of(
+                LinkedMember.builder().id(1L).role(CREATOR).member(member).linkedWallet(linkedWallet).build(),
+                LinkedMember.builder().id(2L).role(PARTICIPANT).member(member1).linkedWallet(linkedWallet)
+                        .build()));
+        linkCardRepository.saveAll(
+                List.of(createLinkWalletCard(1L, linkedWallet, member),
+                        createLinkWalletCard(2L, linkedWallet, member1)));
+
+        // when
+        linkCardService.deleteLinkCard(1L, member.getId());
+
+        // then
+        assertThat(linkCardRepository.findLinkCardsByMember(member).size()).isEqualTo(0);
+    }
+
+    @Test
+    void 링크지갑_공유한_카드를_삭제한다() {
+        // given
+        Member member1 = createMember(1L, "test@email.com", "u1");
+
+        memberRepository.saveAll(List.of(member1));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
+        linkedMemberRepository.saveAll(List.of(
+                LinkedMember.builder().id(1L).role(CREATOR).member(member).linkedWallet(linkedWallet).build(),
+                LinkedMember.builder().id(2L).role(PARTICIPANT).member(member1).linkedWallet(linkedWallet)
+                        .build()));
+        linkCardRepository.saveAll(
+                List.of(createLinkWalletCard(1L, linkedWallet, member),
+                        createLinkWalletCard(2L, linkedWallet, member1)));
+
+        // when
+        linkCardService.deleteLinkCard(2L, member1.getId());
+
+        // then
+        assertThat(linkCardRepository.findLinkCardsByMember(member1).size()).isEqualTo(0);
+    }
+
     private static LinkCardCreateServiceRequest createCard(LocalDate date) {
         return LinkCardCreateServiceRequest.builder()
                 .cardName("test card")
@@ -220,12 +279,17 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .build();
     }
 
-    private static Member createMember(long id, String mail, String u1) {
-        return Member.builder().id(id).email(mail).username(u1).build();
+    private static Member createMember(long id, String mail, String username) {
+        return Member.builder()
+                .id(id)
+                .email(mail)
+                .username(username)
+                .build();
     }
 
     public static LinkCard createLinkWalletCard(Long id, LinkedWallet linkedWallet, Member member) {
-        return LinkCard.builder().id(id)
+        return LinkCard.builder()
+                .id(id)
                 .cardColor(CardColor.getRandomColor())
                 .cardName("cardName")
                 .cardType(SHARED)
@@ -234,11 +298,13 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .member(member)
                 .expiredAt(LocalDate.now().plusDays(1).atStartOfDay())
                 .usedPoint(new Point(0))
-                .state(UNREGISTERED).build();
+                .state(UNREGISTERED)
+                .build();
     }
 
     private static LinkCard createMyWalletCard(Long id, Wallet wallet, Member member, CardState cardState) {
-        return LinkCard.builder().id(id)
+        return LinkCard.builder()
+                .id(id)
                 .cardColor(CardColor.getRandomColor())
                 .cardName("cardName")
                 .cardType(OWNED)
@@ -247,6 +313,7 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .member(member)
                 .expiredAt(LocalDate.now().plusDays(1).atStartOfDay())
                 .usedPoint(new Point(0))
-                .state(cardState).build();
+                .state(cardState)
+                .build();
     }
 }

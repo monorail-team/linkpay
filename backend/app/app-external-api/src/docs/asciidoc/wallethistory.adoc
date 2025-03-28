@@ -1,15 +1,25 @@
 [[WalletHistory]]
 == 지갑 내역
 
-=== 지갑 내역 목록
+=== 내 지갑 내역 목록
 
 ==== HTTP Request
 
-include::{snippets}/wallethistories/read/http-request.adoc[]
+include::{snippets}/wallethistories/read/mywallet/http-request.adoc[]
 
 ==== HTTP Response
 
-include::{snippets}/wallethistories/read/http-response.adoc[]
+include::{snippets}/wallethistories/read/mywallet/http-response.adoc[]
+
+=== 링크 지갑 내역 목록
+
+==== HTTP Request
+
+include::{snippets}/wallethistories/read/linkedwallet/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/wallethistories/read/linkedwallet/http-response.adoc[]
 
 === 지갑 내역 세부사항
 

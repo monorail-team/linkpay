@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long> {
 
-    int countByLinkedWalletId(@Param("linkedWalletId") Long linkedWalletId);
+    int countByLinkedWalletId(Long linkedWalletId);
 
     Optional<LinkedMember> findByMemberId(Long memberId);
 

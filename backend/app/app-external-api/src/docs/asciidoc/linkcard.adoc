@@ -84,3 +84,13 @@ include::{snippets}/cards/activate/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/cards/activate/http-response.adoc[]
+
+=== 링크카드 삭제
+
+==== HTTP Request
+
+include::{snippets}/cards/delete/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/delete/http-response.adoc[]

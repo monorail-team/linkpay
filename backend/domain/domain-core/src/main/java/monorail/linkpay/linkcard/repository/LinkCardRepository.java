@@ -1,11 +1,10 @@
 package monorail.linkpay.linkcard.repository;
 
+import jakarta.persistence.LockModeType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import jakarta.persistence.LockModeType;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.member.domain.Member;
@@ -21,9 +20,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
 
-    boolean existsByWalletId(Long walletId);
-
     List<LinkCard> findLinkCardsByMember(Member member);
+
+    @Query("SELECT COUNT(l) > 0 FROM LinkCard l WHERE l.wallet.id = :walletId")
+    boolean existsByWalletId(Long walletId);
 
     @Query("SELECT l FROM LinkCard l " +
             "WHERE l.member.id = :memberId " +
@@ -37,7 +37,7 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
                                           @Param("current") LocalDateTime current,
                                           Pageable pageable);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE LinkCard l "
             + "SET l.state = 'REGISTERED' "
             + "WHERE l.id in :linkCardIds")
