@@ -75,17 +75,17 @@ public class LinkCard extends BaseEntity {
     private Wallet wallet;
 
     @Builder
-    private LinkCard(
+    public LinkCard(
             final Long id,
             final Point limitPrice,
             final CardType cardType,
             final CardColor cardColor,
             final String cardName,
             final LocalDateTime expiredAt,
-            final Member member,
-            final Wallet wallet,
+            final CardState state,
             final Point usedPoint,
-            final CardState state
+            final Member member,
+            final Wallet wallet
     ) {
         this.id = id;
         this.limitPrice = limitPrice;
@@ -93,10 +93,10 @@ public class LinkCard extends BaseEntity {
         this.cardColor = cardColor;
         this.cardName = cardName;
         this.expiredAt = expiredAt;
+        this.state = state;
+        this.usedPoint = usedPoint;
         this.member = member;
         this.wallet = wallet;
-        this.usedPoint = usedPoint;
-        this.state = state;
     }
 
     public void usePoint(final Point point) {

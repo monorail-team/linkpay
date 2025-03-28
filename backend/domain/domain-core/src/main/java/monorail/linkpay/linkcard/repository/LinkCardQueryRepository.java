@@ -2,18 +2,18 @@ package monorail.linkpay.linkcard.repository;
 
 import jakarta.persistence.EntityManager;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import monorail.linkpay.linkcard.domain.LinkCard;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class LinkCardQueryRepository {
 
-    @Autowired
-    private EntityManager em;
+    private final EntityManager em;
 
     public Slice<LinkCard> findLinkCardsByMemberId(final String query, final Long memberId,
                                                    final Long lastId, final Pageable pageable) {

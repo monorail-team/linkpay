@@ -38,11 +38,10 @@ public abstract class IntegrationTest {
     protected PaymentRepository paymentRepository;
     @Autowired
     protected StoreRepository storeRepository;
-
-    protected Member member;
-
     @Autowired
     private IdGenerator idGenerator;
+
+    protected Member member;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +53,8 @@ public abstract class IntegrationTest {
         walletHistoryRepository.deleteAllInBatch();
         myWalletRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
-        member = memberRepository.save(createMember());
+        member = memberRepository.save(
+                createMember("linkpay@gmail.com", "linkpay"));
         myWalletRepository.save(MyWallet.builder()
                 .id(idGenerator.generate())
                 .member(member)
@@ -62,12 +62,11 @@ public abstract class IntegrationTest {
         storeRepository.save(createStore());
     }
 
-    // todo TestFixtures
-    protected Member createMember() {
+    protected Member createMember(final String email, final String username) {
         return Member.builder()
                 .id(idGenerator.generate())
-                .email("linkpay@gmail.com")
-                .username("link1")
+                .email(email)
+                .username(username)
                 .build();
     }
 
