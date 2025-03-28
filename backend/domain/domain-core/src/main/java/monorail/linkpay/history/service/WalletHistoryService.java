@@ -1,12 +1,13 @@
 package monorail.linkpay.history.service;
 
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.history.domain.WalletHistory;
 import monorail.linkpay.history.dto.WalletHistoryListResponse;
 import monorail.linkpay.history.dto.WalletHistoryResponse;
-import monorail.linkpay.history.repository.WalletHistoryRepository;
-import org.springframework.data.domain.PageRequest;
+import monorail.linkpay.wallet.domain.Wallet;
+import monorail.linkpay.wallet.service.WalletFetcher;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,22 +18,29 @@ import org.springframework.transaction.annotation.Transactional;
 public class WalletHistoryService {
 
     private final WalletHistoryFetcher walletHistoryFetcher;
-    private final WalletHistoryRepository walletHistoryRepository;
+    private final WalletFetcher walletFetcher;
 
-    public WalletHistoryResponse read(final Long id) {
+    public WalletHistoryResponse readWalletHistory(final Long id) {
         WalletHistory walletHistory = walletHistoryFetcher.fetchById(id);
         return WalletHistoryResponse.from(walletHistory);
     }
 
-    public WalletHistoryListResponse readPage(final Long walletId, final Long lastId, final int size) {
-        Slice<WalletHistory> walletHistories = walletHistoryRepository
-                .findByWalletIdWithLastId(walletId, lastId, PageRequest.of(0, size));
-
+    public WalletHistoryListResponse readMyWalletHistoryPage(final Long memberId,
+                                                             final Long lastId,
+                                                             final int size) {
+        Wallet wallet = walletFetcher.fetchByMemberId(memberId);
+        Slice<WalletHistory> walletHistories = walletHistoryFetcher.fetchPageByWalletId(wallet.getId(), lastId, size);
         List<WalletHistoryResponse> walletHistoryResponses = walletHistories.stream()
-                .map(WalletHistoryResponse::from)
-                .toList();
-
+                .map(WalletHistoryResponse::from).toList();
         return new WalletHistoryListResponse(walletHistoryResponses, walletHistories.hasNext());
     }
 
+    public WalletHistoryListResponse readLinkedWalletHistoryPage(final Long walletId,
+                                                                 final Long lastId,
+                                                                 final int size) {
+        Slice<WalletHistory> walletHistories = walletHistoryFetcher.fetchPageByWalletId(walletId, lastId, size);
+        List<WalletHistoryResponse> walletHistoryResponses = walletHistories.stream()
+                .map(WalletHistoryResponse::from).toList();
+        return new WalletHistoryListResponse(walletHistoryResponses, walletHistories.hasNext());
+    }
 }
