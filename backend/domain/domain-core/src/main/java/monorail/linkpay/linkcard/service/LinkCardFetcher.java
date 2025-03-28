@@ -14,6 +14,12 @@ public class LinkCardFetcher {
 
     private final LinkCardRepository linkCardRepository;
 
+    public void checkExistsById(final Long id) {
+        if (!linkCardRepository.existsById(id)) {
+            throw new LinkPayException(NOT_FOUND_RESOURCE, "요청한 아이디에 해당하는 링크카드가 없습니다.");
+        }
+    }
+
     public LinkCard fetchById(final Long linkCardId) {
         return linkCardRepository.findById(linkCardId)
                 .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "링크카드 아이디에 해당하는 링크카드가 없습니다."));

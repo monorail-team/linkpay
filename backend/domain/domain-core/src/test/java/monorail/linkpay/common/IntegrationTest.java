@@ -1,5 +1,6 @@
 package monorail.linkpay.common;
 
+import monorail.linkpay.CleanUp;
 import monorail.linkpay.MockTestConfiguration;
 import monorail.linkpay.history.repository.WalletHistoryRepository;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
@@ -13,15 +14,20 @@ import monorail.linkpay.wallet.domain.MyWallet;
 import monorail.linkpay.wallet.repository.LinkedMemberRepository;
 import monorail.linkpay.wallet.repository.LinkedWalletRepository;
 import monorail.linkpay.wallet.repository.MyWalletRepository;
+import monorail.linkpay.wallet.repository.WalletRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 @Import(MockTestConfiguration.class)
 @SpringBootTest
+@ActiveProfiles("test")
 public abstract class IntegrationTest {
 
+    @Autowired
+    protected CleanUp cleanUp;
     @Autowired
     protected MyWalletRepository myWalletRepository;
     @Autowired
@@ -32,6 +38,8 @@ public abstract class IntegrationTest {
     protected LinkCardRepository linkCardRepository;
     @Autowired
     protected LinkedWalletRepository linkedWalletRepository;
+    @Autowired
+    protected WalletRepository walletRepository;
     @Autowired
     protected LinkedMemberRepository linkedMemberRepository;
     @Autowired
@@ -46,14 +54,7 @@ public abstract class IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        paymentRepository.deleteAllInBatch();
-        storeRepository.deleteAllInBatch();
-        linkCardRepository.deleteAllInBatch();
-        linkedMemberRepository.deleteAllInBatch();
-        linkedWalletRepository.deleteAllInBatch();
-        walletHistoryRepository.deleteAllInBatch();
-        myWalletRepository.deleteAllInBatch();
-        memberRepository.deleteAllInBatch();
+        cleanUp.cleanAll();
         member = memberRepository.save(createMember());
         myWalletRepository.save(MyWallet.builder()
                 .id(idGenerator.generate())
