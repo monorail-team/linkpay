@@ -1,12 +1,12 @@
 package monorail.linkpay.history.service;
 
-import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
-
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.history.domain.WalletHistory;
 import monorail.linkpay.history.repository.WalletHistoryRepository;
+
+import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
 
 @SupportLayer
 @RequiredArgsConstructor
@@ -18,5 +18,4 @@ public class WalletHistoryFetcher {
         return walletHistoryRepository.findById(id)
                 .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "아이디에 해당하는 내역이 존재하지 않습니다."));
     }
-
 }
