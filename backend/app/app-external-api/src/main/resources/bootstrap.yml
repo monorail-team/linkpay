@@ -10,3 +10,8 @@ spring:
       name: linkpay
       username: ${CONFIG_USERNAME}
       password: ${CONFIG_PASSWORD}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
