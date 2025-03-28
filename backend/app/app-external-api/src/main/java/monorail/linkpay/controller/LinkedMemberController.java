@@ -1,6 +1,5 @@
 package monorail.linkpay.controller;
 
-import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import jakarta.validation.Valid;
@@ -8,10 +7,12 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.controller.request.LinkedMemberCreateRequest;
+import monorail.linkpay.wallet.dto.LinkedMembersResponse;
 import monorail.linkpay.wallet.service.LinkedMemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,13 @@ public class LinkedMemberController {
 
     private final LinkedMemberService linkedMemberService;
 
+    @GetMapping
+    public ResponseEntity<LinkedMembersResponse> getLinkedMembers(@PathVariable final Long linkedWalletId,
+                                                                  @RequestParam(required = false) final Long lastId,
+                                                                  @RequestParam(defaultValue = "10") final int size) {
+        return ResponseEntity.ok(linkedMemberService.getLinkedMembers(linkedWalletId, lastId, size));
+    }
+
     @PostMapping
     public ResponseEntity<Void> createLinkedMember(@PathVariable final Long linkedWalletId,
                                                    @AuthenticationPrincipal final AuthPrincipal principal,
@@ -39,7 +47,7 @@ public class LinkedMemberController {
     public ResponseEntity<Void> deleteLinkedMember(@PathVariable final Long linkedWalletId,
                                                    @RequestParam final Set<Long> linkedMemberIds,
                                                    @AuthenticationPrincipal final AuthPrincipal principal) {
-        linkedMemberService.deleteLinkedMember(linkedWalletId, linkedMemberIds, principal.memberId(), now());
+        linkedMemberService.deleteLinkedMember(linkedWalletId, linkedMemberIds, principal.memberId());
         return ResponseEntity.noContent().build();
     }
 }

@@ -33,7 +33,8 @@ public class CleanUp {
                 })
                 .map(String::toUpperCase) // H2에서는 테이블명이 대문자로 저장될 가능성이 높음
                 .filter(existingTables::contains) // 존재하는 테이블만 처리
-                .forEach(tableName -> entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate());
+                .forEach(tableName -> entityManager.createNativeQuery("TRUNCATE TABLE " + tableName)
+                        .executeUpdate());
 
         // 4. 외래 키 제약 복구
         entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();

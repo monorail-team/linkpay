@@ -12,6 +12,7 @@ import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.wallet.service.LinkedWalletService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,6 +67,12 @@ public class LinkedWalletController {
                                                    @Valid @RequestBody final WalletPointRequest walletPointRequest) {
         linkedWalletService.deductLinkedWallet(linkedWalletId, new Point(walletPointRequest.amount()),
                 principal.memberId());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{linkedWalletId}")
+    public ResponseEntity<Void> deleteLinkedWallet(@PathVariable final Long linkedWalletId) {
+        linkedWalletService.deleteLinkedWallet(linkedWalletId);
         return ResponseEntity.noContent().build();
     }
 }

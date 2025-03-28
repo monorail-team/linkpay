@@ -25,6 +25,9 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 
+    // prometheus
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
     runtimeOnly 'com.h2database:h2'
 }
 

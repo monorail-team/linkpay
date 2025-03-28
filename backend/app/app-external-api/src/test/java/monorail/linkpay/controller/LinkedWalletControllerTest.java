@@ -86,4 +86,16 @@ public class LinkedWalletControllerTest extends ControllerTest {
                 .apply(document("linkedwallets/deduct"))
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
+
+    @Test
+    void 링크지갑을_삭제한다() {
+        doNothing().when(linkedWalletService).deleteLinkedWallet(anyLong());
+
+        docsGiven
+                .header("Authorization", "Bearer {access_token}")
+                .when().delete("/api/linked-wallets/1")
+                .then().log().all()
+                .apply(document("linkedwallets/delete"))
+                .statusCode(HttpStatus.NO_CONTENT.value());
+    }
 }

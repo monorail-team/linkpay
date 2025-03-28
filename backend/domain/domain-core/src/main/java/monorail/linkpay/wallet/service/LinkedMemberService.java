@@ -3,7 +3,6 @@ package monorail.linkpay.wallet.service;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.exception.LinkPayException;
@@ -12,13 +11,17 @@ import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.LinkedWallet;
+import monorail.linkpay.wallet.dto.LinkedMemberResponse;
+import monorail.linkpay.wallet.dto.LinkedMembersResponse;
 import monorail.linkpay.wallet.repository.LinkedMemberRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class LinkedMemberService {
 
     private final LinkedMemberRepository linkedMemberRepository;
@@ -27,26 +30,33 @@ public class LinkedMemberService {
     private final MemberFetcher memberFetcher;
     private final IdGenerator idGenerator;
 
+    public LinkedMembersResponse getLinkedMembers(final Long linkedWalletId, final Long lastId, final int size) {
+        Slice<LinkedMember> linkedMembers = linkedMemberRepository.findAllByLinkedWalletId(
+                linkedWalletId, lastId, PageRequest.of(0, size));
+        return new LinkedMembersResponse(linkedMembers.stream()
+                .map(LinkedMemberResponse::from)
+                .toList(),
+                linkedMembers.hasNext());
+    }
+
+    @Transactional
     public void createLinkedMember(final Long linkedWalletId, final Long memberId, final Long participantId) {
         validateCreatorPermission(linkedWalletId, memberId);
         Member member = memberFetcher.fetchById(participantId);
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
-        LinkedMember linkedMember = LinkedMember.of(idGenerator.generate(), PARTICIPANT, member);
 
         linkedMemberRepository.save(LinkedMember.builder()
                 .id(idGenerator.generate())
                 .role(PARTICIPANT)
                 .linkedWallet(linkedWallet)
                 .member(member).build());
-
-        linkedMemberRepository.save(linkedMember);
     }
 
-    public void deleteLinkedMember(final Long linkedWalletId, final Set<Long> linkedMemberIds,
-                                   final Long memberId, LocalDateTime now) {
+    @Transactional
+    public void deleteLinkedMember(final Long linkedWalletId, final Set<Long> linkedMemberIds, final Long memberId) {
         validateCreatorPermission(linkedWalletId, memberId);
         linkedWalletFetcher.checkExistsById(linkedWalletId);
-        linkedMemberRepository.deleteByIds(linkedMemberIds, now);
+        linkedMemberRepository.deleteByIds(linkedMemberIds);
     }
 
     private void validateCreatorPermission(final Long linkedWalletId, final Long memberId) {

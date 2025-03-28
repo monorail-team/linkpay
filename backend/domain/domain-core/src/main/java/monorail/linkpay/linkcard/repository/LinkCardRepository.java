@@ -22,6 +22,9 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
 
     List<LinkCard> findLinkCardsByMember(Member member);
 
+    @Query("SELECT COUNT(l) > 0 FROM LinkCard l WHERE l.wallet.id = :walletId")
+    boolean existsByWalletId(Long walletId);
+
     @Query("SELECT l FROM LinkCard l " +
             "WHERE l.member.id = :memberId " +
             "AND l.state = :state " +

@@ -1,5 +1,12 @@
 package monorail.linkpay.payment;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.LinkCard;
@@ -8,17 +15,8 @@ import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
 import monorail.linkpay.payment.service.PaymentService;
 import monorail.linkpay.wallet.dto.WalletResponse;
 import monorail.linkpay.wallet.service.MyWalletService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class PaymentServiceTest extends IntegrationTest {
 

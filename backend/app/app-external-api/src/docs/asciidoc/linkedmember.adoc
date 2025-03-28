@@ -1,6 +1,16 @@
 [[LinkedMember]]
 == 링크멤버
 
+=== 링크멤버 조회
+
+==== HTTP Request
+
+include::{snippets}/linkedmembers/read/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/linkedmembers/read/http-response.adoc[]
+
 === 링크멤버 추가
 
 ==== HTTP Request
