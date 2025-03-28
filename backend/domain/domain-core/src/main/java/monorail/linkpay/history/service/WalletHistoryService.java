@@ -7,6 +7,7 @@ import monorail.linkpay.history.domain.WalletHistory;
 import monorail.linkpay.history.dto.WalletHistoryListResponse;
 import monorail.linkpay.history.dto.WalletHistoryResponse;
 import monorail.linkpay.wallet.domain.Wallet;
+import monorail.linkpay.wallet.service.MyWalletFetcher;
 import monorail.linkpay.wallet.service.WalletFetcher;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class WalletHistoryService {
 
     private final WalletHistoryFetcher walletHistoryFetcher;
+    private final MyWalletFetcher myWalletFetcher;
     private final WalletFetcher walletFetcher;
 
     public WalletHistoryResponse readWalletHistory(final Long id) {
@@ -28,7 +30,7 @@ public class WalletHistoryService {
     public WalletHistoryListResponse readMyWalletHistoryPage(final Long memberId,
                                                              final Long lastId,
                                                              final int size) {
-        Wallet wallet = walletFetcher.fetchByMemberId(memberId);
+        Wallet wallet = myWalletFetcher.fetchByMemberId(memberId);
         Slice<WalletHistory> walletHistories = walletHistoryFetcher.fetchPageByWalletId(wallet.getId(), lastId, size);
         return WalletHistoryListResponse.from(walletHistories);
     }

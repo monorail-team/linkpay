@@ -14,11 +14,6 @@ public class WalletFetcher {
 
     private final WalletRepository walletRepository;
 
-    public Wallet fetchByMemberId(final Long memberId) {
-        return walletRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "회원 아이디에 해당하는 지갑이 없습니다."));
-    }
-
     public Wallet fetchByIdForUpdate(final Long walletId) {
         return walletRepository.findByIdForUpdate(walletId)
                 .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "지갑 아이디에 해당하는 지갑이 없습니다."));
