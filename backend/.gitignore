@@ -41,3 +41,4 @@ out/
 
 ### rest docs ###
 /linkpay-api/app-external-api/src/main/resources/static/docs/index.html
+/linkpay-api/app-external-api/src/docs/asciidoc/index.html
