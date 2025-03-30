@@ -43,16 +43,18 @@ public class LinkedWalletService {
     private final LinkedMemberFetcher linkedMemberFetcher;
     private final WalletUpdater walletUpdater;
 
-    public LinkedWalletsResponse readLinkedWallets(final long memberId, final Long lastId, final int size) {
-        Slice<LinkedWalletDto> linkedWalletDtos = linkedMemberRepository.findLinkedWalletDtosByMemberId(
+    public LinkedWalletsResponse readLinkedWallets(final long memberId, final Role role,
+                                                   final Long lastId, final int size) {
+        Slice<LinkedWalletDto> linkedWallets = linkedWalletRepository.findLinkedWalletsByMemberId(
                 memberId,
+                role,
                 lastId,
                 PageRequest.of(0, size)
         );
-        return new LinkedWalletsResponse(linkedWalletDtos.stream()
+        return new LinkedWalletsResponse(linkedWallets.stream()
                 .map(LinkedWalletResponse::from)
                 .toList(),
-                linkedWalletDtos.hasNext());
+                linkedWallets.hasNext());
     }
 
     public LinkedWalletResponse readLinkedWallet(final Long linkedWalletId) {

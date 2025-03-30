@@ -7,6 +7,7 @@ import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
+import monorail.linkpay.wallet.domain.Role;
 import monorail.linkpay.wallet.dto.LinkedWalletResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.wallet.service.LinkedWalletService;
@@ -32,8 +33,9 @@ public class LinkedWalletController {
     @GetMapping
     public ResponseEntity<LinkedWalletsResponse> getLinkedWallets(@RequestParam(required = false) final Long lastId,
                                                                   @RequestParam(defaultValue = "10") final int size,
+                                                                  @RequestParam final Role role,
                                                                   @AuthenticationPrincipal final AuthPrincipal principal) {
-        return ResponseEntity.ok(linkedWalletService.readLinkedWallets(principal.memberId(), lastId, size));
+        return ResponseEntity.ok(linkedWalletService.readLinkedWallets(principal.memberId(), role, lastId, size));
     }
 
     @GetMapping("/{linkedWalletId}")

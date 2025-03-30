@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.wallet.domain.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,14 +37,28 @@ public class LinkedWalletControllerTest extends ControllerTest {
     }
 
     @Test
-    void 링크지갑_목록을_조회한다() {
-        when(linkedWalletService.readLinkedWallets(anyLong(), anyLong(), anyInt())).thenReturn(LINKED_WALLETS_RESPONSE);
+    void 내가_소유한_링크지갑_목록을_조회한다() {
+        when(linkedWalletService.readLinkedWallets(anyLong(), any(Role.class), anyLong(), anyInt()))
+                .thenReturn(LINKED_WALLETS_RESPONSE);
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")
-                .when().get("/api/linked-wallets?lastId=1&size=10")
+                .when().get("/api/linked-wallets?lastId=1&size=10&role=CREATOR")
                 .then().log().all()
-                .apply(document("linkedwallets/read"))
+                .apply(document("linkedwallets/read/owned"))
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void 내가_참여한_링크지갑_목록을_조회한다() {
+        when(linkedWalletService.readLinkedWallets(anyLong(), any(Role.class), anyLong(), anyInt()))
+                .thenReturn(LINKED_WALLETS_RESPONSE);
+
+        docsGiven
+                .header("Authorization", "Bearer {access_token}")
+                .when().get("/api/linked-wallets?lastId=1&size=10&role=PARTICIPANT")
+                .then().log().all()
+                .apply(document("linkedwallets/read/participant"))
                 .statusCode(HttpStatus.OK.value());
     }
 
