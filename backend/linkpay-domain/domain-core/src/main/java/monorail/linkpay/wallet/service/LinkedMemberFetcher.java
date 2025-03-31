@@ -18,7 +18,11 @@ public class LinkedMemberFetcher {
         if (!linkedMemberRepository.existsByLinkedWalletIdAndMemberId(linkedWalletId, memberId)) {
             throw new LinkPayException(NOT_FOUND_RESOURCE, "요청한 아이디에 해당하는 링크 멤버가 존재하지 않습니다.");
         }
-        ;
+    }
+
+    public LinkedMember fetchById(final Long id) {
+        return linkedMemberRepository.findById(id)
+                .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "요청한 아이디에 해당하는 링크 멤버가 존재하지 않습니다."));
     }
 
     public LinkedMember fetchByLinkedWalletIdAndMemberId(final Long linkedWalletId, final Long memberId) {

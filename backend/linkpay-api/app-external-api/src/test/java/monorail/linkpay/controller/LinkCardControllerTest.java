@@ -44,7 +44,7 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 링크지갑에서_링크카드를_생성한다() {
-        doNothing().when(linkCardService).createShared(any(SharedLinkCardCreateServiceRequest.class));
+        doNothing().when(linkCardService).createShared(any(SharedLinkCardCreateServiceRequest.class), anyLong());
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -111,7 +111,7 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 링크카드를_결제카드로_등록한다() {
-        doNothing().when(linkCardService).activateLinkCard(anyList());
+        doNothing().when(linkCardService).activateLinkCard(anyList(), anyLong());
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
