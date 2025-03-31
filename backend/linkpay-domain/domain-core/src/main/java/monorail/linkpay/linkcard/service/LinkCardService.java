@@ -112,11 +112,11 @@ public class LinkCardService {
     public LinkCardDetailResponse getLinkCardDetails(final Long memberId, final Long linkCardId) {
         LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
         Member member = memberFetcher.fetchById(memberId);
-        validateCreator(linkCard, member);
-        String linkedWalletName = null;
-        if (linkCard.isSharedCard()) {
-            linkedWalletName = linkedWalletFetcher.fetchById(linkCard.getWalletId()).getName();
+        validateOwnershipOrCreator(linkCard, member);
+        if (!linkCard.isSharedCard()) {
+            return LinkCardDetailResponse.from(linkCard, null);
         }
+        String linkedWalletName = linkedWalletFetcher.fetchById(linkCard.getWalletId()).getName();
         return LinkCardDetailResponse.from(linkCard, linkedWalletName);
     }
 }

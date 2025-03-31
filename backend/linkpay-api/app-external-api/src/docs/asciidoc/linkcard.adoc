@@ -75,6 +75,16 @@ include::{snippets}/cards/read/activate/http-request.adoc[]
 
 include::{snippets}/cards/read/activate/http-response.adoc[]
 
+=== 링크카드 상세 조회
+
+==== HTTP Request
+
+include::{snippets}/cards/read/detail/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/read/detail/http-response.adoc[]
+
 === 결제카드로 등록
 
 ==== HTTP Request
