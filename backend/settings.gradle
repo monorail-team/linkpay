@@ -1,6 +1,6 @@
 rootProject.name = 'A105'
 
-include 'support'
-include 'in-system-available:common-web'
-include 'domain:domain-core'
-include 'app:app-external-api'
+include 'linkpay-support'
+include 'linkpay-in-system-available:common-web'
+include 'linkpay-domain:domain-core'
+include 'linkpay-api:app-external-api'

@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useDoubleBackExit from '@/hooks/useDoubleBackToExit';
+import axios from 'axios';
+import useNfcScan from '@/hooks/useNfcScan';
 
 interface PaymentState {
   cardId: string;
@@ -32,9 +34,10 @@ const Payment: React.FC = () => {
   const [showBackWarning, setShowBackWarning] = useState(false);
   useDoubleBackExit(setShowBackWarning);
 
-  console.log('showBackWarning', showBackWarning);
+  // console.log('showBackWarning', showBackWarning);
 
   // ✅ 타이머 카운트다운
+  const [readValue, setReadValue] = useState('');
   useEffect(() => {
     if (timeLeft === 0) {
       navigate('/', { replace: true });
@@ -45,6 +48,27 @@ const Payment: React.FC = () => {
   }, [timeLeft, navigate]);
 
   const backgroundStyle = { backgroundColor: cardColor };
+
+  useNfcScan({
+    onRead: async (data) => {
+      console.log('읽기 성공', data);
+      setReadValue(data);
+      await axios.post('/api/payment', {
+        cardId: cardData.cardId,
+        nfcData: data
+      }).then((response) => {
+        console.log('API 요청 성공', response);
+        // navigate('/success');
+      }).catch((error) => {
+        console.error('❌ API 실패', error);
+        // navigate('/fail');
+      });
+    },
+    onError: (err) => {
+      console.warn('🚫 NFC 오류:', err.message);
+    }
+  });
+
 
   return (
     <div className="flex flex-col items-center justify-center h-screen text-white px-4 relative bg-[#938F99]">
@@ -79,6 +103,9 @@ const Payment: React.FC = () => {
           뒤로가기를 연속 2번 누르면 취소됩니다.
         </div>
       )}
+
+      {/* NFC 읽기 디버깅 */}
+      {readValue && <p className="text-green-600 mt-4">✅ 읽음: {readValue}</p>}
 
       {/* 가이드 모달 */}
       {showGuideModal && (

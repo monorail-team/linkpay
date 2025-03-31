@@ -1,0 +1,22 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+= LinkPay REST API 문서
+
+== Auth API
+
+include::auth.adoc[]
+include::member.adoc[]
+include::mywallet.adoc[]
+include::linkcard.adoc[]
+include::linkedmember.adoc[]
+include::linkedwallet.adoc[]
+include::payment.adoc[]
+include::wallethistory.adoc[]

@@ -15,6 +15,8 @@ import { useThemeStore } from '@/store/themeStore';
 import PrivateRoute from './components/PrivateRoute';
 import Payment from '@/pages/payment';
 import ExamplePage from '@/pages/payment/example';
+import NfcWrite from 'pages/test/nfcwrite';
+import NfcRead from 'pages/test/nfcread';
 
 const App: React.FC = () => {
 
@@ -36,7 +38,8 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/callback/login/kakao" element={<KakaoCallback />} />
-
+          <Route path="/nfcwrite" element={<NfcWrite />} />
+          <Route path="/nfcread" element={<NfcRead />} />
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
