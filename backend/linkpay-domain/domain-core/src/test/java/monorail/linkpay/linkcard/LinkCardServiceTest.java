@@ -8,6 +8,7 @@ import static monorail.linkpay.linkcard.domain.CardType.SHARED;
 import static monorail.linkpay.wallet.domain.Role.CREATOR;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
@@ -26,6 +28,7 @@ import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequ
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.LinkedWallet;
+import monorail.linkpay.wallet.domain.MyWallet;
 import monorail.linkpay.wallet.domain.Role;
 import monorail.linkpay.wallet.domain.Wallet;
 import org.junit.jupiter.api.Test;
@@ -45,7 +48,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         // when
         linkCardService.create(member.getId(), request);
 
-        List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
+        List<LinkCard> result = linkCardRepository.findByMemberId(member.getId());
         assertThat(result).isNotNull();
     }
 
@@ -61,14 +64,55 @@ public class LinkCardServiceTest extends IntegrationTest {
                 createLinkedMember(2L, PARTICIPANT, member1, linkedWallet)));
         SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
                 linkedWallet.getId(),
-                List.of(member.getId(), 1L, 2L, 3L));
+                List.of(member.getId(), member1.getId()));
 
         // when
-        linkCardService.createShared(request);
+        linkCardService.createShared(request, member.getId());
 
-        List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
+        List<LinkCard> result = linkCardRepository.findByMemberId(member.getId());
         assertThat(result).isNotNull();
         assertThat(result.size()).isEqualTo(1);
+    }
+
+    @Test
+    void 링크지갑_생성자가_아닌사람이_카드생성_시도시_오류가_발생한다() {
+        // given
+        Member member1 = createMember(1L, "test@email.com", "u1");
+        memberRepository.saveAll(List.of(member1));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
+        linkedMemberRepository.saveAll(List.of(
+                createLinkedMember(1L, CREATOR, member, linkedWallet),
+                createLinkedMember(2L, PARTICIPANT, member1, linkedWallet)));
+        SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
+                linkedWallet.getId(),
+                List.of(member.getId(), member1.getId()));
+
+        // when // then
+        assertThatThrownBy(() -> linkCardService.createShared(request, member1.getId())).isInstanceOf(
+                        LinkPayException.class)
+                .hasMessage("링크카드 생성 권한이 없습니다.");
+    }
+
+    @Test
+    void 링크지갑_참여자가_아닌사람에게_카드생성_시도시_오류가_발생한다() {
+        // given
+        Member member1 = createMember(1L, "test@email.com", "u1");
+        Member member2 = createMember(2L, "test@email.com", "u1");
+        memberRepository.saveAll(List.of(member1));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
+        linkedMemberRepository.saveAll(List.of(
+                createLinkedMember(1L, CREATOR, member, linkedWallet),
+                createLinkedMember(2L, PARTICIPANT, member1, linkedWallet)));
+        SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
+                linkedWallet.getId(),
+                List.of(member.getId(), member2.getId()));
+
+        // when // then
+        assertThatThrownBy(() -> linkCardService.createShared(request, member.getId())).isInstanceOf(
+                        LinkPayException.class)
+                .hasMessage("해당 링크지갑에 참여하지 않은 사용자입니다.");
     }
 
     @Test
@@ -154,17 +198,44 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkCardRepository.save(createMyWalletCard(1L, wallet, member, UNREGISTERED));
 
         List<LinkCard> cards =
-                linkCardRepository.findLinkCardsByMember(member)
+                linkCardRepository.findByMemberId(member.getId())
                         .stream()
                         .filter(card -> card.getState().equals(UNREGISTERED)).toList();
 
         // when
         linkCardService.activateLinkCard(
-                List.of(cards.getFirst().getId()));
+                List.of(cards.getFirst().getId()), member.getId());
 
         // then
-        List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
+        List<LinkCard> result = linkCardRepository.findByMemberId(member.getId());
         assertThat(result.getFirst().getState()).isEqualTo(REGISTERED);
+    }
+
+    @Test
+    void 내가_보유한_링크카드가_아닌카드를_결제카드로_등록_시도시_오류가_발생한다() {
+        // given
+        Member member1 = createMember(1L, "test@email.com", "u1");
+        memberRepository.save(member1);
+        myWalletRepository.save(MyWallet.builder()
+                .id(idGenerator.generate())
+                .member(member1)
+                .build());
+
+        Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
+        Wallet otherWallet = myWalletRepository.findByMemberId(member1.getId()).orElseThrow();
+
+        linkCardRepository.saveAll(List.of(createMyWalletCard(1L, wallet, member, UNREGISTERED),
+                createMyWalletCard(2L, otherWallet, member1, UNREGISTERED)));
+
+        List<LinkCard> cards =
+                linkCardRepository.findByMemberId(member.getId())
+                        .stream()
+                        .filter(card -> card.getState().equals(UNREGISTERED)).toList();
+
+        // when //then
+        assertThatThrownBy(() -> linkCardService.activateLinkCard(List.of(1L, 2L), member.getId())).isInstanceOf(
+                LinkPayException.class).hasMessage("소유하지 않은 카드 아이디입니다.");
+
     }
 
     @Test
@@ -193,7 +264,7 @@ public class LinkCardServiceTest extends IntegrationTest {
 
         // then
         assertThat(response.linkCards()).isEmpty();
-        List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
+        List<LinkCard> result = linkCardRepository.findByMemberId(member.getId());
         assertThat(result).hasSize(1);
     }
 
@@ -216,7 +287,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkCardService.deleteLinkCard(1L, member.getId());
 
         // then
-        assertThat(linkCardRepository.findLinkCardsByMember(member).size()).isEqualTo(0);
+        assertThat(linkCardRepository.findByMemberId(member.getId()).size()).isEqualTo(0);
     }
 
     @Test
@@ -239,7 +310,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkCardService.deleteLinkCard(1L, member.getId());
 
         // then
-        assertThat(linkCardRepository.findLinkCardsByMember(member).size()).isEqualTo(0);
+        assertThat(linkCardRepository.findByMemberId(member.getId()).size()).isEqualTo(0);
     }
 
     @Test
@@ -262,7 +333,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkCardService.deleteLinkCard(2L, member1.getId());
 
         // then
-        assertThat(linkCardRepository.findLinkCardsByMember(member1).size()).isEqualTo(0);
+        assertThat(linkCardRepository.findByMemberId(member1.getId()).size()).isEqualTo(0);
     }
 
     @Test

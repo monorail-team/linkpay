@@ -35,7 +35,7 @@ class PaymentServiceTest extends IntegrationTest {
         myWalletService.charge(member.getId(), point);
         LinkCardCreateServiceRequest linkCardCreateServiceRequest = createCard(LocalDate.now().plusDays(1));
         linkCardService.create(member.getId(), linkCardCreateServiceRequest);
-        List<LinkCard> linkCards = linkCardRepository.findLinkCardsByMember(member);
+        List<LinkCard> linkCards = linkCardRepository.findByMemberId(member.getId());
         LinkCard linkCard = linkCards.getFirst();
 
         // when
@@ -55,7 +55,7 @@ class PaymentServiceTest extends IntegrationTest {
 
         LinkCardCreateServiceRequest linkCardCreateServiceRequest = createCard(LocalDate.now().plusDays(1));
         linkCardService.create(member.getId(), linkCardCreateServiceRequest);
-        List<LinkCard> linkCards = linkCardRepository.findLinkCardsByMember(member);
+        List<LinkCard> linkCards = linkCardRepository.findByMemberId(member.getId());
         LinkCard linkCard = linkCards.getFirst();
 
         // when
@@ -93,7 +93,7 @@ class PaymentServiceTest extends IntegrationTest {
         for (int i = 0; i < linkCardAmount; i++) {
             linkCardService.create(member.getId(), linkCardCreateServiceRequest);
         }
-        List<LinkCard> linkCards = linkCardRepository.findLinkCardsByMember(member);
+        List<LinkCard> linkCards = linkCardRepository.findByMemberId(member.getId());
 
         // when
         int threadCount = 16;

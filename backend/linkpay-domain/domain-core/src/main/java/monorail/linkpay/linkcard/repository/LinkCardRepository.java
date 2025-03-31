@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.Set;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
-import monorail.linkpay.member.domain.Member;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
 
-    List<LinkCard> findLinkCardsByMember(Member member);
+    List<LinkCard> findByMemberId(Long memberId);
 
     @Query("SELECT EXISTS ("
             + "SELECT 1 FROM LinkCard l WHERE l.wallet.id = :walletId)")
@@ -47,4 +46,5 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(value = "select l from LinkCard l where l.id = :linkCardId")
     Optional<LinkCard> findByIdForUpdate(@Param("linkCardId") Long linkCardId);
+
 }

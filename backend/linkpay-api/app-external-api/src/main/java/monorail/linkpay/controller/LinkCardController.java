@@ -41,8 +41,9 @@ public class LinkCardController {
 
     @PostMapping("/shared")
     public ResponseEntity<Void> createSharedLinkCard(
-            @Valid @RequestBody final SharedLinkCardCreateRequest sharedLinkCardCreateRequest) {
-        linkCardService.createShared(sharedLinkCardCreateRequest.toServiceRequest());
+            @Valid @RequestBody final SharedLinkCardCreateRequest sharedLinkCardCreateRequest,
+            @AuthenticationPrincipal final AuthPrincipal principal) {
+        linkCardService.createShared(sharedLinkCardCreateRequest.toServiceRequest(), principal.memberId());
         return ResponseEntity.status(CREATED).build();
     }
 
@@ -72,8 +73,9 @@ public class LinkCardController {
 
     @PatchMapping("/activate")
     public ResponseEntity<Void> activateLinkCard(
-            @Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest) {
-        linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds());
+            @Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest,
+            @AuthenticationPrincipal final AuthPrincipal principal) {
+        linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds(), principal.memberId());
         return ResponseEntity.noContent().build();
     }
 
