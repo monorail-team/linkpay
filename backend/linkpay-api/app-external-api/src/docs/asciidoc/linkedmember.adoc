@@ -25,6 +25,16 @@ include::{snippets}/linkedmembers/create/http-response.adoc[]
 
 ==== HTTP Request
 
+include::{snippets}/linkedmembers/delete/one/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/linkedmembers/delete/one/http-response.adoc[]
+
+=== 링크멤버 여러 명 삭제
+
+==== HTTP Request
+
 include::{snippets}/linkedmembers/delete/http-request.adoc[]
 
 ==== HTTP Response
