@@ -19,7 +19,6 @@ import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
-import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
@@ -153,18 +152,15 @@ public class LinkCardServiceTest extends IntegrationTest {
         // given
         Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
         linkCardRepository.save(createMyWalletCard(1L, wallet, member, UNREGISTERED));
-//        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
-//                now());
 
-        LinkCardsResponse cards = new LinkCardsResponse(
+        List<LinkCard> cards =
                 linkCardRepository.findLinkCardsByMember(member)
                         .stream()
-                        .filter(card -> card.getState().equals(UNREGISTERED))
-                        .map(LinkCardResponse::from).toList(), false);
+                        .filter(card -> card.getState().equals(UNREGISTERED)).toList();
 
         // when
         linkCardService.activateLinkCard(
-                List.of(Long.parseLong(cards.linkCards().getFirst().linkCardId())));
+                List.of(cards.getFirst().getId()));
 
         // then
         List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
@@ -276,7 +272,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkCardRepository.save(createMyWalletCard(1L, wallet, member, UNREGISTERED));
 
         // when
-        LinkCardDetailResponse response = linkCardService.getLinkCardDetails(1L, member.getId());
+        LinkCardDetailResponse response = linkCardService.getLinkCardDetails(member.getId(), 1L);
 
         // then
         assertThat(response).isNotNull();
@@ -299,7 +295,7 @@ public class LinkCardServiceTest extends IntegrationTest {
                         createLinkWalletCard(2L, linkedWallet, member1)));
 
         // when
-        LinkCardDetailResponse response = linkCardService.getLinkCardDetails(1L, member.getId());
+        LinkCardDetailResponse response = linkCardService.getLinkCardDetails(member.getId(), 1L);
 
         // then
         assertAll(
