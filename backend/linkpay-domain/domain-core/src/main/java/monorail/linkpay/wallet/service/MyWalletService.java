@@ -38,10 +38,4 @@ public class MyWalletService {
         MyWallet wallet = myWalletFetcher.fetchByMemberIdForUpdate(memberId);
         walletUpdater.chargePoint(wallet, point, wallet.getMember());
     }
-
-    @Transactional
-    public void deduct(final Long memberId, final Point point) {
-        MyWallet wallet = myWalletFetcher.fetchByMemberIdForUpdate(memberId);
-        walletUpdater.deductPoint(wallet, point, wallet.getMember());
-    }
 }

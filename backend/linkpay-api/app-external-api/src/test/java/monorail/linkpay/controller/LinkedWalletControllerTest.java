@@ -89,20 +89,6 @@ public class LinkedWalletControllerTest extends ControllerTest {
     }
 
     @Test
-    void 링크지갑의_잔액을_차감한다() {
-        doNothing().when(linkedWalletService).deductLinkedWallet(anyLong(), any(Point.class), anyLong());
-
-        docsGiven
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer {access_token}")
-                .body(WALLET_POINT_REQUEST)
-                .when().patch("/api/linked-wallets/deduct/1")
-                .then().log().all()
-                .apply(document("linkedwallets/deduct"))
-                .statusCode(HttpStatus.NO_CONTENT.value());
-    }
-
-    @Test
     void 링크지갑을_삭제한다() {
         doNothing().when(linkedWalletService).deleteLinkedWallet(anyLong());
 

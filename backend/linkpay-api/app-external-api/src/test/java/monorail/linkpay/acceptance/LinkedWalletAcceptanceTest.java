@@ -94,35 +94,6 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    @Test
-    void 링크지갑에서_포인트를_차감한다() {
-        String accessToken = 엑세스_토큰();
-        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
-
-        Long linkedWalletId = Long.valueOf(
-                링크지갑_목록_조회_요청(accessToken, "CREATOR").as(LinkedWalletsResponse.class).linkedWallets()
-                        .getFirst().linkedWalletId());
-
-        링크지갑_충전_요청(accessToken, linkedWalletId, new WalletPointRequest(50000L));
-
-        ExtractableResponse<Response> response = 링크지갑_차감_요청(accessToken, linkedWalletId,
-                new WalletPointRequest(20000L));
-        LinkedWalletResponse linkedWalletResponse = 링크지갑_목록_조회_요청(accessToken, "CREATOR").as(
-                        LinkedWalletsResponse.class)
-                .linkedWallets().getFirst();
-
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
-                () -> assertThat(linkedWalletResponse.linkedWalletId()).isEqualTo(linkedWalletId.toString()),
-                () -> assertThat(linkedWalletResponse.amount()).isEqualTo(30000L)
-        );
-    }
-
-    private ExtractableResponse<Response> 링크지갑_차감_요청(final String accessToken, final Long linkedWalletId,
-                                                     final WalletPointRequest pointRequest) {
-        return sendPatchRequest("/api/linked-wallets/deduct/%s".formatted(linkedWalletId), accessToken, pointRequest);
-    }
-
     private ExtractableResponse<Response> 링크지갑_충전_요청(final String accessToken, final Long linkedWalletId,
                                                      final WalletPointRequest pointRequest) {
         return sendPatchRequest("/api/linked-wallets/charge/%s".formatted(linkedWalletId), accessToken, pointRequest);

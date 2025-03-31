@@ -13,6 +13,7 @@ public class MemberService {
 
     private final MemberFetcher memberFetcher;
 
+    // todo: 본인 검증
     public MemberResponse getMember(final String email) {
         Member member = memberFetcher.fetchByEmail(email);
         return MemberResponse.from(member);

@@ -63,15 +63,6 @@ public class LinkedWalletController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/deduct/{linkedWalletId}")
-    public ResponseEntity<Void> deductLinkedWallet(@AuthenticationPrincipal final AuthPrincipal principal,
-                                                   @PathVariable final Long linkedWalletId,
-                                                   @Valid @RequestBody final WalletPointRequest walletPointRequest) {
-        linkedWalletService.deductLinkedWallet(linkedWalletId, new Point(walletPointRequest.amount()),
-                principal.memberId());
-        return ResponseEntity.noContent().build();
-    }
-
     @DeleteMapping("/{linkedWalletId}")
     public ResponseEntity<Void> deleteLinkedWallet(@PathVariable final Long linkedWalletId) {
         linkedWalletService.deleteLinkedWallet(linkedWalletId);

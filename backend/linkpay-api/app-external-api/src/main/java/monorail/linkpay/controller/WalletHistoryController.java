@@ -33,11 +33,10 @@ public class WalletHistoryController {
         return ResponseEntity.ok(walletHistoryService.readMyWalletHistoryPage(principal.memberId(), lastId, size));
     }
 
-    @GetMapping("linked-wallet")
-    public ResponseEntity<WalletHistoryListResponse> getLinkedWalletHistories(
-            @RequestParam final Long walletId,
-            @RequestParam(required = false) final Long lastId,
-            @RequestParam(defaultValue = "10") final int size) {
+    @GetMapping("/linked-wallet")
+    public ResponseEntity<WalletHistoryListResponse> getLinkedWalletHistories(@RequestParam final Long walletId,
+                                                                              @RequestParam(required = false) final Long lastId,
+                                                                              @RequestParam(defaultValue = "10") final int size) {
         return ResponseEntity.ok(walletHistoryService.readLinkedWalletHistoryPage(walletId, lastId, size));
     }
 }
