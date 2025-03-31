@@ -18,8 +18,12 @@ interface PaymentState {
 const Payment: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [cardData] = useState(() => location.state as PaymentState);
-
+ 
+  const { cardData, memberSignature } = location.state as {
+    cardData: PaymentState,
+    memberSignature: PublicKeyCredential
+  };
+  
   const {
     cardName,
     description,

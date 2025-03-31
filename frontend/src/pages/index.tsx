@@ -12,6 +12,8 @@ import MenuModal from '@/modal/MenuModal';
 import { Card } from '@/model/Card';
 import axios from 'axios';
 
+const base_url = process.env.REACT_APP_API_URL;
+
 const Home: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cards, setCards] = useState<Card[]>([]);
@@ -22,7 +24,13 @@ const Home: React.FC = () => {
   const { handleWebAuthn, loading } = useWebAuthn();
 
   const onFingerprintClick = async () => {
-    await handleWebAuthn();
+    const memberSignature = await handleWebAuthn();
+    if (memberSignature) {
+      const selectedCard = cards[currentIndex];
+      navigate("/payment", { state: { cardData: selectedCard, memberSignature } });
+    } else {
+      console.error("memberSignature 생성 실패");
+    }
   };
 
   const [showMenu, setShowMenu] = useState(false);
@@ -35,7 +43,7 @@ const Home: React.FC = () => {
     setShowMenu(false);
   };
 
-  const base_url = process.env.REACT_APP_API_URL;
+ 
   // 카드 API 호출
   useEffect(() => {
     const fetchCards = async () => {

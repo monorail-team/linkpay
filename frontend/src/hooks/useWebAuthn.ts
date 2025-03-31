@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const base_url = process.env.REACT_APP_API_URL;
+const email = "sungiljin98@gmail.com";
 /* 
     문자열을 Uint8Array로 변환하는 유틸 함수
     WebAuthn API 스펙상 challenge 필드는 반드시 바이너리 데이터(ArrayBuffer 또는 이를 래핑한 Uint8Array)여야 함함
@@ -11,7 +12,7 @@ function strToUint8Array(str: string): Uint8Array {
 }
 
 interface WebAuthnHook {
-  handleWebAuthn: () => Promise<void>;
+  handleWebAuthn: () => Promise<PublicKeyCredential | null>;
   loading: boolean;
 }
 
@@ -20,8 +21,21 @@ const useWebAuthn = (): WebAuthnHook => {
 
   const token = sessionStorage.getItem('accessToken');
 
-  // 결제 수행 function
-  const performAuthentication = async () => {
+  const fetchUserData = async () => {
+   /**
+    * userEmail을 로컬 스토리지나 세션 스토리지에서 가져와야함.
+    */
+    if (!email) {
+      throw new Error("User email is not available");
+    }
+    const response = await axios.get(`${base_url}/api/members?email=${email}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data; 
+  };
+
+  //  WebAuthn 인증을 수행하고 memberSignature을 반환하는 함수
+  const performAuthentication = async (): Promise<PublicKeyCredential | null> => {
 
     // 1. 인증용 Challenge 요청
 
@@ -45,24 +59,20 @@ const useWebAuthn = (): WebAuthnHook => {
     };
 
     // 3. Credential을 이용한 인증 (서명 생성)
-    const assertion = await navigator.credentials.get({
+    const memberSignature = await navigator.credentials.get({
       publicKey: publicKeyCredentialRequestOptions,
-    });
-    if (!assertion) {
+    }) as PublicKeyCredential;
+
+    if (!memberSignature) {
       throw new Error("인증 실패");
     }
 
-    // 4. 생성된 assertion(서명) 정보를 백엔드에 전송하여 결제 처리
-    await axios.post(
-      `${base_url}/api/webauthn/authenticate`,
-      { assertion },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    console.log("인증 및 결제 처리 성공");
+    
+    return memberSignature;
   };
 
   //전체 기능 function
-  const handleWebAuthn = async () => {
+  const handleWebAuthn = async (): Promise<PublicKeyCredential | null> => {
     setLoading(true);
     try {
       // 1. 백엔드에 현재 사용자의 등록 여부 확인
@@ -77,14 +87,15 @@ const useWebAuthn = (): WebAuthnHook => {
           headers: { Authorization: `Bearer ${token}` }
         });
         const challenge = challengeRes.data.challenge; // 등록용 Challenge (Base64url 문자열)
-
+        const member = await fetchUserData();
+        console.log(window.location.hostname);
         const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
           challenge: strToUint8Array(challenge),
           rp: { name: "LinkPay", id: window.location.hostname },
           user: {
-            id: strToUint8Array("user-unique-id"), // 실제 사용자 ID로 교체
-            name: "user@example.com",              // 실제 사용자 이메일로 교체
-            displayName: "User Name",
+            id: strToUint8Array(member.memberId), // 실제 사용자 ID로 교체
+            name: member.email,              // 실제 사용자 이메일로 교체
+            displayName: "test-name",
           },
           pubKeyCredParams: [{ type: "public-key", alg: -7 }], // ES256 알고리즘 사용
           authenticatorSelection: {
@@ -97,28 +108,46 @@ const useWebAuthn = (): WebAuthnHook => {
         // Credential 생성 (등록)
         const credential = await navigator.credentials.create({
           publicKey: publicKeyCredentialCreationOptions,
-        });
+        }) as PublicKeyCredential;
+
         if (!credential) {
           throw new Error("Credential 생성 실패");
         }
 
-        // 생성된 credential 정보를 백엔드에 전송하여 등록 처리
-        await axios.post(
-          `${base_url}/api/webauthn/register`,
-          { credential }, // 실제 상황에서는 credential 데이터를 직렬화하여 전송
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+          const bytes = new Uint8Array(buffer);
+          let binary = "";
+          for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          return window.btoa(binary);
+        };
+        
+        const credentialObj = credential;
+        const response = credentialObj.response as AuthenticatorAttestationResponse;
+        
+        const payload = {
+          credentialId: credentialObj.id,
+          clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
+          attestationObject: arrayBufferToBase64(response.attestationObject),
+        };
+        
+        await axios.post(`${base_url}/api/webauthn/register`, payload, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         console.log("등록 성공");
 
         // 등록 후 바로 인증(결제) 플로우로 자동 전환
-        await performAuthentication();
+        const memberSignature = await performAuthentication();
+        return memberSignature;
       } else {
         // 기존 사용자: 바로 인증(결제) 플로우 실행
-        await performAuthentication();
+        const memberSignature = await performAuthentication();
+        return memberSignature;
       }
     } catch (error) {
       console.error("WebAuthn 에러", error);
-      // 에러 처리: 사용자에게 안내 메시지 표시 등
+      return null;
     } finally {
       setLoading(false);
     }

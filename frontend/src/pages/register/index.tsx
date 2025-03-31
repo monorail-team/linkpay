@@ -5,7 +5,7 @@ import LinkCardItem from '@/components/LinkCardItem';
 import axios from 'axios';
 import { Card } from '@/model/Card';
 
-
+const base_url = process.env.REACT_APP_API_URL;
 const Register: React.FC = () => {
 
 
@@ -14,7 +14,7 @@ const Register: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const base_url = process.env.REACT_APP_API_URL;
+  
   
   useEffect(() => {
     const fetchCards = async () => {
