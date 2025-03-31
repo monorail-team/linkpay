@@ -30,21 +30,18 @@ public class PaymentService {
     private final IdGenerator idGenerator;
 
     @Transactional
-    public void createPayment(final Long memberId, final Point point, final Long linkCardId,
-                                           final Long storeId) {
+    public void createPayment(final Long memberId, final Point point, final Long linkCardId, final Long storeId) {
         Member member = memberFetcher.fetchById(memberId);
-
         LinkCard linkCard = linkCardFetcher.fetchByIdForUpdate(linkCardId);
-        validate(point, linkCard, member);
+        validateLinkCard(point, linkCard, member);
         linkCard.usePoint(point);
 
         Wallet wallet = walletFetcher.fetchByIdForUpdate(linkCard.getWallet().getId());
         walletUpdater.deductPoint(wallet, point, member);
-
         paymentRepository.save(getPayment(linkCard, point, storeId));
     }
 
-    private static void validate(Point point, LinkCard linkCard, Member member) {
+    private void validateLinkCard(final Point point, final LinkCard linkCard, final Member member) {
         linkCard.validateOwnership(member);
         linkCard.validateExpiredDate();
         linkCard.validateLimitPriceNotExceed(point);

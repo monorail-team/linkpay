@@ -30,6 +30,7 @@ public class LinkedMemberService {
     private final MemberFetcher memberFetcher;
     private final IdGenerator idGenerator;
 
+    // todo: 링크지갑 회원들만 조회 검증
     public LinkedMembersResponse getLinkedMembers(final Long linkedWalletId, final Long lastId, final int size) {
         Slice<LinkedMember> linkedMembers = linkedMemberRepository.findAllByLinkedWalletId(
                 linkedWalletId, lastId, PageRequest.of(0, size));
@@ -39,6 +40,7 @@ public class LinkedMemberService {
                 linkedMembers.hasNext());
     }
 
+    // todo: 이미 가입된 회원 중복 검증
     @Transactional
     public void createLinkedMember(final Long linkedWalletId, final Long memberId, final Long participantId) {
         validateCreatorPermission(linkedWalletId, memberId);
@@ -52,6 +54,7 @@ public class LinkedMemberService {
                 .member(member).build());
     }
 
+    // todo: 본인이면 삭제가능, creator도 삭제가능, creator가 linkedMemberIds에 포함되어 있으면 예외
     @Transactional
     public void deleteLinkedMember(final Long linkedWalletId, final Set<Long> linkedMemberIds, final Long memberId) {
         validateCreatorPermission(linkedWalletId, memberId);

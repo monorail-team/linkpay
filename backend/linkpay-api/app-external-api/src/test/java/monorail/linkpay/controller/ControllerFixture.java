@@ -1,5 +1,7 @@
 package monorail.linkpay.controller;
 
+import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,8 +26,6 @@ import monorail.linkpay.wallet.dto.LinkedMembersResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.wallet.dto.WalletResponse;
-
-import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
 
 public class ControllerFixture {
 

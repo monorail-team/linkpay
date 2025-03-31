@@ -51,6 +51,7 @@ public class LinkCardService {
         linkCardRepository.save(request.toLinkCard(idGenerator.generate(), wallet, member));
     }
 
+    // todo: 링크지갑 소유자인지 검증
     @Transactional
     public void createShared(final SharedLinkCardCreateServiceRequest request) {
         LinkedWallet linkedwallet = linkedWalletFetcher.fetchById(request.linkedWalletId());
@@ -61,12 +62,14 @@ public class LinkCardService {
         linkCardRepository.saveAll(linkCards);
     }
 
+    // todo: 본인 검증
     public LinkCardsResponse read(final Long memberId, final Long lastId, final int size, final String type) {
         Slice<LinkCard> linkCards = linkCardQueryRepository.findLinkCardsByMemberId(LinkCardQueryFactory.from(type),
                 memberId, lastId, PageRequest.of(0, size));
         return new LinkCardsResponse(getLinkCardResponses(linkCards), linkCards.hasNext());
     }
 
+    // todo: 본인 검증
     public LinkCardsResponse readByState(final long memberId, final Long lastId, final int size,
                                          final CardState state, final LocalDateTime now) {
         Slice<LinkCard> linkCards = linkCardRepository
@@ -80,6 +83,7 @@ public class LinkCardService {
                 .toList();
     }
 
+    // todo: 본인 검증
     @Transactional
     public void activateLinkCard(final List<Long> linkCardIds) {
         linkCardRepository.updateStateByIds(new HashSet<>(linkCardIds));
@@ -89,11 +93,11 @@ public class LinkCardService {
     public void deleteLinkCard(final Long linkCardId, final Long memberId) {
         LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
         Member member = memberFetcher.fetchById(memberId);
-        validateCreator(linkCard, member);
+        validateOwnershipOrCreator(linkCard, member);
         linkCardRepository.deleteById(linkCardId);
     }
 
-    private void validateCreator(final LinkCard linkCard, final Member member) {
+    private void validateOwnershipOrCreator(final LinkCard linkCard, final Member member) {
         if (!linkCard.isSharedCard() || !isCreator(linkCard, member)) {
             linkCard.validateOwnership(member);
         }

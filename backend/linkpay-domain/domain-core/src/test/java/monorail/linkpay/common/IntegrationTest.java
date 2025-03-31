@@ -1,6 +1,6 @@
 package monorail.linkpay.common;
 
-import monorail.linkpay.CleanUp;
+import monorail.linkpay.DatabaseCleaner;
 import monorail.linkpay.MockTestConfiguration;
 import monorail.linkpay.history.repository.WalletHistoryRepository;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
@@ -19,15 +19,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 @Import(MockTestConfiguration.class)
 @SpringBootTest
-@ActiveProfiles("test")
 public abstract class IntegrationTest {
 
     @Autowired
-    protected CleanUp cleanUp;
+    protected DatabaseCleaner databaseCleaner;
     @Autowired
     protected MyWalletRepository myWalletRepository;
     @Autowired
@@ -53,7 +51,7 @@ public abstract class IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        cleanUp.cleanAll();
+        databaseCleaner.truncateAllTables();
         member = memberRepository.save(
                 createMember("linkpay@gmail.com", "linkpay"));
         myWalletRepository.save(MyWallet.builder()
