@@ -36,6 +36,7 @@ public class StoreService {
         PrivateKey privateKey = keyPair.getPrivate();
         PublicKey publicKey = keyPair.getPublic();
         storeSignatureRepository.save(StoreSignature.builder()
+                .id(idGenerator.generate())
                 .store(store)
                 .encryptKey(privateKey.getEncoded())
                 .decryptKey(publicKey.getEncoded())
