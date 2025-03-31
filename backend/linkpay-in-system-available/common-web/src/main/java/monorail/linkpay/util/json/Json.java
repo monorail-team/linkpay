@@ -7,6 +7,7 @@ public record Json(String value) {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    // todo protected로 리팩토링
     public static Json of(final String value) {
         return new Json(value);
     }
