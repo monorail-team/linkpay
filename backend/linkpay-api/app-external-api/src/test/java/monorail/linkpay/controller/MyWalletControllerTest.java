@@ -30,20 +30,6 @@ public class MyWalletControllerTest extends ControllerTest {
     }
 
     @Test
-    void 지갑잔액을_차감한다() {
-        doNothing().when(myWalletService).deduct(anyLong(), any(Point.class));
-
-        docsGiven
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer {access_token}")
-                .body(WALLET_POINT_REQUEST)
-                .when().patch("/api/my-wallets/deduct")
-                .then().log().all()
-                .apply(document("mywallets/deduct"))
-                .statusCode(HttpStatus.NO_CONTENT.value());
-    }
-
-    @Test
     void 지갑_잔액을_조회한다() {
         when(myWalletService.read(anyLong())).thenReturn(WALLET_RESPONSE);
 

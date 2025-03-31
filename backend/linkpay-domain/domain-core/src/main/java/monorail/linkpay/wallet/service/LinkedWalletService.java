@@ -43,18 +43,21 @@ public class LinkedWalletService {
     private final LinkedMemberFetcher linkedMemberFetcher;
     private final WalletUpdater walletUpdater;
 
-    public LinkedWalletsResponse readLinkedWallets(final long memberId, final Long lastId, final int size) {
-        Slice<LinkedWalletDto> linkedWalletDtos = linkedMemberRepository.findLinkedWalletDtosByMemberId(
+    public LinkedWalletsResponse readLinkedWallets(final long memberId, final Role role,
+                                                   final Long lastId, final int size) {
+        Slice<LinkedWalletDto> linkedWallets = linkedWalletRepository.findLinkedWalletsByMemberId(
                 memberId,
+                role,
                 lastId,
                 PageRequest.of(0, size)
         );
-        return new LinkedWalletsResponse(linkedWalletDtos.stream()
+        return new LinkedWalletsResponse(linkedWallets.stream()
                 .map(LinkedWalletResponse::from)
                 .toList(),
-                linkedWalletDtos.hasNext());
+                linkedWallets.hasNext());
     }
 
+    // todo: 본인 검증
     public LinkedWalletResponse readLinkedWallet(final Long linkedWalletId) {
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
         return new LinkedWalletResponse(
@@ -64,6 +67,7 @@ public class LinkedWalletService {
                 linkedMemberRepository.countByLinkedWalletId(linkedWalletId));
     }
 
+    // todo: memberIds에 본인 id가 있으면 예외
     @Transactional
     public Long createLinkedWallet(final long memberId, final String walletName, final Set<Long> memberIds) {
         Member member = memberFetcher.fetchById(memberId);
@@ -91,6 +95,7 @@ public class LinkedWalletService {
                 .build();
     }
 
+    // todo: 링크지갑 멤버인지 검증
     @Transactional
     public void chargeLinkedWallet(final long linkedWalletId, final Point point, final Long memberId) {
         Member member = memberFetcher.fetchById(memberId);
@@ -98,13 +103,7 @@ public class LinkedWalletService {
         walletUpdater.chargePoint(wallet, point, member);
     }
 
-    @Transactional
-    public void deductLinkedWallet(final long linkedWalletId, final Point point, final Long memberId) {
-        Member member = memberFetcher.fetchById(memberId);
-        LinkedWallet wallet = linkedWalletFetcher.fetchByIdForUpdate(linkedWalletId);
-        walletUpdater.deductPoint(wallet, point, member);
-    }
-
+    // todo: 삭제할 때 소유자만 가능, 지갑 잔여 포인트 소유자한테로
     @Transactional
     public void deleteLinkedWallet(final Long linkedWalletId) {
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);

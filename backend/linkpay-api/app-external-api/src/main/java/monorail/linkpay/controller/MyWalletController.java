@@ -29,13 +29,6 @@ public class MyWalletController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/deduct")
-    public ResponseEntity<Void> deductWallet(@AuthenticationPrincipal final AuthPrincipal principal,
-                                             @Valid @RequestBody final WalletPointRequest pointRequest) {
-        myWalletService.deduct(principal.memberId(), new Point(pointRequest.amount()));
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping
     public ResponseEntity<WalletResponse> getWallet(@AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(myWalletService.read(principal.memberId()));

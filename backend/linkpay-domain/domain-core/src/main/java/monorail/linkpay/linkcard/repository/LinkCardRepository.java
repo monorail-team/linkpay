@@ -22,9 +22,8 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
 
     List<LinkCard> findLinkCardsByMember(Member member);
 
-    @Query("SELECT CASE WHEN EXISTS ("
-            + "SELECT 1 FROM LinkCard l WHERE l.wallet.id = :walletId"
-            + ") THEN true ELSE false END")
+    @Query("SELECT EXISTS ("
+            + "SELECT 1 FROM LinkCard l WHERE l.wallet.id = :walletId)")
     boolean existsByWalletId(Long walletId);
 
     @Query("SELECT l FROM LinkCard l " +
