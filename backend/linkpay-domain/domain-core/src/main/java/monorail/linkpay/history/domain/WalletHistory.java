@@ -13,8 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
@@ -27,7 +27,6 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "wallet_history")
 @Getter
-@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE wallet_history SET deleted_at = CURRENT_TIMESTAMP WHERE wallet_history_id = ?")
 @SQLRestriction("deleted_at is null")
@@ -73,5 +72,21 @@ public class WalletHistory extends BaseEntity {
         this.transactionType = transactionType;
         this.wallet = wallet;
         this.member = member;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof WalletHistory walletHistory)) {
+            return false;
+        }
+        return id != null && Objects.equals(id, walletHistory.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

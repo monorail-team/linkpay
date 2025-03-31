@@ -6,8 +6,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
@@ -16,7 +16,6 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "store")
 @Getter
-@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE store SET deleted_at = CURRENT_TIMESTAMP WHERE store_id = ?")
 @SQLRestriction("deleted_at is null")
@@ -34,5 +33,21 @@ public class Store extends BaseEntity {
     private Store(final Long id, final String name) {
         this.id = id;
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof Store store)) {
+            return false;
+        }
+        return id != null && Objects.equals(id, store.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

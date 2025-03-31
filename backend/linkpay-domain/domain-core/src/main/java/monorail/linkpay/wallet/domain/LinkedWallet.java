@@ -36,7 +36,7 @@ public class LinkedWallet extends Wallet {
         if (!super.equals(o)) {
             return false;
         }
-        return Objects.equals(getId(), linkedWallet.getId());
+        return getId() != null && Objects.equals(getId(), linkedWallet.getId());
     }
 
     @Override

@@ -10,18 +10,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
 
 @Table(name = "settlement")
-@Entity
 @Getter
-@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
+@Entity
 public class Settlement extends BaseEntity {
 
     @Id
@@ -53,5 +52,21 @@ public class Settlement extends BaseEntity {
         this.settlementStatus = settlementStatus;
         this.walletId = walletId;
         this.storeId = storeId;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof Settlement settlement)) {
+            return false;
+        }
+        return getAmount() != null && Objects.equals(getId(), settlement.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 }

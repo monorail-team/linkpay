@@ -9,17 +9,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.banking.common.domain.Money;
 
 @Table(name = "account")
-@Entity
 @Getter
-@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
+@Entity
 public class Account {
 
     @Id
@@ -50,5 +49,21 @@ public class Account {
 
     public void withdrawalPoint(Money money) {
         this.money = this.money.subtract(money);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof Account account)) {
+            return false;
+        }
+        return getId() != null && Objects.equals(getId(), account.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 }

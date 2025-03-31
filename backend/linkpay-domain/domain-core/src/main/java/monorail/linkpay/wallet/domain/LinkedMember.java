@@ -12,8 +12,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.util.Objects;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
@@ -26,7 +26,6 @@ import org.hibernate.annotations.SQLRestriction;
 )
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(of = "id", callSuper = false)
 @SQLDelete(sql = "UPDATE linked_member SET deleted_at = CURRENT_TIMESTAMP WHERE linked_member_id = ?")
 @SQLRestriction("deleted_at is null")
 @Entity
@@ -66,5 +65,21 @@ public class LinkedMember extends BaseEntity {
 
     public boolean isCreator() {
         return this.role == Role.CREATOR;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof LinkedMember that)) {
+            return false;
+        }
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
