@@ -11,11 +11,11 @@ public class KeyPairUtil {
 
     private static final int KEY_SIZE = 2048;
 
-    public static KeyPair generateKeyPair(KeyAlgorithm keyAlgorithm) {
+    public static KeyPair generateKeyPair(final KeyAlgorithm keyAlgorithm) {
         return generateKeyPair(KEY_SIZE, keyAlgorithm);
     }
 
-    public static KeyPair generateKeyPair(int keySize, KeyAlgorithm keyAlgorithm) {
+    public static KeyPair generateKeyPair(final int keySize, final KeyAlgorithm keyAlgorithm) {
         try {
             java.security.KeyPairGenerator generator = java.security.KeyPairGenerator.getInstance(keyAlgorithm.getValue());
             generator.initialize(keySize, new SecureRandom());

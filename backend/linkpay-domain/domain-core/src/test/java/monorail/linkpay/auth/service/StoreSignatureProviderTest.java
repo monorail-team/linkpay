@@ -9,7 +9,7 @@ import monorail.linkpay.store.service.TransactionSignatureProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class TransactionSignatureKeyProviderTest {
+class StoreSignatureProviderTest {
 
     private TransactionSignatureProvider sut = new TransactionSignatureProvider();
 
@@ -19,13 +19,13 @@ class TransactionSignatureKeyProviderTest {
         Store store = StoreFixtures.store();
         long amount = 1000L;
         var data = TransactionResponse.Data.from(store, amount);
-        var signatureKey = StoreFixtures.transactionSignatureKey(store);
+        var signature = StoreFixtures.storeSignature(store);
 
         //when
-        String signature = sut.createSignature(data, signatureKey.getEncryptKey());
+        String signedSignature = sut.createSignature(data, signature.getEncryptKey());
 
         //then
-        Assertions.assertThat(signature).isNotBlank();
+        Assertions.assertThat(signedSignature).isNotBlank();
     }
 
     @Test
@@ -34,7 +34,7 @@ class TransactionSignatureKeyProviderTest {
         Store store = StoreFixtures.store();
         long amount = 1000L;
         var data = TransactionResponse.Data.from(store, amount);
-        var signatureKey = StoreFixtures.transactionSignatureKey(store);
+        var signatureKey = StoreFixtures.storeSignature(store);
         String signature = sut.createSignature(data, signatureKey.getEncryptKey());
 
         //when, then
@@ -47,7 +47,7 @@ class TransactionSignatureKeyProviderTest {
         Store store = StoreFixtures.store();
         long amount = 1000L;
         var data = TransactionResponse.Data.from(store, amount);
-        var signatureKey = StoreFixtures.transactionSignatureKey(store);
+        var signatureKey = StoreFixtures.storeSignature(store);
         String signature = sut.createSignature(data, signatureKey.getEncryptKey());
         var wrongData = TransactionResponse.Data.from(store, 222L);
 
