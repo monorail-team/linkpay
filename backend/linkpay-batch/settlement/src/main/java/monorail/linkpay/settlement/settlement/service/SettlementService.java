@@ -3,10 +3,10 @@ package monorail.linkpay.settlement.settlement.service;
 import static monorail.linkpay.settlement.settlement.domain.SettlementStatus.PENDING;
 
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.settlement.common.domain.Point;
-import monorail.linkpay.settlement.id.IdGenerator;
+import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.settlement.settlement.domain.Settlement;
 import monorail.linkpay.settlement.settlement.repository.SettlementRepository;
+import monorail.linkpay.util.id.IdGenerator;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,14 +1,14 @@
 package monorail.linkpay.banking.account.service;
 
-import static monorail.linkpay.banking.exception.ExceptionCode.INVALID_REQUEST;
-import static monorail.linkpay.banking.exception.ExceptionCode.NOT_FOUND_RESOURCE;
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
+import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
 
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.banking.account.domain.Account;
-import monorail.linkpay.banking.account.domain.Point;
 import monorail.linkpay.banking.account.repository.AccountRepository;
-import monorail.linkpay.banking.exception.LinkPayException;
-import monorail.linkpay.banking.id.IdGenerator;
+import monorail.linkpay.banking.common.domain.Money;
+import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.util.id.IdGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +27,7 @@ public class AccountService {
                 .id(idGenerator.generate())
                 .walletId(walletId)
                 .memberId(memberId)
-                .point(new Point(0))
+                .money(new Money(0))
                 .build()).getId();
     }
 
@@ -42,16 +42,16 @@ public class AccountService {
     }
 
     @Transactional
-    public void deduct(Long walletId, Point point) {
+    public void deduct(Long walletId, Money money) {
         Account account = accountRepository.findByWalletId(walletId).orElseThrow(() ->
                 new LinkPayException(NOT_FOUND_RESOURCE, "계좌 아이디와 일치하는 계좌를 찾을 수 없습니다."));
-        account.deductPoint(point);
+        account.deductPoint(money);
     }
 
     @Transactional
-    public void withdrawal(Long walletId, Point point) {
+    public void withdrawal(Long walletId, Money money) {
         Account account = accountRepository.findByWalletId(walletId).orElseThrow(() ->
                 new LinkPayException(NOT_FOUND_RESOURCE, "계좌 아이디와 일치하는 계좌를 찾을 수 없습니다."));
-        account.withdrawalPoint(point);
+        account.withdrawalPoint(money);
     }
 }

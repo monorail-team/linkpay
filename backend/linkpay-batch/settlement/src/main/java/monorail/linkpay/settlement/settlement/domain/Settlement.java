@@ -14,8 +14,8 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import monorail.linkpay.settlement.common.domain.BaseEntity;
-import monorail.linkpay.settlement.common.domain.Point;
+import monorail.linkpay.common.domain.BaseEntity;
+import monorail.linkpay.common.domain.Point;
 
 @Table(name = "settlement")
 @Entity
@@ -25,6 +25,7 @@ import monorail.linkpay.settlement.common.domain.Point;
 public class Settlement extends BaseEntity {
 
     @Id
+    @Column(name = "settlement_id")
     private Long id;
 
     @Embedded
