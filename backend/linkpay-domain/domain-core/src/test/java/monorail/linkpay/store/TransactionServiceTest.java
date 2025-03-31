@@ -18,7 +18,7 @@ class TransactionServiceTest extends IntegrationTest {
     public void 거래정보를_생성한다() throws Exception{
         //given
         Store store = storeRepository.save(StoreFixtures.store());
-        storeSignatureRepository.save(StoreFixtures.signature(store));
+        transactionSignatureKeyRepository.save(StoreFixtures.transactionSignatureKey(store));
         long storeId =store.getId();
         long amount = 1000L;
 

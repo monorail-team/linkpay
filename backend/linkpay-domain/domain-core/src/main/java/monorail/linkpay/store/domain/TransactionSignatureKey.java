@@ -6,11 +6,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "store_signature")
+@Table(name = "transaction_signature_key")
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StoreSignature {
+public class TransactionSignatureKey {
     @Id
     private Long id;
 
@@ -19,13 +19,13 @@ public class StoreSignature {
     private Store store;
 
     @Lob
-    private String encryptKey;
+    private String encryptKey; // todo DB에 키 저장 시 암호화
 
     @Lob
     private String decryptKey;
 
     @Builder
-    private StoreSignature(Long id, Store store, String encryptKey, String decryptKey) {
+    private TransactionSignatureKey(Long id, Store store, String encryptKey, String decryptKey) {
         this.id = id;
         this.store = store;
         this.encryptKey = encryptKey;
