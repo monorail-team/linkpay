@@ -1,9 +1,9 @@
 package monorail.linkpay.banking.exception;
 
+import static lombok.AccessLevel.PRIVATE;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Getter
 @RequiredArgsConstructor(access = PRIVATE)

@@ -8,5 +8,4 @@ import org.springframework.context.annotation.Configuration;
 @EnableBatchProcessing
 @RequiredArgsConstructor
 public class BatchConfiguration {
-
 }

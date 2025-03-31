@@ -1,4 +1,8 @@
 package monorail.linkpay.banking.listener.message;
 
-public record DeductMessage(Long messageId, Long walletId, long amount) {
+public record DeductMessage(
+        Long messageId,
+        Long walletId,
+        long amount
+) {
 }
