@@ -57,11 +57,9 @@ public class LinkCardService {
         linkCardRepository.save(request.toLinkCard(idGenerator.generate(), wallet, member));
     }
 
-    // todo: 링크지갑 소유자인지 검증(완료)
     @Transactional
     public void createShared(final SharedLinkCardCreateServiceRequest request, final Long memberId) {
         LinkedWallet linkedwallet = linkedWalletFetcher.fetchById(request.linkedWalletId());
-
         LinkedMember linkedWalletCreator = linkedMemberRepository.findByLinkedWalletIdAndRole(
                 linkedwallet.getId(), CREATOR);
 
@@ -69,17 +67,15 @@ public class LinkCardService {
             throw new LinkPayException(INVALID_REQUEST, "링크카드 생성 권한이 없습니다.");
         }
 
-        List<LinkedMember> linkedMembers = linkedMemberRepository.findByLinkedWalletId(linkedwallet.getId());
-        List<Long> list = linkedMembers.stream()
+        List<Long> memberIds = linkedMemberRepository.findByLinkedWalletId(linkedwallet.getId()).stream()
                 .map(linkedMember -> linkedMember.getMember().getId())
                 .toList();
 
-        boolean hasUnregisteredMember = request.memberIds().stream().anyMatch(id -> !list.contains(id));
-
+        boolean hasUnregisteredMember = request.memberIds().stream()
+                .anyMatch(id -> !memberIds.contains(id));
         if (hasUnregisteredMember) {
             throw new LinkPayException(INVALID_REQUEST, "해당 링크지갑에 참여하지 않은 사용자입니다.");
         }
-
         List<LinkCard> linkCards = memberRepository.findMembersByIdIn(new HashSet<>(request.memberIds())).stream()
                 .map(member -> request.toLinkCard(idGenerator.generate(), member, linkedwallet))
                 .toList();
@@ -88,15 +84,24 @@ public class LinkCardService {
     }
 
     public LinkCardsResponse read(final Long memberId, final Long lastId, final int size, final String type) {
-        Slice<LinkCard> linkCards = linkCardQueryRepository.findLinkCardsByMemberId(LinkCardQueryFactory.from(type),
-                memberId, lastId, PageRequest.of(0, size));
+        Slice<LinkCard> linkCards = linkCardQueryRepository.findLinkCardsByMemberId(
+                LinkCardQueryFactory.from(type),
+                memberId,
+                lastId,
+                PageRequest.of(0, size)
+        );
         return new LinkCardsResponse(getLinkCardResponses(linkCards), linkCards.hasNext());
     }
 
     public LinkCardsResponse readByState(final long memberId, final Long lastId, final int size,
                                          final CardState state, final LocalDateTime now) {
-        Slice<LinkCard> linkCards = linkCardRepository
-                .findByStateWithLastId(memberId, lastId, state, now, PageRequest.of(0, size));
+        Slice<LinkCard> linkCards = linkCardRepository.findByStateWithLastId(
+                memberId,
+                lastId,
+                state,
+                now,
+                PageRequest.of(0, size)
+        );
         return new LinkCardsResponse(getLinkCardResponses(linkCards), linkCards.hasNext());
     }
 
@@ -106,13 +111,14 @@ public class LinkCardService {
                 .toList();
     }
 
-    // todo: 본인 검증(완료)
     @Transactional
     public void activateLinkCard(final List<Long> linkCardIds, final Long memberId) {
         List<Long> memberLinkCardIds = linkCardRepository.findByMemberId(memberId).stream()
                 .map(LinkCard::getId)
                 .toList();
-        boolean containsUnownedCard = linkCardIds.stream().anyMatch(id -> !memberLinkCardIds.contains(id));
+
+        boolean containsUnownedCard = linkCardIds.stream()
+                .anyMatch(id -> !memberLinkCardIds.contains(id));
         if (containsUnownedCard) {
             throw new LinkPayException(INVALID_REQUEST, "소유하지 않은 카드 아이디입니다.");
         }

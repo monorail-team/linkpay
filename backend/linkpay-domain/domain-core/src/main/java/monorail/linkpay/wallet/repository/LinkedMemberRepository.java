@@ -40,9 +40,9 @@ public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long
             + "where m.id in :linkedMemberIds")
     void deleteByIds(@Param("linkedMemberIds") Set<Long> linkedMemberIds);
 
-    @Query("SELECT lm FROM LinkedMember lm "
-            + "WHERE lm.linkedWallet.id = :linkedWalletId "
-            + "AND lm.role = :role")
+    @Query("select lm from LinkedMember lm "
+            + "where lm.linkedWallet.id = :linkedWalletId "
+            + "and lm.role = :role")
     LinkedMember findByLinkedWalletIdAndRole(@Param("linkedWalletId") Long linkedWalletId,
                                              @Param("role") Role role);
 }
