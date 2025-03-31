@@ -45,7 +45,7 @@ public abstract class IntegrationTest {
     @Autowired
     protected StoreRepository storeRepository;
     @Autowired
-    private IdGenerator idGenerator;
+    protected IdGenerator idGenerator;
 
     protected Member member;
 

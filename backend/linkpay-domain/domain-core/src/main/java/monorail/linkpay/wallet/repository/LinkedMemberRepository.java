@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import monorail.linkpay.wallet.domain.LinkedMember;
+import monorail.linkpay.wallet.domain.Role;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -38,4 +39,10 @@ public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long
             + "set m.deletedAt = CURRENT_TIMESTAMP "
             + "where m.id in :linkedMemberIds")
     void deleteByIds(@Param("linkedMemberIds") Set<Long> linkedMemberIds);
+
+    @Query("SELECT lm FROM LinkedMember lm "
+            + "WHERE lm.linkedWallet.id = :linkedWalletId "
+            + "AND lm.role = :role")
+    LinkedMember findByLinkedWalletIdAndRole(@Param("linkedWalletId") Long linkedWalletId,
+                                             @Param("role") Role role);
 }
