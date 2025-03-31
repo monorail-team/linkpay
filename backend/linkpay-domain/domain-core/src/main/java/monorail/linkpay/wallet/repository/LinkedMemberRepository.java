@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long> {
 
+    boolean existsByLinkedWalletIdAndMemberId(Long linkedWalletId, Long memberId);
+
     int countByLinkedWalletId(Long linkedWalletId);
 
     Optional<LinkedMember> findByMemberId(Long memberId);
