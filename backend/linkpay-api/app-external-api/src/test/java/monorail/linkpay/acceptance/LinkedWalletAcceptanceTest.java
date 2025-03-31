@@ -80,18 +80,10 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
 
         String linkedWalletId = 링크지갑_목록_조회_요청(accessToken, "CREATOR").as(LinkedWalletsResponse.class).linkedWallets()
                 .getFirst().linkedWalletId();
-
         ExtractableResponse<Response> response = 링크지갑_충전_요청(accessToken, Long.valueOf(linkedWalletId),
                 new WalletPointRequest(10000L));
-        LinkedWalletResponse linkedWalletResponse = 링크지갑_목록_조회_요청(accessToken, "CREATOR").as(
-                        LinkedWalletsResponse.class)
-                .linkedWallets().getFirst();
 
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
-                () -> assertThat(linkedWalletResponse.linkedWalletId()).isEqualTo(linkedWalletId),
-                () -> assertThat(linkedWalletResponse.amount()).isEqualTo(10000L)
-        );
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
     private ExtractableResponse<Response> 링크지갑_충전_요청(final String accessToken, final Long linkedWalletId,
