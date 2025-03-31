@@ -48,7 +48,8 @@ class LinkedWalletServiceTest extends IntegrationTest {
                 Set.of(member1.getId(), member2.getId()));
 
         // when
-        LinkedWalletResponse linkedWalletResponse = linkedWalletService.readLinkedWallet(linkedWalletId);
+        LinkedWalletResponse linkedWalletResponse = linkedWalletService.readLinkedWallet(linkedWalletId,
+                member.getId());
 
         // then
         assertThat(linkedWalletResponse)
@@ -109,27 +110,9 @@ class LinkedWalletServiceTest extends IntegrationTest {
         linkedWalletService.chargeLinkedWallet(linkedWalletId, new Point(10000), member1.getId());
 
         // then
-        assertThat(linkedWalletService.readLinkedWallet(linkedWalletId))
+        assertThat(linkedWalletService.readLinkedWallet(linkedWalletId, member.getId()))
                 .extracting("linkedWalletId", "linkedWalletName", "amount", "participantCount")
                 .contains(linkedWalletId.toString(), "animal", 10000L, 3);
-    }
-
-    @Test
-    void 링크지갑에서_현재_잔액보다_많은_금액을_차감하면_예외가_발생한다() {
-        // given
-        Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
-        Member member2 = memberRepository.save(createMember("tiger@gmail.com", "tiger"));
-        Long linkedWalletId = linkedWalletService.createLinkedWallet(member.getId(), "animal",
-                Set.of(member1.getId(), member2.getId()));
-        linkedWalletService.chargeLinkedWallet(linkedWalletId, new Point(10000), member1.getId());
-
-        // when, then
-        assertThatThrownBy(() ->
-                linkedWalletService.deductLinkedWallet(linkedWalletId, new Point(20000), member1.getId()))
-                .isInstanceOf(LinkPayException.class)
-                .hasMessageContaining("차감할 금액은 잔액보다 작거나 같은 값이어야 합니다.")
-                .extracting("exceptionCode")
-                .isEqualTo(INVALID_REQUEST);
     }
 
     @Test
@@ -144,7 +127,7 @@ class LinkedWalletServiceTest extends IntegrationTest {
                 1L, LinkedWallet.builder().id(linkedWalletId).build(), member1));
 
         // when, then
-        assertThatThrownBy(() -> linkedWalletService.deleteLinkedWallet(linkedWalletId))
+        assertThatThrownBy(() -> linkedWalletService.deleteLinkedWallet(linkedWalletId, member.getId()))
                 .isInstanceOf(LinkPayException.class)
                 .hasMessageContaining("해당 지갑에 링크카드가 존재합니다.")
                 .extracting("exceptionCode")

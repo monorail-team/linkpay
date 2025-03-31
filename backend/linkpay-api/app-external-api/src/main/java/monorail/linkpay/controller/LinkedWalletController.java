@@ -39,8 +39,9 @@ public class LinkedWalletController {
     }
 
     @GetMapping("/{linkedWalletId}")
-    public ResponseEntity<LinkedWalletResponse> getLinkedWallet(@PathVariable final Long linkedWalletId) {
-        return ResponseEntity.ok(linkedWalletService.readLinkedWallet(linkedWalletId));
+    public ResponseEntity<LinkedWalletResponse> getLinkedWallet(@PathVariable final Long linkedWalletId,
+                                                                @AuthenticationPrincipal final AuthPrincipal principal) {
+        return ResponseEntity.ok(linkedWalletService.readLinkedWallet(linkedWalletId, principal.memberId()));
     }
 
     @PostMapping
@@ -64,8 +65,9 @@ public class LinkedWalletController {
     }
 
     @DeleteMapping("/{linkedWalletId}")
-    public ResponseEntity<Void> deleteLinkedWallet(@PathVariable final Long linkedWalletId) {
-        linkedWalletService.deleteLinkedWallet(linkedWalletId);
+    public ResponseEntity<Void> deleteLinkedWallet(@PathVariable final Long linkedWalletId,
+                                                   @AuthenticationPrincipal final AuthPrincipal principal) {
+        linkedWalletService.deleteLinkedWallet(linkedWalletId, principal.memberId());
         return ResponseEntity.noContent().build();
     }
 }

@@ -64,7 +64,7 @@ public class LinkedWalletControllerTest extends ControllerTest {
 
     @Test
     void 링크지갑_단건_조회한다() {
-        when(linkedWalletService.readLinkedWallet(anyLong())).thenReturn(LINKED_WALLET_RESPONSE_1);
+        when(linkedWalletService.readLinkedWallet(anyLong(), anyLong())).thenReturn(LINKED_WALLET_RESPONSE_1);
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")
@@ -90,7 +90,7 @@ public class LinkedWalletControllerTest extends ControllerTest {
 
     @Test
     void 링크지갑을_삭제한다() {
-        doNothing().when(linkedWalletService).deleteLinkedWallet(anyLong());
+        doNothing().when(linkedWalletService).deleteLinkedWallet(anyLong(), anyLong());
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")
