@@ -1,4 +1,8 @@
 package monorail.linkpay.banking.listener.message;
 
-public record CreateMessage(Long messageId, Long walletId, Long memberId) {
+public record CreateMessage(
+        Long messageId,
+        Long walletId,
+        Long memberId
+) {
 }

@@ -1,15 +1,21 @@
 package monorail.linkpay.settlement.settlement.domain;
 
-import jakarta.persistence.*;
+import static jakarta.persistence.EnumType.STRING;
+import static lombok.AccessLevel.PROTECTED;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.settlement.common.domain.BaseEntity;
 import monorail.linkpay.settlement.common.domain.Point;
-
-import static jakarta.persistence.EnumType.STRING;
-import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "settlement")
 @Entity
@@ -34,11 +40,13 @@ public class Settlement extends BaseEntity {
     private Long storeId;
 
     @Builder
-    public Settlement(final Long id,
-                      final Point amount,
-                      final SettlementStatus settlementStatus,
-                      final Long walletId,
-                      final Long storeId) {
+    public Settlement(
+            final Long id,
+            final Point amount,
+            final SettlementStatus settlementStatus,
+            final Long walletId,
+            final Long storeId
+    ) {
         this.id = id;
         this.amount = amount;
         this.settlementStatus = settlementStatus;

@@ -1,13 +1,17 @@
 package monorail.linkpay.banking.account.domain;
 
-import jakarta.persistence.*;
+import static lombok.AccessLevel.PROTECTED;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.banking.common.domain.BaseEntity;
-
-import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "account")
 @Entity
@@ -26,9 +30,6 @@ public class Account extends BaseEntity {
     private Long walletId;
 
     private Long memberId;
-
-    @Version
-    private Long version;
 
     @Builder
     public Account(final Long id, final Long walletId, final Point point, final Long memberId) {
