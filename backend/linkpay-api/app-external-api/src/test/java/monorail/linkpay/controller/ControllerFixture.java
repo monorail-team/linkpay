@@ -18,6 +18,7 @@ import monorail.linkpay.history.dto.WalletHistoryListResponse;
 import monorail.linkpay.history.dto.WalletHistoryResponse;
 import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardType;
+import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.member.dto.MemberResponse;
@@ -117,6 +118,14 @@ public class ControllerFixture {
             List.of(REGISTERED_LINK_CARD_RESPONSE, REGISTERED_SHARED_LINK_CARD_RESPONSE), false);
     public static final LinkCardsResponse LINK_CARDS_RESPONSE_3 = new LinkCardsResponse(
             List.of(SHARED_LINK_CARD_RESPONSE, SHARED_LINK_CARD_RESPONSE_2), false);
+    public static final LinkCardDetailResponse LINK_CARD_DETAIL_RESPONSE = new LinkCardDetailResponse(
+            "1",
+            50000L,
+            CardType.OWNED.name(),
+            CardColor.getRandomColor().getHexCode(),
+            "test card2",
+            LocalDate.now().plusMonths(1),
+            0L, "유저", "UNREGISTERED", null);
 
     public static final LinkedWalletResponse LINKED_WALLET_RESPONSE_1 = new LinkedWalletResponse(
             "1", "링크지갑1", 40000L, 1);

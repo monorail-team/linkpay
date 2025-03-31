@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
+import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.repository.LinkCardQueryFactory;
@@ -106,5 +107,16 @@ public class LinkCardService {
         LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(
                 linkCard.getWalletId(), member.getId());
         return linkedMember.isCreator();
+    }
+
+    public LinkCardDetailResponse getLinkCardDetails(final Long memberId, final Long linkCardId) {
+        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
+        Member member = memberFetcher.fetchById(memberId);
+        validateOwnershipOrCreator(linkCard, member);
+        if (!linkCard.isSharedCard()) {
+            return LinkCardDetailResponse.from(linkCard, null);
+        }
+        String linkedWalletName = linkedWalletFetcher.fetchById(linkCard.getWalletId()).getName();
+        return LinkCardDetailResponse.from(linkCard, linkedWalletName);
     }
 }

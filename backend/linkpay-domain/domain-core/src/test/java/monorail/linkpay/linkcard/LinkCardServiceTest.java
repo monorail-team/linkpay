@@ -8,6 +8,7 @@ import static monorail.linkpay.linkcard.domain.CardType.SHARED;
 import static monorail.linkpay.wallet.domain.Role.CREATOR;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +18,7 @@ import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
+import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
@@ -150,12 +152,15 @@ public class LinkCardServiceTest extends IntegrationTest {
         // given
         Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
         linkCardRepository.save(createMyWalletCard(1L, wallet, member, UNREGISTERED));
-        LinkCardsResponse unregisteredCards = linkCardService.readByState(member.getId(), null, 10, UNREGISTERED,
-                now());
+
+        List<LinkCard> cards =
+                linkCardRepository.findLinkCardsByMember(member)
+                        .stream()
+                        .filter(card -> card.getState().equals(UNREGISTERED)).toList();
 
         // when
         linkCardService.activateLinkCard(
-                List.of(Long.parseLong(unregisteredCards.linkCards().getFirst().linkCardId())));
+                List.of(cards.getFirst().getId()));
 
         // then
         List<LinkCard> result = linkCardRepository.findLinkCardsByMember(member);
@@ -258,6 +263,46 @@ public class LinkCardServiceTest extends IntegrationTest {
 
         // then
         assertThat(linkCardRepository.findLinkCardsByMember(member1).size()).isEqualTo(0);
+    }
+
+    @Test
+    void 내_지갑_링크카드를_상세조회한다() {
+        // given
+        Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
+        linkCardRepository.save(createMyWalletCard(1L, wallet, member, UNREGISTERED));
+
+        // when
+        LinkCardDetailResponse response = linkCardService.getLinkCardDetails(member.getId(), 1L);
+
+        // then
+        assertThat(response).isNotNull();
+    }
+
+    @Test
+    void 링크지갑_링크카드를_상세조회한다() {
+        // given
+        Member member1 = createMember(1L, "test@email.com", "u1");
+        String walletName = "링크지갑";
+
+        memberRepository.saveAll(List.of(member1));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name(walletName).build());
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
+        linkedMemberRepository.saveAll(List.of(
+                createLinkedMember(1L, CREATOR, member, linkedWallet),
+                createLinkedMember(2L, PARTICIPANT, member1, linkedWallet)));
+        linkCardRepository.saveAll(
+                List.of(createLinkWalletCard(1L, linkedWallet, member),
+                        createLinkWalletCard(2L, linkedWallet, member1)));
+
+        // when
+        LinkCardDetailResponse response = linkCardService.getLinkCardDetails(member.getId(), 1L);
+
+        // then
+        assertAll(
+                () -> assertThat(response).isNotNull(),
+                () -> assertThat(response.walletName()).isEqualTo(walletName)
+        );
+
     }
 
     private static LinkCardCreateServiceRequest createCard(LocalDate date) {

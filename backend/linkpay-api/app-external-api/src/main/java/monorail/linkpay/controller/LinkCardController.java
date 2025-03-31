@@ -10,6 +10,7 @@ import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
+import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,13 @@ public class LinkCardController {
                                                                  @AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(linkCardService.readByState(principal.memberId(), lastId, size, getCardState(state),
                 now()));
+    }
+
+    @GetMapping("/detail")
+    public ResponseEntity<LinkCardDetailResponse> getLinkCardDetails(@RequestParam final Long linkCardId,
+                                                                     @AuthenticationPrincipal final AuthPrincipal principal) {
+        return ResponseEntity.ok(linkCardService.getLinkCardDetails(principal.memberId(), linkCardId));
+
     }
 
     @PatchMapping("/activate")
