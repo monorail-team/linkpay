@@ -15,8 +15,8 @@ import { useThemeStore } from '@/store/themeStore';
 import PrivateRoute from './components/PrivateRoute';
 import Payment from '@/pages/payment';
 import ExamplePage from '@/pages/payment/example';
-import NfcWrite from '@/pages/nfcwrite';
-import NfcRead from '@/pages/nfcread';
+import NfcWrite from 'pages/test/nfcwrite';
+import NfcRead from 'pages/test/nfcread';
 
 const App: React.FC = () => {
 
