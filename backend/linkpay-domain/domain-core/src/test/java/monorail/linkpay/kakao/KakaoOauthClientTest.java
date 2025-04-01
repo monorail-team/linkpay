@@ -73,7 +73,8 @@ class KakaoOauthClientTest {
         String expectedResponse = """
                     {
                         "kakao_account": {
-                            "email": "test@kakao.com"
+                            "email": "test@kakao.com",
+                            "nickname": "test"
                         }
                     }
                 """;
