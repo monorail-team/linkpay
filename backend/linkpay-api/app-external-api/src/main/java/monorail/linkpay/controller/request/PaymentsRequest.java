@@ -1,5 +1,6 @@
 package monorail.linkpay.controller.request;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.payment.dto.PaymentInfo;
@@ -9,9 +10,13 @@ public record PaymentsRequest(
 
         @Positive(message = "금액은 양수여야 합니다.")
         long amount,
+        @NotNull
         Long linkCardId,
+        @NotNull
         Long storeId,
+        @NotNull
         String transactionSignature,
+        @NotNull
         String paymentToken
 ) {
         public TransactionInfo txInfo() {

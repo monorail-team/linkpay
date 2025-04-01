@@ -1,25 +1,27 @@
 package monorail.linkpay.payment;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import monorail.linkpay.common.IntegrationTest;
+import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.linkcard.domain.LinkCard;
+import monorail.linkpay.linkcard.service.LinkCardService;
+import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
+import monorail.linkpay.payment.service.PaymentService;
+import monorail.linkpay.store.PaymentFixture;
+import monorail.linkpay.store.domain.Store;
+import monorail.linkpay.store.domain.StoreSignature;
+import monorail.linkpay.store.service.StoreService;
+import monorail.linkpay.wallet.dto.WalletResponse;
+import monorail.linkpay.wallet.service.MyWalletService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import monorail.linkpay.common.IntegrationTest;
-import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.linkcard.domain.LinkCard;
-import monorail.linkpay.linkcard.service.LinkCardService;
-import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
-import monorail.linkpay.payment.dto.PaymentInfo;
-import monorail.linkpay.payment.dto.TransactionInfo;
-import monorail.linkpay.payment.service.PaymentService;
-import monorail.linkpay.store.PaymentFixture;
-import monorail.linkpay.wallet.dto.WalletResponse;
-import monorail.linkpay.wallet.service.MyWalletService;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class PaymentServiceTest extends IntegrationTest {
 
@@ -29,6 +31,8 @@ class PaymentServiceTest extends IntegrationTest {
     private LinkCardService linkCardService;
     @Autowired
     private PaymentService paymentService;
+    @Autowired
+    private StoreService storeService;
 
     @Test
     void 내지갑_링크카드로_결제한다() {
@@ -39,8 +43,10 @@ class PaymentServiceTest extends IntegrationTest {
         linkCardService.create(member.getId(), linkCardCreateServiceRequest);
         List<LinkCard> linkCards = linkCardRepository.findByMemberId(member.getId());
         LinkCard linkCard = linkCards.getFirst();
-
-        var txInfo = PaymentFixture.txInfo(new Point(30000));
+        Long storeId = storeService.create("newStore");
+        Store store = storeRepository.findById(storeId).orElseThrow();
+        StoreSignature storeSignature = storeSignatureRepository.findByStoreId(storeId).orElseThrow();
+        var txInfo = PaymentFixture.txInfo(store, storeSignature, new Point(30000));
         var payInfo = PaymentFixture.payInfo(member, linkCard);
 
         // when
@@ -62,6 +68,11 @@ class PaymentServiceTest extends IntegrationTest {
         List<LinkCard> linkCards = linkCardRepository.findByMemberId(member.getId());
         LinkCard linkCard = linkCards.getFirst();
 
+        Long storeId = storeService.create("newStore");
+        Store store = storeRepository.findById(storeId).orElseThrow();
+        StoreSignature storeSignature = storeSignatureRepository.findByStoreId(storeId).orElseThrow();
+
+
         // when
         int threadCount = 16;
         int jobCount = 100;
@@ -70,7 +81,7 @@ class PaymentServiceTest extends IntegrationTest {
             for (int i = 0; i < jobCount; i++) {
                 executorService.submit(() -> {
                     try {
-                        var txInfo = PaymentFixture.txInfo(new Point(1));
+                        var txInfo = PaymentFixture.txInfo(store, storeSignature, new Point(1));
                         var payInfo = PaymentFixture.payInfo(member, linkCard);
                         paymentService.createPayment(txInfo, payInfo);
                     } finally {
@@ -101,6 +112,10 @@ class PaymentServiceTest extends IntegrationTest {
         }
         List<LinkCard> linkCards = linkCardRepository.findByMemberId(member.getId());
 
+        Long storeId = storeService.create("newStore");
+        Store store = storeRepository.findById(storeId).orElseThrow();
+        StoreSignature storeSignature = storeSignatureRepository.findByStoreId(storeId).orElseThrow();
+
         // when
         int threadCount = 16;
         int jobCount = 100;
@@ -111,7 +126,7 @@ class PaymentServiceTest extends IntegrationTest {
                 executorService.submit(() -> {
                     try {
                         LinkCard linkCard = linkCards.get(index % linkCardAmount);
-                        var txInfo = PaymentFixture.txInfo(new Point(1));
+                        var txInfo = PaymentFixture.txInfo(store, storeSignature, new Point(1));
                         var payInfo = PaymentFixture.payInfo(member, linkCard);
                         paymentService.createPayment(txInfo, payInfo);
                     } finally {

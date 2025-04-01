@@ -3,15 +3,11 @@ package monorail.linkpay.payment.service;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
-import monorail.linkpay.exception.ExceptionCode;
-import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.token.TokenGenerator;
 import monorail.linkpay.token.TokenType;
-import monorail.linkpay.token.TokenValidationException;
 import monorail.linkpay.token.TokenValidator;
 import monorail.linkpay.token.dto.GeneratedToken;
-import monorail.linkpay.token.dto.ValidatedToken;
 import monorail.linkpay.util.json.JsonUtil;
 
 import java.util.UUID;
@@ -35,13 +31,13 @@ public class PaymentTokenProvider {
     }
 
     public void validate(final LinkCard linkCard, final String paymentToken) {
-        try {
-            // todo 토큰 검증 추가 구현
-            ValidatedToken validated = tokenValidator.validate(paymentToken);
-            PaymentTokenPayload payload = JsonUtil.parse(validated.payload(), PaymentTokenPayload.class);
-        } catch (TokenValidationException e) {
-            throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, e.getMessage());
-        }
+        // todo 지문 인증 로직과 통합해서 구현 예정
+//        try {
+//            ValidatedToken validated = tokenValidator.validate(paymentToken);
+//            PaymentTokenPayload payload = JsonUtil.parse(validated.payload(), PaymentTokenPayload.class);
+//        } catch (TokenValidationException e) {
+//            throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, e.getMessage());
+//        }
     }
 
     @Builder
