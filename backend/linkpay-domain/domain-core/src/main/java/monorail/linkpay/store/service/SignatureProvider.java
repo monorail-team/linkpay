@@ -17,47 +17,50 @@ import java.util.Base64;
 @SupportLayer
 public class SignatureProvider {
 
-    // todo 외부로부터 설정 정보 주입
-    private final String signatureAlgorithm = "SHA256withRSA";
-    private final String keyAlgorithm = "RSA";
+    private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
+    private static final String KEY_ALGORITHM = "RSA";
 
-    public String sign(final Object data, final String encryptKey) {
+    public String sign(final Object data, final String base64PrivateKey) {
         try {
-            byte[] keyBytes = Base64.getDecoder().decode(encryptKey);
-            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-            PrivateKey privateKey = KeyFactory.getInstance(keyAlgorithm).generatePrivate(spec);
-
-            // todo 해시 적용 후 암호화 해야함
-            Signature sig = Signature.getInstance(signatureAlgorithm);
-            sig.initSign(privateKey);
-            sig.update(JsonUtil.toJson(data).value().getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(sig.sign());
+            PrivateKey privateKey = decodePrivateKey(base64PrivateKey);
+            Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
+            signature.initSign(privateKey);
+            signature.update(toBytes(data));
+            return Base64.getEncoder().encodeToString(signature.sign());
         } catch (Exception e) {
-            LinkPayException linkPayException = new LinkPayException(ExceptionCode.INVALID_REQUEST, "서명 생성 중 예외 발생");
-            linkPayException.initCause(e);
-            throw linkPayException;
+            throw new LinkPayException(ExceptionCode.INVALID_REQUEST, "서명 생성 실패");
         }
     }
 
-    public void verify(final Object data, final String signature, final String decryptKey) {
+    public void verify(final Object data, final String base64Signature, final String base64PublicKey) {
         try {
-            byte[] keyBytes = Base64.getDecoder().decode(decryptKey);
-            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-            PublicKey publicKey = KeyFactory.getInstance(keyAlgorithm).generatePublic(spec);
+            PublicKey publicKey = decodePublicKey(base64PublicKey);
+            Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
+            signature.initVerify(publicKey);
+            signature.update(toBytes(data));
+            byte[] signatureBytes = Base64.getDecoder().decode(base64Signature);
 
-            Signature sig = Signature.getInstance(signatureAlgorithm);
-            sig.initVerify(publicKey);
-            sig.update(JsonUtil.toJson(data).value().getBytes(StandardCharsets.UTF_8));
-            byte[] signatureBytes = Base64.getDecoder().decode(signature);
-
-            boolean verified = sig.verify(signatureBytes);
-            if(!verified){
+            if (!signature.verify(signatureBytes)) {
                 throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, "유효하지 않은 서명");
             }
         } catch (Exception e) {
-            LinkPayException linkPayException = new LinkPayException(ExceptionCode.INVALID_REQUEST, "서명 검증 중 예외 발생");
-            linkPayException.initCause(e);
-            throw linkPayException;
+            throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, "서명 검증 실패");
         }
+    }
+
+    private byte[] toBytes(Object data) {
+        return JsonUtil.toJson(data).value().getBytes(StandardCharsets.UTF_8);
+    }
+
+    private PrivateKey decodePrivateKey(String base64Key) throws Exception {
+        byte[] keyBytes = Base64.getDecoder().decode(base64Key);
+        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+        return KeyFactory.getInstance(KEY_ALGORITHM).generatePrivate(spec);
+    }
+
+    private PublicKey decodePublicKey(String base64Key) throws Exception {
+        byte[] keyBytes = Base64.getDecoder().decode(base64Key);
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+        return KeyFactory.getInstance(KEY_ALGORITHM).generatePublic(spec);
     }
 }
