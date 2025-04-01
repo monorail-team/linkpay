@@ -1,0 +1,12 @@
+[[Mypage]]
+== Mypage
+
+=== 내 정보 조회
+
+==== HTTP Request
+
+include::{snippets}/my/read/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/my/read/http-response.adoc[]
