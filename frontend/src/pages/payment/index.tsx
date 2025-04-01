@@ -15,20 +15,13 @@ interface PaymentState {
   initialTime: number;
 }
 
-interface ParsedAssertionResult {
-  credentialId: string;
-  clientDataJSON: string;
-  authenticatorData: string;
-  signature: string;
-}
 
 const Payment: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
  
-  const { cardData, assertionResult } = location.state as {
+  const { cardData } = location.state as {
     cardData: PaymentState,
-    assertionResult: ParsedAssertionResult
   };
   
   const {
@@ -64,32 +57,19 @@ const Payment: React.FC = () => {
     onRead: async (data) => {
       console.log('읽기 성공', data);
       setReadValue(data);
-      const paydata = {
-        cardId: cardData.cardId, 
-        nfcData: data,
-      };
-  
-      const payload = {
-        credentialId: assertionResult.credentialId,
-        clientDataJSON: assertionResult.clientDataJSON,
-        authenticatorData: assertionResult.authenticatorData,
-        signature: assertionResult.signature,
-        paydata,
-      };
-  
-      try {
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/webauthn/authenticate`, payload, {
-          headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` }
-        });
-        console.log("결제 및 인증 성공", response);
-        //navigate('/success');
-      } catch (error) {
-        console.error("결제 또는 인증 실패", error);
-        //navigate('/fail');
-      }
+      await axios.post('/api/payment', {
+        cardId: cardData.cardId,
+        nfcData: data
+      }).then((response) => {
+        console.log('API 요청 성공', response);
+        // navigate('/success');
+      }).catch((error) => {
+        console.error('❌ API 실패', error);
+        // navigate('/fail');
+      });
     },
     onError: (err) => {
-      console.warn('NFC 읽기 오류:', err.message);
+      console.warn('🚫 NFC 오류:', err.message);
     }
   });
 
