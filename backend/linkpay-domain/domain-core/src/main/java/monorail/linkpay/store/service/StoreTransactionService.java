@@ -11,18 +11,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class StoreTransactionService {
 
-    private final TransactionSignatureProvider transactionSignatureProvider;
-    private final StoreSignatureFetcher storeSignatureFetcher;
+    private final SignatureProvider signatureProvider;
+    private final StoreSignerFetcher storeSignerFetcher;
 
     @Transactional
     public TransactionInfo create(final Long storeId, final Point price) {
-        // todo 가게 및 거래 정보 검증
-        var storeSignature = storeSignatureFetcher.fetchByStoreId(storeId);
+        // todo 가게 도메인 고도화 시 가게 정보 검증
+        var storeSigner = storeSignerFetcher.fetchByStoreId(storeId);
         var txData = TransactionInfo.Data.builder()
                 .storeId(storeId)
                 .point(price)
                 .build();
-        var txSignature = transactionSignatureProvider.createSignature(txData, storeSignature.getEncryptKey());
+        var txSignature = signatureProvider.sign(txData, storeSigner.getEncryptKey());
         return TransactionInfo.from(txData, txSignature);
     }
 }

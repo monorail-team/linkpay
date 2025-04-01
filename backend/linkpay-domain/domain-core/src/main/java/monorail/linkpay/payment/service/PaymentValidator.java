@@ -7,15 +7,15 @@ import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.payment.dto.TransactionInfo;
-import monorail.linkpay.store.service.StoreSignatureFetcher;
-import monorail.linkpay.store.service.TransactionSignatureProvider;
+import monorail.linkpay.store.service.StoreSignerFetcher;
+import monorail.linkpay.store.service.SignatureProvider;
 
 @SupportLayer
 @RequiredArgsConstructor
 public class PaymentValidator {
 
-    private final StoreSignatureFetcher storeSignatureFetcher;
-    private final TransactionSignatureProvider signatureProvider;
+    private final StoreSignerFetcher storeSignerFetcher;
+    private final SignatureProvider signatureProvider;
     private final PaymentTokenProvider paymentTokenProvider;
 
     public void validate(final LinkCard linkCard,
@@ -28,8 +28,8 @@ public class PaymentValidator {
     }
 
     private void validateTransaction(final Store store, final TransactionInfo txInfo) {
-        var storeSignature = storeSignatureFetcher.fetchByStoreId(store.getId());
-        signatureProvider.verifySignature(txInfo.data(), txInfo.signature(), storeSignature.getDecryptKey());
+        var storeSignature = storeSignerFetcher.fetchByStoreId(store.getId());
+        signatureProvider.verify(txInfo.data(), txInfo.signature(), storeSignature.getDecryptKey());
     }
 
     private void validateToken(final LinkCard linkCard, final String paymentToken) {

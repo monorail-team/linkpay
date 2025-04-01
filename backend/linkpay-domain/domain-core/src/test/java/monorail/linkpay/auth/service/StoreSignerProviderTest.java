@@ -5,13 +5,13 @@ import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.store.StoreFixtures;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.payment.dto.TransactionInfo;
-import monorail.linkpay.store.service.TransactionSignatureProvider;
+import monorail.linkpay.store.service.SignatureProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class StoreSignatureProviderTest {
+class StoreSignerProviderTest {
 
-    private TransactionSignatureProvider sut = new TransactionSignatureProvider();
+    private SignatureProvider sut = new SignatureProvider();
 
     @Test
     public void 전자서명을_생성한다() throws Exception{
@@ -19,10 +19,10 @@ class StoreSignatureProviderTest {
         Store store = StoreFixtures.store();
         long amount = 1000L;
         var data = TransactionInfo.Data.from(store, amount);
-        var signature = StoreFixtures.storeSignature(store);
+        var signature = StoreFixtures.storeSigner(store);
 
         //when
-        String signedSignature = sut.createSignature(data, signature.getEncryptKey());
+        String signedSignature = sut.sign(data, signature.getEncryptKey());
 
         //then
         Assertions.assertThat(signedSignature).isNotBlank();
@@ -34,11 +34,11 @@ class StoreSignatureProviderTest {
         Store store = StoreFixtures.store();
         long amount = 1000L;
         var data = TransactionInfo.Data.from(store, amount);
-        var signatureKey = StoreFixtures.storeSignature(store);
-        String signature = sut.createSignature(data, signatureKey.getEncryptKey());
+        var signatureKey = StoreFixtures.storeSigner(store);
+        String signature = sut.sign(data, signatureKey.getEncryptKey());
 
         //when, then
-        Assertions.assertThatNoException().isThrownBy(() -> sut.verifySignature(data, signature, signatureKey.getDecryptKey()));
+        Assertions.assertThatNoException().isThrownBy(() -> sut.verify(data, signature, signatureKey.getDecryptKey()));
     }
 
     @Test
@@ -47,12 +47,12 @@ class StoreSignatureProviderTest {
         Store store = StoreFixtures.store();
         long amount = 1000L;
         var data = TransactionInfo.Data.from(store, amount);
-        var signatureKey = StoreFixtures.storeSignature(store);
-        String signature = sut.createSignature(data, signatureKey.getEncryptKey());
+        var signatureKey = StoreFixtures.storeSigner(store);
+        String signature = sut.sign(data, signatureKey.getEncryptKey());
         var wrongData = TransactionInfo.Data.from(store, 222L);
 
         //when, then
-        Assertions.assertThatThrownBy(() -> sut.verifySignature(wrongData, signature, signatureKey.getDecryptKey()))
+        Assertions.assertThatThrownBy(() -> sut.verify(wrongData, signature, signatureKey.getDecryptKey()))
                 .isInstanceOf(LinkPayException.class)
                 .extracting(e -> ((LinkPayException) e).getExceptionCode())
                 .isEqualTo(ExceptionCode.FORBIDDEN_ACCESS);

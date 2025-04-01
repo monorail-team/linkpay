@@ -6,11 +6,11 @@ import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.store.domain.Store;
-import monorail.linkpay.store.domain.StoreSignature;
-import monorail.linkpay.store.service.TransactionSignatureProvider;
+import monorail.linkpay.store.domain.StoreSigner;
+import monorail.linkpay.store.service.SignatureProvider;
 
 public class PaymentFixture {
-    private static final TransactionSignatureProvider signatureProvider = new TransactionSignatureProvider();
+    private static final SignatureProvider signatureProvider = new SignatureProvider();
 //    private static final PaymentTokenProvider paymentTokenProvider = new PaymentTokenProvider();
 
     public static TransactionInfo.Data txData(Store store, Point point) {
@@ -20,9 +20,9 @@ public class PaymentFixture {
                 .build();
     }
 
-    public static TransactionInfo txInfo(Store store, StoreSignature storeSignature, Point point) {
+    public static TransactionInfo txInfo(Store store, StoreSigner storeSigner, Point point) {
         var txData = txData(store, point);
-        String txSignature = signatureProvider.createSignature(txData, storeSignature.getEncryptKey());
+        String txSignature = signatureProvider.sign(txData, storeSigner.getEncryptKey());
         return TransactionInfo.from(txData, txSignature);
     }
 

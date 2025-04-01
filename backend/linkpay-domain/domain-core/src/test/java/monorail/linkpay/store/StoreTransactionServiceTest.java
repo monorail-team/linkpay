@@ -19,7 +19,7 @@ class StoreTransactionServiceTest extends IntegrationTest {
     public void 거래정보를_생성한다() throws Exception{
         //given
         Store store = storeRepository.save(StoreFixtures.store());
-        storeSignatureRepository.save(StoreFixtures.storeSignature(store));
+        storeSignerRepository.save(StoreFixtures.storeSigner(store));
         long storeId =store.getId();
         Point price = new Point(1000L);
 

@@ -1,7 +1,7 @@
 package monorail.linkpay.store;
 
 import monorail.linkpay.store.domain.Store;
-import monorail.linkpay.store.domain.StoreSignature;
+import monorail.linkpay.store.domain.StoreSigner;
 import monorail.linkpay.util.key.KeyAlgorithm;
 import monorail.linkpay.util.key.KeyPairUtil;
 
@@ -18,9 +18,9 @@ public class StoreFixtures {
                 .build();
     }
 
-    public static StoreSignature storeSignature(Store store) {
+    public static StoreSigner storeSigner(Store store) {
         KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyAlgorithm.RSA);
-        return StoreSignature.builder()
+        return StoreSigner.builder()
                 .id(idGenerator.getAndIncrement())
                 .encryptKey(keyPair.getPrivate().getEncoded())
                 .decryptKey(keyPair.getPublic().getEncoded())

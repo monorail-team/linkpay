@@ -15,13 +15,13 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 @SupportLayer
-public class TransactionSignatureProvider {
+public class SignatureProvider {
 
     // todo 외부로부터 설정 정보 주입
     private final String signatureAlgorithm = "SHA256withRSA";
     private final String keyAlgorithm = "RSA";
 
-    public String createSignature(final Object data, final String encryptKey) {
+    public String sign(final Object data, final String encryptKey) {
         try {
             byte[] keyBytes = Base64.getDecoder().decode(encryptKey);
             PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
@@ -39,14 +39,7 @@ public class TransactionSignatureProvider {
         }
     }
 
-    public void verifySignature(final Object data, final String signature, final String decryptKey) {
-        boolean verified = verify(data, signature, decryptKey);
-        if(!verified) {
-            throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, "유효하지 않은 서명");
-        }
-    }
-
-    private boolean verify(final Object data, final String signature, final String decryptKey){
+    public void verify(final Object data, final String signature, final String decryptKey) {
         try {
             byte[] keyBytes = Base64.getDecoder().decode(decryptKey);
             X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
@@ -56,7 +49,11 @@ public class TransactionSignatureProvider {
             sig.initVerify(publicKey);
             sig.update(JsonUtil.toJson(data).value().getBytes(StandardCharsets.UTF_8));
             byte[] signatureBytes = Base64.getDecoder().decode(signature);
-            return sig.verify(signatureBytes);
+
+            boolean verified = sig.verify(signatureBytes);
+            if(!verified){
+                throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, "유효하지 않은 서명");
+            }
         } catch (Exception e) {
             LinkPayException linkPayException = new LinkPayException(ExceptionCode.INVALID_REQUEST, "서명 검증 중 예외 발생");
             linkPayException.initCause(e);

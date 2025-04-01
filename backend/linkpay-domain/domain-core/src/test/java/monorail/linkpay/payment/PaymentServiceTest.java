@@ -8,7 +8,7 @@ import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
 import monorail.linkpay.payment.service.PaymentService;
 import monorail.linkpay.store.PaymentFixture;
 import monorail.linkpay.store.domain.Store;
-import monorail.linkpay.store.domain.StoreSignature;
+import monorail.linkpay.store.domain.StoreSigner;
 import monorail.linkpay.store.service.StoreService;
 import monorail.linkpay.wallet.dto.WalletResponse;
 import monorail.linkpay.wallet.service.MyWalletService;
@@ -45,8 +45,8 @@ class PaymentServiceTest extends IntegrationTest {
         LinkCard linkCard = linkCards.getFirst();
         Long storeId = storeService.create("newStore");
         Store store = storeRepository.findById(storeId).orElseThrow();
-        StoreSignature storeSignature = storeSignatureRepository.findByStoreId(storeId).orElseThrow();
-        var txInfo = PaymentFixture.txInfo(store, storeSignature, new Point(30000));
+        StoreSigner storeSigner = storeSignerRepository.findByStoreId(storeId).orElseThrow();
+        var txInfo = PaymentFixture.txInfo(store, storeSigner, new Point(30000));
         var payInfo = PaymentFixture.payInfo(member, linkCard);
 
         // when
@@ -70,7 +70,7 @@ class PaymentServiceTest extends IntegrationTest {
 
         Long storeId = storeService.create("newStore");
         Store store = storeRepository.findById(storeId).orElseThrow();
-        StoreSignature storeSignature = storeSignatureRepository.findByStoreId(storeId).orElseThrow();
+        StoreSigner storeSigner = storeSignerRepository.findByStoreId(storeId).orElseThrow();
 
 
         // when
@@ -81,7 +81,7 @@ class PaymentServiceTest extends IntegrationTest {
             for (int i = 0; i < jobCount; i++) {
                 executorService.submit(() -> {
                     try {
-                        var txInfo = PaymentFixture.txInfo(store, storeSignature, new Point(1));
+                        var txInfo = PaymentFixture.txInfo(store, storeSigner, new Point(1));
                         var payInfo = PaymentFixture.payInfo(member, linkCard);
                         paymentService.createPayment(txInfo, payInfo);
                     } finally {
@@ -114,7 +114,7 @@ class PaymentServiceTest extends IntegrationTest {
 
         Long storeId = storeService.create("newStore");
         Store store = storeRepository.findById(storeId).orElseThrow();
-        StoreSignature storeSignature = storeSignatureRepository.findByStoreId(storeId).orElseThrow();
+        StoreSigner storeSigner = storeSignerRepository.findByStoreId(storeId).orElseThrow();
 
         // when
         int threadCount = 16;
@@ -126,7 +126,7 @@ class PaymentServiceTest extends IntegrationTest {
                 executorService.submit(() -> {
                     try {
                         LinkCard linkCard = linkCards.get(index % linkCardAmount);
-                        var txInfo = PaymentFixture.txInfo(store, storeSignature, new Point(1));
+                        var txInfo = PaymentFixture.txInfo(store, storeSigner, new Point(1));
                         var payInfo = PaymentFixture.payInfo(member, linkCard);
                         paymentService.createPayment(txInfo, payInfo);
                     } finally {
