@@ -28,8 +28,8 @@ public class KakaoLoginProcessor {
 
         var userResponse = kakaoOauthClient.fetchUser(authResponse.getBody().accessToken());
         validate(userResponse, "로그인을 위한 권한이 부족");
-
-        return LoginPrincipal.of(userResponse.getBody().kakaoAccount().email());
+        var kakaoAccount = userResponse.getBody().kakaoAccount();
+        return LoginPrincipal.of(kakaoAccount.email(), kakaoAccount.profile().nickname());
     }
 
     private static void validate(final ResponseEntity<?> response, final String messageFor4xx) {
