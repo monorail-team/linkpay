@@ -24,12 +24,12 @@ const Home: React.FC = () => {
   const { handleWebAuthn, loading } = useWebAuthn();
 
   const onFingerprintClick = async () => {
-    const memberSignature = await handleWebAuthn();
-    if (memberSignature) {
+    const assertionResult = await handleWebAuthn();
+    if (assertionResult) {
       const selectedCard = cards[currentIndex];
-      navigate("/payment", { state: { cardData: selectedCard, memberSignature } });
+      navigate("/payment", { state: { cardData: selectedCard} });
     } else {
-      console.error("memberSignature 생성 실패");
+      console.error("assertionResult 생성 실패");
     }
   };
 
