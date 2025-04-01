@@ -22,7 +22,7 @@ class KakaoLoginProcessorTest {
         when(kakaoOauthClient.authorize(code))
                 .thenReturn(ResponseEntity.ok(KakaoOauthResponse.of("accessToken")));
         when(kakaoOauthClient.fetchUser("accessToken"))
-                .thenReturn(ResponseEntity.ok(KakaoUserResponse.of("kakao@kakao.com")));
+                .thenReturn(ResponseEntity.ok(KakaoUserResponse.of("kakao@kakao.com", "username")));
         KakaoLoginProcessor sut = new KakaoLoginProcessor(kakaoOauthClient);
 
         //when

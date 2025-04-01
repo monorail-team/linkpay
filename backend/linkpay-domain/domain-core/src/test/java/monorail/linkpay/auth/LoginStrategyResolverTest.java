@@ -26,7 +26,7 @@ class LoginStrategyResolverTest {
         KakaoLoginProcessor kakaoLoginProcessor = Mockito.mock(KakaoLoginProcessor.class);
         LoginStrategyResolver sut = new LoginStrategyResolver(kakaoLoginProcessor);
         when(kakaoLoginProcessor.process(code))
-                .thenReturn(LoginPrincipal.of("test@email.com"));
+                .thenReturn(LoginPrincipal.of("test@email.com", "username"));
 
         //when
         LoginPrincipal loginPrincipal = sut.resolve(request);
