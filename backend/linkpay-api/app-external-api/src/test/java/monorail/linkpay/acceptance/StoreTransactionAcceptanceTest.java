@@ -4,7 +4,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import monorail.linkpay.controller.request.StoreCreateRequest;
 import monorail.linkpay.controller.request.StoreTransactionRequest;
-import monorail.linkpay.store.dto.TransactionResponse;
+import monorail.linkpay.store.dto.TransactionSign;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ public class StoreTransactionAcceptanceTest extends AcceptanceTest {
     Stream<DynamicTest> 거래정보_생성_및_결제_성공_시나리오() {
         String accessToken = 엑세스_토큰();
         var storeUrl = new ThreadLocal<String>();
-        var transaction = new ThreadLocal<TransactionResponse>();
+        var transaction = new ThreadLocal<TransactionSign>();
 
         return Stream.of(
                 dynamicTest("가게를 생성한다.", () -> {
@@ -40,7 +40,7 @@ public class StoreTransactionAcceptanceTest extends AcceptanceTest {
                     var response = 거래정보_생성_요청(accessToken, storeUrl.get(), request);
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-                    var transactionResponse = response.as(TransactionResponse.class);
+                    var transactionResponse = response.as(TransactionSign.class);
                     assertThat(transactionResponse).isNotNull();
 
                     transaction.set(transactionResponse);

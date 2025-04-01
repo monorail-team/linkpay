@@ -3,7 +3,7 @@ package monorail.linkpay.store.dto;
 import lombok.Builder;
 import monorail.linkpay.store.domain.Store;
 
-public record TransactionResponse(
+public record TransactionSign(
         Data data,
         String signature) {
 

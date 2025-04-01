@@ -2,7 +2,7 @@ package monorail.linkpay.store;
 
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.store.domain.Store;
-import monorail.linkpay.store.dto.TransactionResponse;
+import monorail.linkpay.store.dto.TransactionSign;
 import monorail.linkpay.store.service.StoreTransactionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ class StoreTransactionServiceTest extends IntegrationTest {
         long amount = 1000L;
 
         //when
-        TransactionResponse response = sut.create(storeId, amount);
+        TransactionSign response = sut.create(storeId, amount);
 
         //then
         assertThat(response.data()).isNotNull();
