@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.token.TokenGenerator;
 import monorail.linkpay.token.TokenType;
 import monorail.linkpay.token.TokenValidationException;
@@ -33,9 +34,9 @@ public class PaymentTokenProvider {
         return generated.value();
     }
 
-    public void validate(Long memberId, Long cardId, String paymentToken) {
+    public void validate(final LinkCard linkCard, final String paymentToken) {
         try {
-            // todo 토큰 검증 리팩토링
+            // todo 토큰 검증 추가 구현
             ValidatedToken validated = tokenValidator.validate(paymentToken);
             PaymentTokenPayload payload = JsonUtil.parse(validated.payload(), PaymentTokenPayload.class);
         } catch (TokenValidationException e) {

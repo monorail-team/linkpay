@@ -3,7 +3,6 @@ package monorail.linkpay.store.service;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
-import monorail.linkpay.util.json.Json;
 import monorail.linkpay.util.json.JsonUtil;
 
 import java.nio.charset.StandardCharsets;
@@ -28,6 +27,7 @@ public class TransactionSignatureProvider {
             PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
             PrivateKey privateKey = KeyFactory.getInstance(keyAlgorithm).generatePrivate(spec);
 
+            // todo 해시 적용 후 암호화 해야함
             Signature sig = Signature.getInstance(signatureAlgorithm);
             sig.initSign(privateKey);
             sig.update(JsonUtil.toJson(data).value().getBytes(StandardCharsets.UTF_8));
