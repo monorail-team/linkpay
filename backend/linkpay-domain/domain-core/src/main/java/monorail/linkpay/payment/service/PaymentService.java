@@ -1,7 +1,7 @@
 package monorail.linkpay.payment.service;
 
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.link.service.LinkCardUpdater;
+import monorail.linkpay.linkcard.service.LinkCardUpdater;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.service.LinkCardFetcher;
 import monorail.linkpay.payment.dto.PaymentInfo;

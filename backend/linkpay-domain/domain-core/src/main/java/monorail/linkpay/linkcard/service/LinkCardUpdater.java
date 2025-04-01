@@ -1,4 +1,4 @@
-package monorail.linkpay.link.service;
+package monorail.linkpay.linkcard.service;
 
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
