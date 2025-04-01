@@ -7,6 +7,7 @@ import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
+import monorail.linkpay.wallet.domain.Role;
 import monorail.linkpay.wallet.dto.LinkedWalletResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.wallet.service.LinkedWalletService;
@@ -32,13 +33,15 @@ public class LinkedWalletController {
     @GetMapping
     public ResponseEntity<LinkedWalletsResponse> getLinkedWallets(@RequestParam(required = false) final Long lastId,
                                                                   @RequestParam(defaultValue = "10") final int size,
+                                                                  @RequestParam final Role role,
                                                                   @AuthenticationPrincipal final AuthPrincipal principal) {
-        return ResponseEntity.ok(linkedWalletService.readLinkedWallets(principal.memberId(), lastId, size));
+        return ResponseEntity.ok(linkedWalletService.readLinkedWallets(principal.memberId(), role, lastId, size));
     }
 
     @GetMapping("/{linkedWalletId}")
-    public ResponseEntity<LinkedWalletResponse> getLinkedWallet(@PathVariable final Long linkedWalletId) {
-        return ResponseEntity.ok(linkedWalletService.readLinkedWallet(linkedWalletId));
+    public ResponseEntity<LinkedWalletResponse> getLinkedWallet(@PathVariable final Long linkedWalletId,
+                                                                @AuthenticationPrincipal final AuthPrincipal principal) {
+        return ResponseEntity.ok(linkedWalletService.readLinkedWallet(linkedWalletId, principal.memberId()));
     }
 
     @PostMapping
@@ -61,18 +64,10 @@ public class LinkedWalletController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/deduct/{linkedWalletId}")
-    public ResponseEntity<Void> deductLinkedWallet(@AuthenticationPrincipal final AuthPrincipal principal,
-                                                   @PathVariable final Long linkedWalletId,
-                                                   @Valid @RequestBody final WalletPointRequest walletPointRequest) {
-        linkedWalletService.deductLinkedWallet(linkedWalletId, new Point(walletPointRequest.amount()),
-                principal.memberId());
-        return ResponseEntity.noContent().build();
-    }
-
     @DeleteMapping("/{linkedWalletId}")
-    public ResponseEntity<Void> deleteLinkedWallet(@PathVariable final Long linkedWalletId) {
-        linkedWalletService.deleteLinkedWallet(linkedWalletId);
+    public ResponseEntity<Void> deleteLinkedWallet(@PathVariable final Long linkedWalletId,
+                                                   @AuthenticationPrincipal final AuthPrincipal principal) {
+        linkedWalletService.deleteLinkedWallet(linkedWalletId, principal.memberId());
         return ResponseEntity.noContent().build();
     }
 }

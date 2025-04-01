@@ -17,7 +17,8 @@ public class LinkedMemberControllerTest extends ControllerTest {
 
     @Test
     void 링크멤버를_조회한다() {
-        when(linkedMemberService.getLinkedMembers(anyLong(), anyLong(), anyInt())).thenReturn(LINKED_MEMBERS_RESPONSE);
+        when(linkedMemberService.getLinkedMembers(anyLong(), anyLong(), anyLong(), anyInt()))
+                .thenReturn(LINKED_MEMBERS_RESPONSE);
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")
@@ -43,8 +44,19 @@ public class LinkedMemberControllerTest extends ControllerTest {
 
     @Test
     void 링크멤버를_삭제한다() {
-        doNothing().when(linkedMemberService)
-                .deleteLinkedMember(anyLong(), anySet(), anyLong());
+        doNothing().when(linkedMemberService).deleteLinkedMember(anyLong(), anyLong(), anyLong());
+
+        docsGiven
+                .header("Authorization", "Bearer {access_token}")
+                .when().delete("/api/linked-wallets/1/members/1")
+                .then().log().all()
+                .apply(document("linkedmembers/delete/one"))
+                .statusCode(HttpStatus.NO_CONTENT.value());
+    }
+
+    @Test
+    void 링크멤버_여러명을_삭제한다() {
+        doNothing().when(linkedMemberService).deleteLinkedMembers(anyLong(), anySet(), anyLong());
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")

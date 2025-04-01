@@ -4,6 +4,7 @@ import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE_
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE_2;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE_3;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_CREATE_REQUEST;
+import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_DETAIL_RESPONSE;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_REGISTRATION_REQUEST;
 import static monorail.linkpay.controller.ControllerFixture.REGISTERED_LINK_CARDS_RESPONSE;
 import static monorail.linkpay.controller.ControllerFixture.SHARED_LINK_CARD_CREATE_REQUEST;
@@ -43,7 +44,7 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 링크지갑에서_링크카드를_생성한다() {
-        doNothing().when(linkCardService).createShared(any(SharedLinkCardCreateServiceRequest.class));
+        doNothing().when(linkCardService).createShared(any(SharedLinkCardCreateServiceRequest.class), anyLong());
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -110,7 +111,7 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 링크카드를_결제카드로_등록한다() {
-        doNothing().when(linkCardService).activateLinkCard(anyList());
+        doNothing().when(linkCardService).activateLinkCard(anyList(), anyLong());
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -133,6 +134,18 @@ public class LinkCardControllerTest extends ControllerTest {
                 .when().get("/api/cards/registered")
                 .then().log().all()
                 .apply(document("cards/read/activate"))
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void 링크카드_상세조회한다() {
+        when(linkCardService.getLinkCardDetails(anyLong(), anyLong()))
+                .thenReturn(LINK_CARD_DETAIL_RESPONSE);
+
+        docsGiven.header("Authorization", "Bearer {access_token}")
+                .when().get("/api/cards/detail?linkCardId=1")
+                .then().log().all()
+                .apply(document("cards/read/detail"))
                 .statusCode(HttpStatus.OK.value());
     }
 

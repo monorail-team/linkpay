@@ -1,5 +1,6 @@
 package monorail.linkpay.wallet.service;
 
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.wallet.domain.Role.CREATOR;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.history.service.WalletHistoryRecorder;
 import monorail.linkpay.linkcard.service.LinkCardFetcher;
 import monorail.linkpay.member.domain.Member;
@@ -16,6 +18,7 @@ import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.LinkedWallet;
+import monorail.linkpay.wallet.domain.MyWallet;
 import monorail.linkpay.wallet.domain.Role;
 import monorail.linkpay.wallet.dto.LinkedWalletResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
@@ -41,21 +44,25 @@ public class LinkedWalletService {
     private final IdGenerator idGenerator;
     private final WalletHistoryRecorder walletHistoryRecorder;
     private final LinkedMemberFetcher linkedMemberFetcher;
+    private final MyWalletFetcher myWalletFetcher;
     private final WalletUpdater walletUpdater;
 
-    public LinkedWalletsResponse readLinkedWallets(final long memberId, final Long lastId, final int size) {
-        Slice<LinkedWalletDto> linkedWalletDtos = linkedMemberRepository.findLinkedWalletDtosByMemberId(
+    public LinkedWalletsResponse readLinkedWallets(final long memberId, final Role role,
+                                                   final Long lastId, final int size) {
+        Slice<LinkedWalletDto> linkedWallets = linkedWalletRepository.findLinkedWalletsByMemberId(
                 memberId,
+                role,
                 lastId,
                 PageRequest.of(0, size)
         );
-        return new LinkedWalletsResponse(linkedWalletDtos.stream()
+        return new LinkedWalletsResponse(linkedWallets.stream()
                 .map(LinkedWalletResponse::from)
                 .toList(),
-                linkedWalletDtos.hasNext());
+                linkedWallets.hasNext());
     }
 
-    public LinkedWalletResponse readLinkedWallet(final Long linkedWalletId) {
+    public LinkedWalletResponse readLinkedWallet(final Long linkedWalletId, final long memberId) {
+        linkedMemberFetcher.checkExistsByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
         return new LinkedWalletResponse(
                 linkedWalletId.toString(),
@@ -66,6 +73,7 @@ public class LinkedWalletService {
 
     @Transactional
     public Long createLinkedWallet(final long memberId, final String walletName, final Set<Long> memberIds) {
+        validateCreatorNotInParticipants(memberId, memberIds);
         Member member = memberFetcher.fetchById(memberId);
         LinkedWallet linkedWallet = LinkedWallet.builder()
                 .id(idGenerator.generate())
@@ -92,28 +100,39 @@ public class LinkedWalletService {
     }
 
     @Transactional
-    public void chargeLinkedWallet(final long linkedWalletId, final Point point, final Long memberId) {
+    public void chargeLinkedWallet(final Long linkedWalletId, final Point point, final long memberId) {
+        linkedMemberFetcher.checkExistsByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
         Member member = memberFetcher.fetchById(memberId);
         LinkedWallet wallet = linkedWalletFetcher.fetchByIdForUpdate(linkedWalletId);
         walletUpdater.chargePoint(wallet, point, member);
     }
 
     @Transactional
-    public void deductLinkedWallet(final long linkedWalletId, final Point point, final Long memberId) {
-        Member member = memberFetcher.fetchById(memberId);
-        LinkedWallet wallet = linkedWalletFetcher.fetchByIdForUpdate(linkedWalletId);
-        walletUpdater.deductPoint(wallet, point, member);
-    }
-
-    @Transactional
-    public void deleteLinkedWallet(final Long linkedWalletId) {
+    public void deleteLinkedWallet(final Long linkedWalletId, final long memberId) {
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
+        LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
+        validateCreator(linkedMember);
         linkCardFetcher.checkNotExistsByWalletId(linkedWalletId);
+
+        MyWallet myWallet = myWalletFetcher.fetchByMemberIdForUpdate(memberId);
+        walletUpdater.chargePoint(myWallet, linkedWallet.getPoint(), memberFetcher.fetchById(memberId));
+
         List<Long> linkedMemberIds = linkedMemberRepository.findByLinkedWalletId(linkedWalletId).stream()
                 .map(LinkedMember::getId)
                 .toList();
-
         linkedMemberRepository.deleteByIds(new HashSet<>(linkedMemberIds));
         linkedWalletRepository.delete(linkedWallet);
+    }
+
+    private void validateCreatorNotInParticipants(final Long creatorId, final Set<Long> memberIds) {
+        if (memberIds.contains(creatorId)) {
+            throw new LinkPayException(INVALID_REQUEST, "본인을 참여자 목록에 포함할 수 없습니다.");
+        }
+    }
+
+    private void validateCreator(LinkedMember linkedMember) {
+        if (!linkedMember.isCreator()) {
+            throw new LinkPayException(INVALID_REQUEST, "링크 지갑은 생성자만 삭제할 수 있습니다.");
+        }
     }
 }
