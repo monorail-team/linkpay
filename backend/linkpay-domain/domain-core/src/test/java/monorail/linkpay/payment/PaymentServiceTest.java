@@ -6,7 +6,6 @@ import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
 import monorail.linkpay.payment.service.PaymentService;
-import monorail.linkpay.store.PaymentFixture;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.store.domain.StoreSigner;
 import monorail.linkpay.store.service.StoreService;

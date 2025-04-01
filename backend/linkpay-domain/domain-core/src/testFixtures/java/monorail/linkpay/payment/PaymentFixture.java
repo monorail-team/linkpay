@@ -1,4 +1,4 @@
-package monorail.linkpay.store;
+package monorail.linkpay.payment;
 
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.LinkCard;
