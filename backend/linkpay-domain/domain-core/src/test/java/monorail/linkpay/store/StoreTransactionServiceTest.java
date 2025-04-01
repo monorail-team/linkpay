@@ -1,8 +1,9 @@
 package monorail.linkpay.store;
 
 import monorail.linkpay.common.IntegrationTest;
+import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.store.domain.Store;
-import monorail.linkpay.store.dto.TransactionSign;
+import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.store.service.StoreTransactionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +21,14 @@ class StoreTransactionServiceTest extends IntegrationTest {
         Store store = storeRepository.save(StoreFixtures.store());
         storeSignatureRepository.save(StoreFixtures.storeSignature(store));
         long storeId =store.getId();
-        long amount = 1000L;
+        Point price = new Point(1000L);
 
         //when
-        TransactionSign response = sut.create(storeId, amount);
+        TransactionInfo txInfo = sut.create(storeId, price);
 
         //then
-        assertThat(response.data()).isNotNull();
-        assertThat(response.data().amount()).isEqualTo(amount);
-        assertThat(response.signature()).isNotNull();
+        assertThat(txInfo.data()).isNotNull();
+        assertThat(txInfo.data().point()).isEqualTo(price);
+        assertThat(txInfo.signature()).isNotNull();
     }
 }

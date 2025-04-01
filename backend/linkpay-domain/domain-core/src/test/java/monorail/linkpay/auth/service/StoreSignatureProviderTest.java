@@ -4,7 +4,7 @@ import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.store.StoreFixtures;
 import monorail.linkpay.store.domain.Store;
-import monorail.linkpay.store.dto.TransactionSign;
+import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.store.service.TransactionSignatureProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class StoreSignatureProviderTest {
         //given
         Store store = StoreFixtures.store();
         long amount = 1000L;
-        var data = TransactionSign.Data.from(store, amount);
+        var data = TransactionInfo.Data.from(store, amount);
         var signature = StoreFixtures.storeSignature(store);
 
         //when
@@ -33,7 +33,7 @@ class StoreSignatureProviderTest {
         //given
         Store store = StoreFixtures.store();
         long amount = 1000L;
-        var data = TransactionSign.Data.from(store, amount);
+        var data = TransactionInfo.Data.from(store, amount);
         var signatureKey = StoreFixtures.storeSignature(store);
         String signature = sut.createSignature(data, signatureKey.getEncryptKey());
 
@@ -46,10 +46,10 @@ class StoreSignatureProviderTest {
         //given
         Store store = StoreFixtures.store();
         long amount = 1000L;
-        var data = TransactionSign.Data.from(store, amount);
+        var data = TransactionInfo.Data.from(store, amount);
         var signatureKey = StoreFixtures.storeSignature(store);
         String signature = sut.createSignature(data, signatureKey.getEncryptKey());
-        var wrongData = TransactionSign.Data.from(store, 222L);
+        var wrongData = TransactionInfo.Data.from(store, 222L);
 
         //when, then
         Assertions.assertThatThrownBy(() -> sut.verifySignature(wrongData, signature, signatureKey.getDecryptKey()))

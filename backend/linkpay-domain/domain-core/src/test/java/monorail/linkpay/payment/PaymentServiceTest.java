@@ -12,7 +12,10 @@ import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
+import monorail.linkpay.payment.dto.PaymentInfo;
+import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.payment.service.PaymentService;
+import monorail.linkpay.store.PaymentFixture;
 import monorail.linkpay.wallet.dto.WalletResponse;
 import monorail.linkpay.wallet.service.MyWalletService;
 import org.junit.jupiter.api.Test;
@@ -30,16 +33,18 @@ class PaymentServiceTest extends IntegrationTest {
     @Test
     void 내지갑_링크카드로_결제한다() {
         // given
-        Point point = new Point(50000);
-        Point subtractPoint = new Point(30000);
-        myWalletService.charge(member.getId(), point);
+        myWalletService.charge(member.getId(), new Point(50000));
+
         LinkCardCreateServiceRequest linkCardCreateServiceRequest = createCard(LocalDate.now().plusDays(1));
         linkCardService.create(member.getId(), linkCardCreateServiceRequest);
         List<LinkCard> linkCards = linkCardRepository.findByMemberId(member.getId());
         LinkCard linkCard = linkCards.getFirst();
 
+        var txInfo = PaymentFixture.txInfo(new Point(30000));
+        var payInfo = PaymentFixture.payInfo(member, linkCard);
+
         // when
-        paymentService.createPayment(member.getId(), subtractPoint, linkCard.getId(), 1L);
+        paymentService.createPayment(txInfo, payInfo);
 
         // then
         WalletResponse walletResponse = myWalletService.read(member.getId());
@@ -50,7 +55,6 @@ class PaymentServiceTest extends IntegrationTest {
     void 내지갑_링크카드로_여러번_결제한다() throws InterruptedException {
         // given
         Point chargePoint = new Point(1000);
-        Point subtractPoint = new Point(1);
         myWalletService.charge(member.getId(), chargePoint);
 
         LinkCardCreateServiceRequest linkCardCreateServiceRequest = createCard(LocalDate.now().plusDays(1));
@@ -66,7 +70,9 @@ class PaymentServiceTest extends IntegrationTest {
             for (int i = 0; i < jobCount; i++) {
                 executorService.submit(() -> {
                     try {
-                        paymentService.createPayment(member.getId(), subtractPoint, linkCard.getId(), 1L);
+                        var txInfo = PaymentFixture.txInfo(new Point(1));
+                        var payInfo = PaymentFixture.payInfo(member, linkCard);
+                        paymentService.createPayment(txInfo, payInfo);
                     } finally {
                         countDownLatch.countDown();
                     }
@@ -78,7 +84,7 @@ class PaymentServiceTest extends IntegrationTest {
         // then
         WalletResponse walletResponse = myWalletService.read(member.getId());
         assertThat(walletResponse.amount())
-                .isEqualTo(chargePoint.getAmount() - subtractPoint.getAmount() * jobCount);
+                .isEqualTo(900L);
     }
 
     @Test
@@ -104,8 +110,10 @@ class PaymentServiceTest extends IntegrationTest {
                 final int index = i;
                 executorService.submit(() -> {
                     try {
-                        paymentService.createPayment(member.getId(), subtractPoint,
-                                linkCards.get(index % linkCardAmount).getId(), 1L);
+                        LinkCard linkCard = linkCards.get(index % linkCardAmount);
+                        var txInfo = PaymentFixture.txInfo(new Point(1));
+                        var payInfo = PaymentFixture.payInfo(member, linkCard);
+                        paymentService.createPayment(txInfo, payInfo);
                     } finally {
                         countDownLatch.countDown();
                     }
