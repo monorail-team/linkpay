@@ -18,4 +18,9 @@ public class MemberService {
         Member member = memberFetcher.fetchByEmail(email);
         return MemberResponse.from(member);
     }
+
+    public MemberResponse getMember(final Long memberId) {
+        Member member = memberFetcher.fetchById(memberId);
+        return MemberResponse.from(member);
+    }
 }
