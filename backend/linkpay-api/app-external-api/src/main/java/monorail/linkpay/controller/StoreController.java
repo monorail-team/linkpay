@@ -3,7 +3,7 @@ package monorail.linkpay.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.controller.request.StoreCreateRequest;
-import monorail.linkpay.store.dto.TransactionSign;
+import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.store.service.StoreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ public class StoreController {
 
     // todo 인증 및 인가
     @PostMapping
-    public ResponseEntity<TransactionSign> create(@RequestBody @Valid final StoreCreateRequest request) {
+    public ResponseEntity<TransactionInfo> create(@RequestBody @Valid final StoreCreateRequest request) {
         Long storeId = storeService.create(request.storeName());
         return ResponseEntity.created(URI.create(String.format("/api/stores/%s", storeId))).build();
     }

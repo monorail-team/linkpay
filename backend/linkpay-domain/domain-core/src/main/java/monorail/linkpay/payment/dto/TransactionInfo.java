@@ -7,8 +7,8 @@ import monorail.linkpay.store.domain.Store;
 @Builder
 public record TransactionInfo(Long storeId, Point point, String signature) {
 
-    public TransactionInfo(Data data, String signature) {
-        this(data.storeId(), data.point(), signature);
+    public static TransactionInfo from(Data data, String signature) {
+        return new TransactionInfo(data.storeId(), data.point(), signature);
     }
 
     @Builder
