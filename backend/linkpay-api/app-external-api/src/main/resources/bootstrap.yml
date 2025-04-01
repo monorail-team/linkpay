@@ -1,7 +1,6 @@
 spring:
   profiles:
-    default: dev
-    active: ${SPRING_PROFILES_ACTIVE:}
+    active: dev
   config:
     import: optional:classpath:.env[.properties]
   cloud:
