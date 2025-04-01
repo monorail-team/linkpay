@@ -5,6 +5,7 @@ import static monorail.linkpay.linkcard.domain.CardState.getCardState;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
@@ -35,8 +36,8 @@ public class LinkCardController {
     @PostMapping
     public ResponseEntity<Void> createLinkCard(@AuthenticationPrincipal final AuthPrincipal principal,
                                                @Valid @RequestBody final LinkCardCreateRequest linkCardCreateRequest) {
-        linkCardService.create(principal.memberId(), linkCardCreateRequest.toServiceRequest());
-        return ResponseEntity.status(CREATED).build();
+        Long linkCardId = linkCardService.create(principal.memberId(), linkCardCreateRequest.toServiceRequest());
+        return ResponseEntity.created(URI.create("/api/cards/details/" + linkCardId)).build();
     }
 
     @PostMapping("/shared")
@@ -64,8 +65,8 @@ public class LinkCardController {
                 now()));
     }
 
-    @GetMapping("/detail")
-    public ResponseEntity<LinkCardDetailResponse> getLinkCardDetails(@RequestParam final Long linkCardId,
+    @GetMapping("/details/{linkCardId}")
+    public ResponseEntity<LinkCardDetailResponse> getLinkCardDetails(@PathVariable final Long linkCardId,
                                                                      @AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(linkCardService.getLinkCardDetails(principal.memberId(), linkCardId));
 

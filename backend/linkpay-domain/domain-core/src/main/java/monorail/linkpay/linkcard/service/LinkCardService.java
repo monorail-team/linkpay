@@ -51,10 +51,11 @@ public class LinkCardService {
     private final LinkCardFetcher linkCardFetcher;
 
     @Transactional
-    public void create(final Long memberId, final LinkCardCreateServiceRequest request) {
+    public Long create(final Long memberId, final LinkCardCreateServiceRequest request) {
         Wallet wallet = myWalletFetcher.fetchByMemberId(memberId);
         Member member = memberFetcher.fetchById(memberId);
-        linkCardRepository.save(request.toLinkCard(idGenerator.generate(), wallet, member));
+        LinkCard linkCard = linkCardRepository.save(request.toLinkCard(idGenerator.generate(), wallet, member));
+        return linkCard.getId();
     }
 
     @Transactional
@@ -66,7 +67,6 @@ public class LinkCardService {
         if (!linkedWalletCreator.getMember().getId().equals(memberId)) {
             throw new LinkPayException(INVALID_REQUEST, "링크카드 생성 권한이 없습니다.");
         }
-
         List<Long> memberIds = linkedMemberRepository.findByLinkedWalletId(linkedwallet.getId()).stream()
                 .map(linkedMember -> linkedMember.getMember().getId())
                 .toList();
@@ -127,32 +127,32 @@ public class LinkCardService {
 
     @Transactional
     public void deleteLinkCard(final Long linkCardId, final Long memberId) {
-        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
         Member member = memberFetcher.fetchById(memberId);
-        validateOwnershipOrCreator(linkCard, member);
+        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
+        validateOwnershipOrCreator(member, linkCard);
         linkCardRepository.deleteById(linkCardId);
     }
 
-    private void validateOwnershipOrCreator(final LinkCard linkCard, final Member member) {
-        if (!linkCard.isSharedCard() || !isCreator(linkCard, member)) {
-            linkCard.validateOwnership(member);
-        }
-    }
-
-    private boolean isCreator(final LinkCard linkCard, final Member member) {
-        LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(
-                linkCard.getWalletId(), member.getId());
-        return linkedMember.isCreator();
-    }
-
     public LinkCardDetailResponse getLinkCardDetails(final Long memberId, final Long linkCardId) {
-        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
         Member member = memberFetcher.fetchById(memberId);
-        validateOwnershipOrCreator(linkCard, member);
+        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
+        validateOwnershipOrCreator(member, linkCard);
         if (!linkCard.isSharedCard()) {
             return LinkCardDetailResponse.from(linkCard, null);
         }
         String linkedWalletName = linkedWalletFetcher.fetchById(linkCard.getWalletId()).getName();
         return LinkCardDetailResponse.from(linkCard, linkedWalletName);
+    }
+
+    private void validateOwnershipOrCreator(final Member member, final LinkCard linkCard) {
+        if (!linkCard.isSharedCard() || !isCreator(member, linkCard)) {
+            linkCard.validateOwnership(member);
+        }
+    }
+
+    private boolean isCreator(final Member member, final LinkCard linkCard) {
+        LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(
+                linkCard.getWalletId(), member.getId());
+        return linkedMember.isCreator();
     }
 }
