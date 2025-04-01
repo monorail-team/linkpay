@@ -1,7 +1,7 @@
 package monorail.linkpay.token.dto;
 
-import monorail.linkpay.token.TokenType;
 import lombok.Builder;
+import monorail.linkpay.token.TokenType;
 
 @Builder
 public record GeneratedToken(

@@ -1,12 +1,12 @@
-package monorail.linkpay.banking;
+package monorail.linkpay;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BankApplication {
+public class SettlementApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BankApplication.class, args);
+        SpringApplication.run(SettlementApplication.class, args);
     }
 }

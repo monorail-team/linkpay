@@ -1,12 +1,12 @@
 package monorail.linkpay.history.service;
 
+import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
+
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.history.domain.WalletHistory;
 import monorail.linkpay.history.repository.WalletHistoryRepository;
-
-import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
 
 @SupportLayer
 @RequiredArgsConstructor

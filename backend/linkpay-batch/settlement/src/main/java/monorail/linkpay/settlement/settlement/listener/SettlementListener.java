@@ -20,9 +20,11 @@ public class SettlementListener {
     private final SettlementService settlementService;
 
     @KafkaListener(topics = "create", groupId = "settlement")
-    public void createSettlement(@Payload String messageJson, Acknowledgment ack) throws JsonProcessingException {
+    public void createSettlement(@Payload final String messageJson, final Acknowledgment ack)
+            throws JsonProcessingException {
         CreateMessage message = objectMapper.readValue(messageJson, CreateMessage.class);
         settlementService.create(message.walletId(), message.storeId(), message.amount());
+        log.info(messageJson);
         ack.acknowledge();
     }
 }

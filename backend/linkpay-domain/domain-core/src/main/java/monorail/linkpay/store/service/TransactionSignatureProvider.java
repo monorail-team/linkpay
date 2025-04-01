@@ -1,11 +1,5 @@
 package monorail.linkpay.store.service;
 
-import monorail.linkpay.annotation.SupportLayer;
-import monorail.linkpay.exception.ExceptionCode;
-import monorail.linkpay.exception.LinkPayException;
-import monorail.linkpay.util.json.Json;
-import monorail.linkpay.util.json.JsonUtil;
-
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -14,6 +8,10 @@ import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import monorail.linkpay.annotation.SupportLayer;
+import monorail.linkpay.exception.ExceptionCode;
+import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.util.json.JsonUtil;
 
 @SupportLayer
 public class TransactionSignatureProvider {
@@ -41,12 +39,12 @@ public class TransactionSignatureProvider {
 
     public void verifySignature(final Object data, final String signature, final String decryptKey) {
         boolean verified = verify(data, signature, decryptKey);
-        if(!verified) {
+        if (!verified) {
             throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, "유효하지 않은 서명");
         }
     }
 
-    private boolean verify(final Object data, final String signature, final String decryptKey){
+    private boolean verify(final Object data, final String signature, final String decryptKey) {
         try {
             byte[] keyBytes = Base64.getDecoder().decode(decryptKey);
             X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);

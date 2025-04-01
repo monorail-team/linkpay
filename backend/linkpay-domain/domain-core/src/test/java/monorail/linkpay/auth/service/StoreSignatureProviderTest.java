@@ -14,7 +14,7 @@ class StoreSignatureProviderTest {
     private TransactionSignatureProvider sut = new TransactionSignatureProvider();
 
     @Test
-    public void 전자서명을_생성한다() throws Exception{
+    public void 전자서명을_생성한다() throws Exception {
         //given
         Store store = StoreFixtures.store();
         long amount = 1000L;
@@ -29,7 +29,7 @@ class StoreSignatureProviderTest {
     }
 
     @Test
-    public void 전자서명을_검증한다() throws Exception{
+    public void 전자서명을_검증한다() throws Exception {
         //given
         Store store = StoreFixtures.store();
         long amount = 1000L;
@@ -38,11 +38,12 @@ class StoreSignatureProviderTest {
         String signature = sut.createSignature(data, signatureKey.getEncryptKey());
 
         //when, then
-        Assertions.assertThatNoException().isThrownBy(() -> sut.verifySignature(data, signature, signatureKey.getDecryptKey()));
+        Assertions.assertThatNoException()
+                .isThrownBy(() -> sut.verifySignature(data, signature, signatureKey.getDecryptKey()));
     }
 
     @Test
-    public void 변조된_데이터로_전자서명_검증_시_예외가_발생한다() throws Exception{
+    public void 변조된_데이터로_전자서명_검증_시_예외가_발생한다() throws Exception {
         //given
         Store store = StoreFixtures.store();
         long amount = 1000L;

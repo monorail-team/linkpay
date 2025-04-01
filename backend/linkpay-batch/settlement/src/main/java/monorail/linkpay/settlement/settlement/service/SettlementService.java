@@ -16,12 +16,13 @@ public class SettlementService {
     private final SettlementRepository settlementRepository;
     private final IdGenerator idGenerator;
 
-    public Long create(Long walletId, Long storeId, Long amount) {
+    public Long create(final Long walletId, final Long storeId, final Long amount) {
         return settlementRepository.save(Settlement.builder()
                 .id(idGenerator.generate())
                 .walletId(walletId)
                 .storeId(storeId)
                 .amount(new Point(amount))
-                .settlementStatus(PENDING).build()).getId();
+                .settlementStatus(PENDING)
+                .build()).getId();
     }
 }
