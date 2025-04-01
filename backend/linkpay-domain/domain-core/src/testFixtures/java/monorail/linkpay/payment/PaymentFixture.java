@@ -7,7 +7,7 @@ import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.store.domain.StoreSigner;
-import monorail.linkpay.store.service.SignatureProvider;
+import monorail.linkpay.util.signature.SignatureProvider;
 
 public class PaymentFixture {
     private static final SignatureProvider signatureProvider = new SignatureProvider();

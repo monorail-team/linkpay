@@ -8,7 +8,7 @@ import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.store.service.StoreSignerFetcher;
-import monorail.linkpay.store.service.SignatureProvider;
+import monorail.linkpay.util.signature.SignatureProvider;
 
 @SupportLayer
 @RequiredArgsConstructor

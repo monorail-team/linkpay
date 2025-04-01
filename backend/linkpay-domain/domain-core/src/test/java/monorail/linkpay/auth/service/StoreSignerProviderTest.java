@@ -5,7 +5,7 @@ import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.store.StoreFixtures;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.payment.dto.TransactionInfo;
-import monorail.linkpay.store.service.SignatureProvider;
+import monorail.linkpay.util.signature.SignatureProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package monorail.linkpay.store.service;
+package monorail.linkpay.util.signature;
 
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.ExceptionCode;

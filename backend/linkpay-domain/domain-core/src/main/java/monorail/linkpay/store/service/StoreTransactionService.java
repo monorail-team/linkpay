@@ -3,6 +3,7 @@ package monorail.linkpay.store.service;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.payment.dto.TransactionInfo;
+import monorail.linkpay.util.signature.SignatureProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
