@@ -68,7 +68,11 @@ const LinkWalletListPage: React.FC = () => {
     setWallets([]);
     setHasNext(true);
     setLastId(null);
-  }, [activeTab]);
+
+    setTimeout(() => {
+      fetchWallets();
+    }, 0);
+  }, [activeTab]); 
 
   
   useEffect(() => {
