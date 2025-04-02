@@ -6,6 +6,7 @@ const KakaoCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const base_url = process.env.REACT_APP_API_URL;
   useEffect(() => {
     const code = searchParams.get('code');
     if (!code) {
@@ -15,7 +16,7 @@ const KakaoCallback: React.FC = () => {
       try {
         // POST 요청 시 body가 필요 없으면 null을 전달
         const response = await axios.post(
-          `http://localhost:8080/api/auth/login/kakao?code=${code}`,
+          `${base_url}/api/auth/login/kakao?code=${code}`,
           null,
           {
             headers: {
