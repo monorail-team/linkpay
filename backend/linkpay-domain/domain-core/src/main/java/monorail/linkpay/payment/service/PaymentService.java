@@ -37,8 +37,8 @@ public class PaymentService {
         linkCard.usePoint(point);
 
         Wallet wallet = walletFetcher.fetchByIdForUpdate(linkCard.getWallet().getId());
-        walletUpdater.deductPoint(wallet, point, member);
-        paymentRepository.save(getPayment(linkCard, point, storeId));
+        Payment payment = paymentRepository.save(getPayment(linkCard, point, storeId));
+        walletUpdater.deductPoint(wallet, point, member, payment);
     }
 
     private void validateLinkCard(final Point point, final LinkCard linkCard, final Member member) {

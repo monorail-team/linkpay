@@ -1,8 +1,15 @@
 package monorail.linkpay.common;
 
+import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
+import static monorail.linkpay.linkcard.domain.CardType.SHARED;
+
+import java.time.LocalDate;
 import monorail.linkpay.DatabaseCleaner;
 import monorail.linkpay.MockTestConfiguration;
+import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.history.repository.WalletHistoryRepository;
+import monorail.linkpay.linkcard.domain.CardColor;
+import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
@@ -11,7 +18,10 @@ import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.store.repository.StoreRepository;
 import monorail.linkpay.store.repository.StoreSignatureRepository;
 import monorail.linkpay.util.id.IdGenerator;
+import monorail.linkpay.wallet.domain.LinkedMember;
+import monorail.linkpay.wallet.domain.LinkedWallet;
 import monorail.linkpay.wallet.domain.MyWallet;
+import monorail.linkpay.wallet.domain.Role;
 import monorail.linkpay.wallet.repository.LinkedMemberRepository;
 import monorail.linkpay.wallet.repository.LinkedWalletRepository;
 import monorail.linkpay.wallet.repository.MyWalletRepository;
@@ -76,6 +86,33 @@ public abstract class IntegrationTest {
         return Store.builder()
                 .id(1L)
                 .name("store1")
+                .build();
+    }
+
+    protected LinkedMember createLinkedMember(final Role role,
+                                              final Member member,
+                                              final LinkedWallet linkedWallet) {
+        return LinkedMember.builder()
+                .id(idGenerator.generate())
+                .role(role)
+                .member(member)
+                .linkedWallet(linkedWallet)
+                .build();
+    }
+
+    protected LinkCard createLinkWalletCard(final LinkedWallet linkedWallet,
+                                            final Member member) {
+        return LinkCard.builder()
+                .id(idGenerator.generate())
+                .cardColor(CardColor.getRandomColor())
+                .cardName("cardName")
+                .cardType(SHARED)
+                .wallet(linkedWallet)
+                .limitPrice(new Point(50000000))
+                .member(member)
+                .expiredAt(LocalDate.now().plusDays(1).atStartOfDay())
+                .usedPoint(new Point(0))
+                .state(UNREGISTERED)
                 .build();
     }
 }

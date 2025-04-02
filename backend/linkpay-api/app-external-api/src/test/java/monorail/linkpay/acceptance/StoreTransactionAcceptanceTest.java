@@ -1,20 +1,19 @@
 package monorail.linkpay.acceptance;
 
+import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPostRequest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.util.stream.Stream;
 import monorail.linkpay.controller.request.StoreCreateRequest;
 import monorail.linkpay.controller.request.StoreTransactionRequest;
 import monorail.linkpay.store.dto.TransactionResponse;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
-
-import java.util.stream.Stream;
-
-import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
-import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPostRequest;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class StoreTransactionAcceptanceTest extends AcceptanceTest {
 
@@ -54,11 +53,12 @@ public class StoreTransactionAcceptanceTest extends AcceptanceTest {
         );
     }
 
-    private ExtractableResponse<Response> 가게_생성_요청(final String accessToken, final StoreCreateRequest request) {
+    public static ExtractableResponse<Response> 가게_생성_요청(final String accessToken, final StoreCreateRequest request) {
         return sendPostRequest("/api/stores", accessToken, request);
     }
 
-    private ExtractableResponse<Response> 거래정보_생성_요청(final String accessToken, final String storeUrl, final StoreTransactionRequest request) {
+    private ExtractableResponse<Response> 거래정보_생성_요청(final String accessToken, final String storeUrl,
+                                                     final StoreTransactionRequest request) {
         return sendPostRequest("%s/transactions".formatted(storeUrl), accessToken, request);
     }
 
