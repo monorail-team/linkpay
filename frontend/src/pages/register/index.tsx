@@ -5,7 +5,7 @@ import LinkCardItem from '@/components/LinkCardItem';
 import axios from 'axios';
 import { Card } from '@/model/Card';
 
-
+const base_url = process.env.REACT_APP_API_URL;
 const Register: React.FC = () => {
 
 
@@ -14,11 +14,13 @@ const Register: React.FC = () => {
 
   const navigate = useNavigate();
 
+  
+  
   useEffect(() => {
     const fetchCards = async () => {
       try {
         const token = sessionStorage.getItem('accessToken');
-        const response = await axios.get('http://localhost:8080/api/cards/unregistered', {
+        const response = await axios.get(`${base_url}/api/cards/unregistered`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -50,7 +52,7 @@ const Register: React.FC = () => {
       try {
         const token = sessionStorage.getItem('accessToken');
         await axios.patch(
-          'http://localhost:8080/api/cards/activate',
+          `${base_url}/api/cards/activate`,
           { linkCardIds: selectedIndices },
           {
             headers: {
@@ -89,14 +91,14 @@ const Register: React.FC = () => {
          <div className="overflow-y-auto space-y-4 hide-scrollbar  max-h-[75vh]" >
           {cards.map((card) => (
             <label
-              key={card.id}
+              key={card.linkCardId}
               className="flex items-center cursor-pointer"
-              onClick={() => handleSelect(card.id)}
+              onClick={() => handleSelect(card.linkCardId)}
             >
               {/* 카드 영역: 선택된 경우 테두리 강조 */}
               <div
                 className={`my-1 box-border rounded-lg w-5/6 p-4 mx-auto bg-center h-[150px] ${
-                  selectedIndices.includes(card.id)
+                  selectedIndices.includes(card.linkCardId)
                     ? 'outline outline-4 outline-gray-400 brightness-90 dark:outline-white '
                     : ''
                 }`}
@@ -107,7 +109,7 @@ const Register: React.FC = () => {
                     usedpoint={card.usedpoint}
                     limitPrice={card.limitPrice}
                     expiredAt={card.expiredAt}
-                    isRegistered={card.linkedWalletId !== undefined}
+                    isRegistered={card.isRegistered !== undefined}
                   />
               </div>
             </label>

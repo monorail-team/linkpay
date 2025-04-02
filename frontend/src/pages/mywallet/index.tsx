@@ -12,11 +12,12 @@ const MyWallet: React.FC = () => {
   const [showChargeModal, setShowChargeModal] = useState(false);
   const [walletBalance, setWalletBalance] = useState(walletData.availablePoint);
 
+  const base_url = process.env.REACT_APP_API_URL;
   // 충전 API 호출 함수
   const handleCharge = async (amount: number) => {
     try {
       const token = sessionStorage.getItem('accessToken');
-      const response = await axios.patch('http://localhost:8080/api/wallets/charge', 
+      const response = await axios.patch(`${base_url}/api/wallets/charge`, 
         { amount: amount },
           {
             headers: {

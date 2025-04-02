@@ -2,7 +2,7 @@ import { Card } from '@/model/Card';
 
 export const cards: Card[] = [
   {
-    id: 1,
+    linkCardId: 1,
     cardName: "카드 1",
     expiredAt: "25.12.23",
     usedpoint: 54000,
@@ -12,7 +12,7 @@ export const cards: Card[] = [
     isRegistered: true,
   },
   {
-    id: 2,
+    linkCardId: 2,
     cardName: "카드 2",
     expiredAt: "01.01.24",
     usedpoint: 30000,
@@ -21,7 +21,7 @@ export const cards: Card[] = [
     cardColor: '#FEC9B8',
   },
   {
-    id: 3,
+    linkCardId: 3,
     cardName: "카드 3",
     expiredAt: "01.01.24",
     usedpoint: 30000,
@@ -31,7 +31,7 @@ export const cards: Card[] = [
     isRegistered: true,
   },
   {
-    id: 4,
+    linkCardId: 4,
     cardName: "카드 4",
     expiredAt: "01.01.24",
     usedpoint: 30000,
@@ -40,7 +40,7 @@ export const cards: Card[] = [
     cardColor: '#BCFFE9',
   },
   {
-    id: 5,
+    linkCardId: 5,
     cardName: "카드 5",
     expiredAt: "01.01.24",
     usedpoint: 30000,
