@@ -1,4 +1,4 @@
-package monorail.linkpay.banking.common.event.payload;
+package monorail.linkpay.event.payload;
 
 public record AccountWithdrawalEventPayload(Long walletId, long amount) implements EventPayload {
 }

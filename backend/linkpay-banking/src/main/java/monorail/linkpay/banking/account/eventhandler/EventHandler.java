@@ -1,7 +1,7 @@
 package monorail.linkpay.banking.account.eventhandler;
 
-import monorail.linkpay.banking.common.event.Event;
-import monorail.linkpay.banking.common.event.payload.EventPayload;
+import monorail.linkpay.event.Event;
+import monorail.linkpay.event.payload.EventPayload;
 
 public interface EventHandler<T extends EventPayload> {
 

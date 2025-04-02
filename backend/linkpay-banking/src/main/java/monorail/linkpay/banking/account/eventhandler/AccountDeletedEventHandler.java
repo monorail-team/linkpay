@@ -6,9 +6,9 @@ import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.banking.account.domain.Account;
 import monorail.linkpay.banking.account.repository.AccountRepository;
-import monorail.linkpay.banking.common.event.Event;
-import monorail.linkpay.banking.common.event.EventType;
-import monorail.linkpay.banking.common.event.payload.AccountDeletedEventPayload;
+import monorail.linkpay.event.Event;
+import monorail.linkpay.event.EventType;
+import monorail.linkpay.event.payload.AccountDeletedEventPayload;
 import monorail.linkpay.exception.LinkPayException;
 import org.springframework.stereotype.Component;
 

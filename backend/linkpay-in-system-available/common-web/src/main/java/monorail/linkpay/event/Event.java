@@ -1,8 +1,8 @@
-package monorail.linkpay.banking.common.event;
+package monorail.linkpay.event;
 
 import java.util.Objects;
 import lombok.Getter;
-import monorail.linkpay.banking.common.event.payload.EventPayload;
+import monorail.linkpay.event.payload.EventPayload;
 import monorail.linkpay.util.json.Json;
 import monorail.linkpay.util.json.JsonUtil;
 

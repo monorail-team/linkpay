@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import monorail.linkpay.banking.common.event.EventType;
+import monorail.linkpay.event.EventType;
 
 @Table(name = "event_log")
 @Getter

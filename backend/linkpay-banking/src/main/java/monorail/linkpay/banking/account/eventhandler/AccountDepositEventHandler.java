@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import monorail.linkpay.banking.account.domain.Account;
 import monorail.linkpay.banking.account.repository.AccountRepository;
 import monorail.linkpay.banking.common.domain.Money;
-import monorail.linkpay.banking.common.event.Event;
-import monorail.linkpay.banking.common.event.EventType;
-import monorail.linkpay.banking.common.event.payload.AccountDepositEventPayload;
+import monorail.linkpay.event.Event;
+import monorail.linkpay.event.EventType;
+import monorail.linkpay.event.payload.AccountDepositEventPayload;
 import monorail.linkpay.exception.LinkPayException;
 import org.springframework.stereotype.Component;
 

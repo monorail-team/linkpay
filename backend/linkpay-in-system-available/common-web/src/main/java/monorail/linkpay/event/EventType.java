@@ -1,14 +1,14 @@
-package monorail.linkpay.banking.common.event;
+package monorail.linkpay.event;
 
 import static lombok.AccessLevel.PRIVATE;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_EVENT_TYPE;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.banking.common.event.payload.AccountDeletedEventPayload;
-import monorail.linkpay.banking.common.event.payload.AccountDepositEventPayload;
-import monorail.linkpay.banking.common.event.payload.AccountWithdrawalEventPayload;
-import monorail.linkpay.banking.common.event.payload.EventPayload;
+import monorail.linkpay.event.payload.AccountDeletedEventPayload;
+import monorail.linkpay.event.payload.AccountDepositEventPayload;
+import monorail.linkpay.event.payload.AccountWithdrawalEventPayload;
+import monorail.linkpay.event.payload.EventPayload;
 import monorail.linkpay.exception.LinkPayException;
 
 @Getter
