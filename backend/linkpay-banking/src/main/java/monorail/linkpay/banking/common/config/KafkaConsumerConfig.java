@@ -9,9 +9,6 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
-import org.springframework.kafka.listener.DefaultErrorHandler;
-import org.springframework.util.backoff.ExponentialBackOff;
 
 @EnableKafka
 @Configuration
@@ -22,23 +19,11 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(
-            ConsumerFactory<String, String> consumerFactory) {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
+            final ConsumerFactory<String, String> consumerFactory) {
+        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
-        factory.setConcurrency(3);
+        factory.setConcurrency(1);
         factory.getContainerProperties().setAckMode(MANUAL_IMMEDIATE);
-        factory.setCommonErrorHandler(errorHandler());
         return factory;
-    }
-
-    @Bean
-    public DefaultErrorHandler errorHandler() {
-        ExponentialBackOff exponentialBackOff = new ExponentialBackOff();
-        exponentialBackOff.setInitialInterval(3000L);
-        exponentialBackOff.setMultiplier(2.0);
-        exponentialBackOff.setMaxAttempts(3);
-        DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate);
-        return new DefaultErrorHandler(recoverer, exponentialBackOff);
     }
 }

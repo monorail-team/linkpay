@@ -14,10 +14,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.banking.common.domain.Money;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "account")
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@SQLDelete(sql = "UPDATE account SET deleted_at = CURRENT_TIMESTAMP WHERE account_id = ?")
+@SQLRestriction("deleted_at is null")
 @Entity
 public class Account {
 
@@ -27,11 +31,9 @@ public class Account {
 
     @Embedded
     private Money money;
-
     private Long walletId;
-
     private Long memberId;
-
+    private LocalDateTime deletedAt;
     private LocalDateTime createdAt;
 
     @Builder
@@ -43,16 +45,16 @@ public class Account {
         this.createdAt = now();
     }
 
-    public void deductPoint(Money money) {
+    public void depositMoney(final Money money) {
         this.money = this.money.add(money);
     }
 
-    public void withdrawalPoint(Money money) {
+    public void withdrawalMoney(final Money money) {
         this.money = this.money.subtract(money);
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (this == object) {
             return true;
         }

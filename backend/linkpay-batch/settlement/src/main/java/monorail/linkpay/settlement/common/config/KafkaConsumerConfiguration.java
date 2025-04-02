@@ -26,7 +26,7 @@ public class KafkaConsumerConfiguration {
         ConcurrentKafkaListenerContainerFactory<String, String> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
-        factory.setConcurrency(3);
+        factory.setConcurrency(1);
         factory.getContainerProperties().setAckMode(MANUAL_IMMEDIATE);
         factory.setCommonErrorHandler(errorHandler());
         return factory;

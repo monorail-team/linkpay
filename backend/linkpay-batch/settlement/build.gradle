@@ -33,3 +33,7 @@ dependencyManagement {
 test {
     useJUnitPlatform()
 }
+
+bootJar {
+    enabled = true
+}
