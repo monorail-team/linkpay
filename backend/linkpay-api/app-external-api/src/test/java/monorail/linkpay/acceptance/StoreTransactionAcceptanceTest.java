@@ -57,8 +57,8 @@ public class StoreTransactionAcceptanceTest extends AcceptanceTest {
         return sendPostRequest("/api/stores", accessToken, request);
     }
 
-    private ExtractableResponse<Response> 거래정보_생성_요청(final String accessToken, final String storeUrl,
-                                                     final StoreTransactionRequest request) {
+    public static ExtractableResponse<Response> 거래정보_생성_요청(final String accessToken, final String storeUrl,
+                                                           final StoreTransactionRequest request) {
         return sendPostRequest("%s/transactions".formatted(storeUrl), accessToken, request);
     }
 

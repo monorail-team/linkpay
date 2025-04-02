@@ -1,8 +1,8 @@
 import { MyWalletHistory } from '@/model/MyWalletHistory';
 export const walletHistory: MyWalletHistory[] = [
-    { walletHistoryId:1, point: 100000, transactionDate: '03.11', type: 'DEPOSIT', afterPoint: 870000 , cardName: '카드1' },
-    { walletHistoryId:2, point: 30000, transactionDate: '03.11', type: 'WITHDRAWAL', afterPoint: 770000,cardName: '카드2'},
-    { walletHistoryId:3, point: 100000, transactionDate: '03.09', type: 'WITHDRAWAL', afterPoint: 800000,cardName: '카드3'},
-    { walletHistoryId:4, point: 50000, transactionDate: '03.05', type: 'DEPOSIT', afterPoint: 900000,cardName: '카드4' },
+    { walletHistoryId:1, amount: 100000, time: '03.11', transactionType: 'DEPOSIT', remaining: 870000 },
+    { walletHistoryId:2, amount: 30000, time: '03.11', transactionType: 'WITHDRAWAL', remaining: 770000},
+    { walletHistoryId:3, amount: 100000, time: '03.09', transactionType: 'WITHDRAWAL', remaining: 800000},
+    { walletHistoryId:4, amount: 50000, time: '03.05', transactionType: 'DEPOSIT', remaining: 900000},
 ];
   

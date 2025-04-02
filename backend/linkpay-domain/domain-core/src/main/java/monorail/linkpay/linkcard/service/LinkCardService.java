@@ -135,7 +135,7 @@ public class LinkCardService {
 
     private void validateOwnershipOrCreator(final LinkCard linkCard, final Member member) {
         if (!linkCard.isSharedCard() || !isCreator(linkCard, member)) {
-            linkCard.validateOwnership(member);
+            linkCard.validateOwnership(member.getId());
         }
     }
 

@@ -16,7 +16,7 @@ import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.payment.repository.PaymentRepository;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.store.repository.StoreRepository;
-import monorail.linkpay.store.repository.StoreSignatureRepository;
+import monorail.linkpay.store.repository.StoreSignerRepository;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.LinkedWallet;
@@ -56,7 +56,7 @@ public abstract class IntegrationTest {
     @Autowired
     protected StoreRepository storeRepository;
     @Autowired
-    protected StoreSignatureRepository storeSignatureRepository;
+    protected StoreSignerRepository storeSignerRepository;
     @Autowired
     protected IdGenerator idGenerator;
 

@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.Base64;
 
-@Table(name = "store_signature")
+@Table(name = "store_signer")
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StoreSignature {
+public class StoreSigner {
     @Id
     private Long id;
 
@@ -27,7 +27,7 @@ public class StoreSignature {
     private String decryptKey;
 
     @Builder
-    private StoreSignature(Long id, Store store, byte[] encryptKey, byte[] decryptKey) {
+    private StoreSigner(Long id, Store store, byte[] encryptKey, byte[] decryptKey) {
         this.id = id;
         this.store = store;
         this.encryptKey = Base64.getEncoder().encodeToString(encryptKey);

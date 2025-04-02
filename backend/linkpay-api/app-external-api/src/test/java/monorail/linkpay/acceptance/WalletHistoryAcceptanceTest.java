@@ -7,6 +7,7 @@ import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.지갑_잔액_�
 import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.포인트_충전_요청;
 import static monorail.linkpay.acceptance.PaymentAcceptanceTest.결제_요청;
 import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.가게_생성_요청;
+import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.거래정보_생성_요청;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -17,10 +18,12 @@ import io.restassured.response.Response;
 import java.util.stream.Stream;
 import monorail.linkpay.controller.request.PaymentsRequest;
 import monorail.linkpay.controller.request.StoreCreateRequest;
+import monorail.linkpay.controller.request.StoreTransactionRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.history.dto.WalletHistoryListResponse;
 import monorail.linkpay.history.dto.WalletHistoryResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
+import monorail.linkpay.store.dto.TransactionResponse;
 import monorail.linkpay.wallet.dto.WalletResponse;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -31,6 +34,7 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
     @TestFactory
     Stream<DynamicTest> 내_지갑_카드사용_후_지갑_내역_확인한다() {
         String accessToken = 엑세스_토큰();
+        var transaction = new ThreadLocal<TransactionResponse>();
 
         return Stream.of(
                 dynamicTest("내 지갑에 충전후 잔액을 확인한다", () -> {
@@ -58,10 +62,16 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
                     링크카드_생성_요청(accessToken, LINK_CARD_CREATE_REQUEST);
                     LinkCardsResponse cardsResponse = 링크카드_조회_요청(accessToken, "owned").as(LinkCardsResponse.class);
                     var storeRes = 가게_생성_요청(accessToken, new StoreCreateRequest("새로운 가게"));
-
+                    String storeId = storeRes.header("Location").split("/")[3];
+                    var payInfoRes = 거래정보_생성_요청(accessToken, storeRes.header("Location"),
+                            new StoreTransactionRequest(3000L));
+                    TransactionResponse transactionResponse = payInfoRes.as(TransactionResponse.class);
+                    transaction.set(transactionResponse);
                     ExtractableResponse<Response> response = 결제_요청(accessToken,
-                            new PaymentsRequest(3000, Long.parseLong(cardsResponse.linkCards().getFirst().linkCardId()),
-                                    Long.parseLong(storeRes.header("Location").split("/")[3])));
+                            new PaymentsRequest(3000L,
+                                    Long.parseLong(cardsResponse.linkCards().getFirst().linkCardId()),
+                                    Long.parseLong(storeId), transactionResponse.transactionSignature(),
+                                    "token"));
 
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
                 }),
