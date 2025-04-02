@@ -13,8 +13,20 @@ interface ParsedAssertionResult {
     문자열을 Uint8Array로 변환하는 유틸 함수
     WebAuthn API 스펙상 challenge 필드는 반드시 바이너리 데이터(ArrayBuffer 또는 이를 래핑한 Uint8Array)여야 함함
 */
-function strToUint8Array(str: string): Uint8Array {
-  return Uint8Array.from(str, c => c.charCodeAt(0));
+function base64UrlToUint8Array(base64UrlString: string): Uint8Array {
+  // 필요한 패딩 추가: 길이가 4의 배수가 되도록 '=' 문자를 추가
+  const padding = '='.repeat((4 - base64UrlString.length % 4) % 4);
+  // base64url 형식을 일반 base64 형식으로 변환
+  const base64 = (base64UrlString + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+  // base64 디코딩하여 바이너리 문자열로 변환
+  const binaryString = window.atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
 }
 
 interface WebAuthnHook {
@@ -62,10 +74,10 @@ const useWebAuthn = (): WebAuthnHook => {
 
     // 2. authenticationOptions 구성
     const publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptions = {
-      challenge: strToUint8Array(authChallenge),
+      challenge: base64UrlToUint8Array(authChallenge),
       allowCredentials: [
         {
-          id: strToUint8Array(credentialId),
+          id: base64UrlToUint8Array(credentialId),
           type: "public-key",
         },
       ],
@@ -116,10 +128,10 @@ const useWebAuthn = (): WebAuthnHook => {
         const member = await fetchUserData();
 
         const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
-          challenge: strToUint8Array(challenge),
+          challenge: base64UrlToUint8Array(challenge),
           rp: { name: "LinkPay", id: window.location.hostname },
           user: {
-            id: strToUint8Array(member.memberId), // 실제 사용자 ID로 교체
+            id: base64UrlToUint8Array(member.memberId), // 실제 사용자 ID로 교체
             name: member.email,              // 실제 사용자 이메일로 교체
             displayName: "test-name",
           },
@@ -147,7 +159,6 @@ const useWebAuthn = (): WebAuthnHook => {
         
         const payload = {
           credentialId: credentialObj.id,
-          clientDataJSON: arrayBufferToBase64(response.clientDataJSON),
           attestationObject: arrayBufferToBase64(response.attestationObject),
         };
         
