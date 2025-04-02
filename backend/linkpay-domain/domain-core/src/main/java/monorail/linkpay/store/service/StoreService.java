@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreService {
 
     private final StoreRepository storeRepository;
-    private final StoreSignatureManager storeSignatureManager;
+    private final StoreSignerManager storeSignerManager;
     private final IdGenerator idGenerator;
 
     @Transactional
@@ -24,7 +24,7 @@ public class StoreService {
                 .build());
 
         // 기본 가게 서명 1개 생성
-        storeSignatureManager.create(store);
+        storeSignerManager.create(store);
         return store.getId();
     }
 }

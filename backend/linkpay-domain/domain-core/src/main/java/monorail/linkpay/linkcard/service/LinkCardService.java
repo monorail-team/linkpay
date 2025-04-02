@@ -129,30 +129,30 @@ public class LinkCardService {
     public void deleteLinkCard(final Long linkCardId, final Long memberId) {
         Member member = memberFetcher.fetchById(memberId);
         LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
-        validateOwnershipOrCreator(member, linkCard);
+        validateOwnershipOrCreator(linkCard, member);
         linkCardRepository.deleteById(linkCardId);
+    }
+
+    private void validateOwnershipOrCreator(final LinkCard linkCard, final Member member) {
+        if (!linkCard.isSharedCard() || !isCreator(linkCard, member)) {
+            linkCard.validateOwnership(member.getId());
+        }
+    }
+
+    private boolean isCreator(final LinkCard linkCard, final Member member) {
+        LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(
+                linkCard.getWalletId(), member.getId());
+        return linkedMember.isCreator();
     }
 
     public LinkCardDetailResponse getLinkCardDetails(final Long memberId, final Long linkCardId) {
         Member member = memberFetcher.fetchById(memberId);
         LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
-        validateOwnershipOrCreator(member, linkCard);
+        validateOwnershipOrCreator(linkCard, member);
         if (!linkCard.isSharedCard()) {
             return LinkCardDetailResponse.from(linkCard, null);
         }
         String linkedWalletName = linkedWalletFetcher.fetchById(linkCard.getWalletId()).getName();
         return LinkCardDetailResponse.from(linkCard, linkedWalletName);
-    }
-
-    private void validateOwnershipOrCreator(final Member member, final LinkCard linkCard) {
-        if (!linkCard.isSharedCard() || !isCreator(member, linkCard)) {
-            linkCard.validateOwnership(member);
-        }
-    }
-
-    private boolean isCreator(final Member member, final LinkCard linkCard) {
-        LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(
-                linkCard.getWalletId(), member.getId());
-        return linkedMember.isCreator();
     }
 }

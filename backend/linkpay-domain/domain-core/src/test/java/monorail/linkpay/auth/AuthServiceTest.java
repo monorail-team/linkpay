@@ -3,6 +3,7 @@ package monorail.linkpay.auth;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import monorail.linkpay.auth.dto.KakaoLoginRequest;
@@ -14,6 +15,7 @@ import monorail.linkpay.auth.service.AuthService;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.member.domain.Member;
+import monorail.linkpay.wallet.client.BankAccountClient;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,8 @@ class AuthServiceTest extends IntegrationTest {
     AuthService sut;
     @Autowired
     KakaoOauthClient mockKakaoOauthClient;
+    @Autowired
+    BankAccountClient mockBankAccountClient;
 
     /**
      * @설명 로그인에 대한 테스트
@@ -40,6 +44,8 @@ class AuthServiceTest extends IntegrationTest {
             //given
             String code = "code";
             String accessToken = "value";
+            Long walletId = 1L;
+            Long memberId = 1L;
             Member member = memberRepository.save(Member.builder()
                     .id(1L)
                     .username("link")
@@ -50,6 +56,7 @@ class AuthServiceTest extends IntegrationTest {
             when(mockKakaoOauthClient.fetchUser(accessToken)).thenReturn(
                     ResponseEntity.ok(KakaoUserResponse.of(member.getEmail(), member.getUsername()))
             );
+            doNothing().when(mockBankAccountClient).createAccount(walletId, memberId);
 
             //when
             LoginResponse response = sut.login(new KakaoLoginRequest(code));

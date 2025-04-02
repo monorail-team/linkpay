@@ -1,81 +1,120 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback} from 'react';
 import Header from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import MenuModal from '@/modal/MenuModal';
+import axios from 'axios';
+import { LinkWallet } from '@/model/LinkWallet';
 
-// (1) 링크지갑 데이터 타입 (예시)
-interface LinkWallet {
-  id: number;
-  walletName: string;
-  participants: number; // 참여자 수
-  balance: number;      // 잔액
-  expiredAt: string;    // 만료일
-  walletColor: string;  // 배경색
-}
+const base_url = process.env.REACT_APP_API_URL;
+const TAB_OWNED = 'CREATOR';
+const TAB_PARTICIPATED = 'PARTICIPANT';
+const PAGE_SIZE = 10;
 
-// (2) 탭 상수
-const TAB_OWNED = 'owned';
-const TAB_PARTICIPATED = 'participated';
-
-// (3) 목 데이터 예시
-const ownedWallets: LinkWallet[] = [
-  {
-    id: 1,
-    walletName: '링크지갑명',
-    participants: 0,
-    balance: 890000,
-    expiredAt: '25.12.23',
-    walletColor: '#F6F2FF',
-  },
-];
-
-const participatedWallets: LinkWallet[] = [
-  {
-    id: 2,
-    walletName: '참여 지갑명',
-    participants: 3,
-    balance: 120000,
-    expiredAt: '25.12.24',
-    walletColor: '#FFEFEF',
-  },
-];
-
-// (4) 페이지 컴포넌트
 const LinkWalletListPage: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<string>(TAB_OWNED);
-    const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<string>(TAB_OWNED);
+  const [wallets, setWallets] = useState<LinkWallet[]>([]);
+  const [hasNext, setHasNext] = useState<boolean>(true);
+  const [lastId, setLastId] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const navigate = useNavigate();
+  const observerRef = useRef<HTMLDivElement>(null);
 
-    // 탭 클릭 핸들러
-    const handleTabClick = (tab: string) => {
-        setActiveTab(tab);
-    };
+  const role = activeTab === TAB_OWNED ? 'CREATOR' : 'PARTICIPANT';
+  
+  const fetchWallets = useCallback(async () => {
+    if (loading || !hasNext) return;
 
-    // 현재 탭에 따라 필터링된 지갑 목록 반환
-    const getWalletList = () => {
-    if (activeTab === TAB_OWNED) {
-      return ownedWallets;
-    } else {
-      return participatedWallets;
+    setLoading(true);
+
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      let url = `${base_url}/api/linked-wallets`;
+      
+      if (lastId) {
+        url += `?lastId=${lastId}&size=${PAGE_SIZE}&role=${role}`;
+      } else {
+        url += `?size=${PAGE_SIZE}&role=${role}`;
+      }
+      const response = await axios.get(url, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      const newWallets: LinkWallet[] = response.data.linkedWallets;
+
+      setWallets((prev) => {
+        const allWallets = [...prev, ...newWallets];
+        const uniqueWallets = allWallets.filter(
+          (wallet, index, self) =>
+            index === self.findIndex((w) => w.linkedWalletId === wallet.linkedWalletId)
+        );
+        return uniqueWallets;
+      });
+
+      setHasNext(response.data.hasNext);
+      if (newWallets.length > 0) {
+        setLastId(newWallets[newWallets.length - 1].linkedWalletId);
+      }
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-    };
+  }, [lastId, loading, hasNext, role]);
 
-    // (5) 플러스카드 클릭 시 -> 링크지갑 생성 화면으로 이동
-    const handleCreateLinkWallet = () => {
-        navigate('/linkwalletcreate');
-    };
 
-    const handleLinkWallet = (walletId: number) => {
-      navigate(`/linkwallet/${walletId}`);
+  useEffect(() => {
+    setWallets([]);
+    setHasNext(true);
+    setLastId(null);
+
+    setTimeout(() => {
+      fetchWallets();
+    }, 0);
+  }, [activeTab]); 
+
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNext && !loading) {
+          fetchWallets();
+        }
+      },
+      { threshold: 1.0 }
+    );
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
     }
-    const [showMenu, setShowMenu] = useState(false);
-        
-    const handleMenuClick = () => {
-        setShowMenu(true);
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
     };
-    
-    const handleMenuClose = () => {
-        setShowMenu(false);
-    };
+  }, [fetchWallets, hasNext, loading]);
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
+
+  const handleCreateLinkWallet = () => {
+      navigate('/linkwalletcreate');
+  };
+
+  const handleLinkWallet = (walletId: number) => {
+    navigate(`/linkwallet/${walletId}`);
+  }
+
+      
+  const handleMenuClick = () => {
+      setShowMenu(true);
+  };
+  
+  const handleMenuClose = () => {
+      setShowMenu(false);
+  };
+
   return (
     <div className="w-full h-screen max-w-md mx-auto flex flex-col dark:bg-[#3b3838]">
       {/* 헤더 */}
@@ -110,24 +149,35 @@ const LinkWalletListPage: React.FC = () => {
 
       {/* 링크지갑 목록 */}
       <div className="p-4 flex-1 overflow-auto space-y-4">
-        {getWalletList().map((wallet) => (
+        {wallets.map((wallet) => (
             <div
-                key={wallet.id}
+                key={wallet.linkedWalletId}
                 className="relative my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] dark:bg-[#3b3838] dark:border-[#706E6E]"
-                onClick={() => handleLinkWallet(wallet.id)}
+                onClick={() => handleLinkWallet(Number(wallet.linkedWalletId))}
             >
-                {/* 왼쪽: 지갑명과 참여자 수 (수직 중앙) */}
+                {/* 왼쪽: 지갑명 (수직 중앙) */}
                 <div className="absolute left-4 top-1/2 -translate-y-1/2">
                     <p className="text-base  text-gray-700 dark:text-white">
-                        {wallet.walletName}
-                    </p>
-                    <p className="text-sm text-gray-400 dark:text-gray-300 mt-1">
-                        {wallet.participants}명 참여중
+                        {wallet.linkedWalletName}
                     </p>
                 </div>
 
-                {/* 오른쪽 상단: 잔액 */}
+                {/* 오른쪽 상단: 참여자 수수 */}
                 <div className="absolute top-2 right-2 text-sm w-32">
+                    <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-200">잠여자 수</span>
+                        <span></span>
+                    </div>
+                    <div className="flex justify-between mt-1">
+                        <span></span>
+                        <span className="text-gray-800 dark:text-white">
+                          {wallet.participantCount} 명
+                        </span>
+                    </div>
+                </div>
+
+                {/* 오른쪽 하단: 잔액액 */}
+                <div className="absolute bottom-2 right-2 text-sm w-32">
                     <div className="flex justify-between">
                         <span className="text-gray-600 dark:text-gray-200">잔액</span>
                         <span></span>
@@ -135,21 +185,7 @@ const LinkWalletListPage: React.FC = () => {
                     <div className="flex justify-between mt-1">
                         <span></span>
                         <span className="text-gray-800 dark:text-white">
-                            {wallet.balance.toLocaleString()}원
-                        </span>
-                    </div>
-                </div>
-
-                {/* 오른쪽 하단: 만료일 */}
-                <div className="absolute bottom-2 right-2 text-sm w-32">
-                    <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-200">만료일</span>
-                        <span></span>
-                    </div>
-                    <div className="flex justify-between mt-1">
-                        <span></span>
-                        <span className="text-gray-800 dark:text-white">
-                            {wallet.expiredAt}
+                          {wallet.amount.toLocaleString()}원
                         </span>
                     </div>
                 </div>

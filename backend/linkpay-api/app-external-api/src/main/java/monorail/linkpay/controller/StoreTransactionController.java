@@ -1,7 +1,9 @@
 package monorail.linkpay.controller;
 
 import lombok.RequiredArgsConstructor;
+import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.controller.request.StoreTransactionRequest;
+import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.store.dto.TransactionResponse;
 import monorail.linkpay.store.service.StoreTransactionService;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,7 @@ public class StoreTransactionController {
     @PostMapping
     public ResponseEntity<TransactionResponse> create(@PathVariable(name = "storeId") final Long storeId,
                                                       @RequestBody final StoreTransactionRequest request) {
-        var response = storeTransactionService.create(storeId, request.amount());
-        return ResponseEntity.ok(response);
+        TransactionInfo txInfo = storeTransactionService.create(storeId, new Point(request.amount()));
+        return ResponseEntity.ok(TransactionResponse.from(txInfo));
     }
 }

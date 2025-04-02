@@ -9,7 +9,7 @@ interface CardData {
   linkCardId: number;
   cardName: string;
   expiredAt: string;
-  usedpoint: number;
+  usedPoint: number;
   limitPrice: number;
   cardColor: string;
 }
@@ -26,7 +26,7 @@ const mockCardData: CardData = {
     linkCardId: 1,
     cardName: "카드 1",
     expiredAt: "25.12.23",
-    usedpoint: 54000,
+    usedPoint: 54000,
     limitPrice: 100000,
     cardColor: "#DAD8FC",
   };

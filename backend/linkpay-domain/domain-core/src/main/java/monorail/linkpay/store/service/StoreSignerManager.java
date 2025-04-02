@@ -6,8 +6,8 @@ import java.security.PublicKey;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.store.domain.Store;
-import monorail.linkpay.store.domain.StoreSignature;
-import monorail.linkpay.store.repository.StoreSignatureRepository;
+import monorail.linkpay.store.domain.StoreSigner;
+import monorail.linkpay.store.repository.StoreSignerRepository;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.util.key.KeyAlgorithm;
 import monorail.linkpay.util.key.KeyPairUtil;
@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SupportLayer
 @RequiredArgsConstructor
-public class StoreSignatureManager {
+public class StoreSignerManager {
 
-    private final StoreSignatureRepository storeSignatureRepository;
+    private final StoreSignerRepository storeSignerRepository;
     private final IdGenerator idGenerator;
 
     @Transactional
@@ -25,7 +25,7 @@ public class StoreSignatureManager {
         KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyAlgorithm.RSA);
         PrivateKey privateKey = keyPair.getPrivate();
         PublicKey publicKey = keyPair.getPublic();
-        storeSignatureRepository.save(StoreSignature.builder()
+        storeSignerRepository.save(StoreSigner.builder()
                 .id(idGenerator.generate())
                 .store(store)
                 .encryptKey(privateKey.getEncoded())

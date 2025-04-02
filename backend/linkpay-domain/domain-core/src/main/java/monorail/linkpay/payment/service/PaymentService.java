@@ -1,18 +1,13 @@
 package monorail.linkpay.payment.service;
 
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.linkcard.service.LinkCardUpdater;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.service.LinkCardFetcher;
-import monorail.linkpay.member.domain.Member;
-import monorail.linkpay.member.service.MemberFetcher;
-import monorail.linkpay.payment.domain.Payment;
-import monorail.linkpay.payment.repository.PaymentRepository;
+import monorail.linkpay.payment.dto.PaymentInfo;
+import monorail.linkpay.payment.dto.TransactionInfo;
+import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.store.service.StoreFetcher;
-import monorail.linkpay.util.id.IdGenerator;
-import monorail.linkpay.wallet.domain.Wallet;
-import monorail.linkpay.wallet.service.WalletFetcher;
-import monorail.linkpay.wallet.service.WalletUpdater;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,39 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PaymentService {
 
-    private final PaymentRepository paymentRepository;
-    private final LinkCardFetcher linkCardFetcher;
     private final StoreFetcher storeFetcher;
-    private final MemberFetcher memberFetcher;
-    private final WalletUpdater walletUpdater;
-    private final WalletFetcher walletFetcher;
-    private final IdGenerator idGenerator;
+    private final LinkCardFetcher linkCardFetcher;
+    private final LinkCardUpdater linkCardUpdater;
+    private final PaymentValidator paymentValidator;
+    private final PaymentRecorder paymentRecorder;
 
     @Transactional
-    public void createPayment(final Long memberId, final Point point, final Long linkCardId, final Long storeId) {
-        Member member = memberFetcher.fetchById(memberId);
-        LinkCard linkCard = linkCardFetcher.fetchByIdForUpdate(linkCardId);
-        validateLinkCard(point, linkCard, member);
-        linkCard.usePoint(point);
+    public void createPayment(final TransactionInfo txInfo, final PaymentInfo payInfo) {
+        Store store = storeFetcher.fetchById(txInfo.storeId());
+        LinkCard linkCard = linkCardFetcher.fetchByIdForUpdate(payInfo.linkCardId());
 
-        Wallet wallet = walletFetcher.fetchByIdForUpdate(linkCard.getWallet().getId());
-        walletUpdater.deductPoint(wallet, point, member);
-        paymentRepository.save(getPayment(linkCard, point, storeId));
-    }
-
-    private void validateLinkCard(final Point point, final LinkCard linkCard, final Member member) {
-        linkCard.validateOwnership(member);
-        linkCard.validateExpiredDate();
-        linkCard.validateLimitPriceNotExceed(point);
-    }
-
-    private Payment getPayment(final LinkCard linkCard, final Point point, final Long storeId) {
-        return Payment.builder()
-                .id(idGenerator.generate())
-                .linkCard(linkCard)
-                .member(linkCard.getMember())
-                .amount(point)
-                .store(storeFetcher.fetchById(storeId))
-                .build();
+        paymentValidator.validate(linkCard, store, txInfo, payInfo);
+        linkCardUpdater.pay(linkCard, txInfo.point());
+        paymentRecorder.record(store, linkCard, txInfo.point());
     }
 }

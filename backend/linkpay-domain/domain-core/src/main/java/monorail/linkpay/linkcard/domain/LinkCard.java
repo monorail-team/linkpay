@@ -107,8 +107,8 @@ public class LinkCard extends BaseEntity {
         return this.getCardType().equals(SHARED);
     }
 
-    public void validateOwnership(final Member member) {
-        if (!this.member.equals(member)) {
+    public void validateOwnership(final Long memberId) {
+        if (!Objects.equals(memberId, this.member.getId())) {
             throw new LinkPayException(INVALID_REQUEST, "카드의 소유자가 아닙니다.");
         }
     }

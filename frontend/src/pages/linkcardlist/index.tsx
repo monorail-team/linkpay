@@ -1,35 +1,125 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import Header from '@/components/Header';
 import LinkCardItem from '@/components/LinkCardItem';
 import MenuModal from '@/modal/MenuModal';
-import { cards } from '@/mocks/cards';
+import axios from 'axios';
+import { Card } from '@/model/Card';
 
 
-// 탭 이름을 상수로 관리
-const TAB_CREATED = 'created';
+
+const base_url = process.env.REACT_APP_API_URL;
+const PAGE_SIZE = 10;
+
+const TAB_OWNED  = 'owned';
+const TAB_LINKED  = 'linked';
 const TAB_SHARED = 'shared';
-const TAB_RECEIVED = 'received';
 
 
 
 const LinkCardListPage: React.FC = () => {
-  // 현재 선택된 탭 상태
-  const [activeTab, setActiveTab] = useState<string>(TAB_CREATED);
-
-  const [showMenu, setShowMenu] = useState(false);
-
-  const handleMenuClick = () => {
-  setShowMenu(true);
-  };
-
-  const handleMenuClose = () => {
-  setShowMenu(false);
-  };
+  const [activeTab, setActiveTab] = useState<string>(TAB_OWNED);
+  const [cards, setCards] = useState<Card[]>([]);
+  const [hasNext, setHasNext] = useState<boolean>(true);
+  const [lastId, setLastId] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
 
   const navigate = useNavigate();
+  const observerRef = useRef<HTMLDivElement>(null);
+
+  const fetchCardsRef = useRef<() => void>(() => {});
+
+  const fetchCards = useCallback(async (resetData = false) => {
+    if (loading || (!hasNext && !resetData)) return;
+
+    setLoading(true);
+
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      let url = `${base_url}/api/cards?type=${activeTab}`;
+
+      const currentLastId = resetData ? null : lastId;
+      
+      if (currentLastId) {
+        url += `&lastId=${lastId}&size=${PAGE_SIZE}`;
+      } else {
+        url += `&size=${PAGE_SIZE}`;
+      }
+      const response = await axios.get(url, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      console.log('API 응답:', response.data);
+      
+      const newCards: Card[] = response.data.linkCards;
+
+      setCards((prev) => {
+        const baseCards = resetData ? [] : prev;
+        const allCards = [...baseCards, ...newCards];
+        // 중복 제거: 같은 linkCardId가 여러 번 들어가지 않도록 처리
+        const uniqueCards = allCards.filter((card, index, self) =>
+          index === self.findIndex((c) => c.linkCardId === card.linkCardId)
+        );
+        return uniqueCards;
+      });
+
+      setHasNext(response.data.hasNext);
+      if (newCards.length > 0) {
+        setLastId(newCards[newCards.length - 1].linkCardId.toString());
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab, lastId, loading, hasNext]);
+
+
+  useEffect(() => {
+    fetchCardsRef.current = () => fetchCards(false);
+  }, [fetchCards]);
+
+  useEffect(() => {
+    setCards([]);
+    setHasNext(true);
+    setLastId(null);
+    setTimeout(() => {
+      fetchCards(true);
+    }, 0);
+  }, [activeTab]);
+
+  // 무한 스크롤: IntersectionObserver로 스크롤 끝 감지 시 추가 데이터 호출
+  useEffect(() => {
+    const currentObserver = observerRef.current;
+    if (!currentObserver) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNext && !loading) {
+          fetchCardsRef.current();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(currentObserver);
+    
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [hasNext, loading]);
+
+  const handleMenuClick = () => {
+    setShowMenu(true);
+  };
+
+  const handleMenuClose = () => {
+    setShowMenu(false);
+  };
+
   // 탭 버튼을 클릭했을 때 호출되는 함수
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -38,22 +128,7 @@ const LinkCardListPage: React.FC = () => {
   const handleCardClick = (cardid: number) => {
     navigate(`/cards/${cardid}`);
   }
-  // activeTab에 따라 다른 카드 리스트 반환
-  const getCardList = () => {
-    switch (activeTab) {
-      case TAB_CREATED:
-        // 생성한 링크카드 => cardType === 'OWNED'
-        return cards.filter((card) => card.cardType === 'OWNED');
-      case TAB_SHARED:
-        // 공유한 링크카드 => cardType === 'SHARED'
-        return cards.filter((card) => card.cardType === 'SHARED');
-      case TAB_RECEIVED:
-        // 받은 링크카드 => cardType === 'RECEIVED'
-        return cards.filter((card) => card.cardType === 'RECEIVED');
-      default:
-        return [];
-    }
-  };
+
 
   return (
     <div className="w-full h-screen max-w-md mx-auto dark:bg-[#3b3838] flex flex-col">
@@ -65,30 +140,30 @@ const LinkCardListPage: React.FC = () => {
       <div className="flex justify-around items-center border-b border-gray-200 dark:border-gray-700 text-sm mx-10">
         <button
           className={`py-3 w-full 
-            ${activeTab === TAB_CREATED ? 'text-[#76558F] dark:text-[#D8D5F8] first-letter:font-bold border-b-2 border-[#76558F] dark:border-[#D8D5F8]' : 'text-gray-500 dark:text-white'}`}
-          onClick={() => handleTabClick(TAB_CREATED)}
+            ${activeTab === TAB_OWNED ? 'text-[#76558F] dark:text-[#D8D5F8] first-letter:font-bold border-b-2 border-[#76558F] dark:border-[#D8D5F8]' : 'text-gray-500 dark:text-white'}`}
+          onClick={() => handleTabClick(TAB_OWNED)}
         >
-          생성한 링크카드
+          내 지갑 카드
+        </button>
+        <button
+          className={`py-3 w-full 
+            ${activeTab === TAB_LINKED ? 'text-[#76558F] dark:text-[#D8D5F8] font-bold border-b-2 border-[#76558F] dark:border-[#D8D5F8]' : 'text-gray-500 dark:text-white'}`}
+          onClick={() => handleTabClick(TAB_LINKED)}
+        >
+          링크 지갑 카드
         </button>
         <button
           className={`py-3 w-full 
             ${activeTab === TAB_SHARED ? 'text-[#76558F] dark:text-[#D8D5F8] font-bold border-b-2 border-[#76558F] dark:border-[#D8D5F8]' : 'text-gray-500 dark:text-white'}`}
           onClick={() => handleTabClick(TAB_SHARED)}
         >
-          공유한 링크카드
-        </button>
-        <button
-          className={`py-3 w-full 
-            ${activeTab === TAB_RECEIVED ? 'text-[#76558F] dark:text-[#D8D5F8] font-bold border-b-2 border-[#76558F] dark:border-[#D8D5F8]' : 'text-gray-500 dark:text-white'}`}
-          onClick={() => handleTabClick(TAB_RECEIVED)}
-        >
-          받은 링크카드
+          공유한 카드
         </button>
       </div>
 
       {/* 카드 목록 영역 */}
       <div className="p-4 flex-1 overflow-auto space-y-4">
-        {getCardList().map((card) => (
+        {cards.map((card) => (
           <div 
             key={card.linkCardId}
             className="my-1 box-border rounded-lg w-5/6 p-4 mx-auto bg-center h-[150px]"
@@ -97,13 +172,15 @@ const LinkCardListPage: React.FC = () => {
           >
              <LinkCardItem
                 cardName={card.cardName}
-                usedpoint={card.usedpoint}
+                usedPoint={card.usedPoint}
                 limitPrice={card.limitPrice}
                 expiredAt={card.expiredAt}
                 isRegistered={card.isRegistered}
             />
           </div>
         ))}
+        <div ref={observerRef} />
+        {loading && <p className="text-center text-gray-500">불러오는 중...</p>}
       </div>
     </div>
   );

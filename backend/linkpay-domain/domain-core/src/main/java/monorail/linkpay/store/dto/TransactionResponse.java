@@ -1,19 +1,18 @@
 package monorail.linkpay.store.dto;
 
 import lombok.Builder;
-import monorail.linkpay.store.domain.Store;
+import monorail.linkpay.payment.dto.TransactionInfo;
 
+@Builder
 public record TransactionResponse(
-        Data data,
-        String signature) {
-
-    @Builder
-    public record Data(String storeId, long amount) {
-        public static Data from(final Store store, long amount) {
-            return Data.builder()
-                    .storeId(store.getId().toString())
-                    .amount(amount)
-                    .build();
-        }
+        String storeId,
+        long amount,
+        String transactionSignature) {
+    public static TransactionResponse from(TransactionInfo txInfo) {
+        return TransactionResponse.builder()
+                .storeId(txInfo.storeId().toString())
+                .amount(txInfo.point().getAmount())
+                .transactionSignature(txInfo.signature())
+                .build();
     }
 }

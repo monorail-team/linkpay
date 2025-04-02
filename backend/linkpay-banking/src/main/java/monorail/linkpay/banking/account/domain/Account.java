@@ -31,6 +31,7 @@ public class Account {
 
     @Embedded
     private Money money;
+    @Column(nullable = false, unique = true)
     private Long walletId;
     private Long memberId;
     private LocalDateTime deletedAt;
