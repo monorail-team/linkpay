@@ -40,13 +40,7 @@ const useWebAuthn = (): WebAuthnHook => {
   const token = sessionStorage.getItem('accessToken');
 
   const fetchUserData = async () => {
-   /**
-    * userEmail을 로컬 스토리지나 세션 스토리지에서 가져와야함.
-    */
-    if (!email) {
-      throw new Error("User email is not available");
-    }
-    const response = await axios.get(`${base_url}/api/members?email=${email}`, {
+    const response = await axios.get(`${base_url}/api/mypage`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data; 
@@ -124,6 +118,7 @@ const useWebAuthn = (): WebAuthnHook => {
         });
         // 등록용 Challenge (Base64url 문자열)
         const challenge = challengeRes.data.challenge; 
+        
         //유저 데이터
         const member = await fetchUserData();
 
@@ -131,9 +126,9 @@ const useWebAuthn = (): WebAuthnHook => {
           challenge: base64UrlToUint8Array(challenge),
           rp: { name: "LinkPay", id: window.location.hostname },
           user: {
-            id: base64UrlToUint8Array(member.memberId), // 실제 사용자 ID로 교체
-            name: member.email,              // 실제 사용자 이메일로 교체
-            displayName: "test-name",
+            id: base64UrlToUint8Array(member.memberId), 
+            name: member.email,             
+            displayName: member.username,
           },
           pubKeyCredParams: [{ type: "public-key", alg: -7 }], // ES256 알고리즘 사용
           authenticatorSelection: {
