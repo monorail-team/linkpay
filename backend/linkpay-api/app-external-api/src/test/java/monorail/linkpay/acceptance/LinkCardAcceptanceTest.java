@@ -34,8 +34,6 @@ import org.springframework.http.HttpStatus;
 
 public class LinkCardAcceptanceTest extends AcceptanceTest {
 
-    public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
-            "테스트카드", 500000, LocalDate.now().plusMonths(1));
 
     public static final String EMAIL = "email@kakao.com";
 
@@ -274,11 +272,12 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
         return sendGetRequest("/api/cards/registered", accessToken);
     }
 
-    private ExtractableResponse<Response> 링크카드_조회_요청(final String accessToken, final String type) {
+    public static ExtractableResponse<Response> 링크카드_조회_요청(final String accessToken, final String type) {
         return sendGetRequest("/api/cards?type=" + type, accessToken);
     }
 
-    private ExtractableResponse<Response> 링크카드_생성_요청(final String accessToken, final LinkCardCreateRequest request) {
+    public static ExtractableResponse<Response> 링크카드_생성_요청(final String accessToken,
+                                                           final LinkCardCreateRequest request) {
         return sendPostRequest("/api/cards", accessToken, request);
     }
 

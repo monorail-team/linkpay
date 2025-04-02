@@ -49,4 +49,8 @@ public class MyWallet extends Wallet {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
+    public boolean isMyWallet(Member member) {
+        return this.member.equals(member);
+    }
 }

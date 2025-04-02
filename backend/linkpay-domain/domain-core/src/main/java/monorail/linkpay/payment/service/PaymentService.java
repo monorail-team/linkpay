@@ -1,9 +1,10 @@
 package monorail.linkpay.payment.service;
 
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.linkcard.service.LinkCardUpdater;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.service.LinkCardFetcher;
+import monorail.linkpay.linkcard.service.LinkCardUpdater;
+import monorail.linkpay.payment.domain.Payment;
 import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.store.domain.Store;
@@ -28,7 +29,7 @@ public class PaymentService {
         LinkCard linkCard = linkCardFetcher.fetchByIdForUpdate(payInfo.linkCardId());
 
         paymentValidator.validate(linkCard, store, txInfo, payInfo);
-        linkCardUpdater.pay(linkCard, txInfo.point());
-        paymentRecorder.record(store, linkCard, txInfo.point());
+        Payment payment = paymentRecorder.record(store, linkCard, txInfo.point());
+        linkCardUpdater.pay(linkCard, txInfo.point(), payment);
     }
 }

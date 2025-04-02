@@ -18,10 +18,11 @@ public class PaymentRecorder {
     private final PaymentRepository paymentRepository;
 
     @Transactional
-    public void record(final Store store,
-                       final LinkCard linkCard,
-                       final Point point) {
-        paymentRepository.save(Payment.builder()
+    public Payment record(final Store store,
+                          final LinkCard linkCard,
+                          final Point point
+    ) {
+        return paymentRepository.save(Payment.builder()
                 .id(idGenerator.generate())
                 .member(linkCard.getMember())
                 .linkCard(linkCard)

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.LinkCard;
+import monorail.linkpay.payment.domain.Payment;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.service.WalletFetcher;
 import monorail.linkpay.wallet.service.WalletUpdater;
@@ -17,9 +18,9 @@ public class LinkCardUpdater {
     private final WalletUpdater walletUpdater;
 
     @Transactional
-    public void pay(final LinkCard linkCard, final Point point) {
+    public void pay(final LinkCard linkCard, final Point point, final Payment payment) {
         linkCard.usePoint(point);
         Wallet wallet = walletFetcher.fetchByIdForUpdate(linkCard.getWallet().getId());
-        walletUpdater.deductPoint(wallet, point, linkCard.getMember());
+        walletUpdater.deductPoint(wallet, point, linkCard.getMember(), payment);
     }
 }

@@ -86,9 +86,12 @@ public class LinkedWalletService {
                 .map(tuple -> getLinkedMember(tuple, linkedWallet, PARTICIPANT))
                 .toList();
 
+        validateMemberExist(memberIds, linkedMembers);
+
         linkedMemberRepository.saveAll(linkedMembers);
         return linkedWallet.getId();
     }
+
 
     private LinkedMember getLinkedMember(final Member member, final LinkedWallet linkedWallet, final Role role) {
         return LinkedMember.builder()
@@ -133,6 +136,12 @@ public class LinkedWalletService {
     private void validateCreator(LinkedMember linkedMember) {
         if (!linkedMember.isCreator()) {
             throw new LinkPayException(INVALID_REQUEST, "링크 지갑은 생성자만 삭제할 수 있습니다.");
+        }
+    }
+
+    private static void validateMemberExist(final Set<Long> memberIds, final List<LinkedMember> linkedMembers) {
+        if (memberIds.size() != linkedMembers.size()) {
+            throw new LinkPayException(INVALID_REQUEST, "존재하지 않는 회원 아이디가 포함되어있습니다.");
         }
     }
 }
