@@ -1,14 +1,10 @@
-import React,{ useState, useEffect } from 'react';
+import React,{useState,useEffect} from 'react';
 import Header from '@/components/Header';
 import ChargeModal from '@/modal/ChargeModal';
 import { MyWalletHistory } from '@/model/MyWalletHistory';
 import MenuModal from '@/modal/MenuModal';
 import { useNavigate } from 'react-router-dom';
-interface WalletDataResponse {
-  userWalletName: string;
-  amount: number;
-  walletHistory: MyWalletHistory[];
-}
+import axios from 'axios';
 
 const MyWallet: React.FC = () => {
   const [showChargeModal, setShowChargeModal] = useState(false);
@@ -17,21 +13,7 @@ const MyWallet: React.FC = () => {
   const [userWalletName, setUserWalletName] = useState('');
 
   const navigate = useNavigate();
-
-  const handleCreateCard = () => {
-    navigate('/createcard');
-  };
-
-  const [showMenu, setShowMenu] = useState(false);
-
-  const handleMenuClick = () => {
-    setShowMenu(true);
-  };
-
-  const handleMenuClose = () => {
-    setShowMenu(false);
-  };
-
+  
   //내 지갑 잔액 조회 api 호출
   useEffect(() => {
     const fetchWalletBalance = async () => {
@@ -60,22 +42,26 @@ const MyWallet: React.FC = () => {
     fetchWalletBalance();
   }, []);
 
+  const base_url = process.env.REACT_APP_API_URL;
   // 충전 API 호출 함수
   const handleCharge = async (amount: number) => {
     try {
-      const accessToken = '사용자_토큰_여기'; 
-      const response = await fetch('/api/wallets/charge', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ amount }),
-      });
+      const token = sessionStorage.getItem('accessToken');
+      const response = await axios.patch(`${base_url}/api/wallets/charge`, 
+        { amount: amount },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          }
+      );
       if (response.status === 204) {
         // API 호출 성공 시 잔액 업데이트 및 모달 닫기
         setWalletBalance(prev => prev + amount);
+        console.log('충전 성공');
         setShowChargeModal(false);
+        navigate('/mywallet');
       } else {
         alert('충전에 실패했습니다.');
       }
@@ -84,7 +70,21 @@ const MyWallet: React.FC = () => {
       alert('오류가 발생했습니다.');
     }
   };
-  
+
+
+  const handleCreateCard = () => {
+    navigate('/createcard');
+  };
+
+  const [showMenu, setShowMenu] = useState(false);
+
+  const handleMenuClick = () => {
+    setShowMenu(true);
+  };
+
+  const handleMenuClose = () => {
+    setShowMenu(false);
+  };
   return (
     <div className='dark:bg-[#3b3838]'>
       <Header headerType="menu" onMenuClick={handleMenuClick} />

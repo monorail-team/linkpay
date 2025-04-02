@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { useNavigate } from 'react-router-dom';
+import { useThemeStore } from '@/store/themeStore';
+import useWebAuthn from '@/hooks/useWebAuthn';
 
 import Header from '@/components/Header';
 import CardComponent from '@/components/Card';
 import Icon from '@/components/Icon';
 import AddLinkCard from '@/components/AddLinkCard';
 import MenuModal from '@/modal/MenuModal';
-import { useThemeStore } from '@/store/themeStore';
 import { Card } from '@/model/Card';
 import axios from 'axios';
+
+const base_url = process.env.REACT_APP_API_URL;
 
 const Home: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,17 +21,29 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
 
+  const { handleWebAuthn, loading } = useWebAuthn();
+
+  const onFingerprintClick = async () => {
+    const assertionResult = await handleWebAuthn();
+    if (assertionResult) {
+      const selectedCard = cards[currentIndex];
+      navigate("/payment", { state: { cardData: selectedCard} });
+    } else {
+      console.error("assertionResult 생성 실패");
+    }
+  };
 
   const [showMenu, setShowMenu] = useState(false);
   
-    const handleMenuClick = () => {
-      setShowMenu(true);
-    };
+  const handleMenuClick = () => {
+    setShowMenu(true);
+  };
   
-    const handleMenuClose = () => {
-      setShowMenu(false);
-    };
+  const handleMenuClose = () => {
+    setShowMenu(false);
+  };
 
+ 
   // 카드 API 호출
   useEffect(() => {
     const fetchCards = async () => {
@@ -38,7 +53,7 @@ const Home: React.FC = () => {
           console.error('accessToken이 없습니다.');
           return;
         }
-        const response = await axios.get('http://localhost:8080/api/cards/registered', {
+        const response = await axios.get(`${base_url}/api/cards/registered`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const cardsData = response.data.linkCards as Card[];
@@ -60,7 +75,7 @@ const Home: React.FC = () => {
           console.error('accessToken이 없습니다.');
           return;
         }
-        const response = await axios.get('http://localhost:8080/api/wallets', {
+        const response = await axios.get(`${base_url}/api/my-wallets`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setWalletInfo(response.data);
@@ -117,7 +132,7 @@ const Home: React.FC = () => {
             {/* 실제 카드들을 화면에 표시 */}
             {cards.map((card) => (
               <div 
-                key={card.id} 
+                key={card.linkCardId} 
                 className="flex-shrink-0 mr-[10%] last:mr-0 transition-opacity duration-300 w-full"
                 style={{ opacity: Math.abs(currentIndex - cards.indexOf(card)) > 1 ? 0.5 : 1 }}
               >
@@ -154,13 +169,20 @@ const Home: React.FC = () => {
 
       {/* 지문 아이콘 및 결제 문구 */}
       <footer className="flex flex-col items-center p-4 mt-10 min-h-[120px]">
+        <button
+          onClick={onFingerprintClick}
+          disabled={loading}
+          className="focus:outline-none"
+        >
           <Icon
             name={theme === 'dark' ? 'fingerprintDarkIcon' : 'fingerprintIcon'}
             width={78}
             height={78}
-            alt="메뉴"
+            alt="지문 인증"
           />
-        <div className="mt-2 text-sm text-gray-800 dark:text-white">지문으로 결제하세요</div>
+        </button>
+        {loading && <p className="mt-4 text-white">처리중...</p>}
+        <p className="mt-2 text-white">지문 버튼을 눌러 결제를 진행하세요.</p>
       </footer>
     </div>
   );

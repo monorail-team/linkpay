@@ -53,7 +53,7 @@ const MenuModal: React.FC<MenuModalProps> = ({ onClose }) => {
               </button>
               <button
                 onClick={() => {
-                  navigate('/링크카드관리페이지');
+                  navigate('/linkcardlist');
                   onClose();
                 }}
                 className="flex items-center gap-2 px-4 py-4 hover:bg-gray-100 dark:hover:bg-[#3c3c3c]"
@@ -68,7 +68,7 @@ const MenuModal: React.FC<MenuModalProps> = ({ onClose }) => {
               </button>
               <button
                 onClick={() => {
-                  navigate('/링크지갑페이지');
+                  navigate('/linkwalletlist');
                   onClose();
                 }}
                 className="flex items-center gap-2 px-4 py-4 hover:bg-gray-100 dark:hover:bg-[#3c3c3c]"

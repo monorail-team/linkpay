@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: dev
+  config:
+    import: optional:classpath:.env[.properties]
+  cloud:
+    config:
+      uri: http://3.37.114.5:8081
+      name: linkpay
+      username: ${CONFIG_USERNAME}
+      password: ${CONFIG_PASSWORD}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

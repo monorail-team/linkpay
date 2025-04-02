@@ -18,6 +18,8 @@ const CreateCardPage: React.FC = () => {
   const toggleCalendar = () => setIsCalendarOpen(prev => !prev);
   const { theme } = useThemeStore();
 
+  const base_url = process.env.REACT_APP_API_URL;
+  
   // 달력 선택 함수수
   const handleDateSelect = (date: string) => {
     setExpireDate(date);
@@ -48,7 +50,7 @@ const CreateCardPage: React.FC = () => {
     };
     console.log('payload:', payload);
     try {
-      const response = await axios.post('http://localhost:8080/api/cards', payload, {
+      const response = await axios.post(`${base_url}/api/cards`, payload, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
