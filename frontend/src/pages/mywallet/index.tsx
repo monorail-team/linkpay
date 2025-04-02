@@ -55,7 +55,7 @@ const MyWallet: React.FC = () => {
     }, [base_url]);
 
     // 지갑 내역 API 호출 함수
-  const fetchWalletHistories = async () => {
+  const fetchWalletHistories =  useCallback(async () => {
     if (loading || !hasNext) return;
     setLoading(true);
     try {
@@ -81,21 +81,21 @@ const MyWallet: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading, hasNext, lastId, base_url]);
 
    // 무한 스크롤 구현: observer를 사용해 loadMoreRef가 화면에 나타나면 추가 데이터를 불러옴
    const loadMoreRef = useRef<HTMLDivElement | null>(null);
    const observer = useRef<IntersectionObserver>();
  
    const handleObserver = useCallback(
-     (entries: IntersectionObserverEntry[]) => {
-       const target = entries[0];
-       if (target.isIntersecting && hasNext && !loading) {
-         fetchWalletHistories();
-       }
-     },
-     [hasNext, loading]
-   );
+    (entries: IntersectionObserverEntry[]) => {
+      const target = entries[0];
+      if (target.isIntersecting && hasNext && !loading) {
+        fetchWalletHistories();
+      }
+    },
+    [hasNext, loading, fetchWalletHistories] 
+  );
 
    useEffect(() => {
     if (observer.current) observer.current.disconnect();
