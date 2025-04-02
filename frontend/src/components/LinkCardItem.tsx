@@ -1,17 +1,17 @@
 import React from 'react';
 import {Card} from '@/model/Card';
-type LinkCardItemProps = Pick<Card, 'cardName' | 'usedPoint' | 'limitPrice' | 'expiredAt'| 'isRegistered'>;
+type LinkCardItemProps = Pick<Card, 'cardName' | 'usedPoint' | 'limitPrice' | 'expiredAt'| 'state'>;
 const LinkCardItem: React.FC<LinkCardItemProps> = ({
   cardName,
   usedPoint,
   limitPrice,
   expiredAt,
-  isRegistered = "UNREGISTERED",
+  state = "UNREGISTERED",
 }) => {
   return (
     <div className="relative w-full h-28">
     {/* (1) 등록된 카드이면 오른쪽 상단에 배지 표시 */}
-    {isRegistered === "REGISTERED" && (
+    {state === "REGISTERED" && (
       <div className="absolute -top-4 -right-2 bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded-bl">
         등록됨
       </div>
@@ -23,7 +23,7 @@ const LinkCardItem: React.FC<LinkCardItemProps> = ({
     </div>
 
     {/* (3) 사용현황 영역 (오른쪽 상단) */}
-    {isRegistered ? (
+    {state ? (
       // 등록된 카드: "사용한 포인트 / 한도" (문구 + 실제 값 2줄)
       <div className="absolute top-2 right-2 text-sm w-40">
         <div className="flex justify-between">
