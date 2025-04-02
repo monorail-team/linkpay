@@ -15,11 +15,15 @@ interface PaymentState {
   initialTime: number;
 }
 
+
 const Payment: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [cardData] = useState(() => location.state as PaymentState);
-
+ 
+  const { cardData } = location.state as {
+    cardData: PaymentState,
+  };
+  
   const {
     cardName,
     description,
@@ -69,6 +73,7 @@ const Payment: React.FC = () => {
     }
   });
 
+  
 
   return (
     <div className="flex flex-col items-center justify-center h-screen text-white px-4 relative bg-[#938F99]">

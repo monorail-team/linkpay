@@ -2,12 +2,13 @@ import React, { useEffect } from 'react';
 import kakaoLoginImage from '@/assets/images/kakao-login-medium-wide.png';
 import { useNavigate } from 'react-router-dom';
 
+const front_url = process.env.REACT_APP_FRONTEND_URL;
 const Login: React.FC = () => {
 
   const handleKakaoLogin = () => {
     // RestAPI키와 RedirectURI는 외부로 노출되도 상관 없음; 토큰 획득시에 사용하는 ClientSecret만 보안 관리 대상
     const REST_API_KEY = '40857df827a0ec72c7a9345d3e3f3e8b';
-    const REDIRECT_URI = 'http://localhost:3000/callback/login/kakao';
+    const REDIRECT_URI = `${front_url}/callback/login/kakao`;
     const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
 
     window.location.href = kakaoAuthURL;
