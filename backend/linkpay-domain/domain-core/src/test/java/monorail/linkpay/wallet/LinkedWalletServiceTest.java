@@ -11,7 +11,6 @@ import java.util.Set;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.exception.LinkPayException;
-import monorail.linkpay.linkcard.LinkCardServiceTest;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.LinkedWallet;
 import monorail.linkpay.wallet.dto.LinkedWalletResponse;
@@ -37,6 +36,18 @@ class LinkedWalletServiceTest extends IntegrationTest {
 
         // then
         assertThat(linkedWalletId).isNotNull();
+    }
+
+    @Test
+    void 링크지갑_생성_시_회원이_아닌_아이디값을_보내면_오류가_발생한다() {
+        // given
+        Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
+        Member member2 = memberRepository.save(createMember("tiger@gmail.com", "tiger"));
+
+        // when // then
+        assertThatThrownBy(() -> linkedWalletService.createLinkedWallet(member.getId(), "animal",
+                Set.of(member1.getId(), member2.getId(), 999L))).isInstanceOf(LinkPayException.class)
+                .hasMessage("존재하지 않는 회원 아이디가 포함되어있습니다.");
     }
 
     @Test
@@ -123,8 +134,8 @@ class LinkedWalletServiceTest extends IntegrationTest {
         Long linkedWalletId = linkedWalletService.createLinkedWallet(member.getId(), "animal",
                 Set.of(member1.getId(), member2.getId()));
         linkedWalletService.chargeLinkedWallet(linkedWalletId, new Point(10000), member1.getId());
-        linkCardRepository.save(LinkCardServiceTest.createLinkWalletCard(
-                1L, LinkedWallet.builder().id(linkedWalletId).build(), member1));
+        linkCardRepository.save(createLinkWalletCard(
+                LinkedWallet.builder().id(linkedWalletId).build(), member1));
 
         // when, then
         assertThatThrownBy(() -> linkedWalletService.deleteLinkedWallet(linkedWalletId, member.getId()))

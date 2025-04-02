@@ -11,16 +11,6 @@ include::{snippets}/mywallets/charge/http-request.adoc[]
 
 include::{snippets}/mywallets/charge/http-response.adoc[]
 
-=== 지갑 차감
-
-==== HTTP Request
-
-include::{snippets}/mywallets/deduct/http-request.adoc[]
-
-==== HTTP Response
-
-include::{snippets}/mywallets/deduct/http-response.adoc[]
-
 === 지갑 조회
 
 ==== HTTP Request

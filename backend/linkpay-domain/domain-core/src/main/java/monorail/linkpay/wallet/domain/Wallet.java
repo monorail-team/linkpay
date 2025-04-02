@@ -50,4 +50,5 @@ public abstract class Wallet extends BaseEntity {
     public void deductPoint(final Point point) {
         this.point = this.point.subtract(point);
     }
+    
 }

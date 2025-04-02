@@ -1,7 +1,20 @@
 package monorail.linkpay.controller;
 
+import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
+import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 import monorail.linkpay.auth.dto.LoginResponse;
-import monorail.linkpay.controller.request.*;
+import monorail.linkpay.controller.request.LinkCardCreateRequest;
+import monorail.linkpay.controller.request.LinkCardRegistRequest;
+import monorail.linkpay.controller.request.LinkedMemberCreateRequest;
+import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
+import monorail.linkpay.controller.request.PaymentsRequest;
+import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
+import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.history.dto.WalletHistoryListResponse;
 import monorail.linkpay.history.dto.WalletHistoryResponse;
 import monorail.linkpay.linkcard.domain.CardColor;
@@ -10,27 +23,24 @@ import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.member.dto.MemberResponse;
-import monorail.linkpay.wallet.dto.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-
-import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
+import monorail.linkpay.wallet.dto.LinkedMemberResponse;
+import monorail.linkpay.wallet.dto.LinkedMembersResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
+import monorail.linkpay.wallet.dto.WalletResponse;
 
 public class ControllerFixture {
 
     public static final WalletHistoryListResponse WALLET_HISTORY_LIST_RESPONSE = new WalletHistoryListResponse(List.of(
             new WalletHistoryResponse("1", 10000L, 30000L,
-                    DEPOSIT.toString(), LocalDateTime.now()),
+                    DEPOSIT.toString(), LocalDateTime.now(), null, null),
             new WalletHistoryResponse("2", 10000L, 30000L,
-                    DEPOSIT.toString(), LocalDateTime.now()),
+                    DEPOSIT.toString(), LocalDateTime.now(), null, null),
             new WalletHistoryResponse("3", 10000L, 30000L,
-                    DEPOSIT.toString(), LocalDateTime.now())), false);
+                    WITHDRAWAL.toString(), LocalDateTime.now(), "3", "카드명")), false);
 
     public static final WalletHistoryResponse WALLET_HISTORY_RESPONSE = new WalletHistoryResponse(
-            "1", 10000L, 30000L, DEPOSIT.toString(), LocalDateTime.now());
+            "1", 10000L, 30000L, DEPOSIT.toString(), LocalDateTime.now(), null, null);
 
     public static final LoginResponse LOGIN_RESPONSE = new LoginResponse("accessToken");
 
@@ -129,7 +139,7 @@ public class ControllerFixture {
             List.of(LINKED_WALLET_RESPONSE_1, LINKED_WALLET_RESPONSE_2, LINKED_WALLET_RESPONSE_3), false
     );
 
-    public static final PaymentsRequest PAYMENT_REQUEST = new PaymentsRequest(10000, 1L, 2L,"sig","tkn");
+    public static final PaymentsRequest PAYMENT_REQUEST = new PaymentsRequest(10000, 1L, 2L, "sig", "tkn");
 
     public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_1 = new LinkedMemberResponse(
             "1", "링크멤버1", "link1@gmail.com");
