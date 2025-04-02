@@ -1,23 +1,118 @@
-import React,{useState} from 'react';
+import React,{ useState, useEffect, useRef, useCallback} from 'react';
 import Header from '@/components/Header';
 import ChargeModal from '@/modal/ChargeModal';
 import MenuModal from '@/modal/MenuModal';
-
 import { MyWalletHistory } from '@/model/MyWalletHistory';
-import { walletData } from '@/mocks/walletData';
 import { useNavigate } from 'react-router-dom';
+import { formatDateTime } from'@/util/formatdate';
 import axios from 'axios';
 
 const MyWallet: React.FC = () => {
   const [showChargeModal, setShowChargeModal] = useState(false);
-  const [walletBalance, setWalletBalance] = useState(walletData.availablePoint);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [walletHistories, setWalletHistories] = useState<MyWalletHistory[]>([]);
+  const [hasNext, setHasNext] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [lastId, setLastId] = useState<string>('1');
+  const [username, setUsername] = useState('');
 
   const base_url = process.env.REACT_APP_API_URL;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = sessionStorage.getItem('accessToken');
+        const response = await axios.get(`${base_url}/api/mypage`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        setUsername(response.data.username);
+      } catch (error) {
+        console.error('사용자 정보를 불러오는 중 오류 발생:', error);
+      }
+    };
+    fetchUserInfo();
+  }, [base_url]);
+    // 지갑 잔액을 API에서 가져오는 useEffect
+    useEffect(() => {
+      const fetchWalletBalance = async () => {
+        try {
+          const token = sessionStorage.getItem('accessToken');
+          const response = await axios.get(`${base_url}/api/my-wallets`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          // API 응답 데이터의 amount 값을 walletBalance에 저장
+          setWalletBalance(response.data.amount);
+        } catch (error) {
+          console.error('지갑 정보를 불러오는 중 오류 발생:', error);
+          alert('지갑 정보를 불러오는데 실패했습니다.');
+        }
+      };
+  
+      fetchWalletBalance();
+    }, [base_url]);
+
+    // 지갑 내역 API 호출 함수
+  const fetchWalletHistories =  useCallback(async () => {
+    if (loading || !hasNext) return;
+    setLoading(true);
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      const response = await axios.get(
+        `${base_url}/api/wallet-histories/my-wallet?lastId=${lastId}&size=10`,
+        {
+          headers: { 'Authorization': `Bearer ${token}` },
+        }
+      );
+      const { walletHistories: newHistories, hasNext: next } = response.data;
+      // 새 데이터를 기존 데이터에 추가
+      setWalletHistories(prev => [...prev, ...newHistories]);
+      setHasNext(next);
+      // 다음 페이지 요청을 위해 마지막 항목의 ID를 갱신 (newHistories가 존재하는 경우)
+      if (newHistories && newHistories.length > 0) {
+        const newLastId = newHistories[newHistories.length - 1].walletHistoryId;
+        setLastId(newLastId);
+      }
+    } catch (error) {
+      console.error('지갑 내역을 불러오는 중 오류 발생:', error);
+      alert('지갑 내역을 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, hasNext, lastId, base_url]);
+
+   // 무한 스크롤 구현: observer를 사용해 loadMoreRef가 화면에 나타나면 추가 데이터를 불러옴
+   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+   const observer = useRef<IntersectionObserver>();
+ 
+   const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const target = entries[0];
+      if (target.isIntersecting && hasNext && !loading) {
+        fetchWalletHistories();
+      }
+    },
+    [hasNext, loading, fetchWalletHistories] 
+  );
+
+   useEffect(() => {
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(handleObserver, {
+      threshold: 0.1,
+    });
+    if (loadMoreRef.current) {
+      observer.current.observe(loadMoreRef.current);
+    }
+    return () => observer.current?.disconnect();
+  }, [handleObserver]);
+
   // 충전 API 호출 함수
   const handleCharge = async (amount: number) => {
     try {
       const token = sessionStorage.getItem('accessToken');
-      const response = await axios.patch(`${base_url}/api/wallets/charge`, 
+      const response = await axios.patch(`${base_url}/api/my-wallets/charge`, 
         { amount: amount },
           {
             headers: {
@@ -42,8 +137,6 @@ const MyWallet: React.FC = () => {
   };
 
 
-  const navigate = useNavigate();
-
   const handleCreateCard = () => {
     navigate('/createcard');
   };
@@ -65,14 +158,14 @@ const MyWallet: React.FC = () => {
         {/* 내 지갑 정보 */}
         <div className="w-4/5 h-1/4 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
           <p className="test-sm text-[clamp(0.8rem,2vw,1rem)] text-black text-start mt-4 px-4 dark:text-[#D4D4D4]">
-          {walletData.userWalletName}의 지갑
+          {username}의 지갑
           </p>
           <div className='flex flex-col items-center justify-center h-2/3'>
             <p className="text-[clamp(1rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4]">
               잔여 포인트
             </p>
             <p className="text-[clamp(1.5rem,4vw,2.5rem)] sm:text-3xl text-black text-center font-bold dark:text-[#D4D4D4]">
-              {walletData.availablePoint.toLocaleString()}원
+              {walletBalance.toLocaleString()}원
             </p>
           </div>
           <div className="flex justify-between w-full">
@@ -91,7 +184,7 @@ const MyWallet: React.FC = () => {
         <div className="mt-12 mx-6">
           <h3 className="text-lg text-[#969595]">입출금 내역</h3>
           <ul className="mt-2">
-            {walletData.walletHistory.map((history: MyWalletHistory) => (
+            {walletHistories.map((history: MyWalletHistory) => (
               <li
                 key={history.walletHistoryId}
                 className="py-1.5 border-b flex justify-between items-center text-lg border-gray-300 dark:border-[#515151] dark:bg-[#3b3838]"
@@ -99,22 +192,22 @@ const MyWallet: React.FC = () => {
                 {/* 날짜 & 카드 이름 */}
                 <div className="flex items-center w-1/2">
                   <p className="text-black dark:text-white">
-                    {history.transactionDate}
+                    {formatDateTime(history.time)}
                   </p>
-                  {history.type !== 'DEPOSIT' && (
+                  {history.transactionType  !== 'DEPOSIT' && (
                     <p className="text-black ml-12 dark:text-white">
-                      {history.cardName}
+                      카드
                     </p>
                   )}
                 </div>
                 {/* 입출금 종류 & 금액 */}
                 <div className="flex flex-col items-end">
-                  <p className={`${history.type === 'DEPOSIT' ? 'text-blue-500' : 'text-black dark:text-white'}`}>
-                    {history.type === 'DEPOSIT' ? '+' : '-'}{' '}
-                    {Math.abs(history.point).toLocaleString()}원
+                  <p className={`${history.transactionType === 'DEPOSIT' ? 'text-blue-500' : 'text-black dark:text-white'}`}>
+                    {history.transactionType === 'DEPOSIT' ? '+' : '-'}{' '}
+                    {Math.abs(history.amount).toLocaleString()}원
                   </p>
                   <p className="text-sm text-gray-500 dark:text-white">
-                    잔액 {history.afterPoint.toLocaleString()}원
+                    잔액 {history.remaining.toLocaleString()}원
                   </p>
                 </div>
               </li>
