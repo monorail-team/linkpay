@@ -10,6 +10,7 @@ import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
+import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +41,9 @@ public class LinkCardController {
 
     @PostMapping("/shared")
     public ResponseEntity<Void> createSharedLinkCard(
-            @Valid @RequestBody final SharedLinkCardCreateRequest sharedLinkCardCreateRequest) {
-        linkCardService.createShared(sharedLinkCardCreateRequest.toServiceRequest());
+            @Valid @RequestBody final SharedLinkCardCreateRequest sharedLinkCardCreateRequest,
+            @AuthenticationPrincipal final AuthPrincipal principal) {
+        linkCardService.createShared(sharedLinkCardCreateRequest.toServiceRequest(), principal.memberId());
         return ResponseEntity.status(CREATED).build();
     }
 
@@ -62,10 +64,18 @@ public class LinkCardController {
                 now()));
     }
 
+    @GetMapping("/detail")
+    public ResponseEntity<LinkCardDetailResponse> getLinkCardDetails(@RequestParam final Long linkCardId,
+                                                                     @AuthenticationPrincipal final AuthPrincipal principal) {
+        return ResponseEntity.ok(linkCardService.getLinkCardDetails(principal.memberId(), linkCardId));
+
+    }
+
     @PatchMapping("/activate")
     public ResponseEntity<Void> activateLinkCard(
-            @Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest) {
-        linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds());
+            @Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest,
+            @AuthenticationPrincipal final AuthPrincipal principal) {
+        linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds(), principal.memberId());
         return ResponseEntity.noContent().build();
     }
 

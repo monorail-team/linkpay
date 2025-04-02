@@ -48,7 +48,7 @@ class AuthServiceTest extends IntegrationTest {
                     ResponseEntity.ok(KakaoOauthResponse.of(accessToken))
             );
             when(mockKakaoOauthClient.fetchUser(accessToken)).thenReturn(
-                    ResponseEntity.ok(KakaoUserResponse.of(member.getEmail()))
+                    ResponseEntity.ok(KakaoUserResponse.of(member.getEmail(), member.getUsername()))
             );
 
             //when

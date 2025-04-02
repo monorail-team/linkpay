@@ -1,0 +1,13 @@
+dependencies {
+    implementation project(':linkpay-support')
+    implementation project(':linkpay-domain:domain-core')
+    implementation project(':linkpay-in-system-available:common-web')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+    runtimeOnly 'com.h2database:h2'
+}

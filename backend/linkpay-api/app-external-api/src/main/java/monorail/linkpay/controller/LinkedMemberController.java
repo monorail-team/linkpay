@@ -30,8 +30,10 @@ public class LinkedMemberController {
     @GetMapping
     public ResponseEntity<LinkedMembersResponse> getLinkedMembers(@PathVariable final Long linkedWalletId,
                                                                   @RequestParam(required = false) final Long lastId,
-                                                                  @RequestParam(defaultValue = "10") final int size) {
-        return ResponseEntity.ok(linkedMemberService.getLinkedMembers(linkedWalletId, lastId, size));
+                                                                  @RequestParam(defaultValue = "10") final int size,
+                                                                  @AuthenticationPrincipal final AuthPrincipal principal) {
+        return ResponseEntity.ok(
+                linkedMemberService.getLinkedMembers(linkedWalletId, principal.memberId(), lastId, size));
     }
 
     @PostMapping
@@ -43,11 +45,19 @@ public class LinkedMemberController {
         return ResponseEntity.status(CREATED).build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{linkedMemberId}")
     public ResponseEntity<Void> deleteLinkedMember(@PathVariable final Long linkedWalletId,
-                                                   @RequestParam final Set<Long> linkedMemberIds,
+                                                   @PathVariable final Long linkedMemberId,
                                                    @AuthenticationPrincipal final AuthPrincipal principal) {
-        linkedMemberService.deleteLinkedMember(linkedWalletId, linkedMemberIds, principal.memberId());
+        linkedMemberService.deleteLinkedMember(linkedWalletId, linkedMemberId, principal.memberId());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteLinkedMembers(@PathVariable final Long linkedWalletId,
+                                                    @RequestParam final Set<Long> linkedMemberIds,
+                                                    @AuthenticationPrincipal final AuthPrincipal principal) {
+        linkedMemberService.deleteLinkedMembers(linkedWalletId, linkedMemberIds, principal.memberId());
         return ResponseEntity.noContent().build();
     }
 }

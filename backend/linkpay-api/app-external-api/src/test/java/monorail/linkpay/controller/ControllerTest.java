@@ -32,6 +32,7 @@ import org.springframework.web.context.WebApplicationContext;
         LinkedWalletController.class,
         PaymentController.class,
         WalletHistoryController.class,
+        MypageController.class,
 })
 @WithCustomUser
 @ExtendWith(RestDocumentationExtension.class)

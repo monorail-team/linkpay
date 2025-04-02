@@ -1,5 +1,6 @@
 package monorail.linkpay.wallet.service;
 
+import static monorail.linkpay.exception.ExceptionCode.DUPLICATED_RESOURCE;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
@@ -30,7 +31,9 @@ public class LinkedMemberService {
     private final MemberFetcher memberFetcher;
     private final IdGenerator idGenerator;
 
-    public LinkedMembersResponse getLinkedMembers(final Long linkedWalletId, final Long lastId, final int size) {
+    public LinkedMembersResponse getLinkedMembers(final Long linkedWalletId, final long memberId,
+                                                  final Long lastId, final int size) {
+        linkedMemberFetcher.checkExistsByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
         Slice<LinkedMember> linkedMembers = linkedMemberRepository.findAllByLinkedWalletId(
                 linkedWalletId, lastId, PageRequest.of(0, size));
         return new LinkedMembersResponse(linkedMembers.stream()
@@ -42,6 +45,7 @@ public class LinkedMemberService {
     @Transactional
     public void createLinkedMember(final Long linkedWalletId, final Long memberId, final Long participantId) {
         validateCreatorPermission(linkedWalletId, memberId);
+        validateDuplicatedLinkedMember(linkedWalletId, participantId);
         Member member = memberFetcher.fetchById(participantId);
         LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
 
@@ -49,20 +53,58 @@ public class LinkedMemberService {
                 .id(idGenerator.generate())
                 .role(PARTICIPANT)
                 .linkedWallet(linkedWallet)
-                .member(member).build());
+                .member(member)
+                .build());
     }
 
     @Transactional
-    public void deleteLinkedMember(final Long linkedWalletId, final Set<Long> linkedMemberIds, final Long memberId) {
-        validateCreatorPermission(linkedWalletId, memberId);
+    public void deleteLinkedMember(final Long linkedWalletId, final Long linkedMemberId, final long memberId) {
         linkedWalletFetcher.checkExistsById(linkedWalletId);
+        LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
+        validateCreatorOrSelf(memberId, linkedMember);
+
+        LinkedMember target = linkedMemberFetcher.fetchById(linkedMemberId);
+        if (target.isCreator()) {
+            throw new LinkPayException(INVALID_REQUEST, "링크지갑 생성자를 삭제할 수 없습니다.");
+        }
+        linkedMemberRepository.delete(target);
+    }
+
+    @Transactional
+    public void deleteLinkedMembers(final Long linkedWalletId, final Set<Long> linkedMemberIds, final Long memberId) {
+        linkedWalletFetcher.checkExistsById(linkedWalletId);
+        LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
+
+        if (!linkedMember.isCreator()) {
+            throw new LinkPayException(INVALID_REQUEST, "링크지갑 생성자만 참여자를 관리할 수 있습니다.");
+        }
+        validateNotDeletingCreator(linkedMemberIds, linkedMember.getId());
         linkedMemberRepository.deleteByIds(linkedMemberIds);
     }
 
     private void validateCreatorPermission(final Long linkedWalletId, final Long memberId) {
         LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
         if (!linkedMember.isCreator()) {
-            throw new LinkPayException(INVALID_REQUEST, "지갑 생성자만 참여자를 관리할 수 있습니다.");
+            throw new LinkPayException(INVALID_REQUEST, "링크지갑 생성자만 참여자를 관리할 수 있습니다.");
         }
+    }
+
+    private void validateCreatorOrSelf(final long memberId, final LinkedMember linkedMember) {
+        if (!linkedMember.isCreator() && !linkedMember.getMember().getId().equals(memberId)) {
+            throw new LinkPayException(INVALID_REQUEST, "링크지갑 생성자 또는 본인만이 삭제할 수 있습니다.");
+        }
+    }
+
+    private void validateNotDeletingCreator(final Set<Long> linkedMemberIds, final Long linkedCreatorId) {
+        if (linkedMemberIds.contains(linkedCreatorId)) {
+            throw new LinkPayException(INVALID_REQUEST, "링크지갑 생성자는 자신을 삭제할 수 없습니다.");
+        }
+    }
+
+    private void validateDuplicatedLinkedMember(final Long linkedWalletId, final Long participantId) {
+        linkedMemberRepository.findByLinkedWalletIdAndMemberId(linkedWalletId, participantId)
+                .ifPresent(linkedMember -> {
+                    throw new LinkPayException(DUPLICATED_RESOURCE, "이미 링크 지갑에 가입된 회원입니다.");
+                });
     }
 }

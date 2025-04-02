@@ -35,7 +35,7 @@ public class AuthService {
                     Member member = memberRepository.save(Member.builder()
                             .id(idGenerator.generate())
                             .email(loginPrincipal.email())
-                            .username("")
+                            .username(loginPrincipal.username())
                             .build()
                     );
                     myWalletRepository.save(MyWallet.builder()

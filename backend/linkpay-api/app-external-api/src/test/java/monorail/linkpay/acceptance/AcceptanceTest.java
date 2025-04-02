@@ -41,6 +41,6 @@ public abstract class AcceptanceTest {
         when(mockKakaoOauthClient.authorize(KAKAO_OAUTH_CODE))
                 .thenReturn(ResponseEntity.ok(KakaoOauthResponse.of(KAKAO_OAUTH_ACCESS_TOKEN)));
         when(mockKakaoOauthClient.fetchUser(KAKAO_OAUTH_ACCESS_TOKEN))
-                .thenReturn(ResponseEntity.ok(KakaoUserResponse.of("email@kakao.com")));
+                .thenReturn(ResponseEntity.ok(KakaoUserResponse.of("email@kakao.com","username")));
     }
 }

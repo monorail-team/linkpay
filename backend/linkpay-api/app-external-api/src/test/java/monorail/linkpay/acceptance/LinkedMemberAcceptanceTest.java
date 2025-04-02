@@ -50,7 +50,7 @@ public class LinkedMemberAcceptanceTest extends AcceptanceTest {
 
                 dynamicTest("링크지갑 참여자를 삭제한다", () -> {
                     String linkedMemberId = 링크지갑_참여자_조회_요청(accessToken, linkedWalletId).as(LinkedMembersResponse.class)
-                            .linkedMembers().getFirst().linkedMemberId();
+                            .linkedMembers().getLast().linkedMemberId();
 
                     ExtractableResponse<Response> response = 링크지갑_참여자_삭제_요청(
                             accessToken, linkedWalletId, Long.parseLong(linkedMemberId));
