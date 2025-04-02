@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef, useCallback} from 'react';
 import Header from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import LinkCardItem from '@/components/LinkCardItem';
@@ -6,42 +6,91 @@ import axios from 'axios';
 import { Card } from '@/model/Card';
 
 const base_url = process.env.REACT_APP_API_URL;
+const PAGE_SIZE = 10;
+
 const Register: React.FC = () => {
 
 
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [cards, setCards] = useState<Card[]>([]);
+  const [hasNext, setHasNext] = useState(true);
+  const [lastId, setLastId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const observerRef = useRef<HTMLDivElement>(null)
+  
+  
+  const fetchCards = useCallback(async () => {
+    if (loading || !hasNext) return;
+    setLoading(true);
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      let url = `${base_url}/api/cards/unregistered`;
+      if (lastId) {
+        url += `&lastId=${lastId}&size=${PAGE_SIZE}`;
+      } else {
+        url += `?size=${PAGE_SIZE}`;
+      }
+      const response = await axios.get(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
-  
-  
+      const newCards = response.data.linkCards;
+      setCards(
+        (prev) => 
+         {
+          const allCards = [...prev, ...newCards];
+          const uniqueCards = allCards.filter((card, index, self) =>
+            index === self.findIndex((c) => c.linkCardId === card.linkCardId)
+          );
+          return uniqueCards;
+         }
+        );
+      setHasNext(response.data.hasNext);
+      if (newCards.length > 0) {
+        // 다음 호출을 위해 마지막 카드의 id 업데이트
+        const newLastId = newCards[newCards.length - 1].linkCardId;
+        setLastId(newLastId);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [lastId, loading, hasNext]);
+
+  // 컴포넌트가 마운트되면 카드리스트트 호출
   useEffect(() => {
-    const fetchCards = async () => {
-      try {
-        const token = sessionStorage.getItem('accessToken');
-        const response = await axios.get(`${base_url}/api/cards/unregistered`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        setCards(response.data.linkCards);
-      } catch (err) {
-        console.error(err);
-        
-      } 
-    };
-
     fetchCards();
-  }, []);
+  }, [fetchCards]);
+
+  // IntersectionObserver를 이용해 스크롤이 바닥에 도달하면 다음 페이지를 불러옴
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasNext && !loading) {
+        fetchCards();
+      }
+    }, { threshold: 1.0 });
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [fetchCards, hasNext, loading]);
 
   const handleSelect = (index: number) => {
     setSelectedIndices((prev) => {
-      // 이미 선택된 경우 -> 선택 취소
       if (prev.includes(index)) {
         return prev.filter((i) => i !== index);
       } else {
-        // 새로 선택
         return [...prev, index];
       }
     });
@@ -73,7 +122,6 @@ const Register: React.FC = () => {
 
 
   const handleBackClick = () => {
-    // 뒤로가기 로직 (예: navigate(-1))
     navigate('/');
   };
 
@@ -114,6 +162,8 @@ const Register: React.FC = () => {
               </div>
             </label>
           ))}
+          <div ref={observerRef}/>
+          {loading && <p className="text-center text-gray-500">불러오는 중...</p>}
         </div>
 
         {/* 등록하기 버튼 */}
