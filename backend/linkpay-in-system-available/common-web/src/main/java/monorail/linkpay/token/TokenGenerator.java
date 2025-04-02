@@ -52,6 +52,7 @@ public class TokenGenerator {
         return switch (type) {
             case ACCESS -> jwtProps.getExpirySeconds();
             case REFRESH -> jwtProps.getRefreshExpirySeconds();
+            case PAYMENT -> 45;
         };
     }
 }

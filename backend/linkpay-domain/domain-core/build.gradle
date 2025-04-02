@@ -10,6 +10,7 @@ dependencies {
 
     testRuntimeOnly 'com.h2database:h2'
     testImplementation testFixtures(project(':linkpay-in-system-available:common-web'))
+    testImplementation testFixtures(project(':linkpay-domain:domain-core'))
 
     testFixturesImplementation project(':linkpay-in-system-available:common-web')
     testFixturesImplementation testFixtures(project(':linkpay-in-system-available:common-web'))

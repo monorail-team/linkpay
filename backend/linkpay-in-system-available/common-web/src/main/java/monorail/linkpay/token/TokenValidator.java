@@ -29,7 +29,7 @@ public class TokenValidator {
                 .type(TokenType.valueOf(claims.get(TOKEN_TYPE.name()).asString()))
                 .tokenId(claims.get(TOKEN_ID.name()).asString())
                 .expiresAt(jwt.getExpiresAtAsInstant())
-                .payload(Json.of(claims.get(PAYLOAD.name()).asString()))
+                .payload(Json.of(claims.get(PAYLOAD.name()).asString())) // todo token 리팩토링
                 .build();
     }
 
