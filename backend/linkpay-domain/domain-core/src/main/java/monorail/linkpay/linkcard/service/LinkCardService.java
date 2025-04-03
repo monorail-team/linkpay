@@ -56,10 +56,11 @@ public class LinkCardService {
     private final PaymentRepository paymentRepository;
 
     @Transactional
-    public void create(final Long memberId, final LinkCardCreateServiceRequest request) {
+    public Long create(final Long memberId, final LinkCardCreateServiceRequest request) {
         Wallet wallet = myWalletFetcher.fetchByMemberId(memberId);
         Member member = memberFetcher.fetchById(memberId);
-        linkCardRepository.save(request.toLinkCard(idGenerator.generate(), wallet, member));
+        LinkCard linkCard = linkCardRepository.save(request.toLinkCard(idGenerator.generate(), wallet, member));
+        return linkCard.getId();
     }
 
     @Transactional
@@ -71,7 +72,6 @@ public class LinkCardService {
         if (!linkedWalletCreator.getMember().getId().equals(memberId)) {
             throw new LinkPayException(INVALID_REQUEST, "링크카드 생성 권한이 없습니다.");
         }
-
         List<Long> memberIds = linkedMemberRepository.findByLinkedWalletId(linkedwallet.getId()).stream()
                 .map(linkedMember -> linkedMember.getMember().getId())
                 .toList();
@@ -133,15 +133,15 @@ public class LinkCardService {
 
     @Transactional
     public void deleteLinkCard(final Long linkCardId, final Long memberId) {
-        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
         Member member = memberFetcher.fetchById(memberId);
+        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
         validateOwnershipOrCreator(linkCard, member);
         linkCardRepository.deleteById(linkCardId);
     }
 
     public LinkCardDetailResponse getLinkCardDetails(final Long memberId, final Long linkCardId) {
-        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
         Member member = memberFetcher.fetchById(memberId);
+        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
         validateOwnershipOrCreator(linkCard, member);
         if (!linkCard.isSharedCard()) {
             return LinkCardDetailResponse.from(linkCard, null);

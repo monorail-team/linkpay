@@ -1,12 +1,11 @@
 package monorail.linkpay.store;
 
+import java.security.KeyPair;
+import java.util.concurrent.atomic.AtomicLong;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.store.domain.StoreSigner;
 import monorail.linkpay.util.key.KeyAlgorithm;
 import monorail.linkpay.util.key.KeyPairUtil;
-
-import java.security.KeyPair;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class StoreFixtures {
     private static final AtomicLong idGenerator = new AtomicLong();

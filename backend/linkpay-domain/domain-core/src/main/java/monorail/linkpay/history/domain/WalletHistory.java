@@ -1,8 +1,20 @@
 package monorail.linkpay.history.domain;
 
-import jakarta.persistence.*;
+import static jakarta.persistence.EnumType.STRING;
+import static lombok.AccessLevel.PROTECTED;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
@@ -13,12 +25,8 @@ import monorail.linkpay.wallet.domain.Wallet;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import static jakarta.persistence.EnumType.STRING;
-import static lombok.AccessLevel.PROTECTED;
-
 @Table(name = "wallet_history")
 @Getter
-@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE wallet_history SET deleted_at = CURRENT_TIMESTAMP WHERE wallet_history_id = ?")
 @SQLRestriction("deleted_at is null")
@@ -64,5 +72,21 @@ public class WalletHistory extends BaseEntity {
         this.transactionType = transactionType;
         this.wallet = wallet;
         this.member = member;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof WalletHistory that)) {
+            return false;
+        }
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 }

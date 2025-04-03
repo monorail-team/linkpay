@@ -1,6 +1,8 @@
 package monorail.linkpay.token;
 
-import static monorail.linkpay.jwt.JwtFixtures.*;
+import static monorail.linkpay.jwt.JwtFixtures.idGenerator;
+import static monorail.linkpay.jwt.JwtFixtures.jwtProps;
+import static monorail.linkpay.jwt.JwtFixtures.jwtProvider;
 
 public class TokenFixtures {
 

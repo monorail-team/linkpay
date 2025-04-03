@@ -42,7 +42,7 @@ public class MyWallet extends Wallet {
         if (!super.equals(o)) {
             return false;
         }
-        return Objects.equals(getId(), myWallet.getId());
+        return getId() != null && Objects.equals(getId(), myWallet.getId());
     }
 
     @Override

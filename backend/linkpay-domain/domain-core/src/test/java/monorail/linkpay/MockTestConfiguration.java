@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import monorail.linkpay.auth.kakao.KakaoOauthClient;
 import monorail.linkpay.jwt.JwtFixtures;
 import monorail.linkpay.jwt.JwtProvider;
+import monorail.linkpay.wallet.client.BankAccountClient;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -22,5 +23,11 @@ public class MockTestConfiguration {
     @Bean(name = "jwtProvider")
     public JwtProvider stubJwtProvider() {
         return new JwtProvider(JwtFixtures.jwtProps);
+    }
+
+    @Primary
+    @Bean(name = "bankAccountClient")
+    public BankAccountClient bankAccountClient() {
+        return mock(BankAccountClient.class);
     }
 }

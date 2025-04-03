@@ -58,14 +58,13 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
     @Test
     void 내_지갑_링크카드를_상세조회한다() {
         String accessToken = 엑세스_토큰();
-        링크카드_생성_요청(accessToken, LINK_CARD_CREATE_REQUEST);
-        ExtractableResponse<Response> cardRes = 링크카드_조회_요청(accessToken, "owned");
-        String linkCardId = cardRes.as(LinkCardsResponse.class).linkCards().getFirst().linkCardId();
-        ExtractableResponse<Response> cardDetailRes = 링크카드_상세_조회_요청(accessToken,
-                Long.parseLong(linkCardId));
+        ExtractableResponse<Response> response = 링크카드_생성_요청(accessToken, LINK_CARD_CREATE_REQUEST);
+        String header = response.header("Location");
+        Long linkCardId = Long.parseLong(header.substring(header.lastIndexOf("/") + 1));
+        ExtractableResponse<Response> cardDetailRes = 링크카드_상세_조회_요청(accessToken, linkCardId);
         LinkCardDetailResponse cardDetailResponse = cardDetailRes.as(LinkCardDetailResponse.class);
 
-        assertThat(linkCardId).isEqualTo(cardDetailResponse.linkCardId());
+        assertThat(linkCardId).isEqualTo(Long.parseLong(cardDetailResponse.linkCardId()));
     }
 
     @Test
@@ -341,7 +340,7 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
     }
 
     private ExtractableResponse<Response> 링크카드_상세_조회_요청(final String accessToken, final Long linkCardId) {
-        return sendGetRequest("/api/cards/detail?linkCardId=" + linkCardId, accessToken);
+        return sendGetRequest("/api/cards/details/" + linkCardId, accessToken);
     }
 
     private ExtractableResponse<Response> 링크카드_사용내역_조회_요청(final String accessToken, final Long linkCardId) {

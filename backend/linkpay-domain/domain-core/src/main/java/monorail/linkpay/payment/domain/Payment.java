@@ -2,9 +2,18 @@ package monorail.linkpay.payment.domain;
 
 import static lombok.AccessLevel.PROTECTED;
 
-import jakarta.persistence.*;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
@@ -18,7 +27,6 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "payment")
 @Getter
-@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE payment SET deleted_at = CURRENT_TIMESTAMP WHERE payment_id = ?")
 @SQLRestriction("deleted_at is null")
@@ -64,5 +72,21 @@ public class Payment extends BaseEntity {
         this.amount = amount;
         this.store = store;
         this.walletHistory = walletHistory;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof Payment payment)) {
+            return false;
+        }
+        return getId() != null && Objects.equals(getId(), payment.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 }

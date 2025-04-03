@@ -2,9 +2,9 @@ package monorail.linkpay.auth.service;
 
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.store.StoreFixtures;
 import monorail.linkpay.store.domain.Store;
-import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.util.signature.SignatureProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ class StoreSignerProviderTest {
     private SignatureProvider sut = new SignatureProvider();
 
     @Test
-    public void 전자서명을_생성한다() throws Exception{
+    public void 전자서명을_생성한다() throws Exception {
         //given
         Store store = StoreFixtures.store();
         long amount = 1000L;
@@ -29,7 +29,7 @@ class StoreSignerProviderTest {
     }
 
     @Test
-    public void 전자서명을_검증한다() throws Exception{
+    public void 전자서명을_검증한다() throws Exception {
         //given
         Store store = StoreFixtures.store();
         long amount = 1000L;
@@ -42,7 +42,7 @@ class StoreSignerProviderTest {
     }
 
     @Test
-    public void 변조된_데이터로_전자서명_검증_시_예외가_발생한다() throws Exception{
+    public void 변조된_데이터로_전자서명_검증_시_예외가_발생한다() throws Exception {
         //given
         Store store = StoreFixtures.store();
         long amount = 1000L;

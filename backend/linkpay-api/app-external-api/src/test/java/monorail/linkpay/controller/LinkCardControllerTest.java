@@ -31,7 +31,7 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 링크카드를_생성한다() {
-        doNothing().when(linkCardService).create(anyLong(), any(LinkCardCreateServiceRequest.class));
+        when(linkCardService.create(anyLong(), any(LinkCardCreateServiceRequest.class))).thenReturn(1L);
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -144,7 +144,7 @@ public class LinkCardControllerTest extends ControllerTest {
                 .thenReturn(LINK_CARD_DETAIL_RESPONSE);
 
         docsGiven.header("Authorization", "Bearer {access_token}")
-                .when().get("/api/cards/detail?linkCardId=1")
+                .when().get("/api/cards/details/1")
                 .then().log().all()
                 .apply(document("cards/read/detail"))
                 .statusCode(HttpStatus.OK.value());

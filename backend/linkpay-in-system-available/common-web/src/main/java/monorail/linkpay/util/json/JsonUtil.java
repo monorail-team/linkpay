@@ -1,10 +1,14 @@
 package monorail.linkpay.util.json;
 
+import static lombok.AccessLevel.PRIVATE;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 
-public class JsonUtil {
+@RequiredArgsConstructor(access = PRIVATE)
+public final class JsonUtil {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -26,6 +30,10 @@ public class JsonUtil {
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Object -> JSON 변환 실패: " + e.getMessage(), e);
         }
+    }
+
+    public static <T> T parse(final Object data, final Class<T> clazz) {
+        return objectMapper.convertValue(data, clazz);
     }
 }
 

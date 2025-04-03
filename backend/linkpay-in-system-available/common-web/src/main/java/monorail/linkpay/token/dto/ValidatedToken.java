@@ -1,10 +1,9 @@
 package monorail.linkpay.token.dto;
 
+import java.time.Instant;
+import lombok.Builder;
 import monorail.linkpay.token.TokenType;
 import monorail.linkpay.util.json.Json;
-import lombok.Builder;
-
-import java.time.Instant;
 
 @Builder
 public record ValidatedToken(
