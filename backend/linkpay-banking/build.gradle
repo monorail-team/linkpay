@@ -16,6 +16,8 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 
+    implementation 'com.github.mwiede:jsch:0.2.24'
+
     runtimeOnly 'com.h2database:h2'
 }
 
