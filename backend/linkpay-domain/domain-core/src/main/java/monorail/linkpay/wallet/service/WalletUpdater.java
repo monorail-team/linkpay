@@ -1,19 +1,13 @@
 package monorail.linkpay.wallet.service;
 
-import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
-import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
-import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
-import static monorail.linkpay.wallet.domain.Role.CREATOR;
-import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
-
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.history.domain.WalletHistory;
 import monorail.linkpay.history.service.WalletHistoryRecorder;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
-import monorail.linkpay.payment.domain.Payment;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.LinkedWallet;
@@ -26,6 +20,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
+import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
+import static monorail.linkpay.wallet.domain.Role.CREATOR;
+import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
+
 @SupportLayer
 @RequiredArgsConstructor
 public class WalletUpdater {
@@ -36,14 +36,14 @@ public class WalletUpdater {
     private final LinkedMemberRepository linkedMemberRepository;
     private final MemberFetcher memberFetcher;
 
-    public void chargePoint(final Wallet wallet, final Point amount, final Member member) {
+    public WalletHistory chargePoint(final Wallet wallet, final Point amount, final Member member) {
         wallet.chargePoint(amount);
-        walletHistoryRecorder.recordHistory(DEPOSIT, wallet, amount, member, null);
+        return walletHistoryRecorder.recordHistory(DEPOSIT, wallet, amount, member);
     }
 
-    public void deductPoint(final Wallet wallet, final Point amount, final Member member, final Payment payment) {
+    public WalletHistory deductPoint(final Wallet wallet, final Point amount, final Member member) {
         wallet.deductPoint(amount);
-        walletHistoryRecorder.recordHistory(WITHDRAWAL, wallet, amount, member, payment);
+        return walletHistoryRecorder.recordHistory(WITHDRAWAL, wallet, amount, member);
     }
 
     public LinkedWallet save(final String name, final Long creatorId, final Set<Long> memberIds) {

@@ -19,8 +19,10 @@ public record WalletHistoryResponse(
                 walletHistory.getRemaining().getAmount(),
                 walletHistory.getTransactionType().name(),
                 walletHistory.getCreatedAt(),
-                walletHistory.hasPayment() ? walletHistory.getPayment().getLinkCard().getId().toString() : null,
-                walletHistory.hasPayment() ? walletHistory.getPayment().getLinkCard().getCardName() : null
+//                walletHistory.hasPayment() ? walletHistory.getPayment().getLinkCard().getId().toString() : null,
+//                walletHistory.hasPayment() ? walletHistory.getPayment().getLinkCard().getCardName() : null
+                null, // todo: 리팩토링 진행중간 커밋
+                null
         );
     }
 }

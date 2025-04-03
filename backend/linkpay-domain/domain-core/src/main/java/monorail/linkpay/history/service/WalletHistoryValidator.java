@@ -8,7 +8,6 @@ import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.LinkedWallet;
 import monorail.linkpay.wallet.domain.MyWallet;
 import monorail.linkpay.wallet.domain.Wallet;
-import monorail.linkpay.wallet.repository.WalletRepository;
 import monorail.linkpay.wallet.service.LinkedMemberValidator;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,6 @@ import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 @Transactional(readOnly = true)
 public class WalletHistoryValidator {
 
-    private final WalletRepository walletRepository;
     private final LinkedMemberValidator linkedMemberValidator;
 
     public void validateRead(final WalletHistory walletHistory, final Member member) {

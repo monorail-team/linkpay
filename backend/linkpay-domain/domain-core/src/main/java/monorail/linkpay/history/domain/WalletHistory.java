@@ -1,19 +1,6 @@
 package monorail.linkpay.history.domain;
 
-import static jakarta.persistence.EnumType.STRING;
-import static lombok.AccessLevel.PROTECTED;
-
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,10 +9,12 @@ import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.common.domain.TransactionType;
 import monorail.linkpay.member.domain.Member;
-import monorail.linkpay.payment.domain.Payment;
 import monorail.linkpay.wallet.domain.Wallet;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import static jakarta.persistence.EnumType.STRING;
+import static lombok.AccessLevel.PROTECTED;
 
 @Table(name = "wallet_history")
 @Getter
@@ -60,14 +49,6 @@ public class WalletHistory extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "payment_id")
-    @OneToOne(fetch = FetchType.LAZY)
-    private Payment payment;
-
-    public boolean hasPayment() {
-        return payment != null;
-    }
-
     @Builder
     private WalletHistory(
             final Long id,
@@ -75,8 +56,7 @@ public class WalletHistory extends BaseEntity {
             final Point remaining,
             final TransactionType transactionType,
             final Wallet wallet,
-            final Member member,
-            final Payment payment
+            final Member member
     ) {
         this.id = id;
         this.amount = amount;
@@ -84,6 +64,5 @@ public class WalletHistory extends BaseEntity {
         this.transactionType = transactionType;
         this.wallet = wallet;
         this.member = member;
-        this.payment = payment;
     }
 }

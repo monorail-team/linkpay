@@ -2,21 +2,14 @@ package monorail.linkpay.payment.domain;
 
 import static lombok.AccessLevel.PROTECTED;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.history.domain.WalletHistory;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.store.domain.Store;
@@ -52,18 +45,24 @@ public class Payment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Store store;
 
+    @JoinColumn(name = "wallet_history_id", nullable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    private WalletHistory walletHistory;
+
     @Builder
     private Payment(
             final Long id,
             final LinkCard linkCard,
             final Member member,
             final Point amount,
-            final Store store
+            final Store store,
+            final WalletHistory walletHistory
     ) {
         this.id = id;
         this.linkCard = linkCard;
         this.member = member;
         this.amount = amount;
         this.store = store;
+        this.walletHistory = walletHistory;
     }
 }
