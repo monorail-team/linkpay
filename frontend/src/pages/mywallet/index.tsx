@@ -210,7 +210,7 @@ const MyWallet: React.FC = () => {
                   </p>
                   {history.transactionType  !== 'DEPOSIT' && (
                     <p className="text-black ml-12 dark:text-white">
-                      카드
+                      {history.linkCardName}
                     </p>
                   )}
                 </div>
