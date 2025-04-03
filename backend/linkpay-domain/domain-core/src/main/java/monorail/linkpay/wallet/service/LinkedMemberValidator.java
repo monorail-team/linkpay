@@ -12,9 +12,15 @@ import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
 public class LinkedMemberValidator {
     private final LinkedMemberRepository linkedMemberRepository;
 
-    public void checkExistsByLinkedWalletIdAndMemberId(Long linkedWalletId, long memberId) {
+    public void validateIsLinkedMember(Long linkedWalletId, long memberId) {
         if (!linkedMemberRepository.existsByLinkedWalletIdAndMemberId(linkedWalletId, memberId)) {
             throw new LinkPayException(NOT_FOUND_RESOURCE, "요청한 아이디에 해당하는 링크 멤버가 존재하지 않습니다.");
+        }
+    }
+
+    public void validateIsLinkedMember(Long linkedWalletId, long memberId, LinkPayException e) {
+        if (!linkedMemberRepository.existsByLinkedWalletIdAndMemberId(linkedWalletId, memberId)) {
+            throw e;
         }
     }
 }

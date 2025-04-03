@@ -34,7 +34,7 @@ public class LinkedMemberService {
 
     public LinkedMembersResponse getLinkedMembers(final Long linkedWalletId, final long memberId,
                                                   final Long lastId, final int size) {
-        linkedMemberValidator.checkExistsByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
+        linkedMemberValidator.validateIsLinkedMember(linkedWalletId, memberId);
         Slice<LinkedMember> linkedMembers = linkedMemberRepository.findAllByLinkedWalletId(
                 linkedWalletId, lastId, PageRequest.of(0, size));
         return new LinkedMembersResponse(linkedMembers.stream()

@@ -25,11 +25,11 @@ public class LinkedWalletValidator {
     }
 
     public void validateRead(final Long linkedWalletId, long memberId) {
-        linkedMemberValidator.checkExistsByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
+        linkedMemberValidator.validateIsLinkedMember(linkedWalletId, memberId);
     }
 
     public void validateCharge(final Long linkedWalletId,final Long memberId) {
-        linkedMemberValidator.checkExistsByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
+        linkedMemberValidator.validateIsLinkedMember(linkedWalletId, memberId);
     }
 
     public void validateDelete(final Long linkedWalletId, final Long memberId) {
