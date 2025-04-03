@@ -81,9 +81,9 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange }) => 
         />
         <button 
           onClick={handleSearch}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2"
+          className="absolute -right-3 top-1/2 transform -translate-y-1/2 p-2"
         >
-          <Icon name={theme === 'dark' ? "searchDarkIcon" : "searchIcon"} width={24} height={24} alt="검색" />
+          <Icon name={theme === 'dark' ? "searchDarkIcon" : "searchIcon"} width={50} height={50} alt="검색" />
         </button>
       </div>
       {/* 에러 메시지 (모달로 대체 가능) */}
@@ -95,10 +95,10 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange }) => 
       {/* 추가된 사용자 리스트: 각 칩은 좌측에 이름, 우측에 x 아이콘 포함 */}
       <div className="mt-4 flex flex-wrap gap-2 justify-center w-full">
         {addedMembers.map(member => (
-          <div key={member.memberId} className="flex items-center justify-between border rounded-full px-3 py-1 min-w-[200px]">
+          <div key={member.memberId} className="flex items-center justify-between border rounded-full px-3 py-1 min-w-[200px] dark:bg-[#9E9E9E]">
             <span className="mr-2 dark:text-white">{member.username}({member.email})</span>
             <button onClick={() => removeUser(member.memberId)}>
-            <Icon name={theme === 'dark' ? "canceltextDarkIcon" : "canceltextIcon"} width={24} height={24} alt="입력취소" />
+            <Icon name={theme === 'dark' ? "searchcalcelDarkIcon" : "searchcalcelIcon"} width={theme === 'dark' ? 13 : 10} height={theme === 'dark' ? 13 : 10} alt="입력취소" />
             </button>
           </div>
         ))}
