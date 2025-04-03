@@ -4,6 +4,10 @@ import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
 import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_목록_조회_요청;
 import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_생성_요청;
 import static monorail.linkpay.acceptance.MemberAcceptanceTest.회원_조회_요청;
+import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.포인트_충전_요청;
+import static monorail.linkpay.acceptance.PaymentAcceptanceTest.결제_요청;
+import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.가게_생성_요청;
+import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.거래정보_생성_요청;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendDeleteRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPatchRequest;
@@ -22,10 +26,16 @@ import java.util.stream.Stream;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
+import monorail.linkpay.controller.request.PaymentsRequest;
 import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
+import monorail.linkpay.controller.request.StoreCreateRequest;
+import monorail.linkpay.controller.request.StoreTransactionRequest;
+import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
+import monorail.linkpay.linkcard.dto.LinkCardHistoriesResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.member.dto.MemberResponse;
+import monorail.linkpay.store.dto.TransactionResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -260,6 +270,45 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
         );
     }
 
+    @TestFactory
+    Stream<DynamicTest> 링크카드로_결제하고_내역을_조회한다() {
+        String accessToken = 엑세스_토큰();
+        AtomicReference<Long> linkCardId = new AtomicReference<>();
+
+        return Stream.of(
+                dynamicTest("링크카드 생성 및 등록", () -> {
+                    링크카드_생성_요청(accessToken, LINK_CARD_CREATE_REQUEST);
+                    ExtractableResponse<Response> cardRes = 링크카드_조회_요청(accessToken, "owned");
+                    LinkCardsResponse linkCardsResponse = cardRes.as(LinkCardsResponse.class);
+                    linkCardId.set(Long.parseLong(linkCardsResponse.linkCards().getFirst().linkCardId()));
+                    assertThat(linkCardsResponse.linkCards()).hasSize(1);
+                }),
+                dynamicTest("지갑 충전 및 카드 사용", () -> {
+                    포인트_충전_요청(accessToken, new WalletPointRequest(50000));
+
+                    var storeRes = 가게_생성_요청(accessToken, new StoreCreateRequest("새로운 가게"));
+                    String storeId = storeRes.header("Location").split("/")[3];
+                    var payInfoRes = 거래정보_생성_요청(accessToken, storeRes.header("Location"),
+                            new StoreTransactionRequest(3000L));
+                    TransactionResponse transactionResponse = payInfoRes.as(TransactionResponse.class);
+                    ExtractableResponse<Response> response = 결제_요청(accessToken,
+                            new PaymentsRequest(3000L,
+                                    linkCardId.get(),
+                                    Long.parseLong(storeId), transactionResponse.transactionSignature(),
+                                    "token"));
+                }),
+                dynamicTest("카드 내역을 확인한다", () -> {
+                    ExtractableResponse<Response> response = 링크카드_사용내역_조회_요청(accessToken, linkCardId.get());
+                    LinkCardHistoriesResponse histories = response.as(LinkCardHistoriesResponse.class);
+                    assertAll(
+                            () -> assertThat(histories.linkCardHistories()).hasSize(1),
+                            () -> assertThat(histories.linkCardHistories().getFirst().linkCardId()).isEqualTo(
+                                    linkCardId.get().toString())
+                    );
+                })
+        );
+    }
+
     private ExtractableResponse<Response> 카드_등록(final String accessToken,
                                                 final LinkCardRegistRequest linkCardRegistRequest) {
         return sendPatchRequest("api/cards/activate", accessToken, linkCardRegistRequest);
@@ -293,5 +342,9 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
 
     private ExtractableResponse<Response> 링크카드_상세_조회_요청(final String accessToken, final Long linkCardId) {
         return sendGetRequest("/api/cards/detail?linkCardId=" + linkCardId, accessToken);
+    }
+
+    private ExtractableResponse<Response> 링크카드_사용내역_조회_요청(final String accessToken, final Long linkCardId) {
+        return sendGetRequest("/api/cards/card-histories/" + linkCardId, accessToken);
     }
 }

@@ -11,6 +11,7 @@ import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
 import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
+import monorail.linkpay.linkcard.dto.LinkCardHistoriesResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import org.springframework.http.ResponseEntity;
@@ -84,5 +85,13 @@ public class LinkCardController {
                                                @AuthenticationPrincipal final AuthPrincipal principal) {
         linkCardService.deleteLinkCard(linkCardId, principal.memberId());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/card-histories/{linkCardId}")
+    public ResponseEntity<LinkCardHistoriesResponse> getLinkCardHistories(@PathVariable final Long linkCardId,
+                                                                          @RequestParam(required = false) final Long lastId,
+                                                                          @RequestParam(defaultValue = "10") final int size,
+                                                                          @AuthenticationPrincipal final AuthPrincipal principal) {
+        return ResponseEntity.ok(linkCardService.getLinkCardHistories(principal.memberId(), lastId, size, linkCardId));
     }
 }
