@@ -20,11 +20,14 @@ import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
+import monorail.linkpay.linkcard.dto.LinkCardHistoriesResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.linkcard.service.request.LinkCardCreateServiceRequest;
 import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequest;
 import monorail.linkpay.member.domain.Member;
+import monorail.linkpay.payment.domain.Payment;
+import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.LinkedWallet;
 import monorail.linkpay.wallet.domain.MyWallet;
@@ -61,8 +64,8 @@ public class LinkCardServiceTest extends IntegrationTest {
                 createLinkedMember(CREATOR, member, linkedWallet),
                 createLinkedMember(PARTICIPANT, member1, linkedWallet)));
         SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
-                linkedWallet.getId(),
-                List.of(member.getId(), member1.getId()));
+                linkedWallet.getId().toString(),
+                List.of(member.getId().toString(), member1.getId().toString()));
 
         // when
         linkCardService.createShared(request, member.getId());
@@ -82,9 +85,10 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkedMemberRepository.saveAll(List.of(
                 createLinkedMember(CREATOR, member, linkedWallet),
                 createLinkedMember(PARTICIPANT, member1, linkedWallet)));
+
         SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
-                linkedWallet.getId(),
-                List.of(member.getId(), member1.getId()));
+                linkedWallet.getId().toString(),
+                List.of(member.getId().toString(), member1.getId().toString()));
 
         // when // then
         assertThatThrownBy(() -> linkCardService.createShared(request, member1.getId())).isInstanceOf(
@@ -104,8 +108,8 @@ public class LinkCardServiceTest extends IntegrationTest {
                 createLinkedMember(CREATOR, member, linkedWallet),
                 createLinkedMember(PARTICIPANT, member1, linkedWallet)));
         SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
-                linkedWallet.getId(),
-                List.of(member.getId(), member2.getId()));
+                linkedWallet.getId().toString(),
+                List.of(member.getId().toString(), member2.getId().toString()));
 
         // when // then
         assertThatThrownBy(() -> linkCardService.createShared(request, member.getId())).isInstanceOf(
@@ -300,7 +304,7 @@ public class LinkCardServiceTest extends IntegrationTest {
 
         // when
         linkCardService.deleteLinkCard(card.getId(), member.getId());
-        
+
         // then
         assertThat(linkCardRepository.findByMemberId(member.getId()).size()).isEqualTo(0);
     }
@@ -372,7 +376,36 @@ public class LinkCardServiceTest extends IntegrationTest {
 
     }
 
-    private static LinkCardCreateServiceRequest createCard(LocalDate date) {
+    @Test
+    void 카드_사용내역을_조회한다() {
+        // given
+        Wallet wallet = myWalletRepository.findByMemberId(member.getId()).orElseThrow();
+        LinkCard linkCard = linkCardRepository.save(createMyWalletCard(1L, wallet, member, UNREGISTERED));
+        Store store = storeRepository.save(Store.builder().id(1L).name("store").build());
+        wallet.chargePoint(new Point(50000L));
+        paymentRepository.save(createPayment(linkCard, store));
+
+        // when
+        LinkCardHistoriesResponse res = linkCardService.getLinkCardHistories(member.getId(), null, 10,
+                linkCard.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(res.linkCardHistories().size()).isEqualTo(1),
+                () -> assertThat(res.linkCardHistories().getFirst().linkCardId()).isEqualTo(linkCard.getId().toString())
+        );
+    }
+
+    private Payment createPayment(final LinkCard linkCard, final Store store) {
+        return Payment.builder()
+                .id(1L)
+                .linkCard(linkCard)
+                .amount(new Point(3000L))
+                .member(member).store(store)
+                .build();
+    }
+
+    private static LinkCardCreateServiceRequest createCard(final LocalDate date) {
         return LinkCardCreateServiceRequest.builder()
                 .cardName("test card")
                 .expiredAt(date)
@@ -380,8 +413,8 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .build();
     }
 
-    private static SharedLinkCardCreateServiceRequest createSharedCards(LocalDate date, long walletId,
-                                                                        List<Long> memberIds) {
+    private static SharedLinkCardCreateServiceRequest createSharedCards(final LocalDate date, final String walletId,
+                                                                        final List<String> memberIds) {
         return SharedLinkCardCreateServiceRequest.builder()
                 .cardName("test card")
                 .expiredAt(date)
@@ -392,7 +425,8 @@ public class LinkCardServiceTest extends IntegrationTest {
     }
 
 
-    private static LinkCard createMyWalletCard(Long id, Wallet wallet, Member member, CardState cardState) {
+    private static LinkCard createMyWalletCard(final Long id, final Wallet wallet, final Member member,
+                                               final CardState cardState) {
         return LinkCard.builder()
                 .id(id)
                 .cardColor(CardColor.getRandomColor())

@@ -25,20 +25,20 @@ public class LinkedMemberAcceptanceTest extends AcceptanceTest {
     @TestFactory
     Stream<DynamicTest> 링크지갑_참여자_추가_삭제_조회_시나리오() {
         String accessToken = 엑세스_토큰();
-        String location = 링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of(1L))).header(
+        String location = 링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of("1"))).header(
                 "Location");
         Long linkedWalletId = Long.valueOf(location.substring(location.lastIndexOf("/") + 1));
 
         return Stream.of(
                 dynamicTest("링크지갑에 참여자를 추가한다", () -> {
                     ExtractableResponse<Response> response = 링크지갑_참여자_추가_요청(
-                            accessToken, linkedWalletId, new LinkedMemberCreateRequest(2L));
+                            accessToken, linkedWalletId, new LinkedMemberCreateRequest("2"));
 
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
                 }),
 
                 dynamicTest("링크지갑의 참여자들을 모두 조회한다", () -> {
-                    링크지갑_참여자_추가_요청(accessToken, linkedWalletId, new LinkedMemberCreateRequest(3L));
+                    링크지갑_참여자_추가_요청(accessToken, linkedWalletId, new LinkedMemberCreateRequest("3"));
 
                     ExtractableResponse<Response> response = 링크지갑_참여자_조회_요청(accessToken, linkedWalletId);
                     LinkedMembersResponse linkedMembersResponse = response.as(LinkedMembersResponse.class);
