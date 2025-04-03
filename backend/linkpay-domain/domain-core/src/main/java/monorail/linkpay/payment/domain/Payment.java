@@ -74,11 +74,11 @@ public class Payment extends BaseEntity {
         if (!(object instanceof Payment payment)) {
             return false;
         }
-        return id != null && Objects.equals(id, payment.id);
+        return getId() != null && Objects.equals(getId(), payment.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 }

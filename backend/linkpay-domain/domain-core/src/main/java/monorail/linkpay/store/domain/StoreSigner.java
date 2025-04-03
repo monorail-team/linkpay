@@ -1,12 +1,18 @@
 package monorail.linkpay.store.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.util.Base64;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Base64;
 
 @Table(name = "store_signer")
 @Getter
@@ -32,6 +38,22 @@ public class StoreSigner {
         this.store = store;
         this.encryptKey = Base64.getEncoder().encodeToString(encryptKey);
         this.decryptKey = Base64.getEncoder().encodeToString(decryptKey);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof StoreSigner that)) {
+            return false;
+        }
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 }
 

@@ -47,11 +47,11 @@ public class Member extends BaseEntity {
         if (!(object instanceof Member member)) {
             return false;
         }
-        return id != null && Objects.equals(id, member.id);
+        return getId() != null && Objects.equals(getId(), member.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 }

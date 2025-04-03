@@ -137,11 +137,11 @@ public class LinkCard extends BaseEntity {
         if (!(object instanceof LinkCard linkCard)) {
             return false;
         }
-        return id != null && Objects.equals(id, linkCard.id);
+        return getId() != null && Objects.equals(getId(), linkCard.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 }

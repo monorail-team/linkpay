@@ -91,14 +91,14 @@ public class WalletHistory extends BaseEntity {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof WalletHistory walletHistory)) {
+        if (!(object instanceof WalletHistory that)) {
             return false;
         }
-        return id != null && Objects.equals(id, walletHistory.id);
+        return getId() != null && Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 }

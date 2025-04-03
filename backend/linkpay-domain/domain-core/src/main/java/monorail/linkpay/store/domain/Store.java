@@ -43,11 +43,11 @@ public class Store extends BaseEntity {
         if (!(object instanceof Store store)) {
             return false;
         }
-        return id != null && Objects.equals(id, store.id);
+        return getId() != null && Objects.equals(getId(), store.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 }

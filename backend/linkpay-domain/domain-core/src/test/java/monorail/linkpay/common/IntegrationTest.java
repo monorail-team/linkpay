@@ -32,7 +32,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 @Import(MockTestConfiguration.class)
-@SpringBootTest
+@SpringBootTest(
+        properties = "banking.account.uri=http://localhost:8080/api/bank-account"
+)
 public abstract class IntegrationTest {
 
     @Autowired

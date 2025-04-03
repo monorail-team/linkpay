@@ -62,7 +62,7 @@ public class Settlement extends BaseEntity {
         if (!(object instanceof Settlement settlement)) {
             return false;
         }
-        return getAmount() != null && Objects.equals(getId(), settlement.getId());
+        return getId() != null && Objects.equals(getId(), settlement.getId());
     }
 
     @Override

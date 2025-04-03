@@ -75,11 +75,11 @@ public class LinkedMember extends BaseEntity {
         if (!(object instanceof LinkedMember that)) {
             return false;
         }
-        return id != null && Objects.equals(id, that.id);
+        return getId() != null && Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 }
