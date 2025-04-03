@@ -70,7 +70,6 @@ public class WebAuthnController {
         boolean success = webAuthnService.registerAuthenticator(
                 principal.memberId(),
                 request.credentialId(),
-                request.clientDataJSON(),
                 request.attestationObject()
         );
         if (!success) {

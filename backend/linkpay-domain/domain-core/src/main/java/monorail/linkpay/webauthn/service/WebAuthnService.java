@@ -48,17 +48,8 @@ public class WebAuthnService {
 
 
 
-    public boolean registerAuthenticator(Long memberId, String credentialId, String clientDataJSON, String attestationObject) {
+    public boolean registerAuthenticator(Long memberId, String credentialId, String attestationObject) {
 
-//        String extractedPublicKey = "simulatedPublicKey";
-//
-//        WebAuthnCredential credential = WebAuthnCredential.builder()
-//                .credentialId(credentialId)
-//                .memberId(memberId)
-//                .publicKey(extractedPublicKey)
-//                .build();
-//        credentialRepository.save(credential);
-//        return true;
         try {
             byte[] attestationBytes = Base64.getDecoder().decode(attestationObject);
             CBORFactory cborFactory = new CBORFactory();
@@ -89,12 +80,10 @@ public class WebAuthnService {
             // 나머지 바이트가 credentialPublicKey (COSE 형식의 CBOR 데이터)
             byte[] publicKeyBytes = Arrays.copyOfRange(authData, offset, authData.length);
 
-            // 6. credentialPublicKey를 CBOR로 디코딩 (필요시 상세 파싱 가능)
-            Map<String, Object> publicKeyCose = cborMapper.readValue(publicKeyBytes, Map.class);
-            // 여기서는 간단히 추출한 credentialPublicKey 전체를 base64로 인코딩하여 저장합니다.
+            //추출한 credentialPublicKey 전체를 base64로 인코딩하여 저장
             String publicKeyBase64 = Base64.getEncoder().encodeToString(publicKeyBytes);
 
-            // 7. 추출된 publicKey를 DB에 저장 (WebAuthnCredential 엔티티에 저장)
+
             WebAuthnCredential credential = WebAuthnCredential.builder()
                     .credentialId(credentialId)
                     .memberId(memberId)
@@ -103,7 +92,6 @@ public class WebAuthnService {
             credentialRepository.save(credential);
             return true;
         }catch (Exception e) {
-            // 에러 로깅 및 예외 처리
             e.printStackTrace();
             return false;
         }
