@@ -77,23 +77,23 @@ const CreateCardPage: React.FC = () => {
         {/* 카드 이름 입력 */}
         <div>
           <span className="text-sm text-gray-600  dark:text-gray-400">카드 이름</span>
-          
-            <input
-              type="text"
-              placeholder="카드 이름을 입력하세요."
-              value={cardName}
-              onChange={(e) => setCardName(e.target.value)}
-              className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-white"
-            />
-            {cardName && (
-              <button 
-                onClick={handleClearCardName}
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-500"
-              > 
-                <Icon name={theme === 'dark' ? "canceltextDarkIcon" : "canceltextIcon"} width={24} height={24} alt="입력취소" />
-              </button>
-            )}
-          
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="카드 이름을 입력하세요."
+                value={cardName}
+                onChange={(e) => setCardName(e.target.value)}
+                className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-white"
+              />
+              {cardName && (
+                <button 
+                  onClick={handleClearCardName}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+                > 
+                  <Icon name={theme === 'dark' ? "canceltextDarkIcon" : "canceltextIcon"} width={24} height={24} alt="입력취소" />
+                </button>
+              )}
+            </div>
           {cardName.length > 10 && (
             <p className="mt-1 text-red-500 text-xs">카드 이름은 10자 내로 입력해 주세요.</p>
           )}
@@ -124,7 +124,7 @@ const CreateCardPage: React.FC = () => {
                   {cardLimit && (
                     <button 
                         onClick={handleClearCardLimit}
-                        className="absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-500"
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
                     >
                       
                       <Icon name={theme === 'dark' ? "canceltextDarkIcon" : "canceltextIcon"} width={24} height={24} alt="입력취소" />
