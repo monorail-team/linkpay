@@ -9,11 +9,18 @@ import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
 
+import java.util.List;
+
 @SupportLayer
 @RequiredArgsConstructor
 public class LinkCardFetcher {
 
     private final LinkCardRepository linkCardRepository;
+
+
+    public List<LinkCard> fetchAllByWalletId(final long walletId){
+        return linkCardRepository.findAllByWalletId(walletId);
+    }
 
     public void checkNotExistsByWalletId(final Long walletId) {
         if (linkCardRepository.existsByWalletId(walletId)) {

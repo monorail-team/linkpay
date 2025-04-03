@@ -30,10 +30,11 @@ public class LinkedMemberService {
     private final LinkedWalletFetcher linkedWalletFetcher;
     private final MemberFetcher memberFetcher;
     private final IdGenerator idGenerator;
+    private final LinkedMemberValidator linkedMemberValidator;
 
     public LinkedMembersResponse getLinkedMembers(final Long linkedWalletId, final long memberId,
                                                   final Long lastId, final int size) {
-        linkedMemberFetcher.checkExistsByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
+        linkedMemberValidator.checkExistsByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
         Slice<LinkedMember> linkedMembers = linkedMemberRepository.findAllByLinkedWalletId(
                 linkedWalletId, lastId, PageRequest.of(0, size));
         return new LinkedMembersResponse(linkedMembers.stream()
