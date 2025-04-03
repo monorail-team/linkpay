@@ -1,21 +1,7 @@
 package monorail.linkpay.acceptance;
 
-import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
-import static monorail.linkpay.acceptance.LinkCardAcceptanceTest.링크카드_생성_요청;
-import static monorail.linkpay.acceptance.LinkCardAcceptanceTest.링크카드_조회_요청;
-import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.지갑_잔액_조회_요청;
-import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.포인트_충전_요청;
-import static monorail.linkpay.acceptance.PaymentAcceptanceTest.결제_요청;
-import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.가게_생성_요청;
-import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.거래정보_생성_요청;
-import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
-
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.util.stream.Stream;
 import monorail.linkpay.controller.request.PaymentsRequest;
 import monorail.linkpay.controller.request.StoreCreateRequest;
 import monorail.linkpay.controller.request.StoreTransactionRequest;
@@ -28,6 +14,21 @@ import monorail.linkpay.wallet.dto.WalletResponse;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
+
+import java.util.stream.Stream;
+
+import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
+import static monorail.linkpay.acceptance.LinkCardAcceptanceTest.링크카드_생성_요청;
+import static monorail.linkpay.acceptance.LinkCardAcceptanceTest.링크카드_조회_요청;
+import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.지갑_잔액_조회_요청;
+import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.포인트_충전_요청;
+import static monorail.linkpay.acceptance.PaymentAcceptanceTest.결제_요청;
+import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.가게_생성_요청;
+import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.거래정보_생성_요청;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class WalletHistoryAcceptanceTest extends AcceptanceTest {
 
@@ -49,9 +50,9 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
                 dynamicTest("지갑 히스토리에서 충전 내역을 확인한다", () -> {
                     ExtractableResponse<Response> walletHistoriesRes = 나의_지갑_히스토리_리스트_조회_요청(accessToken);
                     WalletHistoryListResponse walletHistories = walletHistoriesRes.as(WalletHistoryListResponse.class);
+
                     ExtractableResponse<Response> response = 지갑_히스토리_조회_요청(accessToken,
                             Long.parseLong(walletHistories.walletHistories().getFirst().walletHistoryId()));
-
                     WalletHistoryResponse walletHistoryResponse = response.as(WalletHistoryResponse.class);
                     assertAll(
                             () -> assertThat(walletHistoryResponse.remaining()).isEqualTo(50000),

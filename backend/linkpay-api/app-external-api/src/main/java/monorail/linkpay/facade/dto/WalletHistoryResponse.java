@@ -1,10 +1,11 @@
 package monorail.linkpay.facade.dto;
 
+import monorail.linkpay.history.dto.WalletHistoryDto;
+import monorail.linkpay.payment.dto.PaymentDto;
+
 import java.time.LocalDateTime;
 
-import monorail.linkpay.history.dto.WalletHistoryDto;
-import monorail.linkpay.payment.domain.Payment;
-import monorail.linkpay.payment.dto.PaymentDto;
+import static java.util.Objects.isNull;
 
 public record WalletHistoryResponse(
         String walletHistoryId,
@@ -22,7 +23,7 @@ public record WalletHistoryResponse(
                 walletHistoryDto.remaining(),
                 walletHistoryDto.transactionType(),
                 walletHistoryDto.time(),
-                paymentDto.linkCardId().toString(),
-                paymentDto.linkCardName());
+                isNull(paymentDto) ? null : paymentDto.linkCardId().toString(),
+                isNull(paymentDto) ? null : paymentDto.linkCardName());
     }
 }
