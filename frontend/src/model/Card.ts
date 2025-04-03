@@ -6,7 +6,7 @@ export interface Card {
     cardName: string;
     expiredAt: string;
     usedPoint: number;
-    isRegistered?: string;
+    state?: string;
     linkedWalletId?: number;
   }
   

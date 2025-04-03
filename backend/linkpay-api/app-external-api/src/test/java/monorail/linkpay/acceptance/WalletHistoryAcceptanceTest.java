@@ -69,8 +69,8 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
                     transaction.set(transactionResponse);
                     ExtractableResponse<Response> response = 결제_요청(accessToken,
                             new PaymentsRequest(3000L,
-                                    Long.parseLong(cardsResponse.linkCards().getFirst().linkCardId()),
-                                    Long.parseLong(storeId), transactionResponse.transactionSignature(),
+                                    cardsResponse.linkCards().getFirst().linkCardId(),
+                                    storeId, transactionResponse.transactionSignature(),
                                     "token"));
 
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());

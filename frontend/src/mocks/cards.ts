@@ -9,7 +9,7 @@ export const cards: Card[] = [
     limitPrice: 100000,
     cardType: 'OWNED',
     cardColor: '#DAD8FC',
-    isRegistered: 'REGISTERED',
+    state: 'REGISTERED',
   },
   {
     linkCardId: 2,
@@ -28,7 +28,7 @@ export const cards: Card[] = [
     limitPrice: 80000,
     cardType: 'SHARED',
     cardColor: '#B589E1',
-    isRegistered: 'REGISTERED',
+    state: 'REGISTERED',
   },
   {
     linkCardId: 4,

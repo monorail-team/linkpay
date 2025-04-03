@@ -95,6 +95,16 @@ include::{snippets}/cards/activate/http-request.adoc[]
 
 include::{snippets}/cards/activate/http-response.adoc[]
 
+=== 링크카드 내역 조회
+
+==== HTTP Request
+
+include::{snippets}/cards/read/histories/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/read/histories/http-response.adoc[]
+
 === 링크카드 삭제
 
 ==== HTTP Request

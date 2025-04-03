@@ -11,6 +11,8 @@ import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
+import monorail.linkpay.linkcard.dto.LinkCardHistoriesResponse;
+import monorail.linkpay.linkcard.dto.LinkCardHistoryResponse;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.repository.LinkCardQueryFactory;
@@ -21,6 +23,8 @@ import monorail.linkpay.linkcard.service.request.SharedLinkCardCreateServiceRequ
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 import monorail.linkpay.member.service.MemberFetcher;
+import monorail.linkpay.payment.domain.Payment;
+import monorail.linkpay.payment.repository.PaymentRepository;
 import monorail.linkpay.util.id.IdGenerator;
 import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.LinkedWallet;
@@ -49,6 +53,7 @@ public class LinkCardService {
     private final MemberFetcher memberFetcher;
     private final IdGenerator idGenerator;
     private final LinkCardFetcher linkCardFetcher;
+    private final PaymentRepository paymentRepository;
 
     @Transactional
     public Long create(final Long memberId, final LinkCardCreateServiceRequest request) {
@@ -60,7 +65,7 @@ public class LinkCardService {
 
     @Transactional
     public void createShared(final SharedLinkCardCreateServiceRequest request, final Long memberId) {
-        LinkedWallet linkedwallet = linkedWalletFetcher.fetchById(request.linkedWalletId());
+        LinkedWallet linkedwallet = linkedWalletFetcher.fetchById(Long.parseLong(request.linkedWalletId()));
         LinkedMember linkedWalletCreator = linkedMemberRepository.findByLinkedWalletIdAndRole(
                 linkedwallet.getId(), CREATOR);
 
@@ -72,11 +77,12 @@ public class LinkCardService {
                 .toList();
 
         boolean hasUnregisteredMember = request.memberIds().stream()
-                .anyMatch(id -> !memberIds.contains(id));
+                .anyMatch(id -> !memberIds.contains(Long.parseLong(id)));
         if (hasUnregisteredMember) {
             throw new LinkPayException(INVALID_REQUEST, "해당 링크지갑에 참여하지 않은 사용자입니다.");
         }
-        List<LinkCard> linkCards = memberRepository.findMembersByIdIn(new HashSet<>(request.memberIds())).stream()
+        List<LinkCard> linkCards = memberRepository.findMembersByIdIn(
+                        new HashSet<>(request.memberIds().stream().map(Long::parseLong).toList())).stream()
                 .map(member -> request.toLinkCard(idGenerator.generate(), member, linkedwallet))
                 .toList();
 
@@ -133,6 +139,38 @@ public class LinkCardService {
         linkCardRepository.deleteById(linkCardId);
     }
 
+    public LinkCardDetailResponse getLinkCardDetails(final Long memberId, final Long linkCardId) {
+        Member member = memberFetcher.fetchById(memberId);
+        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
+        validateOwnershipOrCreator(linkCard, member);
+        if (!linkCard.isSharedCard()) {
+            return LinkCardDetailResponse.from(linkCard, null);
+        }
+        String linkedWalletName = linkedWalletFetcher.fetchById(linkCard.getWalletId()).getName();
+        return LinkCardDetailResponse.from(linkCard, linkedWalletName);
+    }
+
+    public LinkCardHistoriesResponse getLinkCardHistories(final Long memberId, final Long lastId, final int size,
+                                                          final Long linkCardId) {
+        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
+        Member member = memberFetcher.fetchById(memberId);
+        validateOwnershipOrCreator(linkCard, member);
+        Slice<Payment> payments = paymentRepository.findPaymentsByLinkCard(
+                linkCardId,
+                lastId,
+                PageRequest.of(0, size)
+        );
+        return new LinkCardHistoriesResponse(getLinkCardHistoryResponses(linkCard, payments), payments.hasNext());
+    }
+
+    private List<LinkCardHistoryResponse> getLinkCardHistoryResponses(final LinkCard linkCard,
+                                                                      final Slice<Payment> payments
+    ) {
+        return payments.stream()
+                .map(payment -> LinkCardHistoryResponse.from(linkCard, payment))
+                .toList();
+    }
+
     private void validateOwnershipOrCreator(final LinkCard linkCard, final Member member) {
         if (!linkCard.isSharedCard() || !isCreator(linkCard, member)) {
             linkCard.validateOwnership(member.getId());
@@ -143,16 +181,5 @@ public class LinkCardService {
         LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(
                 linkCard.getWalletId(), member.getId());
         return linkedMember.isCreator();
-    }
-
-    public LinkCardDetailResponse getLinkCardDetails(final Long memberId, final Long linkCardId) {
-        Member member = memberFetcher.fetchById(memberId);
-        LinkCard linkCard = linkCardFetcher.fetchById(linkCardId);
-        validateOwnershipOrCreator(linkCard, member);
-        if (!linkCard.isSharedCard()) {
-            return LinkCardDetailResponse.from(linkCard, null);
-        }
-        String linkedWalletName = linkedWalletFetcher.fetchById(linkCard.getWalletId()).getName();
-        return LinkCardDetailResponse.from(linkCard, linkedWalletName);
     }
 }
