@@ -13,7 +13,7 @@ const MyWallet: React.FC = () => {
   const [walletHistories, setWalletHistories] = useState<MyWalletHistory[]>([]);
   const [hasNext, setHasNext] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [lastId, setLastId] = useState<string>('1');
+  const [lastId, setLastId] = useState<string | null>(null);
   const [username, setUsername] = useState('');
 
   const base_url = process.env.REACT_APP_API_URL;
@@ -33,6 +33,7 @@ const MyWallet: React.FC = () => {
     };
     fetchUserInfo();
   }, [base_url]);
+
     // 지갑 잔액을 API에서 가져오는 useEffect
     useEffect(() => {
       const fetchWalletBalance = async () => {
@@ -60,15 +61,24 @@ const MyWallet: React.FC = () => {
     setLoading(true);
     try {
       const token = sessionStorage.getItem('accessToken');
-      const response = await axios.get(
-        `${base_url}/api/wallet-histories/my-wallet?lastId=${lastId}&size=10`,
-        {
-          headers: { 'Authorization': `Bearer ${token}` },
-        }
-      );
+      let url = `${base_url}/api/wallet-histories/my-wallet?size=10`;
+      if (lastId) {
+        url += `&lastId=${lastId}`;
+      }
+      const response = await axios.get(url, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
       const { walletHistories: newHistories, hasNext: next } = response.data;
       // 새 데이터를 기존 데이터에 추가
-      setWalletHistories(prev => [...prev, ...newHistories]);
+      setWalletHistories((prev) => {
+        // 기존 데이터와 새 데이터를 합칩니다.
+        const combined = [...prev, ...newHistories];
+        // walletHistoryId를 기준으로 중복 제거
+        const uniqueHistories = combined.filter((history, index, self) =>
+          index === self.findIndex(h => h.walletHistoryId === history.walletHistoryId)
+        );
+        return uniqueHistories;
+      });
       setHasNext(next);
       // 다음 페이지 요청을 위해 마지막 항목의 ID를 갱신 (newHistories가 존재하는 경우)
       if (newHistories && newHistories.length > 0) {
@@ -107,6 +117,10 @@ const MyWallet: React.FC = () => {
     }
     return () => observer.current?.disconnect();
   }, [handleObserver]);
+
+  useEffect(() => {
+    fetchWalletHistories();
+  }, [fetchWalletHistories]);
 
   // 충전 API 호출 함수
   const handleCharge = async (amount: number) => {
@@ -156,7 +170,7 @@ const MyWallet: React.FC = () => {
       {showMenu && <MenuModal onClose={handleMenuClose} />}
       <div className="w-full max-w-md mx-auto p-4" style={{ height: 'calc(100vh - 64px)' }}>
         {/* 내 지갑 정보 */}
-        <div className="w-4/5 h-1/4 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
+        <div className="w-4/5 h-2/6 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
           <p className="test-sm text-[clamp(0.8rem,2vw,1rem)] text-black text-start mt-4 px-4 dark:text-[#D4D4D4]">
           {username}의 지갑
           </p>
@@ -181,9 +195,9 @@ const MyWallet: React.FC = () => {
           </div>
         </div>
         {/* 입출금 내역 */}
-        <div className="mt-12 mx-6">
+        <div className="mt-12 mx-6" >
           <h3 className="text-lg text-[#969595]">입출금 내역</h3>
-          <ul className="mt-2">
+          <ul className="mt-2 hide-scrollbar" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
             {walletHistories.map((history: MyWalletHistory) => (
               <li
                 key={history.walletHistoryId}
@@ -213,6 +227,7 @@ const MyWallet: React.FC = () => {
               </li>
             ))}
           </ul>
+          <div ref={loadMoreRef} />
         </div>
       </div>
       {showChargeModal && (
