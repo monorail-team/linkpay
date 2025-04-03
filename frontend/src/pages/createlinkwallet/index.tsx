@@ -28,10 +28,6 @@ const CreateLinkWalletPage: React.FC = () => {
       return;
     }
 
-
-
- 
-
     const payload = {
         walletName,
         memberIds: selectedMembers.map(member => member.memberId)
@@ -47,8 +43,7 @@ const CreateLinkWalletPage: React.FC = () => {
         },
       });
       if (response.status === 201) {
-        // 카드 생성 성공 시 linkcardlist 페이지로 이동
-        navigate('/linkcardlist');
+        navigate('/linkwalletlist');
       }
     } catch (error) {
       console.error('Failed to create linkwallet:', error);
