@@ -10,9 +10,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class EventProducer {
 
+    private static final String BANKING_REPLY_EVENTS = "banking-reply";
+
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void publish(final Event<EventPayload> event) {
-        kafkaTemplate.send(event.type().getTopic(), event.eventId().toString());
+        kafkaTemplate.send(BANKING_REPLY_EVENTS, String.valueOf(event.eventId()));
     }
 }
