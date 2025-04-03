@@ -1,8 +1,8 @@
 package monorail.linkpay.history.service;
 
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.history.dto.WalletHistoryListResponse;
-import monorail.linkpay.history.dto.WalletHistoryResponse;
+import monorail.linkpay.history.dto.WalletHistoryDto;
+import monorail.linkpay.history.dto.WalletHistoryListDto;
 import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.wallet.service.MyWalletFetcher;
 import org.springframework.stereotype.Service;
@@ -18,25 +18,25 @@ public class WalletHistoryService {
     private final MemberFetcher memberFetcher;
     private final WalletHistoryValidator validator;
 
-    public WalletHistoryResponse readWalletHistory(final Long walletHistoryId, final Long memberId) {
+    public WalletHistoryDto readWalletHistory(final Long walletHistoryId, final Long memberId) {
         var walletHistory = walletHistoryFetcher.fetchById(walletHistoryId);
         var member = memberFetcher.fetchById(memberId);
         validator.validateRead(walletHistory, member);
-        return WalletHistoryResponse.from(walletHistory);
+        return WalletHistoryDto.from(walletHistory);
     }
 
-    public WalletHistoryListResponse readMyWalletHistoryPage(final Long memberId,
+    public WalletHistoryListDto readMyWalletHistoryPage(final Long memberId,
                                                              final Long lastId,
                                                              final int size) {
         var myWallet = myWalletFetcher.fetchByMemberId(memberId);
         var walletHistories = walletHistoryFetcher.fetchPage(myWallet.getId(), lastId, size);
-        return WalletHistoryListResponse.from(walletHistories);
+        return WalletHistoryListDto.from(walletHistories);
     }
 
-    public WalletHistoryListResponse readLinkedWalletHistoryPage(final Long walletId,
-                                                                 final Long lastId,
-                                                                 final int size) {
+    public WalletHistoryListDto readLinkedWalletHistoryPage(final Long walletId,
+                                                            final Long lastId,
+                                                            final int size) {
         var walletHistories = walletHistoryFetcher.fetchPage(walletId, lastId, size);
-        return WalletHistoryListResponse.from(walletHistories);
+        return WalletHistoryListDto.from(walletHistories);
     }
 }

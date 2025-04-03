@@ -1,20 +1,10 @@
 package monorail.linkpay.history;
 
-import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
-import static monorail.linkpay.wallet.domain.Role.CREATOR;
-import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import java.util.List;
-import java.util.Set;
-
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.common.domain.TransactionType;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.history.domain.WalletHistory;
-import monorail.linkpay.history.dto.WalletHistoryResponse;
 import monorail.linkpay.history.service.WalletHistoryService;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.wallet.domain.LinkedWallet;
@@ -23,6 +13,15 @@ import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.service.LinkedWalletService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Set;
+
+import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
+import static monorail.linkpay.wallet.domain.Role.CREATOR;
+import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class WalletHistoryServiceTest extends IntegrationTest {
 
@@ -41,7 +40,7 @@ public class WalletHistoryServiceTest extends IntegrationTest {
         walletHistoryRepository.save(history);
 
         // when
-        WalletHistoryResponse response = walletHistoryService.readWalletHistory(history.getId(), member.getId());
+        var response = walletHistoryService.readWalletHistory(history.getId(), member.getId());
 
         // then
         assertThat(response).isNotNull();
@@ -88,7 +87,7 @@ public class WalletHistoryServiceTest extends IntegrationTest {
         walletHistoryRepository.save(history);
 
         // when
-        WalletHistoryResponse response = walletHistoryService.readWalletHistory(history.getId(), member1.getId());
+        var response = walletHistoryService.readWalletHistory(history.getId(), member1.getId());
 
         // then
         assertThat(response).isNotNull();
