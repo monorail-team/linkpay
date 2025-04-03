@@ -8,6 +8,9 @@ import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.repository.MemberRepository;
 
+import java.util.List;
+import java.util.Set;
+
 @SupportLayer
 @RequiredArgsConstructor
 public class MemberFetcher {
@@ -22,5 +25,9 @@ public class MemberFetcher {
     public Member fetchById(final Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "요청한 아이디에 해당하는 회원이 존재하지 않습니다."));
+    }
+
+    public List<Member> fetchByIdIn(final Set<Long> memberIds) {
+        return memberRepository.findMembersByIdIn(memberIds);
     }
 }

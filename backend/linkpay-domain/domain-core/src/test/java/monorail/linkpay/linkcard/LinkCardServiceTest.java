@@ -15,7 +15,9 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.common.domain.TransactionType;
 import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.history.domain.WalletHistory;
 import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
@@ -383,7 +385,15 @@ public class LinkCardServiceTest extends IntegrationTest {
         LinkCard linkCard = linkCardRepository.save(createMyWalletCard(1L, wallet, member, UNREGISTERED));
         Store store = storeRepository.save(Store.builder().id(1L).name("store").build());
         wallet.chargePoint(new Point(50000L));
-        paymentRepository.save(createPayment(linkCard, store));
+        WalletHistory walletHistory = walletHistoryRepository.save(WalletHistory.builder()
+                .id(1L)
+                .wallet(wallet)
+                .amount(wallet.getPoint())
+                .remaining(wallet.getPoint()) // todo: 리팩토링 진행중간 커밋
+                .member(member)
+                .transactionType(TransactionType.DEPOSIT)
+                .build());
+        paymentRepository.save(createPayment(linkCard, store, walletHistory));
 
         // when
         LinkCardHistoriesResponse res = linkCardService.getLinkCardHistories(member.getId(), null, 10,
@@ -396,12 +406,13 @@ public class LinkCardServiceTest extends IntegrationTest {
         );
     }
 
-    private Payment createPayment(final LinkCard linkCard, final Store store) {
+    private Payment createPayment(final LinkCard linkCard, final Store store, final WalletHistory walletHistory) {
         return Payment.builder()
                 .id(1L)
                 .linkCard(linkCard)
                 .amount(new Point(3000L))
                 .member(member).store(store)
+                .walletHistory(walletHistory)
                 .build();
     }
 
