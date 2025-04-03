@@ -1,4 +1,4 @@
-package monorail.linkpay.banking.common.config;
+package monorail.linkpay.config;
 
 import static org.springframework.kafka.listener.ContainerProperties.AckMode.MANUAL_IMMEDIATE;
 
@@ -8,14 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
 
 @EnableKafka
 @Configuration
 @RequiredArgsConstructor
 public class KafkaConsumerConfig {
-
-    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(
