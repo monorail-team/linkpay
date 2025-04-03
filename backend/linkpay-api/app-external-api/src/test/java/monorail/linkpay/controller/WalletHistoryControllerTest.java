@@ -14,7 +14,7 @@ public class WalletHistoryControllerTest extends ControllerTest {
 
     @Test
     void 내_지갑_내역_목록을_확인한다() {
-        when(walletHistoryService.readMyWalletHistoryPage(anyLong(), anyLong(), anyInt()))
+        when(walletHistoryFacade.readMyWalletHistoryPage(anyLong(), anyLong(), anyInt()))
                 .thenReturn(WALLET_HISTORY_LIST_RESPONSE);
 
         docsGiven
@@ -27,7 +27,7 @@ public class WalletHistoryControllerTest extends ControllerTest {
 
     @Test
     void 링크지갑_내역_목록을_확인한다() {
-        when(walletHistoryService.readLinkedWalletHistoryPage(anyLong(), anyLong(), anyInt()))
+        when(walletHistoryFacade.readLinkedWalletHistoryPage(anyLong(), anyLong(), anyInt()))
                 .thenReturn(WALLET_HISTORY_LIST_RESPONSE);
 
         docsGiven
@@ -40,7 +40,7 @@ public class WalletHistoryControllerTest extends ControllerTest {
 
     @Test
     void 지갑_세부내역을_확인한다() {
-        when(walletHistoryService.readWalletHistory(anyLong(), anyLong())).thenReturn(WALLET_HISTORY_RESPONSE);
+        when(walletHistoryFacade.readWalletHistory(anyLong(), anyLong())).thenReturn(WALLET_HISTORY_RESPONSE);
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")

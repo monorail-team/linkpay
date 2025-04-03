@@ -1,10 +1,6 @@
 package monorail.linkpay.linkcard.repository;
 
 import jakarta.persistence.LockModeType;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +11,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
@@ -47,4 +48,9 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
     @Query(value = "select l from LinkCard l where l.id = :linkCardId")
     Optional<LinkCard> findByIdForUpdate(@Param("linkCardId") Long linkCardId);
 
+    @Query("""
+        SELECT l FROM LinkCard l
+        WHERE l.wallet.id = :walletId
+    """)
+    List<LinkCard> findAllByWalletId(Long walletId);
 }
