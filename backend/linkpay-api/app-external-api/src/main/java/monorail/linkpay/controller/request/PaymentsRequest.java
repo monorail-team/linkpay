@@ -11,27 +11,27 @@ public record PaymentsRequest(
         @Positive(message = "금액은 양수여야 합니다.")
         long amount,
         @NotNull
-        Long linkCardId,
+        String linkCardId,
         @NotNull
-        Long storeId,
+        String storeId,
         @NotNull
         String transactionSignature,
         @NotNull
         String paymentToken
 ) {
-        public TransactionInfo txInfo() {
-                return TransactionInfo.builder()
-                        .storeId(storeId)
-                        .point(new Point(amount))
-                        .signature(transactionSignature)
-                        .build();
-        }
+    public TransactionInfo txInfo() {
+        return TransactionInfo.builder()
+                .storeId(Long.parseLong(storeId))
+                .point(new Point(amount))
+                .signature(transactionSignature)
+                .build();
+    }
 
-        public PaymentInfo payInfo(Long memberId) {
-                return PaymentInfo.builder()
-                        .memberId(memberId)
-                        .linkCardId(linkCardId)
-                        .paymentToken(paymentToken)
-                        .build();
-        }
+    public PaymentInfo payInfo(Long memberId) {
+        return PaymentInfo.builder()
+                .memberId(memberId)
+                .linkCardId(Long.parseLong(linkCardId))
+                .paymentToken(paymentToken)
+                .build();
+    }
 }

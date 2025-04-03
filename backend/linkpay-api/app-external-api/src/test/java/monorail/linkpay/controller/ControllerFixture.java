@@ -56,14 +56,14 @@ public class ControllerFixture {
             "테스트카드", 500000, LocalDate.of(2025, 5, 25));
 
     public static final SharedLinkCardCreateRequest SHARED_LINK_CARD_CREATE_REQUEST = new SharedLinkCardCreateRequest(
-            "테스트카드", 500000, LocalDate.of(2025, 5, 25), List.of(1L), 1L);
+            "테스트카드", 500000, LocalDate.of(2025, 5, 25), List.of("1"), "1");
 
     public static final LinkCardRegistRequest LINK_CARD_REGISTRATION_REQUEST = new LinkCardRegistRequest(
-            List.of(1L));
-    public static final LinkedMemberCreateRequest LINKED_MEMBER_CREATE_REQUEST = new LinkedMemberCreateRequest(1L);
+            List.of("1"));
+    public static final LinkedMemberCreateRequest LINKED_MEMBER_CREATE_REQUEST = new LinkedMemberCreateRequest("1");
 
     public static final LinkedWalletCreateRequest LINKED_WALLET_CREATE_REQUEST = new LinkedWalletCreateRequest(
-            "링크지갑1", Set.of(1L, 2L, 3L));
+            "링크지갑1", Set.of("1", "2", "3"));
 
     public static final LinkCardResponse REGISTERED_LINK_CARD_RESPONSE = new LinkCardResponse("1", 500000L,
             CardType.OWNED.name(),
@@ -153,7 +153,7 @@ public class ControllerFixture {
             List.of(LINKED_WALLET_RESPONSE_1, LINKED_WALLET_RESPONSE_2, LINKED_WALLET_RESPONSE_3), false
     );
 
-    public static final PaymentsRequest PAYMENT_REQUEST = new PaymentsRequest(10000, 1L, 2L, "sig", "tkn");
+    public static final PaymentsRequest PAYMENT_REQUEST = new PaymentsRequest(10000, "1", "2", "sig", "tkn");
 
     public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_1 = new LinkedMemberResponse(
             "1", "링크멤버1", "link1@gmail.com");

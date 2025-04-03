@@ -41,7 +41,7 @@ public class LinkedMemberController {
                                                    @AuthenticationPrincipal final AuthPrincipal principal,
                                                    @Valid @RequestBody final LinkedMemberCreateRequest linkedMemberCreateRequest) {
         linkedMemberService.createLinkedMember(linkedWalletId, principal.memberId(),
-                linkedMemberCreateRequest.memberId());
+                Long.parseLong(linkedMemberCreateRequest.memberId()));
         return ResponseEntity.status(CREATED).build();
     }
 

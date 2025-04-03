@@ -2,6 +2,7 @@ package monorail.linkpay.controller;
 
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.common.domain.Point;
@@ -50,7 +51,7 @@ public class LinkedWalletController {
         Long linkedWalletId = linkedWalletService.createLinkedWallet(
                 principal.memberId(),
                 linkedWalletCreateRequest.walletName(),
-                linkedWalletCreateRequest.memberIds());
+                linkedWalletCreateRequest.memberIds().stream().map(Long::parseLong).collect(Collectors.toSet()));
 
         return ResponseEntity.created(URI.create("/api/linked-wallets/" + linkedWalletId)).build();
     }

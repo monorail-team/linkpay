@@ -76,7 +76,8 @@ public class LinkCardController {
     public ResponseEntity<Void> activateLinkCard(
             @Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest,
             @AuthenticationPrincipal final AuthPrincipal principal) {
-        linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds(), principal.memberId());
+        linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds().stream().map(Long::parseLong).toList(),
+                principal.memberId());
         return ResponseEntity.noContent().build();
     }
 

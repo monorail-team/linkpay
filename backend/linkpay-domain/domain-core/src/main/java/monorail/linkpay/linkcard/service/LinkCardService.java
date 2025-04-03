@@ -64,7 +64,7 @@ public class LinkCardService {
 
     @Transactional
     public void createShared(final SharedLinkCardCreateServiceRequest request, final Long memberId) {
-        LinkedWallet linkedwallet = linkedWalletFetcher.fetchById(request.linkedWalletId());
+        LinkedWallet linkedwallet = linkedWalletFetcher.fetchById(Long.parseLong(request.linkedWalletId()));
         LinkedMember linkedWalletCreator = linkedMemberRepository.findByLinkedWalletIdAndRole(
                 linkedwallet.getId(), CREATOR);
 
@@ -77,11 +77,12 @@ public class LinkCardService {
                 .toList();
 
         boolean hasUnregisteredMember = request.memberIds().stream()
-                .anyMatch(id -> !memberIds.contains(id));
+                .anyMatch(id -> !memberIds.contains(Long.parseLong(id)));
         if (hasUnregisteredMember) {
             throw new LinkPayException(INVALID_REQUEST, "해당 링크지갑에 참여하지 않은 사용자입니다.");
         }
-        List<LinkCard> linkCards = memberRepository.findMembersByIdIn(new HashSet<>(request.memberIds())).stream()
+        List<LinkCard> linkCards = memberRepository.findMembersByIdIn(
+                        new HashSet<>(request.memberIds().stream().map(Long::parseLong).toList())).stream()
                 .map(member -> request.toLinkCard(idGenerator.generate(), member, linkedwallet))
                 .toList();
 

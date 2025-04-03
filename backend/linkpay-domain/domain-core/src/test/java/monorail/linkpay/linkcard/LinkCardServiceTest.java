@@ -64,8 +64,8 @@ public class LinkCardServiceTest extends IntegrationTest {
                 createLinkedMember(CREATOR, member, linkedWallet),
                 createLinkedMember(PARTICIPANT, member1, linkedWallet)));
         SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
-                linkedWallet.getId(),
-                List.of(member.getId(), member1.getId()));
+                linkedWallet.getId().toString(),
+                List.of(member.getId().toString(), member1.getId().toString()));
 
         // when
         linkCardService.createShared(request, member.getId());
@@ -85,9 +85,10 @@ public class LinkCardServiceTest extends IntegrationTest {
         linkedMemberRepository.saveAll(List.of(
                 createLinkedMember(CREATOR, member, linkedWallet),
                 createLinkedMember(PARTICIPANT, member1, linkedWallet)));
+
         SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
-                linkedWallet.getId(),
-                List.of(member.getId(), member1.getId()));
+                linkedWallet.getId().toString(),
+                List.of(member.getId().toString(), member1.getId().toString()));
 
         // when // then
         assertThatThrownBy(() -> linkCardService.createShared(request, member1.getId())).isInstanceOf(
@@ -107,8 +108,8 @@ public class LinkCardServiceTest extends IntegrationTest {
                 createLinkedMember(CREATOR, member, linkedWallet),
                 createLinkedMember(PARTICIPANT, member1, linkedWallet)));
         SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
-                linkedWallet.getId(),
-                List.of(member.getId(), member2.getId()));
+                linkedWallet.getId().toString(),
+                List.of(member.getId().toString(), member2.getId().toString()));
 
         // when // then
         assertThatThrownBy(() -> linkCardService.createShared(request, member.getId())).isInstanceOf(
@@ -412,8 +413,8 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .build();
     }
 
-    private static SharedLinkCardCreateServiceRequest createSharedCards(final LocalDate date, final long walletId,
-                                                                        final List<Long> memberIds) {
+    private static SharedLinkCardCreateServiceRequest createSharedCards(final LocalDate date, final String walletId,
+                                                                        final List<String> memberIds) {
         return SharedLinkCardCreateServiceRequest.builder()
                 .cardName("test card")
                 .expiredAt(date)

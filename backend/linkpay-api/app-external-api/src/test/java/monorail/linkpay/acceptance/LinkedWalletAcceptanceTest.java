@@ -23,7 +23,7 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
     void 링크지갑을_생성한다() {
         String accessToken = 엑세스_토큰();
         ExtractableResponse<Response> response = 링크지갑_생성_요청(accessToken,
-                new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
+                new LinkedWalletCreateRequest("링크지갑1", Set.of("1", "2", "3")));
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     }
 
@@ -31,7 +31,7 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
     void 특정_링크지갑을_조회한다() {
         String accessToken = 엑세스_토큰();
         String location = 링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest(
-                "링크지갑1", Set.of(1L, 2L, 3L))).header("Location");
+                "링크지갑1", Set.of("1", "2", "3"))).header("Location");
         Long linkedWalletId = Long.valueOf(location.substring(location.lastIndexOf("/") + 1));
 
         ExtractableResponse<Response> response = 링크지갑_조회_요청(accessToken, linkedWalletId);
@@ -46,9 +46,9 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
     @Test
     void 내가_소유한_링크지갑들을_조회한다() {
         String accessToken = 엑세스_토큰();
-        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
-        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑2", Set.of(1L, 2L, 3L)));
-        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑3", Set.of(1L, 2L, 3L)));
+        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of("1", "2", "3")));
+        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑2", Set.of("1", "2", "3")));
+        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑3", Set.of("1", "2", "3")));
 
         ExtractableResponse<Response> response = 링크지갑_목록_조회_요청(accessToken, "CREATOR");
         LinkedWalletsResponse linkedWalletsResponse = response.as(LinkedWalletsResponse.class);
@@ -61,9 +61,9 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
     @Test
     void 내가_참여한_링크지갑들을_조회한다() {
         String accessToken = 엑세스_토큰();
-        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
-        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑2", Set.of(1L, 2L, 3L)));
-        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑3", Set.of(1L, 2L, 3L)));
+        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of("1", "2", "3")));
+        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑2", Set.of("1", "2", "3")));
+        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑3", Set.of("1", "2", "3")));
 
         ExtractableResponse<Response> response = 링크지갑_목록_조회_요청(accessToken, "PARTICIPANT");
         LinkedWalletsResponse linkedWalletsResponse = response.as(LinkedWalletsResponse.class);
@@ -76,7 +76,7 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
     @Test
     void 링크지갑에_포인트를_충전한다() {
         String accessToken = 엑세스_토큰();
-        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of(1L, 2L, 3L)));
+        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of("1", "2", "3")));
 
         String linkedWalletId = 링크지갑_목록_조회_요청(accessToken, "CREATOR").as(LinkedWalletsResponse.class).linkedWallets()
                 .getFirst().linkedWalletId();
