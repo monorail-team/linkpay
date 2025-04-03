@@ -26,7 +26,7 @@ public class AccountDepositEventHandler implements EventHandler<AccountDepositEv
     @Override
     public void handle(final Event<AccountDepositEventPayload> event) {
         AccountDepositEventPayload payload = event.payload();
-        Account account = accountRepository.findByWalletId(payload.walletId()).orElseThrow(() ->
+        Account account = accountRepository.findByWalletIdForUpdate(payload.walletId()).orElseThrow(() ->
                 new LinkPayException(NOT_FOUND_RESOURCE, "계좌 아이디와 일치하는 계좌를 찾을 수 없습니다."));
         account.depositMoney(new Money(payload.amount()));
     }

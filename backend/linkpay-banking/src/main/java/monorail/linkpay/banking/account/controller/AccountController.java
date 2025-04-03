@@ -20,7 +20,7 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<Void> createAccount(@RequestBody final AccountCreateRequest accountCreateRequest) {
-        accountService.create(accountCreateRequest.walletId(), accountCreateRequest.memberId());
+        accountService.createAccount(accountCreateRequest.walletId(), accountCreateRequest.memberId());
         return ResponseEntity.status(CREATED).build();
     }
 }

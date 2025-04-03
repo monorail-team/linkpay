@@ -26,7 +26,7 @@ public class AccountDeletedEventHandler implements EventHandler<AccountDeletedEv
     @Override
     public void handle(final Event<AccountDeletedEventPayload> event) {
         AccountDeletedEventPayload payload = event.payload();
-        Account account = accountRepository.findByWalletId(payload.walletId()).orElseThrow(() ->
+        Account account = accountRepository.findByWalletIdForUpdate(payload.walletId()).orElseThrow(() ->
                 new LinkPayException(NOT_FOUND_RESOURCE, "계좌 아이디와 일치하는 계좌를 찾을 수 없습니다."));
         if (!account.getMemberId().equals(payload.memberId())) {
             throw new LinkPayException(INVALID_REQUEST, "계좌 삭제는 생성자만 할 수 있습니다.");

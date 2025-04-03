@@ -38,7 +38,7 @@ public class Account {
     private LocalDateTime createdAt;
 
     @Builder
-    public Account(final Long id, final Long walletId, final Money money, final Long memberId) {
+    private Account(final Long id, final Long walletId, final Money money, final Long memberId) {
         this.id = id;
         this.walletId = walletId;
         this.money = money;

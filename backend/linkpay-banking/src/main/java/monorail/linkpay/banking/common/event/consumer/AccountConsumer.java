@@ -22,8 +22,7 @@ public class AccountConsumer {
             Topic.ACCOUNT_DELETE,
             Topic.ACCOUNT_DEPOSIT,
             Topic.ACCOUNT_WITHDRAWAL
-    }
-            , groupId = "account")
+    }, groupId = "account")
     public void listen(final String messageJson, final Acknowledgment ack) {
         final Event<EventPayload> event = Event.fromJson(messageJson);
         try {

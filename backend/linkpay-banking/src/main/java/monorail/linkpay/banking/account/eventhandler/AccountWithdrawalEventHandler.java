@@ -26,7 +26,7 @@ public class AccountWithdrawalEventHandler implements EventHandler<AccountWithdr
     @Override
     public void handle(final Event<AccountWithdrawalEventPayload> event) {
         AccountWithdrawalEventPayload payload = event.payload();
-        Account account = accountRepository.findByWalletId(payload.walletId()).orElseThrow(() ->
+        Account account = accountRepository.findByWalletIdForUpdate(payload.walletId()).orElseThrow(() ->
                 new LinkPayException(NOT_FOUND_RESOURCE, "계좌 아이디와 일치하는 계좌를 찾을 수 없습니다."));
         account.withdrawalMoney(new Money(payload.amount()));
     }
