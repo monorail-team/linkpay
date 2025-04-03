@@ -53,7 +53,7 @@ public class WalletHistory extends BaseEntity {
     private TransactionType transactionType;
 
     @JoinColumn(name = "wallet_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // todo: Lazy Loading 안되는 이슈 해결
     private Wallet wallet;
 
     @JoinColumn(name = "member_id", nullable = false)

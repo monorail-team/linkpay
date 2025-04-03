@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class WalletHistoryService {
 
     private final WalletHistoryFetcher walletHistoryFetcher;
