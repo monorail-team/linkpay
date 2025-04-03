@@ -1,5 +1,7 @@
 package monorail.linkpay.banking.common.config;
 
+import static monorail.linkpay.exception.ExceptionCode.SERVER_ERROR;
+
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -7,18 +9,11 @@ import jakarta.annotation.PreDestroy;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.function.Consumer;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import monorail.linkpay.exception.LinkPayException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 
-@Slf4j
 @Component
-@ConfigurationProperties(prefix = "ssh")
-@Validated
-@Setter
 public class SshTunnelingInitializer {
 
     @Value("${ssh.ssh_host}")
@@ -40,7 +35,6 @@ public class SshTunnelingInitializer {
 
     private Session rdsSession;
     private int rdsForwardedPort;
-
     private Session redisSession;
     private int redisForwardedPort;
 
@@ -56,26 +50,22 @@ public class SshTunnelingInitializer {
 
     public int buildRdsSSHConnection() {
         if (rdsSession == null || !rdsSession.isConnected()) {
-            int port = buildSSHConnection(databaseHost, databasePort, "RDS", session -> rdsSession = session);
-            rdsForwardedPort = port;
+            rdsForwardedPort = buildSSHConnection(databaseHost, databasePort, session -> rdsSession = session);
         }
         return rdsForwardedPort;
     }
 
     public int buildRedisSSHConnection() {
         if (redisSession == null || !redisSession.isConnected()) {
-            int port = buildSSHConnection(redisHost, redisPort, "Redis", session -> redisSession = session);
-            redisForwardedPort = port;
+            redisForwardedPort = buildSSHConnection(redisHost, redisPort, session -> redisSession = session);
         }
         return redisForwardedPort;
     }
 
-    private Integer buildSSHConnection(String targetHost, int targetPort, String label,
-                                       Consumer<Session> sessionConsumer) {
+    private int buildSSHConnection(final String targetHost, final int targetPort,
+                                   final Consumer<Session> sessionConsumer) {
         try {
-            log.info("🔹 Connecting to SSH for {} with {}@{}:{} using key {}", label, sshUser, sshHost, sshPort, sshKey);
             JSch jsch = new JSch();
-
             byte[] privateKeyBytes = sshKey.getBytes(StandardCharsets.UTF_8);
             jsch.addIdentity("key-from-yaml", privateKeyBytes, null, null);
             Session session = jsch.getSession(sshUser, sshHost, sshPort);
@@ -83,21 +73,14 @@ public class SshTunnelingInitializer {
             Properties config = new Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setConfig(config);
-
-            log.info("🔹 Starting SSH session for {}...", label);
             session.connect();
 
             int forwardPort = session.setPortForwardingL(0, targetHost, targetPort);
-            log.info("✅ Port forwarding for {} created on local port {} to remote port {}", label, forwardPort,
-                    targetPort);
-
             sessionConsumer.accept(session);
             return forwardPort;
-
         } catch (JSchException e) {
-            log.error("❗ SSH Tunnel Error for {}: {}", label, e.getMessage());
             this.closeSSH();
-            throw new RuntimeException(e);
+            throw new LinkPayException(SERVER_ERROR, e.getMessage());
         }
     }
 }
