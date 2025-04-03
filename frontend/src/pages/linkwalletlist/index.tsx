@@ -99,7 +99,7 @@ const LinkWalletListPage: React.FC = () => {
   };
 
   const handleCreateLinkWallet = () => {
-      navigate('/linkwalletcreate');
+      navigate('/createlinkwallet');
   };
 
   const handleLinkWallet = (walletId: number) => {
