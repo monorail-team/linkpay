@@ -1,7 +1,9 @@
 package monorail.linkpay.store.service;
 
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.store.dto.TransactionResponse;
+import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.payment.dto.TransactionInfo;
+import monorail.linkpay.util.signature.SignatureProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,15 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StoreTransactionService {
-    private final TransactionSignatureProvider transactionSignatureProvider;
-    private final StoreSignatureFetcher storeSignatureFetcher;
+
+    private final SignatureProvider signatureProvider;
+    private final StoreSignerFetcher storeSignerFetcher;
 
     @Transactional
-    public TransactionResponse create(final Long storeId, final long amount) {
-        // todo 가게 및 거래 정보 검증
-        var storeSignature = storeSignatureFetcher.fetchByStoreId(storeId);
-        var data = TransactionResponse.Data.from(storeSignature.getStore(), amount);
-        var signature = transactionSignatureProvider.createSignature(data, storeSignature.getEncryptKey());
-        return new TransactionResponse(data, signature);
+    public TransactionInfo create(final Long storeId, final Point price) {
+        // todo 가게 도메인 고도화 시 가게 정보 검증
+        var storeSigner = storeSignerFetcher.fetchByStoreId(storeId);
+        var txData = TransactionInfo.Data.builder()
+                .storeId(storeId)
+                .point(price)
+                .build();
+        var txSignature = signatureProvider.sign(txData, storeSigner.getEncryptKey());
+        return TransactionInfo.from(txData, txSignature);
     }
 }

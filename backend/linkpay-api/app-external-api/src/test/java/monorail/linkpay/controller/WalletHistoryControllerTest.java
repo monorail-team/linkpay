@@ -1,13 +1,14 @@
 package monorail.linkpay.controller;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-
-import static monorail.linkpay.controller.ControllerFixture.*;
+import static monorail.linkpay.controller.ControllerFixture.WALLET_HISTORY_LIST_RESPONSE;
+import static monorail.linkpay.controller.ControllerFixture.WALLET_HISTORY_RESPONSE;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 public class WalletHistoryControllerTest extends ControllerTest {
 
@@ -39,7 +40,7 @@ public class WalletHistoryControllerTest extends ControllerTest {
 
     @Test
     void 지갑_세부내역을_확인한다() {
-        when(walletHistoryService.readWalletHistory(anyLong())).thenReturn(WALLET_HISTORY_RESPONSE);
+        when(walletHistoryService.readWalletHistory(anyLong(), anyLong())).thenReturn(WALLET_HISTORY_RESPONSE);
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")

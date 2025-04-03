@@ -1,12 +1,12 @@
 export interface Card {
     linkCardId: number;
+    limitPrice: number;
+    cardType?: 'OWNED' | 'SHARED';
+    cardColor: string;
     cardName: string;
     expiredAt: string;
-    usedpoint: number;
-    limitPrice: number;
-    cardColor: string;
-    cardType?: 'OWNED' | 'SHARED' | 'RECEIVED';
-    isRegistered?: boolean;
+    usedPoint: number;
+    isRegistered?: string;
     linkedWalletId?: number;
   }
   

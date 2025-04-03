@@ -21,8 +21,9 @@ public class WalletHistoryController {
     private final WalletHistoryService walletHistoryService;
 
     @GetMapping("/{walletHistoryId}")
-    public ResponseEntity<WalletHistoryResponse> getWalletHistory(@PathVariable final Long walletHistoryId) {
-        return ResponseEntity.ok(walletHistoryService.readWalletHistory(walletHistoryId));
+    public ResponseEntity<WalletHistoryResponse> getWalletHistory(@PathVariable final Long walletHistoryId,
+                                                                  @AuthenticationPrincipal final AuthPrincipal principal) {
+        return ResponseEntity.ok(walletHistoryService.readWalletHistory(walletHistoryId, principal.memberId()));
     }
 
     @GetMapping("/my-wallet")

@@ -51,16 +51,6 @@ include::{snippets}/linkedwallets/charge/http-request.adoc[]
 
 include::{snippets}/linkedwallets/charge/http-response.adoc[]
 
-=== 링크지갑 차감
-
-==== HTTP Request
-
-include::{snippets}/linkedwallets/deduct/http-request.adoc[]
-
-==== HTTP Response
-
-include::{snippets}/linkedwallets/deduct/http-response.adoc[]
-
 === 링크지갑 삭제
 
 ==== HTTP Request

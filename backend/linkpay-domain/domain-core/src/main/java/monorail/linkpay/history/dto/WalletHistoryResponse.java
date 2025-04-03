@@ -8,7 +8,9 @@ public record WalletHistoryResponse(
         Long amount,
         Long remaining,
         String transactionType,
-        LocalDateTime time
+        LocalDateTime time,
+        String linkCardId,
+        String linkCardName
 ) {
     public static WalletHistoryResponse from(final WalletHistory walletHistory) {
         return new WalletHistoryResponse(
@@ -16,7 +18,9 @@ public record WalletHistoryResponse(
                 walletHistory.getAmount().getAmount(),
                 walletHistory.getRemaining().getAmount(),
                 walletHistory.getTransactionType().name(),
-                walletHistory.getCreatedAt()
+                walletHistory.getCreatedAt(),
+                walletHistory.hasPayment() ? walletHistory.getPayment().getLinkCard().getId().toString() : null,
+                walletHistory.hasPayment() ? walletHistory.getPayment().getLinkCard().getCardName() : null
         );
     }
 }

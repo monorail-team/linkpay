@@ -12,6 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -21,6 +22,7 @@ import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.common.domain.TransactionType;
 import monorail.linkpay.member.domain.Member;
+import monorail.linkpay.payment.domain.Payment;
 import monorail.linkpay.wallet.domain.Wallet;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -58,6 +60,14 @@ public class WalletHistory extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @JoinColumn(name = "payment_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    private Payment payment;
+
+    public boolean hasPayment() {
+        return payment != null;
+    }
+
     @Builder
     private WalletHistory(
             final Long id,
@@ -65,7 +75,8 @@ public class WalletHistory extends BaseEntity {
             final Point remaining,
             final TransactionType transactionType,
             final Wallet wallet,
-            final Member member
+            final Member member,
+            final Payment payment
     ) {
         this.id = id;
         this.amount = amount;
@@ -73,5 +84,6 @@ public class WalletHistory extends BaseEntity {
         this.transactionType = transactionType;
         this.wallet = wallet;
         this.member = member;
+        this.payment = payment;
     }
 }

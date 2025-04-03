@@ -3,9 +3,11 @@ package monorail.linkpay.acceptance;
 import static org.mockito.Mockito.when;
 
 import io.restassured.RestAssured;
+import java.time.LocalDate;
 import monorail.linkpay.auth.dto.KakaoUserResponse;
 import monorail.linkpay.auth.kakao.KakaoOauthClient;
 import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
+import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -25,6 +27,8 @@ public abstract class AcceptanceTest {
 
     public static final String KAKAO_OAUTH_CODE = "kakaocode";
     public static final String KAKAO_OAUTH_ACCESS_TOKEN = "kaccesstoken";
+    public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
+            "테스트카드", 500000, LocalDate.now().plusMonths(1));
 
     @LocalServerPort
     int port;
@@ -41,6 +45,6 @@ public abstract class AcceptanceTest {
         when(mockKakaoOauthClient.authorize(KAKAO_OAUTH_CODE))
                 .thenReturn(ResponseEntity.ok(KakaoOauthResponse.of(KAKAO_OAUTH_ACCESS_TOKEN)));
         when(mockKakaoOauthClient.fetchUser(KAKAO_OAUTH_ACCESS_TOKEN))
-                .thenReturn(ResponseEntity.ok(KakaoUserResponse.of("email@kakao.com","username")));
+                .thenReturn(ResponseEntity.ok(KakaoUserResponse.of("email@kakao.com", "username")));
     }
 }
