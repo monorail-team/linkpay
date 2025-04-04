@@ -157,7 +157,7 @@ const LinkWalletListPage: React.FC = () => {
         {wallets.map((wallet) => (
             <div
                 key={wallet.linkedWalletId}
-                className="relative my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] bg-[#EEEEEE] dark:bg-[#3b3838] dark:border-[#706E6E]"
+                className="relative my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] bg-[#EEEEEE] dark:bg-[#5c5b5b] dark:border-[#706E6E]"
                 onClick={() => handleLinkWallet(wallet.linkedWalletId)}
             >
                 {/* 왼쪽: 지갑명 (수직 중앙) */}
@@ -173,12 +173,12 @@ const LinkWalletListPage: React.FC = () => {
                 {/* 오른쪽 상단: 참여자 수수 */}
                 <div className="absolute top-2 right-2 text-sm w-32">
                     <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-200">잠여자 수</span>
+                        <span className="text-gray-600 dark:text-gray-200 mt-2 ml-2">참여자 수</span>
                         <span></span>
                     </div>
                     <div className="flex justify-between mt-1">
                         <span></span>
-                        <span className="text-gray-800 dark:text-white">
+                        <span className="text-gray-800 dark:text-white mr-2">
                           {wallet.participantCount} 명
                         </span>
                     </div>
@@ -187,12 +187,12 @@ const LinkWalletListPage: React.FC = () => {
                 {/* 오른쪽 하단: 잔액액 */}
                 <div className="absolute bottom-2 right-2 text-sm w-32">
                     <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-200">잔액</span>
+                        <span className="text-gray-600 dark:text-gray-200 ml-2">잔액</span>
                         <span></span>
                     </div>
                     <div className="flex justify-between mt-1">
                         <span></span>
-                        <span className="text-gray-800 dark:text-white">
+                        <span className="text-gray-800 dark:text-white mb-2 mr-2">
                           {wallet.amount.toLocaleString()}원
                         </span>
                     </div>
