@@ -39,7 +39,6 @@ const ManageLinkWalletPage: React.FC = () => {
       try {
         const token = sessionStorage.getItem('accessToken');
         console.log('walletid', walletId);
-        // 페이지네이션이 필요한 경우 추가 파라미터로 lastId, size를 사용할 수 있습니다.
         const response = await axios.get(`${base_url}/api/linked-wallets/${walletId}/members?size=100`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
@@ -75,7 +74,6 @@ const ManageLinkWalletPage: React.FC = () => {
     return isWalletNameChanged || isMembersChanged;
   };
 
-  // 수정 API 호출 함수 (예시로 PATCH 사용)
   const handleUpdate = async () => {
     const accessToken = sessionStorage.getItem('accessToken');
     if (!accessToken) {
@@ -92,6 +90,9 @@ const ManageLinkWalletPage: React.FC = () => {
       member => !selectedMembers.find(selected => selected.memberId === member.memberId)
     );
 
+    console.log("Members to add:", membersToAdd);
+    console.log("Members to remove:", membersToRemove);
+    
     try {
       for (const member of membersToAdd) {
         await axios.post(
@@ -164,7 +165,7 @@ const ManageLinkWalletPage: React.FC = () => {
         <div>
           <span className="text-sm text-gray-600 dark:text-gray-400">링크 지갑 참여자 추가</span>
           {/* MemberSearchBar 컴포넌트에 onMembersChange prop을 전달하여 선택된 참여자를 관리 */}
-          <MemberSearchBar onMembersChange={setSelectedMembers} initialMembers={selectedMembers} />
+          <MemberSearchBar onMembersChange={setSelectedMembers} initialMembers={initialMembers} />
         </div>
       </div>
       <div className="p-4 mt-auto">

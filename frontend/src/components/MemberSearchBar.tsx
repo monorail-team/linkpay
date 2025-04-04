@@ -16,6 +16,11 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
   const [addedMembers, setAddedMembers] = useState<Member[]>(initialMembers);
   const [error, setError] = useState<string | null>(null);
   const { theme } = useThemeStore();
+
+  useEffect(() => {
+    setAddedMembers(initialMembers);
+  }, [initialMembers]);
+
   useEffect(() => {
     if (onMembersChange) {
       onMembersChange(addedMembers);
@@ -65,7 +70,7 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
 
   // 추가된 사용자 제거 함수
   const removeUser = (id: string) => {
-    setAddedMembers(addedMembers.filter(member => member.memberId !== id));
+    setAddedMembers(prevMembers => prevMembers.filter(member => member.memberId !== id));
   };
 
   return (
@@ -97,9 +102,9 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
       <div className="mt-4 flex flex-wrap gap-2 justify-center w-full">
         {addedMembers.map(member => (
           <div key={member.memberId} className="flex items-center justify-between border rounded-full px-3 py-1 min-w-[200px] dark:bg-[#9E9E9E]">
-            <span className="mr-2 dark:text-white">{member.username}({member.email})</span>
-            <button onClick={() => removeUser(member.memberId)}>
-            <Icon name={theme === 'dark' ? "searchcalcelDarkIcon" : "searchcalcelIcon"} width={theme === 'dark' ? 13 : 10} height={theme === 'dark' ? 13 : 10} alt="입력취소" />
+            <span key={`span-${member.memberId}`} className="mr-2 dark:text-white">{member.username}({member.email})</span>
+            <button key={`btn-${member.memberId}`} onClick={() => removeUser(member.memberId)}>
+            <Icon key={`icon-${member.memberId}`} name={theme === 'dark' ? "searchcalcelDarkIcon" : "searchcalcelIcon"} width={theme === 'dark' ? 13 : 10} height={theme === 'dark' ? 13 : 10} alt="입력취소" />
             </button>
           </div>
         ))}
