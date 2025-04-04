@@ -14,14 +14,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "wallet")
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@SQLDelete(sql = "UPDATE wallet SET deleted_at = CURRENT_TIMESTAMP WHERE wallet_id = ?")
-@SQLRestriction("deleted_at is null")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "wallet_type")
 @Entity
@@ -50,5 +46,5 @@ public abstract class Wallet extends BaseEntity {
     public void deductPoint(final Point point) {
         this.point = this.point.subtract(point);
     }
-    
+
 }

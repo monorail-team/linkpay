@@ -1,20 +1,26 @@
 package monorail.linkpay.acceptance;
 
 import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendDeleteRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPatchRequest;
 import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPostRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.wallet.dto.LinkedWalletResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
 
 public class LinkedWalletAcceptanceTest extends AcceptanceTest {
@@ -86,8 +92,45 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
-    private ExtractableResponse<Response> 링크지갑_충전_요청(final String accessToken, final Long linkedWalletId,
-                                                     final WalletPointRequest pointRequest) {
+    @TestFactory
+    Stream<DynamicTest> 링크지갑을_생성_후_삭제한다() {
+        String accessToken = 엑세스_토큰();
+        AtomicReference<LinkedWalletsResponse> linkedWalletsResponse = new AtomicReference<>();
+        return Stream.of(
+                dynamicTest("링크지갑을 생성한다", () -> {
+                    링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of("1", "2", "3")));
+                    링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑2", Set.of("1", "2", "3")));
+
+                    ExtractableResponse<Response> response = 링크지갑_목록_조회_요청(accessToken, "CREATOR");
+                    linkedWalletsResponse.set(response.as(LinkedWalletsResponse.class));
+                    assertAll(
+                            () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                            () -> assertThat(linkedWalletsResponse.get().linkedWallets()).hasSize(2)
+                    );
+                }),
+
+                dynamicTest("링크지갑을 삭제한다", () -> {
+                    Long linkedWalletId = Long.parseLong(linkedWalletsResponse.get()
+                            .linkedWallets()
+                            .getFirst().linkedWalletId());
+                    ExtractableResponse<Response> response = 링크지갑_삭제_요청(accessToken, linkedWalletId);
+                    System.out.println(linkedWalletId + "??");
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+                }),
+
+                dynamicTest("링크지갑 조회시 삭제한 링크지갑을 제외한 결과가 나온다", () -> {
+                    ExtractableResponse<Response> response = 링크지갑_목록_조회_요청(accessToken, "CREATOR");
+                    LinkedWalletsResponse res = response.as(LinkedWalletsResponse.class);
+                    assertAll(
+                            () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                            () -> assertThat(res.linkedWallets()).hasSize(1)
+                    );
+                })
+        );
+    }
+
+    public static ExtractableResponse<Response> 링크지갑_충전_요청(final String accessToken, final Long linkedWalletId,
+                                                           final WalletPointRequest pointRequest) {
         return sendPatchRequest("/api/linked-wallets/charge/%s".formatted(linkedWalletId), accessToken, pointRequest);
     }
 
@@ -102,5 +145,9 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
 
     public static ExtractableResponse<Response> 링크지갑_조회_요청(final String accessToken, Long linkedWalletId) {
         return sendGetRequest("/api/linked-wallets/%s".formatted(linkedWalletId), accessToken);
+    }
+
+    private ExtractableResponse<Response> 링크지갑_삭제_요청(final String accessToken, final Long linkedWalletId) {
+        return sendDeleteRequest("/api/linked-wallets/" + linkedWalletId, accessToken);
     }
 }

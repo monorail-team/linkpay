@@ -9,10 +9,14 @@ import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @DiscriminatorValue("LINKED")
+@SQLDelete(sql = "UPDATE wallet SET deleted_at = CURRENT_TIMESTAMP WHERE wallet_id = ?")
+@SQLRestriction("deleted_at is null")
 @Entity
 public class LinkedWallet extends Wallet {
 
