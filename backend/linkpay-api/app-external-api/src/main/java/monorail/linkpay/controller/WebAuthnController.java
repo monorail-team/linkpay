@@ -7,7 +7,6 @@ import monorail.linkpay.controller.request.AuthAuthenticateRequest;
 import monorail.linkpay.controller.request.RegisterRequest;
 import monorail.linkpay.webauthn.dto.RegisterChallengeResponse;
 import monorail.linkpay.webauthn.dto.AuthChallengeResponse;
-import monorail.linkpay.webauthn.dto.RegistrationStatusResponse;
 import monorail.linkpay.webauthn.service.WebAuthnService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,56 +24,43 @@ public class WebAuthnController {
 
     private final WebAuthnService webAuthnService;
 
-    // 1. 인증 챌린지 발급: 클라이언트가 인증 시작 전에 챌린지를 요청
-    @GetMapping("/auth-challenge")
-    public ResponseEntity<AuthChallengeResponse> getAuthChallenge(@AuthenticationPrincipal final AuthPrincipal principal) {
-        String challenge = webAuthnService.generateAuthChallenge(principal.memberId());
-        String credentialId = webAuthnService.getCredentialIdByMemberId(principal.memberId()).orElse("");
-        return ResponseEntity.ok(new AuthChallengeResponse(challenge, credentialId));
+    @GetMapping("/register/challenge")
+    public ResponseEntity<RegisterChallengeResponse> getRegisterChallenge() {
+        String challenge = webAuthnService.getRegisterChallenge();
+        return ResponseEntity.ok(new RegisterChallengeResponse(challenge));
     }
 
-    // 2. 인증 수행: 클라이언트가 WebAuthn 데이터를 보내면 검증
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(@AuthenticationPrincipal final AuthPrincipal principal,
+                                         @Valid @RequestBody final RegisterRequest request) {
+        webAuthnService.registerAuthenticator(
+                principal.memberId(),
+                request.credentialId(),
+                request.attestationObject()
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    // 인증 챌린지 발급: 클라이언트가 인증 시작 전에 챌린지를 요청
+    // 세션에 챌린지를 기록 TTL
+    @GetMapping("/authenticate/challenge")
+    public ResponseEntity<AuthChallengeResponse> getAuthChallenge(@AuthenticationPrincipal final AuthPrincipal principal) {
+        var response = webAuthnService.getAuthChallenge(principal.memberId());
+        return ResponseEntity.ok(response);
+    }
+
+    // 인증 수행: 클라이언트가 WebAuthn 데이터를 보내면 검증
+    // 세션에서 챌린지 삭제
     @PostMapping("/authenticate")
-    public ResponseEntity<Void> authenticate(@AuthenticationPrincipal final AuthPrincipal principal,
+    public ResponseEntity<?> authenticate(@AuthenticationPrincipal final AuthPrincipal principal,
                                              @Valid @RequestBody final AuthAuthenticateRequest request) {
-        boolean verified = webAuthnService.verifyAuthentication(
+        var response = webAuthnService.verifyAuthentication(
                 principal.memberId(),
                 request.credentialId(),
                 request.clientDataJSON(),
                 request.authenticatorData()
         );
-        if (!verified) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(response);
     }
 
-    // 3. 등록 상태 조회: 현재 사용자가 WebAuthn 등록이 되어있는지 확인
-    @GetMapping("/registration-status")
-    public ResponseEntity<RegistrationStatusResponse> getRegistrationStatus(@AuthenticationPrincipal final AuthPrincipal principal) {
-        boolean registered = webAuthnService.isRegistered(principal.memberId());
-        return ResponseEntity.ok(new RegistrationStatusResponse(registered));
-    }
-
-    // 4. 등록 챌린지 발급: 클라이언트가 등록 시작 전에 챌린지를 요청
-    @GetMapping("/register-challenge")
-    public ResponseEntity<RegisterChallengeResponse> getRegisterChallenge(@AuthenticationPrincipal final AuthPrincipal principal) {
-        String challenge = webAuthnService.generateRegisterChallenge(principal.memberId());
-        return ResponseEntity.ok(new RegisterChallengeResponse(challenge));
-    }
-
-    // 5. 등록 수행: 클라이언트가 WebAuthn 등록 데이터를 보내면 처리
-    @PostMapping("/register")
-    public ResponseEntity<Void> register(@AuthenticationPrincipal final AuthPrincipal principal,
-                                         @Valid @RequestBody final RegisterRequest request) {
-        boolean success = webAuthnService.registerAuthenticator(
-                principal.memberId(),
-                request.credentialId(),
-                request.attestationObject()
-        );
-        if (!success) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
 }
