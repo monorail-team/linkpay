@@ -8,11 +8,12 @@ const base_url = process.env.REACT_APP_API_URL;
 
 interface MemberSearchBarProps {
     onMembersChange?: (members: Member[]) => void;
+    initialMembers?: Member[];
 }
 
-const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange }) => {
+const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initialMembers = []}) => {
   const [email, setEmail] = useState('');
-  const [addedMembers, setAddedMembers] = useState<Member[]>([]);
+  const [addedMembers, setAddedMembers] = useState<Member[]>(initialMembers);
   const [error, setError] = useState<string | null>(null);
   const { theme } = useThemeStore();
   useEffect(() => {

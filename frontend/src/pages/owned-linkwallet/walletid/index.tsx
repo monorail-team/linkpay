@@ -133,7 +133,7 @@ const OwnedLinkWalletPage: React.FC = () => {
   };
 
   const handleManageLinkWallet = (walletId: string) => {
-    navigate(`/linkwallet/${walletId}/manage`);
+    navigate(`/owned-linkwallet/${walletId}/manage`);
   };
   // 메뉴 관련 핸들러
   const [showMenu, setShowMenu] = useState(false);
