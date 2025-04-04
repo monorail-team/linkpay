@@ -114,7 +114,6 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
                             .linkedWallets()
                             .getFirst().linkedWalletId());
                     ExtractableResponse<Response> response = 링크지갑_삭제_요청(accessToken, linkedWalletId);
-                    System.out.println(linkedWalletId + "??");
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
                 }),
 
