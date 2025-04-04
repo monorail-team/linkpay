@@ -127,11 +127,9 @@ const ParticipatedLinkWalletPage: React.FC = () => {
     }
   };
 
-  // 카드 생성
-  const handleCreateCard = (walletId: string) => {
-    navigate(`/partcipated/${walletId}/create`);
+  const handleManageLinkWallet = (walletId: string) => {
+    navigate(`/linkwallet/${walletId}/participants`);
   };
-
 
   // 메뉴 관련 핸들러
   const [showMenu, setShowMenu] = useState(false);
@@ -145,28 +143,31 @@ const ParticipatedLinkWalletPage: React.FC = () => {
       <div className="w-full max-w-md mx-auto p-4" style={{ height: 'calc(100vh - 64px)' }}>
         {/* 지갑 정보 영역 (카드 생성 버튼은 제거됨) */}
         <div className="w-4/5 h-1/4 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
-          <p className="test-sm text-[clamp(0.8rem,2vw,1rem)] text-black text-start mt-4 px-4 dark:text-[#D4D4D4]">
-          {linkWallet!.linkedWalletName}
+          <p className="text-[clamp(0.8rem,2vw,1rem)] text-black text-start mt-4 px-4 dark:text-[#D4D4D4]">
+            {linkWallet?.linkedWalletName || '로딩 중...'}
           </p>
           <div className="flex flex-col items-center justify-center h-2/3">
             <p className="text-[clamp(1rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4]">
               잔여 포인트
             </p>
             <p className="text-[clamp(1.5rem,4vw,2.5rem)] sm:text-3xl text-black text-center font-bold dark:text-[#D4D4D4]">
-              {linkWallet!.amount.toLocaleString()}원
+              {linkWallet?.amount?.toLocaleString() || '0'}원
             </p>
           </div>
-          <div className="flex justify-between w-full">
-            <button
-            onClick={() => handleCreateCard(walletId!)} 
-            className="bg-white text-black py-2 px-4 ml-auto mr-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">
-              카드 생성
-            </button>
-            <button className="bg-white text-black py-2 px-4 mr-auto ml-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]"
+          <div className="flex justify-center w-full">
+            <button className="bg-white text-black py-2 w-2/3 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]"
               onClick={() => setShowChargeModal(true)}>
               충전하기
             </button>
           </div>
+        </div>
+        <div className="flex justify-end mr-10 mt-3">
+          <button
+            onClick={() => handleManageLinkWallet(walletId!)}
+            className="bg-white border text-black py-1 px-2 rounded-lg dark:bg-[#4F4F4F] dark:text-white dark:border-[#4F4F4F]"
+          >
+            참여자목록
+          </button>
         </div>
         {/* 입출금 내역 영역 */}
         <div className="mt-12 mx-6" ref={scrollContainerRef} style={{ maxHeight: '50vh', overflowY: 'auto' }}>

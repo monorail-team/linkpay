@@ -148,14 +148,14 @@ const OwnedLinkWalletPage: React.FC = () => {
         {/* 지갑 정보 영역 */}
         <div className="w-4/5 h-1/4 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
           <p className="test-sm text-[clamp(0.8rem,2vw,1rem)] text-black text-start mt-4 px-4 dark:text-[#D4D4D4]">
-            {linkWallet!.linkedWalletName}
+            {linkWallet?.linkedWalletName || '로딩 중...'}
           </p>
           <div className="flex flex-col items-center justify-center h-2/3">
             <p className="text-[clamp(1rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4]">
               잔여 포인트
             </p>
             <p className="text-[clamp(1.5rem,4vw,2.5rem)] sm:text-3xl text-black text-center font-bold dark:text-[#D4D4D4]">
-              {linkWallet!.amount.toLocaleString()}원
+            {linkWallet?.amount?.toLocaleString() || '0'}원
             </p>
           </div>
           <div className="flex justify-between w-full">
