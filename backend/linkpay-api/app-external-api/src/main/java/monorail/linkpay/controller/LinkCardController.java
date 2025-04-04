@@ -5,12 +5,14 @@ import static monorail.linkpay.linkcard.domain.CardState.getCardState;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
 import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
+import monorail.linkpay.linkcard.dto.LinkCardHistoriesResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +37,8 @@ public class LinkCardController {
     @PostMapping
     public ResponseEntity<Void> createLinkCard(@AuthenticationPrincipal final AuthPrincipal principal,
                                                @Valid @RequestBody final LinkCardCreateRequest linkCardCreateRequest) {
-        linkCardService.create(principal.memberId(), linkCardCreateRequest.toServiceRequest());
-        return ResponseEntity.status(CREATED).build();
+        Long linkCardId = linkCardService.create(principal.memberId(), linkCardCreateRequest.toServiceRequest());
+        return ResponseEntity.created(URI.create("/api/cards/details/" + linkCardId)).build();
     }
 
     @PostMapping("/shared")
@@ -64,8 +66,8 @@ public class LinkCardController {
                 now()));
     }
 
-    @GetMapping("/detail")
-    public ResponseEntity<LinkCardDetailResponse> getLinkCardDetails(@RequestParam final Long linkCardId,
+    @GetMapping("/details/{linkCardId}")
+    public ResponseEntity<LinkCardDetailResponse> getLinkCardDetails(@PathVariable final Long linkCardId,
                                                                      @AuthenticationPrincipal final AuthPrincipal principal) {
         return ResponseEntity.ok(linkCardService.getLinkCardDetails(principal.memberId(), linkCardId));
 
@@ -75,7 +77,8 @@ public class LinkCardController {
     public ResponseEntity<Void> activateLinkCard(
             @Valid @RequestBody final LinkCardRegistRequest linkCardRegistRequest,
             @AuthenticationPrincipal final AuthPrincipal principal) {
-        linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds(), principal.memberId());
+        linkCardService.activateLinkCard(linkCardRegistRequest.linkCardIds().stream().map(Long::parseLong).toList(),
+                principal.memberId());
         return ResponseEntity.noContent().build();
     }
 
@@ -84,5 +87,13 @@ public class LinkCardController {
                                                @AuthenticationPrincipal final AuthPrincipal principal) {
         linkCardService.deleteLinkCard(linkCardId, principal.memberId());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/card-histories/{linkCardId}")
+    public ResponseEntity<LinkCardHistoriesResponse> getLinkCardHistories(@PathVariable final Long linkCardId,
+                                                                          @RequestParam(required = false) final Long lastId,
+                                                                          @RequestParam(defaultValue = "10") final int size,
+                                                                          @AuthenticationPrincipal final AuthPrincipal principal) {
+        return ResponseEntity.ok(linkCardService.getLinkCardHistories(principal.memberId(), lastId, size, linkCardId));
     }
 }

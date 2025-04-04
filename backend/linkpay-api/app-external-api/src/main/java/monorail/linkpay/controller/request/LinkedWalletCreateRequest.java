@@ -12,6 +12,6 @@ public record LinkedWalletCreateRequest(
         String walletName,
 
         @NotEmpty(message = "참여자를 최소 한 명 이상 입력해주세요.")
-        Set<Long> memberIds
+        Set<String> memberIds
 ) {
 }

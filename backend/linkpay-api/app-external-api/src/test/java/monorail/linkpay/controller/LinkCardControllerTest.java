@@ -5,6 +5,7 @@ import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE_
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARDS_RESPONSE_3;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_CREATE_REQUEST;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_DETAIL_RESPONSE;
+import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_HISTORIES_RESPONSE;
 import static monorail.linkpay.controller.ControllerFixture.LINK_CARD_REGISTRATION_REQUEST;
 import static monorail.linkpay.controller.ControllerFixture.REGISTERED_LINK_CARDS_RESPONSE;
 import static monorail.linkpay.controller.ControllerFixture.SHARED_LINK_CARD_CREATE_REQUEST;
@@ -30,7 +31,7 @@ public class LinkCardControllerTest extends ControllerTest {
 
     @Test
     void 링크카드를_생성한다() {
-        doNothing().when(linkCardService).create(anyLong(), any(LinkCardCreateServiceRequest.class));
+        when(linkCardService.create(anyLong(), any(LinkCardCreateServiceRequest.class))).thenReturn(1L);
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -103,7 +104,7 @@ public class LinkCardControllerTest extends ControllerTest {
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")
-                .when().get("/api/cards/unregistered")
+                .when().get("/api/cards/unregistered?lastId=1&size=10")
                 .then().log().all()
                 .apply(document("cards/read/deactivate"))
                 .statusCode(HttpStatus.OK.value());
@@ -131,7 +132,7 @@ public class LinkCardControllerTest extends ControllerTest {
 
         docsGiven
                 .header("Authorization", "Bearer {access_token}")
-                .when().get("/api/cards/registered")
+                .when().get("/api/cards/registered?lastId=1&size=10")
                 .then().log().all()
                 .apply(document("cards/read/activate"))
                 .statusCode(HttpStatus.OK.value());
@@ -143,7 +144,7 @@ public class LinkCardControllerTest extends ControllerTest {
                 .thenReturn(LINK_CARD_DETAIL_RESPONSE);
 
         docsGiven.header("Authorization", "Bearer {access_token}")
-                .when().get("/api/cards/detail?linkCardId=1")
+                .when().get("/api/cards/details/1")
                 .then().log().all()
                 .apply(document("cards/read/detail"))
                 .statusCode(HttpStatus.OK.value());
@@ -159,5 +160,17 @@ public class LinkCardControllerTest extends ControllerTest {
                 .then().log().all()
                 .apply(document("cards/delete"))
                 .statusCode(HttpStatus.NO_CONTENT.value());
+    }
+
+    @Test
+    void 링크카드_사용_내역을_확인한다() {
+        when(linkCardService.getLinkCardHistories(anyLong(), nullable(Long.class), eq(10), anyLong())).thenReturn(
+                LINK_CARD_HISTORIES_RESPONSE);
+
+        docsGiven.header("Authorization", "Bearer {access_token}")
+                .when().get("/api/cards/card-histories/1?lastId=1&size=10")
+                .then().log().all()
+                .apply(document("cards/read/histories"))
+                .statusCode(HttpStatus.OK.value());
     }
 }

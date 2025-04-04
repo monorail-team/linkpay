@@ -1,12 +1,9 @@
 package monorail.linkpay.controller;
 
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
 import monorail.linkpay.auth.service.AuthService;
-import monorail.linkpay.history.service.WalletHistoryService;
+import monorail.linkpay.facade.WalletHistoryFacade;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.member.service.MemberService;
 import monorail.linkpay.payment.service.PaymentService;
@@ -22,6 +19,9 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 
 @WebMvcTest({
         AuthController.class,
@@ -54,7 +54,7 @@ public abstract class ControllerTest {
     @MockitoBean
     protected PaymentService paymentService;
     @MockitoBean
-    protected WalletHistoryService walletHistoryService;
+    protected WalletHistoryFacade walletHistoryFacade;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,

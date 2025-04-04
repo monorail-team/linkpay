@@ -10,13 +10,15 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.history.domain.WalletHistory;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.store.domain.Store;
@@ -25,7 +27,6 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "payment")
 @Getter
-@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE payment SET deleted_at = CURRENT_TIMESTAMP WHERE payment_id = ?")
 @SQLRestriction("deleted_at is null")
@@ -52,18 +53,40 @@ public class Payment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Store store;
 
+    @JoinColumn(name = "wallet_history_id", nullable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    private WalletHistory walletHistory;
+
     @Builder
     private Payment(
             final Long id,
             final LinkCard linkCard,
             final Member member,
             final Point amount,
-            final Store store
+            final Store store,
+            final WalletHistory walletHistory
     ) {
         this.id = id;
         this.linkCard = linkCard;
         this.member = member;
         this.amount = amount;
         this.store = store;
+        this.walletHistory = walletHistory;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof Payment payment)) {
+            return false;
+        }
+        return getId() != null && Objects.equals(getId(), payment.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 }

@@ -12,24 +12,21 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.common.domain.TransactionType;
 import monorail.linkpay.member.domain.Member;
-import monorail.linkpay.payment.domain.Payment;
 import monorail.linkpay.wallet.domain.Wallet;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "wallet_history")
 @Getter
-@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE wallet_history SET deleted_at = CURRENT_TIMESTAMP WHERE wallet_history_id = ?")
 @SQLRestriction("deleted_at is null")
@@ -60,14 +57,6 @@ public class WalletHistory extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "payment_id")
-    @OneToOne(fetch = FetchType.LAZY)
-    private Payment payment;
-
-    public boolean hasPayment() {
-        return payment != null;
-    }
-
     @Builder
     private WalletHistory(
             final Long id,
@@ -75,8 +64,7 @@ public class WalletHistory extends BaseEntity {
             final Point remaining,
             final TransactionType transactionType,
             final Wallet wallet,
-            final Member member,
-            final Payment payment
+            final Member member
     ) {
         this.id = id;
         this.amount = amount;
@@ -84,6 +72,21 @@ public class WalletHistory extends BaseEntity {
         this.transactionType = transactionType;
         this.wallet = wallet;
         this.member = member;
-        this.payment = payment;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof WalletHistory that)) {
+            return false;
+        }
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 }

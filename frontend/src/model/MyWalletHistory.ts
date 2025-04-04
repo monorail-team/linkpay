@@ -4,5 +4,6 @@ export interface MyWalletHistory {
     remaining : number;
     transactionType: 'DEPOSIT' | 'WITHDRAWAL';
     time : string;
+    linkCardName?: string| null;
 }
   

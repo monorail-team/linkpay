@@ -26,10 +26,10 @@ public record SharedLinkCardCreateRequest(
         LocalDate expiredAt,
 
         @NotEmpty
-        List<Long> memberIds,
+        List<String> memberIds,
 
         @NotNull(message = "연결된 링크 지갑 정보를 입력해주세요.")
-        Long linkedWalletId
+        String linkedWalletId
 ) {
     public SharedLinkCardCreateServiceRequest toServiceRequest() {
         return SharedLinkCardCreateServiceRequest.builder()

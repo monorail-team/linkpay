@@ -68,13 +68,14 @@ const LinkWalletListPage: React.FC = () => {
     setWallets([]);
     setHasNext(true);
     setLastId(null);
-
-    setTimeout(() => {
-      fetchWallets();
-    }, 0);
   }, [activeTab]); 
 
-  
+  useEffect(() => {
+    if(hasNext && lastId === null) {
+      fetchWallets();
+    }
+  }, [fetchWallets, hasNext, lastId]);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -99,11 +100,15 @@ const LinkWalletListPage: React.FC = () => {
   };
 
   const handleCreateLinkWallet = () => {
-      navigate('/linkwalletcreate');
+      navigate('/createlinkwallet');
   };
 
-  const handleLinkWallet = (walletId: number) => {
-    navigate(`/linkwallet/${walletId}`);
+  const handleLinkWallet = (walletId: string) => {
+    if (activeTab === TAB_OWNED) {
+      navigate(`/owned-linkwallet/${walletId}`);
+    } else if (activeTab === TAB_PARTICIPATED) {
+      navigate(`/participated-linkwallet/${walletId}`);
+    }
   }
 
       
@@ -152,12 +157,15 @@ const LinkWalletListPage: React.FC = () => {
         {wallets.map((wallet) => (
             <div
                 key={wallet.linkedWalletId}
-                className="relative my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] dark:bg-[#3b3838] dark:border-[#706E6E]"
-                onClick={() => handleLinkWallet(Number(wallet.linkedWalletId))}
+                className="relative my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] bg-[#EEEEEE] dark:bg-[#5c5b5b] dark:border-[#706E6E]"
+                onClick={() => handleLinkWallet(wallet.linkedWalletId)}
             >
                 {/* 왼쪽: 지갑명 (수직 중앙) */}
                 <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                    <p className="text-base  text-gray-700 dark:text-white">
+                    <p className="text-sm text-gray-800 dark:text-white">
+                      링크 지갑명
+                    </p>
+                    <p className="text-lg  text-gray-700 dark:text-white">
                         {wallet.linkedWalletName}
                     </p>
                 </div>
@@ -165,12 +173,12 @@ const LinkWalletListPage: React.FC = () => {
                 {/* 오른쪽 상단: 참여자 수수 */}
                 <div className="absolute top-2 right-2 text-sm w-32">
                     <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-200">잠여자 수</span>
+                        <span className="text-gray-600 dark:text-gray-200 mt-2 ml-2">참여자 수</span>
                         <span></span>
                     </div>
                     <div className="flex justify-between mt-1">
                         <span></span>
-                        <span className="text-gray-800 dark:text-white">
+                        <span className="text-gray-800 dark:text-white mr-2">
                           {wallet.participantCount} 명
                         </span>
                     </div>
@@ -179,12 +187,12 @@ const LinkWalletListPage: React.FC = () => {
                 {/* 오른쪽 하단: 잔액액 */}
                 <div className="absolute bottom-2 right-2 text-sm w-32">
                     <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-200">잔액</span>
+                        <span className="text-gray-600 dark:text-gray-200 ml-2">잔액</span>
                         <span></span>
                     </div>
                     <div className="flex justify-between mt-1">
                         <span></span>
-                        <span className="text-gray-800 dark:text-white">
+                        <span className="text-gray-800 dark:text-white mb-2 mr-2">
                           {wallet.amount.toLocaleString()}원
                         </span>
                     </div>
@@ -193,12 +201,14 @@ const LinkWalletListPage: React.FC = () => {
         ))}
 
         {/* 플러스카드 (새 링크지갑 생성용) */}
-        <div
-          onClick={handleCreateLinkWallet}
-          className="my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] flex items-center justify-center cursor-pointer bg-[#F2F2F2] dark:bg-[#3b3838] dark:border-[#706E6E]"
-        >
-          <span className="text-4xl text-gray-500">+</span>
-        </div>
+        {activeTab === TAB_OWNED && (
+          <div
+            onClick={handleCreateLinkWallet}
+            className="my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] flex items-center justify-center cursor-pointer bg-[#FFFFFF] dark:bg-[#3b3838] dark:border-[#706E6E]"
+          >
+            <span className="text-4xl text-gray-500">+</span>
+          </div>
+        )}
       </div>
     </div>
   );

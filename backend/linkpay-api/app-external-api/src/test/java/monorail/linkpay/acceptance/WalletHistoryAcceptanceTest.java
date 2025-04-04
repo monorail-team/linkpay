@@ -1,5 +1,22 @@
 package monorail.linkpay.acceptance;
 
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
+import monorail.linkpay.controller.request.PaymentsRequest;
+import monorail.linkpay.controller.request.StoreCreateRequest;
+import monorail.linkpay.controller.request.StoreTransactionRequest;
+import monorail.linkpay.controller.request.WalletPointRequest;
+import monorail.linkpay.facade.dto.WalletHistoryListResponse;
+import monorail.linkpay.facade.dto.WalletHistoryResponse;
+import monorail.linkpay.linkcard.dto.LinkCardsResponse;
+import monorail.linkpay.store.dto.TransactionResponse;
+import monorail.linkpay.wallet.dto.WalletResponse;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+import org.springframework.http.HttpStatus;
+
+import java.util.stream.Stream;
+
 import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
 import static monorail.linkpay.acceptance.LinkCardAcceptanceTest.링크카드_생성_요청;
 import static monorail.linkpay.acceptance.LinkCardAcceptanceTest.링크카드_조회_요청;
@@ -12,22 +29,6 @@ import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetReques
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
-
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
-import java.util.stream.Stream;
-import monorail.linkpay.controller.request.PaymentsRequest;
-import monorail.linkpay.controller.request.StoreCreateRequest;
-import monorail.linkpay.controller.request.StoreTransactionRequest;
-import monorail.linkpay.controller.request.WalletPointRequest;
-import monorail.linkpay.history.dto.WalletHistoryListResponse;
-import monorail.linkpay.history.dto.WalletHistoryResponse;
-import monorail.linkpay.linkcard.dto.LinkCardsResponse;
-import monorail.linkpay.store.dto.TransactionResponse;
-import monorail.linkpay.wallet.dto.WalletResponse;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-import org.springframework.http.HttpStatus;
 
 public class WalletHistoryAcceptanceTest extends AcceptanceTest {
 
@@ -49,9 +50,9 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
                 dynamicTest("지갑 히스토리에서 충전 내역을 확인한다", () -> {
                     ExtractableResponse<Response> walletHistoriesRes = 나의_지갑_히스토리_리스트_조회_요청(accessToken);
                     WalletHistoryListResponse walletHistories = walletHistoriesRes.as(WalletHistoryListResponse.class);
+
                     ExtractableResponse<Response> response = 지갑_히스토리_조회_요청(accessToken,
                             Long.parseLong(walletHistories.walletHistories().getFirst().walletHistoryId()));
-
                     WalletHistoryResponse walletHistoryResponse = response.as(WalletHistoryResponse.class);
                     assertAll(
                             () -> assertThat(walletHistoryResponse.remaining()).isEqualTo(50000),
@@ -69,8 +70,8 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
                     transaction.set(transactionResponse);
                     ExtractableResponse<Response> response = 결제_요청(accessToken,
                             new PaymentsRequest(3000L,
-                                    Long.parseLong(cardsResponse.linkCards().getFirst().linkCardId()),
-                                    Long.parseLong(storeId), transactionResponse.transactionSignature(),
+                                    cardsResponse.linkCards().getFirst().linkCardId(),
+                                    storeId, transactionResponse.transactionSignature(),
                                     "token"));
 
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());

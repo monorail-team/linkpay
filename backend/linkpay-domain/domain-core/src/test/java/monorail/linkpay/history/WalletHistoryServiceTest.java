@@ -1,30 +1,34 @@
 package monorail.linkpay.history;
 
+import monorail.linkpay.common.IntegrationTest;
+import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.common.domain.TransactionType;
+import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.history.domain.WalletHistory;
+import monorail.linkpay.history.service.WalletHistoryService;
+import monorail.linkpay.member.domain.Member;
+import monorail.linkpay.wallet.domain.LinkedWallet;
+import monorail.linkpay.wallet.domain.MyWallet;
+import monorail.linkpay.wallet.domain.Wallet;
+import monorail.linkpay.wallet.service.LinkedWalletService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Set;
+
 import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
 import static monorail.linkpay.wallet.domain.Role.CREATOR;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
-import monorail.linkpay.common.IntegrationTest;
-import monorail.linkpay.common.domain.Point;
-import monorail.linkpay.common.domain.TransactionType;
-import monorail.linkpay.exception.LinkPayException;
-import monorail.linkpay.history.domain.WalletHistory;
-import monorail.linkpay.history.dto.WalletHistoryResponse;
-import monorail.linkpay.history.service.WalletHistoryService;
-import monorail.linkpay.member.domain.Member;
-import monorail.linkpay.wallet.domain.LinkedWallet;
-import monorail.linkpay.wallet.domain.MyWallet;
-import monorail.linkpay.wallet.domain.Wallet;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 public class WalletHistoryServiceTest extends IntegrationTest {
 
     @Autowired
     private WalletHistoryService walletHistoryService;
+    @Autowired
+    private LinkedWalletService linkedWalletService;
 
     @Test
     void 내_지갑의_특정_히스토리를_조회한다() {
@@ -36,7 +40,7 @@ public class WalletHistoryServiceTest extends IntegrationTest {
         walletHistoryRepository.save(history);
 
         // when
-        WalletHistoryResponse response = walletHistoryService.readWalletHistory(history.getId(), member.getId());
+        var response = walletHistoryService.readWalletHistory(history.getId(), member.getId());
 
         // then
         assertThat(response).isNotNull();
@@ -70,11 +74,11 @@ public class WalletHistoryServiceTest extends IntegrationTest {
         String walletName = "링크지갑";
 
         memberRepository.saveAll(List.of(member1));
-        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name(walletName).build());
-        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
-        linkedMemberRepository.saveAll(List.of(
-                createLinkedMember(CREATOR, member, linkedWallet),
-                createLinkedMember(PARTICIPANT, member1, linkedWallet)));
+        Long linkedWalletId = linkedWalletService.createLinkedWallet(member.getId(), "name", Set.of(member1.getId()));
+        LinkedWallet linkedWallet = linkedWalletRepository.findById(linkedWalletId).orElseThrow();
+//        linkedMemberRepository.saveAll(List.of(
+//                createLinkedMember(CREATOR, member, linkedWallet),
+//                createLinkedMember(PARTICIPANT, member1, linkedWallet)));
         linkCardRepository.saveAll(
                 List.of(createLinkWalletCard(linkedWallet, member),
                         createLinkWalletCard(linkedWallet, member1)));
@@ -83,7 +87,7 @@ public class WalletHistoryServiceTest extends IntegrationTest {
         walletHistoryRepository.save(history);
 
         // when
-        WalletHistoryResponse response = walletHistoryService.readWalletHistory(history.getId(), member.getId());
+        var response = walletHistoryService.readWalletHistory(history.getId(), member1.getId());
 
         // then
         assertThat(response).isNotNull();
