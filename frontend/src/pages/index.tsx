@@ -182,7 +182,7 @@ const Home: React.FC = () => {
           />
         </button>
         {loading && <p className="mt-4 text-white">처리중...</p>}
-        <p className="mt-2 text-white">지문 버튼을 눌러 결제를 진행하세요.</p>
+        <p className="mt-2 text-black dark:text-white">지문 버튼을 눌러 결제를 진행하세요.</p>
       </footer>
     </div>
   );
