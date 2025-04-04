@@ -34,7 +34,7 @@ public class PaymentService {
         paymentProcessor.executePay(store, linkCard, txInfo.point());
     }
 
-    public List<PaymentDto> readPaymentsByHistoryIdIn(Set<Long> walletHistoryIds) {
+    public List<PaymentDto> readPaymentsByHistoryIdIn(final Set<Long> walletHistoryIds) {
         return paymentFetcher.fetchByWalletHistoryIdIn(walletHistoryIds)
                 .stream()
                 .map(PaymentDto::from)
