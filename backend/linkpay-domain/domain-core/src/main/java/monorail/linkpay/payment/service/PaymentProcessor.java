@@ -7,7 +7,6 @@ import monorail.linkpay.history.domain.WalletHistory;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.service.LinkCardUpdater;
 import monorail.linkpay.payment.domain.Payment;
-import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.payment.repository.PaymentRepository;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.util.id.IdGenerator;
@@ -24,8 +23,7 @@ public class PaymentProcessor {
     @Transactional
     public Payment executePay(final Store store,
                               final LinkCard linkCard,
-                              final Point point
-                          ) {
+                              final Point point) {
         WalletHistory walletHistory = linkCardUpdater.useCard(linkCard, point);
         return paymentRepository.save(Payment.builder()
                 .id(idGenerator.generate())
