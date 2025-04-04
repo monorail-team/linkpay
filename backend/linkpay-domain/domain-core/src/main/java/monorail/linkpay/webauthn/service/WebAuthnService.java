@@ -6,18 +6,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.payment.service.PaymentTokenProvider;
 import monorail.linkpay.webauthn.domain.WebAuthnCredential;
 import monorail.linkpay.webauthn.dto.AuthChallengeResponse;
+import monorail.linkpay.webauthn.dto.WebAuthnSuccessResponse;
 import monorail.linkpay.webauthn.repository.WebAuthnCredentialRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -29,6 +28,7 @@ public class WebAuthnService {
 
     private final WebAuthnCredentialRepository credentialRepository;
     private final WebAuthnCredentialFetcher credentialFetcher;
+    private final PaymentTokenProvider paymentTokenProvider;
 
     public String getRegisterChallenge() {
         return generateRandomChallenge();
@@ -99,23 +99,19 @@ public class WebAuthnService {
     public AuthChallengeResponse getAuthChallenge(Long memberId) {
         WebAuthnCredential credential = credentialFetcher.fetchByMemberId(memberId);
         String challenge = generateRandomChallenge();
-        // todo: 세션에 기록
+        // TODO: 세션에 챌린지를 기록 & TTL
         return new AuthChallengeResponse(challenge, credential.getCredentialId());
     }
 
     @Transactional
-    public Object verifyAuthentication(Long memberId, String credentialId, String clientDataJSON, String authenticatorData) {
-        Optional<WebAuthnCredential> optCredential = credentialFetcher.fetchByCredentialId(credentialId);
-        if (optCredential.isEmpty()) {
-            return false;
-        }
-        WebAuthnCredential credential = optCredential.get();
-        if (!credential.getMemberId().equals(memberId)) {
+    public WebAuthnSuccessResponse verifyAuthentication(Long memberId, String credentialId, String clientDataJSON, String authenticatorData) {
+        WebAuthnCredential credential = credentialFetcher.fetchByCredentialId(credentialId);
+        if (!Objects.equals(credential.getMemberId(), memberId)) {
             throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, "지문 인증 실패");
         }
 
-        // todo: 인증 성공 시 토큰 생성해서 반환
-        return null;
+        // TODO: 세션에서 챌린지 삭제?
+        return new WebAuthnSuccessResponse(paymentTokenProvider.generateFor(memberId));
     }
 
     private String generateRandomChallenge() {

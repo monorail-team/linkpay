@@ -7,6 +7,7 @@ import monorail.linkpay.controller.request.AuthAuthenticateRequest;
 import monorail.linkpay.controller.request.RegisterRequest;
 import monorail.linkpay.webauthn.dto.RegisterChallengeResponse;
 import monorail.linkpay.webauthn.dto.AuthChallengeResponse;
+import monorail.linkpay.webauthn.dto.WebAuthnSuccessResponse;
 import monorail.linkpay.webauthn.service.WebAuthnService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,6 @@ public class WebAuthnController {
     }
 
     // 인증 챌린지 발급: 클라이언트가 인증 시작 전에 챌린지를 요청
-    // 세션에 챌린지를 기록 TTL
     @GetMapping("/authenticate/challenge")
     public ResponseEntity<AuthChallengeResponse> getAuthChallenge(@AuthenticationPrincipal final AuthPrincipal principal) {
         var response = webAuthnService.getAuthChallenge(principal.memberId());
@@ -50,16 +50,14 @@ public class WebAuthnController {
     }
 
     // 인증 수행: 클라이언트가 WebAuthn 데이터를 보내면 검증
-    // 세션에서 챌린지 삭제
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(@AuthenticationPrincipal final AuthPrincipal principal,
-                                             @Valid @RequestBody final AuthAuthenticateRequest request) {
+    public ResponseEntity<WebAuthnSuccessResponse> authenticate(@AuthenticationPrincipal final AuthPrincipal principal,
+                                                                @Valid @RequestBody final AuthAuthenticateRequest request) {
         var response = webAuthnService.verifyAuthentication(
                 principal.memberId(),
                 request.credentialId(),
                 request.clientDataJSON(),
-                request.authenticatorData()
-        );
+                request.authenticatorData());
         return ResponseEntity.ok(response);
     }
 

@@ -1,6 +1,5 @@
 package monorail.linkpay.webauthn.service;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
@@ -19,7 +18,8 @@ public class WebAuthnCredentialFetcher {
                 .orElseThrow(()->new LinkPayException(ExceptionCode.WEBAUTHN_NOT_REGISTERED, "등록되지 않은 인증 정보"));
     }
 
-    public Optional<WebAuthnCredential> fetchByCredentialId(String credentialId) {
-        return repository.findById(credentialId);
+    public WebAuthnCredential fetchByCredentialId(String credentialId) {
+        return repository.findById(credentialId)
+                .orElseThrow(()->new LinkPayException(ExceptionCode.WEBAUTHN_NOT_REGISTERED, "등록되지 않은 인증 정보"));
     }
 }
