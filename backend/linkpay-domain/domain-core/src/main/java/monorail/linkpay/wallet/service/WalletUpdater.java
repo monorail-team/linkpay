@@ -1,5 +1,14 @@
 package monorail.linkpay.wallet.service;
 
+import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
+import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
+import static monorail.linkpay.wallet.domain.Role.CREATOR;
+import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.common.domain.Point;
@@ -15,16 +24,6 @@ import monorail.linkpay.wallet.domain.Role;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.repository.LinkedMemberRepository;
 import monorail.linkpay.wallet.repository.WalletRepository;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static monorail.linkpay.common.domain.TransactionType.DEPOSIT;
-import static monorail.linkpay.common.domain.TransactionType.WITHDRAWAL;
-import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
-import static monorail.linkpay.wallet.domain.Role.CREATOR;
-import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
 @SupportLayer
 @RequiredArgsConstructor

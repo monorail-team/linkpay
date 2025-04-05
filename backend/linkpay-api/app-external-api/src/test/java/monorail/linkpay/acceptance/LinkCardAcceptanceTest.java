@@ -295,6 +295,8 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                                     linkCardId.get().toString(),
                                     storeId, transactionResponse.transactionSignature(),
                                     "token"));
+
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
                 }),
                 dynamicTest("카드 내역을 확인한다", () -> {
                     ExtractableResponse<Response> response = 링크카드_사용내역_조회_요청(accessToken, linkCardId.get());
@@ -330,8 +332,8 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
         return sendPostRequest("/api/cards", accessToken, request);
     }
 
-    private ExtractableResponse<Response> 링크지갑에서_링크카드_생성_요청(final String accessToken,
-                                                            final SharedLinkCardCreateRequest request) {
+    public static ExtractableResponse<Response> 링크지갑에서_링크카드_생성_요청(final String accessToken,
+                                                                  final SharedLinkCardCreateRequest request) {
         return sendPostRequest("/api/cards/shared", accessToken, request);
     }
 
