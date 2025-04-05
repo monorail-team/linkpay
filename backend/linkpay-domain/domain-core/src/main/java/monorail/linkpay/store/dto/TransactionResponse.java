@@ -1,10 +1,8 @@
 package monorail.linkpay.store.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import monorail.linkpay.payment.dto.TransactionInfo;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
 public record TransactionResponse(
         String storeId,
