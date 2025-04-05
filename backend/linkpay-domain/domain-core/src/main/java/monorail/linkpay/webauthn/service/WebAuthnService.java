@@ -8,8 +8,8 @@ import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.payment.service.PaymentTokenProvider;
 import monorail.linkpay.webauthn.domain.WebAuthnCredential;
-import monorail.linkpay.webauthn.dto.AuthChallengeResponse;
-import monorail.linkpay.webauthn.dto.WebAuthnSuccessResponse;
+import monorail.linkpay.webauthn.dto.WebAuthnChallengeResponse;
+import monorail.linkpay.webauthn.dto.WebAuthnResponse;
 import monorail.linkpay.webauthn.repository.WebAuthnCredentialRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,22 +96,22 @@ public class WebAuthnService {
     }
 
     @Transactional
-    public AuthChallengeResponse getAuthChallenge(Long memberId) {
+    public WebAuthnChallengeResponse getAuthChallenge(Long memberId) {
         WebAuthnCredential credential = credentialFetcher.fetchByMemberId(memberId);
         String challenge = generateRandomChallenge();
         // TODO: 세션에 챌린지를 기록 & TTL
-        return new AuthChallengeResponse(challenge, credential.getCredentialId());
+        return new WebAuthnChallengeResponse(challenge, credential.getCredentialId());
     }
 
     @Transactional
-    public WebAuthnSuccessResponse verifyAuthentication(Long memberId, String credentialId, String clientDataJSON, String authenticatorData) {
+    public WebAuthnResponse verifyAuthentication(Long memberId, String credentialId, String clientDataJSON, String authenticatorData) {
         WebAuthnCredential credential = credentialFetcher.fetchByCredentialId(credentialId);
         if (!Objects.equals(credential.getMemberId(), memberId)) {
             throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, "지문 인증 실패");
         }
 
         // TODO: 세션에서 챌린지 삭제?
-        return new WebAuthnSuccessResponse(paymentTokenProvider.generateFor(memberId));
+        return new WebAuthnResponse(paymentTokenProvider.generateFor(memberId));
     }
 
     private String generateRandomChallenge() {

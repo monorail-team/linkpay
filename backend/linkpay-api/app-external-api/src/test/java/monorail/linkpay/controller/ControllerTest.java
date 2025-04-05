@@ -11,6 +11,7 @@ import monorail.linkpay.security.WithCustomUser;
 import monorail.linkpay.wallet.service.LinkedMemberService;
 import monorail.linkpay.wallet.service.LinkedWalletService;
 import monorail.linkpay.wallet.service.MyWalletService;
+import monorail.linkpay.webauthn.service.WebAuthnService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,6 +34,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
         PaymentController.class,
         WalletHistoryController.class,
         MypageController.class,
+        WebAuthnController.class
 })
 @WithCustomUser
 @ExtendWith(RestDocumentationExtension.class)
@@ -55,6 +57,8 @@ public abstract class ControllerTest {
     protected PaymentService paymentService;
     @MockitoBean
     protected WalletHistoryFacade walletHistoryFacade;
+    @MockitoBean
+    protected WebAuthnService webAuthnService;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
