@@ -14,6 +14,7 @@ import io.restassured.response.Response;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
+import monorail.linkpay.controller.request.LinkedWalletChangeRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.wallet.dto.LinkedWalletResponse;
@@ -80,6 +81,27 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    void 나의_링크지갑_이름을_바꾼다() {
+        String accessToken = 엑세스_토큰();
+        링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of("1", "2", "3")));
+
+        ExtractableResponse<Response> walletRes = 링크지갑_목록_조회_요청(accessToken, "CREATOR");
+        LinkedWalletsResponse linkedWalletsResponse = walletRes.as(LinkedWalletsResponse.class);
+        ExtractableResponse<Response> response = 링크지갑명_변경_요청(accessToken,
+                Long.parseLong(linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId()),
+                new LinkedWalletChangeRequest("새로운 이름"));
+
+        LinkedWalletResponse linkedWallet = 링크지갑_목록_조회_요청(accessToken, "CREATOR").as(LinkedWalletsResponse.class)
+                .linkedWallets().getFirst();
+
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value()),
+                () -> assertThat(linkedWallet.linkedWalletName()).isEqualTo("새로운 이름")
+        );
+
+    }
+
+    @Test
     void 링크지갑에_포인트를_충전한다() {
         String accessToken = 엑세스_토큰();
         링크지갑_생성_요청(accessToken, new LinkedWalletCreateRequest("링크지갑1", Set.of("1", "2", "3")));
@@ -142,8 +164,13 @@ public class LinkedWalletAcceptanceTest extends AcceptanceTest {
         return sendGetRequest("/api/linked-wallets?role=%s".formatted(role), accessToken);
     }
 
-    public static ExtractableResponse<Response> 링크지갑_조회_요청(final String accessToken, Long linkedWalletId) {
+    public static ExtractableResponse<Response> 링크지갑_조회_요청(final String accessToken, final Long linkedWalletId) {
         return sendGetRequest("/api/linked-wallets/%s".formatted(linkedWalletId), accessToken);
+    }
+
+    public static ExtractableResponse<Response> 링크지갑명_변경_요청(final String accessToken, final Long linkedWalletId,
+                                                            final LinkedWalletChangeRequest linkedWalletChangeRequest) {
+        return sendPatchRequest("/api/linked-wallets/" + linkedWalletId, accessToken, linkedWalletChangeRequest);
     }
 
     private ExtractableResponse<Response> 링크지갑_삭제_요청(final String accessToken, final Long linkedWalletId) {

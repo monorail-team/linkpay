@@ -84,6 +84,13 @@ public abstract class IntegrationTest {
                 .build();
     }
 
+    protected LinkedWallet createLinkedWallet(final String name) {
+        return LinkedWallet.builder()
+                .id(idGenerator.generate())
+                .name(name)
+                .build();
+    }
+
     protected Store createStore() {
         return Store.builder()
                 .id(1L)

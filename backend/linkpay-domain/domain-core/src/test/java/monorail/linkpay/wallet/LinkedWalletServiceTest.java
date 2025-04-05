@@ -55,17 +55,17 @@ class LinkedWalletServiceTest extends IntegrationTest {
         // given
         Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
         Member member2 = memberRepository.save(createMember("tiger@gmail.com", "tiger"));
-        Long linkedWalletId = linkedWalletService.createLinkedWallet(member.getId(), "animal",
-                Set.of(member1.getId(), member2.getId()));
+
+        LinkedWallet linkedWallet = createLinkedWallet("animal", Set.of(member1, member2));
 
         // when
-        LinkedWalletResponse linkedWalletResponse = linkedWalletService.readLinkedWallet(linkedWalletId,
+        LinkedWalletResponse linkedWalletResponse = linkedWalletService.readLinkedWallet(linkedWallet.getId(),
                 member.getId());
 
         // then
         assertThat(linkedWalletResponse)
                 .extracting("linkedWalletId", "linkedWalletName", "amount", "participantCount")
-                .contains(linkedWalletId.toString(), "animal", 0L, 3);
+                .contains(linkedWallet.getId().toString(), "animal", 0L, 3);
     }
 
     @Test
@@ -73,10 +73,8 @@ class LinkedWalletServiceTest extends IntegrationTest {
         // given
         Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
         Member member2 = memberRepository.save(createMember("tiger@gmail.com", "tiger"));
-        Long linkedWalletId1 = linkedWalletService.createLinkedWallet(member.getId(), "animal-1",
-                Set.of(member1.getId(), member2.getId()));
-        Long linkedWalletId2 = linkedWalletService.createLinkedWallet(member.getId(), "animal-2",
-                Set.of(member1.getId(), member2.getId()));
+        LinkedWallet linkedWallet1 = createLinkedWallet("animal-1", Set.of(member1, member2));
+        LinkedWallet linkedWallet2 = createLinkedWallet("animal-2", Set.of(member1, member2));
 
         // when
         LinkedWalletsResponse linkedWalletsResponse = linkedWalletService.readLinkedWallets(
@@ -86,8 +84,8 @@ class LinkedWalletServiceTest extends IntegrationTest {
         assertThat(linkedWalletsResponse.linkedWallets()).hasSize(2)
                 .extracting("linkedWalletId", "linkedWalletName", "participantCount", "amount")
                 .containsExactlyInAnyOrder(
-                        tuple(linkedWalletId1.toString(), "animal-1", 3, 0L),
-                        tuple(linkedWalletId2.toString(), "animal-2", 3, 0L)
+                        tuple(linkedWallet1.getId().toString(), "animal-1", 3, 0L),
+                        tuple(linkedWallet2.getId().toString(), "animal-2", 3, 0L)
                 );
     }
 
@@ -96,10 +94,8 @@ class LinkedWalletServiceTest extends IntegrationTest {
         // given
         Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
         Member member2 = memberRepository.save(createMember("tiger@gmail.com", "tiger"));
-        Long linkedWalletId1 = linkedWalletService.createLinkedWallet(member.getId(), "animal-1",
-                Set.of(member1.getId()));
-        Long linkedWalletId2 = linkedWalletService.createLinkedWallet(member.getId(), "animal-2",
-                Set.of(member1.getId(), member2.getId()));
+        createLinkedWallet("animal-1", Set.of(member1));
+        createLinkedWallet("animal-2", Set.of(member1, member2));
 
         // when
         LinkedWalletsResponse linkedWalletsResponse = linkedWalletService.readLinkedWallets(
@@ -114,16 +110,15 @@ class LinkedWalletServiceTest extends IntegrationTest {
         // given
         Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
         Member member2 = memberRepository.save(createMember("tiger@gmail.com", "tiger"));
-        Long linkedWalletId = linkedWalletService.createLinkedWallet(member.getId(), "animal",
-                Set.of(member1.getId(), member2.getId()));
+        LinkedWallet linkedWallet = createLinkedWallet("animal", Set.of(member1, member2));
 
         // when
-        linkedWalletService.chargeLinkedWallet(linkedWalletId, new Point(10000), member1.getId());
+        linkedWalletService.chargeLinkedWallet(linkedWallet.getId(), new Point(10000), member1.getId());
 
         // then
-        assertThat(linkedWalletService.readLinkedWallet(linkedWalletId, member.getId()))
+        assertThat(linkedWalletService.readLinkedWallet(linkedWallet.getId(), member.getId()))
                 .extracting("linkedWalletId", "linkedWalletName", "amount", "participantCount")
-                .contains(linkedWalletId.toString(), "animal", 10000L, 3);
+                .contains(linkedWallet.getId().toString(), "animal", 10000L, 3);
     }
 
     @Test
@@ -131,17 +126,64 @@ class LinkedWalletServiceTest extends IntegrationTest {
         // given
         Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
         Member member2 = memberRepository.save(createMember("tiger@gmail.com", "tiger"));
-        Long linkedWalletId = linkedWalletService.createLinkedWallet(member.getId(), "animal",
-                Set.of(member1.getId(), member2.getId()));
-        linkedWalletService.chargeLinkedWallet(linkedWalletId, new Point(10000), member1.getId());
+        LinkedWallet linkedWallet = createLinkedWallet("animal", Set.of(member1, member2));
         linkCardRepository.save(createLinkWalletCard(
-                LinkedWallet.builder().id(linkedWalletId).build(), member1));
+                linkedWallet, member1));
 
         // when, then
-        assertThatThrownBy(() -> linkedWalletService.deleteLinkedWallet(linkedWalletId, member.getId()))
+        assertThatThrownBy(() -> linkedWalletService.deleteLinkedWallet(linkedWallet.getId(), member.getId()))
                 .isInstanceOf(LinkPayException.class)
                 .hasMessageContaining("해당 지갑에 링크카드가 존재합니다.")
                 .extracting("exceptionCode")
                 .isEqualTo(INVALID_REQUEST);
     }
+
+    @Test
+    void 소유한_링크지갑의_이름을_변경한다() {
+        // given
+        Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
+        LinkedWallet linkedWallet = createLinkedWallet("testname", Set.of(member1));
+
+        // when
+        linkedWalletService.changeLinkedWallet(linkedWallet.getId(), "새로운이름", member.getId());
+
+        // then
+        assertThat(linkedWalletService.readLinkedWallet(linkedWallet.getId(), member.getId())
+                .linkedWalletName()).isEqualTo(
+                "새로운이름");
+    }
+
+    @Test
+    void 링크지갑의_참여자가_이름을_변경시도하면_예외가_발생한다() {
+        // given
+        Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
+        LinkedWallet linkedWallet = createLinkedWallet("testname", Set.of(member1));
+
+        // when // then
+        assertThatThrownBy(() -> linkedWalletService.changeLinkedWallet(linkedWallet.getId(), "새로운이름",
+                member1.getId())).isInstanceOf(LinkPayException.class);
+    }
+
+    @Test
+    void 링크지갑의_생성자나_참여자가_아닌_사람이_이름변경시도하면_예외가_발생한다() {
+        // given
+        Member member1 = memberRepository.save(createMember("lion@gmail.com", "lion"));
+        Member member2 = memberRepository.save(createMember("lion2@gmail.com", "lion2"));
+
+        LinkedWallet linkedWallet = createLinkedWallet("testname", Set.of(member1));
+
+        // when // then
+        assertThatThrownBy(() -> linkedWalletService.changeLinkedWallet(linkedWallet.getId(), "새로운이름",
+                member2.getId())).isInstanceOf(LinkPayException.class);
+    }
+
+    private LinkedWallet createLinkedWallet(String name, Set<Member> members) {
+        LinkedWallet linkedWallet = linkedWalletRepository.save(createLinkedWallet(name));
+        linkedMemberRepository.save((createLinkedMember(CREATOR, member, linkedWallet)));
+        linkedMemberRepository.saveAll(
+                members.stream().map(member -> createLinkedMember(PARTICIPANT, member, linkedWallet)).toList());
+
+        return linkedWallet;
+    }
+
 }
