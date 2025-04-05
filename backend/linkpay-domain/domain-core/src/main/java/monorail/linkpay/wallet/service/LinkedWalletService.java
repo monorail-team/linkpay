@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
+import monorail.linkpay.wallet.client.BankAccountClient;
 import monorail.linkpay.wallet.domain.LinkedWallet;
 import monorail.linkpay.wallet.domain.MyWallet;
 import monorail.linkpay.wallet.domain.Role;
@@ -25,6 +26,7 @@ public class LinkedWalletService {
     private final MyWalletFetcher myWalletFetcher;
     private final WalletUpdater walletUpdater;
     private final MemberFetcher memberFetcher;
+    private final BankAccountClient bankAccountClient;
 
     public LinkedWalletsResponse readLinkedWallets(final long memberId, final Role role,
                                                    final Long lastId, final int size) {
@@ -44,6 +46,10 @@ public class LinkedWalletService {
     public Long createLinkedWallet(final long memberId, final String walletName, final Set<Long> memberIds) {
         validator.validateCreate(memberId, memberIds);
         LinkedWallet linkedWallet = walletUpdater.save(walletName, memberId, memberIds);
+
+        // 은행 계좌 생성요청 api 호출을 가장 마지막에 실행
+        bankAccountClient.createAccount(linkedWallet.getId(), memberId);
+
         return linkedWallet.getId();
     }
 

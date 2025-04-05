@@ -32,7 +32,7 @@ public class Settlement {
     private Long storeId;
 
     @Builder
-    private Settlement(Long id, Point point, Long storeId) {
+    private Settlement(final Long id, final Point point, final Long storeId) {
         this.id = id;
         this.point = point;
         this.storeId = storeId;

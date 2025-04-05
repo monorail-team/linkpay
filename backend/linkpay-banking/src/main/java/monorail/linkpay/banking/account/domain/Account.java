@@ -31,10 +31,16 @@ public class Account {
 
     @Embedded
     private Money money;
+
     @Column(nullable = false, unique = true)
     private Long walletId;
+
+    @Column(nullable = false)
     private Long memberId;
+
     private LocalDateTime deletedAt;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Builder

@@ -1,16 +1,15 @@
-package monorail.linkpay.walletHistory;
+package monorail.linkpay.wallethistory;
 
 import jakarta.persistence.EntityManagerFactory;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.payment.domain.Payment;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor

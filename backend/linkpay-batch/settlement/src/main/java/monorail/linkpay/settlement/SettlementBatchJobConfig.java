@@ -9,7 +9,7 @@ import monorail.linkpay.outbox.OutboxReader;
 import monorail.linkpay.outbox.OutboxWriter;
 import monorail.linkpay.payment.PaymentReader;
 import monorail.linkpay.payment.domain.Payment;
-import monorail.linkpay.walletHistory.WalletHistoryReader;
+import monorail.linkpay.wallethistory.WalletHistoryReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;

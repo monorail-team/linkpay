@@ -1,5 +1,6 @@
 package monorail.linkpay.payment.service;
 
+import java.util.UUID;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
@@ -9,8 +10,6 @@ import monorail.linkpay.token.TokenType;
 import monorail.linkpay.token.TokenValidator;
 import monorail.linkpay.token.dto.GeneratedToken;
 import monorail.linkpay.util.json.JsonUtil;
-
-import java.util.UUID;
 
 @SupportLayer
 @RequiredArgsConstructor

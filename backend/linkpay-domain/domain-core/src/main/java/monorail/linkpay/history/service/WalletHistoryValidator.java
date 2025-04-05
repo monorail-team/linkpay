@@ -1,5 +1,8 @@
 package monorail.linkpay.history.service;
 
+import static monorail.linkpay.exception.ExceptionCode.FORBIDDEN_ACCESS;
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
+
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.LinkPayException;
@@ -10,11 +13,7 @@ import monorail.linkpay.wallet.domain.MyWallet;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.service.LinkedMemberValidator;
 import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
 import org.springframework.transaction.annotation.Transactional;
-
-import static monorail.linkpay.exception.ExceptionCode.FORBIDDEN_ACCESS;
-import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 
 @SupportLayer
 @RequiredArgsConstructor
@@ -35,7 +34,8 @@ public class WalletHistoryValidator {
                 }
             }
             case LinkedWallet linkedWallet -> {
-                linkedMemberValidator.validateIsLinkedMember(linkedWallet.getId(), member.getId(), new LinkPayException(FORBIDDEN_ACCESS, "참여중인 링크지갑이 아닙니다."));
+                linkedMemberValidator.validateIsLinkedMember(linkedWallet.getId(), member.getId(),
+                        new LinkPayException(FORBIDDEN_ACCESS, "참여중인 링크지갑이 아닙니다."));
             }
             default -> {
                 throw new LinkPayException(INVALID_REQUEST, "처리할 수 없는 종류의 지갑입니다.");

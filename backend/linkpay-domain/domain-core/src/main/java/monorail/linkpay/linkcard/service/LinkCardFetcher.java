@@ -3,13 +3,12 @@ package monorail.linkpay.linkcard.service;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
-
-import java.util.List;
 
 @SupportLayer
 @RequiredArgsConstructor
@@ -18,7 +17,7 @@ public class LinkCardFetcher {
     private final LinkCardRepository linkCardRepository;
 
 
-    public List<LinkCard> fetchAllByWalletId(final long walletId){
+    public List<LinkCard> fetchAllByWalletId(final long walletId) {
         return linkCardRepository.findAllByWalletId(walletId);
     }
 
