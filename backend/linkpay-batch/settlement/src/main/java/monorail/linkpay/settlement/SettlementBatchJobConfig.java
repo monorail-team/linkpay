@@ -9,6 +9,7 @@ import monorail.linkpay.outbox.OutboxReader;
 import monorail.linkpay.outbox.OutboxWriter;
 import monorail.linkpay.payment.PaymentReader;
 import monorail.linkpay.payment.domain.Payment;
+import monorail.linkpay.walletHistory.WalletHistoryReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
@@ -28,13 +29,32 @@ public class SettlementBatchJobConfig {
     @Bean
     public Job settlementJob(
             final JobRepository jobRepository,
+            final Step chargeStep,
             final Step settlementStep,
             final Step publishOutboxStep
     ) {
         return new JobBuilder("settlementJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(settlementStep)
+                .start(chargeStep)
+                .next(settlementStep)
                 .next(publishOutboxStep)
+                .build();
+    }
+
+    @Bean
+    @JobScope
+    public Step chargeStep(
+            final JobRepository jobRepository,
+            final WalletHistoryReader walletHistoryReader,
+            final OutboxWriter outboxWriter,
+            final PlatformTransactionManager transactionManager
+    ) {
+        return new StepBuilder("chargeStep", jobRepository)
+                .<Payment, Payment>chunk(CHUNK_SIZE, transactionManager)
+                .reader(walletHistoryReader.chargeItemReader())
+                .writer(items -> {
+                    outboxWriter.depositHistoryOutboxItemWriter();
+                })
                 .build();
     }
 
@@ -52,7 +72,7 @@ public class SettlementBatchJobConfig {
                 .reader(paymentReader.paymentItemReader())
                 .writer(items -> {
                     settlementWriter.settlementItemWriter();
-                    outboxWriter.outboxItemWriter();
+                    outboxWriter.paymentOutboxItemWriter();
                 })
                 .build();
     }
