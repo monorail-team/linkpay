@@ -26,8 +26,8 @@ public class WalletHistoryService {
     }
 
     public WalletHistoryListDto readMyWalletHistoryPage(final Long memberId,
-                                                             final Long lastId,
-                                                             final int size) {
+                                                        final Long lastId,
+                                                        final int size) {
         var myWallet = myWalletFetcher.fetchByMemberId(memberId);
         var walletHistories = walletHistoryFetcher.fetchPage(myWallet.getId(), lastId, size);
         return WalletHistoryListDto.from(walletHistories);

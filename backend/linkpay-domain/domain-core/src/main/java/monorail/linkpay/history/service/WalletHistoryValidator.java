@@ -9,6 +9,8 @@ import monorail.linkpay.wallet.domain.LinkedWallet;
 import monorail.linkpay.wallet.domain.MyWallet;
 import monorail.linkpay.wallet.domain.Wallet;
 import monorail.linkpay.wallet.service.LinkedMemberValidator;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.transaction.annotation.Transactional;
 
 import static monorail.linkpay.exception.ExceptionCode.FORBIDDEN_ACCESS;
@@ -26,7 +28,7 @@ public class WalletHistoryValidator {
     }
 
     private void checkOwnershipOrParticipant(final Wallet wallet, final Member member) {
-        switch (wallet) {
+        switch (Hibernate.unproxy(wallet)) {
             case MyWallet myWallet -> {
                 if (!myWallet.isMyWallet(member)) {
                     throw new LinkPayException(FORBIDDEN_ACCESS, "소유한 지갑이 아닙니다.");

@@ -11,6 +11,8 @@ import LinkWalletList from '@/pages/linkwalletlist';
 import LinkCardList from '@/pages/linkcardlist';
 import CardDetail from '@/pages/card/id';
 import CreateLinkWallet from './pages/createlinkwallet';
+import OwnedLinkWallet from '@/pages/owned-linkwallet/walletid';
+import ParticipatedLinkWallet from '@/pages/participated-linkwallet/walletid';
 
 import { useThemeStore } from '@/store/themeStore';
 import PrivateRoute from './components/PrivateRoute';
@@ -50,6 +52,8 @@ const App: React.FC = () => {
             <Route path="/example" element={<ExamplePage />} />
             <Route path="/linkwalletlist" element={<LinkWalletList />} />
             <Route path="/createlinkwallet" element={<CreateLinkWallet />} />
+            <Route path="/owned-linkwallet/:walletId" element={<OwnedLinkWallet />} />
+            <Route path="/participated-linkwallet/:walletId" element={<ParticipatedLinkWallet />} />
             <Route path="/linkcardlist" element={<LinkCardList />} />
             <Route path="/cards/:id" element={<CardDetail />} />
           </Route>
