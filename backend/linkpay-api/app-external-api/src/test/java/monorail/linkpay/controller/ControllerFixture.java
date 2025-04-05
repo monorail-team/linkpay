@@ -11,6 +11,7 @@ import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.controller.request.LinkCardRegistRequest;
 import monorail.linkpay.controller.request.LinkedMemberCreateRequest;
+import monorail.linkpay.controller.request.LinkedWalletChangeRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.PaymentsRequest;
 import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
@@ -51,6 +52,8 @@ public class ControllerFixture {
     public static final WalletResponse WALLET_RESPONSE = new WalletResponse(50000);
 
     public static final WalletPointRequest WALLET_POINT_REQUEST = new WalletPointRequest(50000);
+
+    public static final LinkedWalletChangeRequest WALLET_CHANGE_REQUEST = new LinkedWalletChangeRequest("새로운 지갑명");
 
     public static final LinkCardCreateRequest LINK_CARD_CREATE_REQUEST = new LinkCardCreateRequest(
             "테스트카드", 500000, LocalDate.of(2025, 5, 25));

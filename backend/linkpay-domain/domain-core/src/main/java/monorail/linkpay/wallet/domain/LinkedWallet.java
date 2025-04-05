@@ -43,4 +43,8 @@ public class LinkedWallet extends Wallet {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
+    public void changeName(final String newName) {
+        this.name = newName;
+    }
 }
