@@ -13,10 +13,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.member.domain.Member;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @DiscriminatorValue("MY")
+@SQLDelete(sql = "UPDATE wallet SET deleted_at = CURRENT_TIMESTAMP WHERE wallet_id = ?")
+@SQLRestriction("deleted_at is null")
 @Entity
 public class MyWallet extends Wallet {
 
