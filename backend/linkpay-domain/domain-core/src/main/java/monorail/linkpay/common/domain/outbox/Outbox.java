@@ -37,10 +37,11 @@ public class Outbox extends BaseEntity {
     private EventStatus eventStatus;
 
     @Builder
-    private Outbox(final Long id, final EventType eventType, final String payload) {
+    private Outbox(final Long id, final EventType eventType, final String payload, final EventStatus eventStatus) {
         this.id = id;
         this.eventType = eventType;
         this.payload = payload;
+        this.eventStatus = eventStatus;
     }
 
     public void approveEvent() {

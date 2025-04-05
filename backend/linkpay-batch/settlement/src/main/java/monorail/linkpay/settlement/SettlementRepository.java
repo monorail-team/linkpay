@@ -1,8 +1,8 @@
-package monorail.linkpay.common.domain.outbox;
+package monorail.linkpay.settlement;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OutboxRepository extends JpaRepository<Outbox, Long> {
+public interface SettlementRepository extends JpaRepository<Settlement, Long> {
 }
