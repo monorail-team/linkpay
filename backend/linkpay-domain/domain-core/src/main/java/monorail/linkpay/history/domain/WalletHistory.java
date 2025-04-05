@@ -57,6 +57,14 @@ public class WalletHistory extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    public Long getWalletId() {
+        return wallet.getId();
+    }
+
+    public Long getAmount() {
+        return amount.getAmount();
+    }
+
     @Builder
     private WalletHistory(
             final Long id,
