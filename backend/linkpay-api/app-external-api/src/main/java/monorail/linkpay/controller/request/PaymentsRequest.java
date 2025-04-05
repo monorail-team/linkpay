@@ -2,10 +2,12 @@ package monorail.linkpay.controller.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.payment.dto.TransactionInfo;
 
+@Builder
 public record PaymentsRequest(
 
         @Positive(message = "금액은 양수여야 합니다.")
