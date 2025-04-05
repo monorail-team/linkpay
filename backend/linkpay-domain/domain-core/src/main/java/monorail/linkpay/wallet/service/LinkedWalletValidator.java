@@ -1,16 +1,15 @@
 package monorail.linkpay.wallet.service;
 
+import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
+
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.service.LinkCardFetcher;
 import monorail.linkpay.wallet.domain.LinkedMember;
-
-import java.util.List;
-import java.util.Set;
-
-import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 
 @SupportLayer
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class LinkedWalletValidator {
         linkedMemberValidator.validateIsLinkedMember(linkedWalletId, memberId);
     }
 
-    public void validateCharge(final Long linkedWalletId,final Long memberId) {
+    public void validateCharge(final Long linkedWalletId, final Long memberId) {
         linkedMemberValidator.validateIsLinkedMember(linkedWalletId, memberId);
     }
 
@@ -36,6 +35,11 @@ public class LinkedWalletValidator {
         LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
         checkCreator(linkedMember);
         checkNotExistsByWalletId(linkedWalletId);
+    }
+
+    public void validateChange(final Long linkedWalletId, final Long memberId) {
+        LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
+        checkCreator(linkedMember);
     }
 
     private void checkNotExistsByWalletId(final Long walletId) {
@@ -53,7 +57,7 @@ public class LinkedWalletValidator {
 
     private void checkCreator(final LinkedMember linkedMember) {
         if (!linkedMember.isCreator()) {
-            throw new LinkPayException(INVALID_REQUEST, "링크 지갑은 생성자만 삭제할 수 있습니다.");
+            throw new LinkPayException(INVALID_REQUEST, "링크지갑의 생성자가 아닙니다.");
         }
     }
 }

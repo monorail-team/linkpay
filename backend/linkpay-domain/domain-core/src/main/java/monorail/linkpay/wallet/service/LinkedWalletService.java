@@ -1,5 +1,6 @@
 package monorail.linkpay.wallet.service;
 
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.member.domain.Member;
@@ -13,8 +14,6 @@ import monorail.linkpay.wallet.repository.dto.LinkedWalletDto;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +62,13 @@ public class LinkedWalletService {
         MyWallet myWallet = myWalletFetcher.fetchByMemberIdForUpdate(memberId);
         walletUpdater.chargePoint(myWallet, linkedWallet.getPoint(), memberFetcher.fetchById(memberId));
         walletUpdater.delete(linkedWallet);
+    }
+
+    @Transactional
+    public void changeLinkedWallet(final Long linkedWalletId, final String newName,
+                                   final Long memberId) {
+        validator.validateChange(linkedWalletId, memberId);
+        LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
+        linkedWallet.changeName(newName);
     }
 }

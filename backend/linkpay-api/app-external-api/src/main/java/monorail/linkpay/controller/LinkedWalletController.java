@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.controller.request.LinkedWalletChangeRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
 import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.wallet.domain.Role;
@@ -54,6 +55,16 @@ public class LinkedWalletController {
                 linkedWalletCreateRequest.memberIds().stream().map(Long::parseLong).collect(Collectors.toSet()));
 
         return ResponseEntity.created(URI.create("/api/linked-wallets/" + linkedWalletId)).build();
+    }
+
+    @PatchMapping("/{linkedWalletId}")
+    public ResponseEntity<Void> changeLinkedWallet(
+            @AuthenticationPrincipal final AuthPrincipal principal,
+            @PathVariable final Long linkedWalletId,
+            @Valid @RequestBody final LinkedWalletChangeRequest linkedWalletChangeRequest) {
+        linkedWalletService.changeLinkedWallet(linkedWalletId, linkedWalletChangeRequest.linkedWalletName(),
+                principal.memberId());
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/charge/{linkedWalletId}")
