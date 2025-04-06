@@ -19,7 +19,7 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
 
   useEffect(() => {
     setAddedMembers(initialMembers);
-  }, [initialMembers]);
+  }, []);
 
   useEffect(() => {
     if (onMembersChange) {
@@ -81,7 +81,7 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
           placeholder="초대 대상 이메일 검색"
           className="w-full border-b border-gray-300 py-2 pr-10  focus:outline-none dark:bg-black dark:text-white dark:placeholder-white"
         />
