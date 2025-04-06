@@ -7,6 +7,7 @@ import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
 import monorail.linkpay.controller.request.LinkCardCreateRequest;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.payment.service.PaymentTokenProvider;
+import monorail.linkpay.wallet.client.BankAccountClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -26,7 +27,10 @@ import static org.mockito.Mockito.when;
         "/data/truncate.sql",
         "/data/member.sql",
 })
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = WebEnvironment.RANDOM_PORT,
+        properties = "banking.account.uri=http://localhost:8080/api/bank-account"
+)
 @ActiveProfiles("test")
 public abstract class AcceptanceTest {
 
@@ -41,6 +45,8 @@ public abstract class AcceptanceTest {
     protected KakaoOauthClient mockKakaoOauthClient;
     @MockitoBean
     protected PaymentTokenProvider mockPaymentTokenProvider;
+    @MockitoBean
+    protected BankAccountClient bankAccountClient;
 
     @BeforeEach
     void setUp() {
