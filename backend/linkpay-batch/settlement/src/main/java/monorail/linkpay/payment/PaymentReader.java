@@ -1,13 +1,13 @@
 package monorail.linkpay.payment;
 
 import jakarta.persistence.EntityManagerFactory;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.payment.domain.Payment;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,9 +19,12 @@ public class PaymentReader {
 
     @Bean
     @StepScope
-    public JpaPagingItemReader<Payment> paymentItemReader() {
-        LocalDateTime start = LocalDate.now().minusDays(1).atStartOfDay();
-        LocalDateTime end = LocalDate.now().atStartOfDay();
+    public JpaPagingItemReader<Payment> paymentItemReader(
+            @Value("#{jobParameters['start']}") final String startDateTime,
+            @Value("#{jobParameters['end']}") final String endDateTime
+    ) {
+        LocalDateTime start = LocalDateTime.parse(startDateTime);
+        LocalDateTime end = LocalDateTime.parse(endDateTime);
 
         JpaPagingItemReader<Payment> reader = new JpaPagingItemReader<>();
         reader.setName("paymentItemReader");

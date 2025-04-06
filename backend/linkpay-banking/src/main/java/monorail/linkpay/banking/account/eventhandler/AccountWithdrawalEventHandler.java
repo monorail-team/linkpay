@@ -7,6 +7,7 @@ import monorail.linkpay.banking.account.domain.Account;
 import monorail.linkpay.banking.account.repository.AccountRepository;
 import monorail.linkpay.banking.common.domain.Money;
 import monorail.linkpay.event.Event;
+import monorail.linkpay.event.EventHandler;
 import monorail.linkpay.event.EventType;
 import monorail.linkpay.event.payload.AccountWithdrawalEventPayload;
 import monorail.linkpay.exception.LinkPayException;

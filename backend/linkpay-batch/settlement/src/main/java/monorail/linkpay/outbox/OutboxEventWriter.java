@@ -19,21 +19,23 @@ public class OutboxEventWriter {
 
     @Bean
     @StepScope
-    public ItemWriter<Event<? extends EventPayload>> outboxEventWriter() {
-        return chunk -> {
-            for (Event<? extends EventPayload> event : chunk) {
-                String topic = getTopic(event);
-                String key = String.valueOf(event.eventId());
-                kafkaTemplate.send(topic, key, JsonUtil.toJson(event).value());
-            }
-        };
+    public ItemWriter<Event<? extends EventPayload>> outboxEventItemWriter() {
+        return chunk -> chunk.forEach(this::sendEvent);
+    }
+
+    private void sendEvent(final Event<? extends EventPayload> event) {
+        String topic = getTopic(event);
+        String key = String.valueOf(event.eventId());
+        String value = JsonUtil.toJson(event).value();
+
+        kafkaTemplate.send(topic, key, value);
     }
 
     private String getTopic(final Event<?> event) {
         return switch (event.type()) {
             case DELETE -> Topic.ACCOUNT_DELETE;
-            case WITHDRAWAL -> Topic.ACCOUNT_WITHDRAWAL;
             case DEPOSIT -> Topic.ACCOUNT_DEPOSIT;
+            default -> Topic.ACCOUNT_WITHDRAWAL;
         };
     }
 }
