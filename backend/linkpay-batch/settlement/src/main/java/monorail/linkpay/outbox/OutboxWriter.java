@@ -1,12 +1,13 @@
 package monorail.linkpay.outbox;
 
-import static monorail.linkpay.common.domain.outbox.EventStatus.PENDING;
+import static monorail.linkpay.common.event.EventStatus.PENDING;
+import static monorail.linkpay.event.EventType.DEPOSIT;
 import static monorail.linkpay.event.EventType.WITHDRAWAL;
 import static monorail.linkpay.util.json.JsonUtil.toJson;
 
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.common.domain.outbox.Outbox;
-import monorail.linkpay.common.domain.outbox.OutboxRepository;
+import monorail.linkpay.common.event.Outbox;
+import monorail.linkpay.common.event.OutboxRepository;
 import monorail.linkpay.event.payload.AccountDepositEventPayload;
 import monorail.linkpay.event.payload.AccountWithdrawalEventPayload;
 import monorail.linkpay.history.domain.WalletHistory;
@@ -30,7 +31,7 @@ public class OutboxWriter {
         return chunk -> outboxRepository.saveAll(chunk.getItems().stream()
                 .map(depositHistory -> Outbox.builder()
                         .id(idGenerator.generate())
-                        .eventType(WITHDRAWAL)
+                        .eventType(DEPOSIT)
                         .payload(toJson(toAccountDepositEventPayload(depositHistory)).value())
                         .eventStatus(PENDING)
                         .build()

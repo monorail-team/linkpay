@@ -1,4 +1,4 @@
-package monorail.linkpay.common.domain.outbox;
+package monorail.linkpay.common.event;
 
 import static lombok.AccessLevel.PRIVATE;
 
