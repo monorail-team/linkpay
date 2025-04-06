@@ -1,9 +1,11 @@
 package monorail.linkpay.settlement;
 
+import static monorail.linkpay.BatchTestFixture.BEFORE;
+import static monorail.linkpay.BatchTestFixture.END;
+import static monorail.linkpay.BatchTestFixture.START;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.batch.core.ExitStatus.COMPLETED;
 
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.Job;
@@ -31,12 +33,10 @@ class SettlementSchedulerTest {
 
     @Test
     void testJob() throws Exception {
-        LocalDateTime startDateTime = LocalDateTime.of(2025, 4, 5, 0, 0, 0);
-        LocalDateTime endDateTime = LocalDateTime.of(2025, 4, 6, 0, 0, 0);
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString("start", String.valueOf(startDateTime))
-                .addString("end", String.valueOf(endDateTime))
-                .addString("before", String.valueOf(endDateTime))
+                .addString("start", String.valueOf(START))
+                .addString("end", String.valueOf(END))
+                .addString("before", String.valueOf(BEFORE))
                 .toJobParameters();
 
         JobExecution execution = jobLauncherTestUtils.launchJob(jobParameters);
