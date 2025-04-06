@@ -4,43 +4,25 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import useDoubleBackExit from '@/hooks/useDoubleBackToExit';
 import axios from 'axios';
 import useNfcScan from '@/hooks/useNfcScan';
-
-interface PaymentState {
-  cardId: string;
-  cardName: string;
-  description: string;
-  expireAt: string;
-  guideText: string;
-  cardColor: string;
-  initialTime: number;
-}
-
+import { Card } from '@/model/Card';
 
 const Payment: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
- 
-  const { cardData } = location.state as {
-    cardData: PaymentState,
-  };
-  
-  const {
-    cardName,
-    description,
-    expireAt,
-    guideText,
-    initialTime = 45,
-    cardColor
-  } = cardData || {};
+  const base_url = process.env.REACT_APP_API_URL;
 
-  const [timeLeft, setTimeLeft] = useState(initialTime);
+  const cardData: Card = location.state.cardData;
+  const paymentToken: string = location.state.paymentToken;
+  const initTime: number = 45;
+  const description: string = 'description'; // TODO: description 필드 존재 여부 체크
+  const guideText: string = '디바이스의 뒷면을 카드 리더기에 대세요.';
+
+  const [timeLeft, setTimeLeft] = useState(initTime);
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showBackWarning, setShowBackWarning] = useState(false);
   useDoubleBackExit(setShowBackWarning);
 
-  // console.log('showBackWarning', showBackWarning);
-
-  // ✅ 타이머 카운트다운
+  // 타이머 카운트다운
   const [readValue, setReadValue] = useState('');
   useEffect(() => {
     if (timeLeft === 0) {
@@ -51,20 +33,35 @@ const Payment: React.FC = () => {
     return () => clearTimeout(timer);
   }, [timeLeft, navigate]);
 
-  const backgroundStyle = { backgroundColor: cardColor };
+  const backgroundStyle = { backgroundColor: cardData.cardColor };
 
   useNfcScan({
     onRead: async (data) => {
       console.log('읽기 성공', data);
-      setReadValue(data);
-      await axios.post('/api/payment', {
-        cardId: cardData.cardId,
-        nfcData: data
-      }).then((response) => {
+      setReadValue(data); // TODO: remove
+      const txData = JSON.parse(data);
+      console.log('txData변환 -> ', txData);
+      const token = sessionStorage.getItem('accessToken');
+      await axios.post(
+        `${base_url}/api/payments`,
+        {
+          linkCardId: cardData.linkCardId,
+          storeId: txData.storeId,
+          amount: txData.amount,
+          transactionSignature: txData.transactionSignature,
+          paymentToken: paymentToken,
+        },
+        {
+          headers: {
+            'Content-Type': `application/json`,
+            'Authorization': `Bearer ${token}`,
+          }
+        }
+      ).then((response) => {
         console.log('API 요청 성공', response);
         // navigate('/success');
       }).catch((error) => {
-        console.error('❌ API 실패', error);
+        console.error('API 요청 실패', error);
         // navigate('/fail');
       });
     },
@@ -73,7 +70,6 @@ const Payment: React.FC = () => {
     }
   });
 
-  
 
   return (
     <div className="flex flex-col items-center justify-center h-screen text-white px-4 relative bg-[#938F99]">
@@ -82,10 +78,10 @@ const Payment: React.FC = () => {
         className="text-center text-black rounded-2xl shadow-lg w-[249px] h-[384px] mb-12 flex flex-col justify-between p-6"
         style={backgroundStyle}>
         <div className="flex flex-col justify-center mt-24 items-start ml-4">
-          <p className="text-sm text-gray-700 mb-1 truncate w-full text-left">{cardName}</p>
+          <p className="text-sm text-gray-700 mb-1 truncate w-full text-left">{cardData.cardName}</p>
           <h2 className="text-2xl font-semibold text-gray-600 truncate w-full text-left">{description}</h2>
         </div>
-        <div className="mt-auto text-xs text-gray-500 text-right">만료일 {expireAt}</div>
+        <div className="mt-auto text-xs text-gray-500 text-right">만료일 {cardData.expiredAt}</div>
       </div>
 
       {/* 카운트다운 */}

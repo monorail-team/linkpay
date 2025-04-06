@@ -27,7 +27,7 @@ const Home: React.FC = () => {
     const assertionResult = await handleWebAuthn();
     if (assertionResult) {
       const selectedCard = cards[currentIndex];
-      navigate("/payment", { state: { cardData: selectedCard} });
+      navigate("/payment", { state: { cardData: selectedCard} }); // TODO: state에 paymentToken 추가해주세요
     } else {
       console.error("assertionResult 생성 실패");
     }
