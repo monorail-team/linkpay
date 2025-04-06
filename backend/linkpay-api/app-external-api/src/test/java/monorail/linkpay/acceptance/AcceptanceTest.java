@@ -27,10 +27,7 @@ import static org.mockito.Mockito.when;
         "/data/truncate.sql",
         "/data/member.sql",
 })
-@SpringBootTest(
-        webEnvironment = WebEnvironment.RANDOM_PORT,
-        properties = "banking.account.uri=http://localhost:8080/api/bank-account"
-)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public abstract class AcceptanceTest {
 
