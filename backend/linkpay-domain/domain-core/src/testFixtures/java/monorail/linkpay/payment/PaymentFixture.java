@@ -5,13 +5,17 @@ import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.payment.dto.TransactionInfo;
+import monorail.linkpay.payment.service.PaymentTokenProvider;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.store.domain.StoreSigner;
+import monorail.linkpay.token.TokenFixtures;
 import monorail.linkpay.util.signature.SignatureProvider;
 
 public class PaymentFixture {
+
     private static final SignatureProvider signatureProvider = new SignatureProvider();
-//    private static final PaymentTokenProvider paymentTokenProvider = new PaymentTokenProvider();
+    private static final PaymentTokenProvider paymentTokenProvider
+            = new PaymentTokenProvider(TokenFixtures.tokenGenerator, TokenFixtures.tokenValidator);
 
     public static TransactionInfo.Data txData(Store store, Point point) {
         return TransactionInfo.Data.builder()
@@ -27,10 +31,11 @@ public class PaymentFixture {
     }
 
     public static PaymentInfo payInfo(Member member, LinkCard linkCard) {
+
         return PaymentInfo.builder()
                 .memberId(member.getId())
                 .linkCardId(linkCard.getId())
-                .paymentToken("temtpadmfpsadfmpsdapfpsd")
+                .paymentToken(paymentTokenProvider.generateFor(member.getId()))
                 .build();
     }
 }

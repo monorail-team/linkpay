@@ -46,7 +46,7 @@ class PaymentServiceTest extends IntegrationTest {
         StoreSigner storeSigner = storeSignerRepository.findByStoreId(storeId).orElseThrow();
         var txInfo = PaymentFixture.txInfo(store, storeSigner, new Point(30000));
         var payInfo = PaymentFixture.payInfo(member, linkCard);
-
+        // TODO: 테스트 깨지는 거 수정
         // when
         paymentService.createPayment(txInfo, payInfo);
 

@@ -1,24 +1,25 @@
 package monorail.linkpay.acceptance;
 
-import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
-import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
-import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPatchRequest;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
-
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.util.stream.Stream;
 import monorail.linkpay.controller.request.WalletPointRequest;
 import monorail.linkpay.wallet.dto.WalletResponse;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
 
+import java.util.stream.Stream;
+
+import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPatchRequest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+
 class MyWalletAcceptanceTest extends AcceptanceTest {
 
     @TestFactory
-    Stream<DynamicTest> 지갑_포인트_충전과_잔액_조회_시나리오() {
+    public Stream<DynamicTest> 지갑_포인트_충전과_잔액_조회_시나리오() {
         final String accessToken = 엑세스_토큰();
 
         return Stream.of(
