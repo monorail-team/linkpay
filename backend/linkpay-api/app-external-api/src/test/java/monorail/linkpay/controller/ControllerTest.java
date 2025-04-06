@@ -2,6 +2,7 @@ package monorail.linkpay.controller;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
+import monorail.linkpay.auth.AuthConfig;
 import monorail.linkpay.auth.service.AuthService;
 import monorail.linkpay.facade.WalletHistoryFacade;
 import monorail.linkpay.linkcard.service.LinkCardService;
@@ -15,6 +16,7 @@ import monorail.linkpay.webauthn.service.WebAuthnService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -38,6 +40,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 })
 @WithCustomUser
 @ExtendWith(RestDocumentationExtension.class)
+@Import(AuthConfig.class)
 public abstract class ControllerTest {
 
     protected MockMvcRequestSpecification docsGiven;
