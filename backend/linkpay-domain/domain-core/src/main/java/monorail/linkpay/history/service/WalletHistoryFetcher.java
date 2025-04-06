@@ -21,9 +21,7 @@ public class WalletHistoryFetcher {
                 .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "아이디에 해당하는 내역이 존재하지 않습니다."));
     }
 
-    public Slice<WalletHistory> fetchPage(final Long walletId,
-                                          final Long lastId,
-                                          final int size) {
+    public Slice<WalletHistory> fetchPage(final Long walletId, final Long lastId, final int size) {
         return walletHistoryRepository
                 .findByWalletIdWithLastId(walletId, lastId, PageRequest.of(0, size));
     }

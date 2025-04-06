@@ -1,5 +1,12 @@
 package monorail.linkpay.payment;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import monorail.linkpay.common.IntegrationTest;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.LinkCard;
@@ -13,14 +20,6 @@ import monorail.linkpay.wallet.dto.WalletResponse;
 import monorail.linkpay.wallet.service.MyWalletService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class PaymentServiceTest extends IntegrationTest {
 
@@ -70,7 +69,6 @@ class PaymentServiceTest extends IntegrationTest {
         Long storeId = storeService.create("newStore");
         Store store = storeRepository.findById(storeId).orElseThrow();
         StoreSigner storeSigner = storeSignerRepository.findByStoreId(storeId).orElseThrow();
-
 
         // when
         int threadCount = 16;

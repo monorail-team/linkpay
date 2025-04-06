@@ -1,9 +1,7 @@
 package monorail.linkpay.history.dto;
 
-import monorail.linkpay.history.domain.WalletHistory;
-import monorail.linkpay.payment.domain.Payment;
-
 import java.time.LocalDateTime;
+import monorail.linkpay.history.domain.WalletHistory;
 
 public record WalletHistoryDto(
         Long walletHistoryId,
@@ -15,7 +13,7 @@ public record WalletHistoryDto(
     public static WalletHistoryDto from(final WalletHistory walletHistory) {
         return new WalletHistoryDto(
                 walletHistory.getId(),
-                walletHistory.getAmount().getAmount(),
+                walletHistory.getAmount(),
                 walletHistory.getRemaining().getAmount(),
                 walletHistory.getTransactionType().name(),
                 walletHistory.getCreatedAt());

@@ -21,16 +21,14 @@ public class PaymentProcessor {
     private final LinkCardUpdater linkCardUpdater;
 
     @Transactional
-    public Payment executePay(final Store store,
-                              final LinkCard linkCard,
-                              final Point point) {
+    public Payment executePay(final Store store, final LinkCard linkCard, final Point point) {
         WalletHistory walletHistory = linkCardUpdater.useCard(linkCard, point);
         return paymentRepository.save(Payment.builder()
                 .id(idGenerator.generate())
                 .member(linkCard.getMember())
                 .linkCard(linkCard)
                 .store(store)
-                .amount(point)
+                .point(point)
                 .walletHistory(walletHistory)
                 .build());
     }

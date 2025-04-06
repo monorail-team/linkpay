@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import monorail.linkpay.event.payload.AccountDeletedEventPayload;
 import monorail.linkpay.event.payload.AccountDepositEventPayload;
 import monorail.linkpay.event.payload.AccountWithdrawalEventPayload;
+import monorail.linkpay.event.payload.BankResponseEventPayload;
 import monorail.linkpay.event.payload.EventPayload;
 import monorail.linkpay.exception.LinkPayException;
 
@@ -17,7 +18,8 @@ public enum EventType {
 
     DELETE(Topic.ACCOUNT_DELETE, AccountDeletedEventPayload.class),
     DEPOSIT(Topic.ACCOUNT_DEPOSIT, AccountDepositEventPayload.class),
-    WITHDRAWAL(Topic.ACCOUNT_WITHDRAWAL, AccountWithdrawalEventPayload.class);
+    WITHDRAWAL(Topic.ACCOUNT_WITHDRAWAL, AccountWithdrawalEventPayload.class),
+    BANK_RESPONSE(Topic.BANK_RESPONSE, BankResponseEventPayload.class);
 
     private final String topic;
     private final Class<? extends EventPayload> payloadClass;
@@ -35,5 +37,6 @@ public enum EventType {
         public static final String ACCOUNT_DELETE = "account-delete";
         public static final String ACCOUNT_DEPOSIT = "account-deposit";
         public static final String ACCOUNT_WITHDRAWAL = "account-withdrawal";
+        public static final String BANK_RESPONSE = "bank-response";
     }
 }
