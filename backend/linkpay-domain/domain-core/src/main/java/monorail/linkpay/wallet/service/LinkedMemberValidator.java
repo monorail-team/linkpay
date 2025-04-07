@@ -1,11 +1,11 @@
 package monorail.linkpay.wallet.service;
 
+import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
+
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.wallet.repository.LinkedMemberRepository;
-
-import static monorail.linkpay.exception.ExceptionCode.NOT_FOUND_RESOURCE;
 
 @SupportLayer
 @RequiredArgsConstructor

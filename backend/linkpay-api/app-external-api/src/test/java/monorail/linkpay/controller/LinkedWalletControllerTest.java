@@ -3,6 +3,7 @@ package monorail.linkpay.controller;
 import static monorail.linkpay.controller.ControllerFixture.LINKED_WALLETS_RESPONSE;
 import static monorail.linkpay.controller.ControllerFixture.LINKED_WALLET_CREATE_REQUEST;
 import static monorail.linkpay.controller.ControllerFixture.LINKED_WALLET_RESPONSE_1;
+import static monorail.linkpay.controller.ControllerFixture.WALLET_CHANGE_REQUEST;
 import static monorail.linkpay.controller.ControllerFixture.WALLET_POINT_REQUEST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -97,6 +98,20 @@ public class LinkedWalletControllerTest extends ControllerTest {
                 .when().delete("/api/linked-wallets/1")
                 .then().log().all()
                 .apply(document("linkedwallets/delete"))
+                .statusCode(HttpStatus.NO_CONTENT.value());
+    }
+
+    @Test
+    void 링크지갑의_이름을_변경한다() {
+        doNothing().when(linkedWalletService).changeLinkedWallet(anyLong(), anyString(), anyLong());
+
+        docsGiven
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer {access_token}")
+                .body(WALLET_CHANGE_REQUEST)
+                .when().patch("/api/linked-wallets/1")
+                .then().log().all()
+                .apply(document("linkedwallets/change"))
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 }

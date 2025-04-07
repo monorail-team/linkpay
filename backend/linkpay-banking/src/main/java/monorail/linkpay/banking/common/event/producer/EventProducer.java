@@ -1,8 +1,7 @@
 package monorail.linkpay.banking.common.event.producer;
 
 import lombok.RequiredArgsConstructor;
-import monorail.linkpay.event.Event;
-import monorail.linkpay.event.payload.EventPayload;
+import monorail.linkpay.event.EventType.Topic;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -10,11 +9,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class EventProducer {
 
-    private static final String BANKING_REPLY_EVENTS = "banking-reply";
-
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void publish(final Event<EventPayload> event) {
-        kafkaTemplate.send(BANKING_REPLY_EVENTS, String.valueOf(event.eventId()));
+    public void publish(final String messageJson) {
+        kafkaTemplate.send(Topic.BANK_RESPONSE, messageJson);
     }
 }

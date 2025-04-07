@@ -21,6 +21,7 @@ import Payment from '@/pages/payment';
 import ExamplePage from '@/pages/payment/example';
 import NfcWrite from 'pages/test/nfcwrite';
 import NfcRead from 'pages/test/nfcread';
+import { useFcm } from '@/hooks/useFcm';
 
 const App: React.FC = () => {
 
@@ -35,6 +36,8 @@ const App: React.FC = () => {
       root.classList.remove('dark');
     }
   }, [theme]);
+
+  useFcm();
 
   return (
     <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto border">

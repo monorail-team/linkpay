@@ -47,7 +47,7 @@ public class Payment extends BaseEntity {
 
     @Embedded
     @AttributeOverride(name = "amount", column = @Column(name = "amount", nullable = false, updatable = false))
-    private Point amount;
+    private Point point;
 
     @JoinColumn(name = "store_id", nullable = false, updatable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -62,16 +62,28 @@ public class Payment extends BaseEntity {
             final Long id,
             final LinkCard linkCard,
             final Member member,
-            final Point amount,
+            final Point point,
             final Store store,
             final WalletHistory walletHistory
     ) {
         this.id = id;
         this.linkCard = linkCard;
         this.member = member;
-        this.amount = amount;
+        this.point = point;
         this.store = store;
         this.walletHistory = walletHistory;
+    }
+
+    public Long getStoreId() {
+        return store.getId();
+    }
+
+    public Long getAmount() {
+        return point.getAmount();
+    }
+
+    public Long getWalletId() {
+        return linkCard.getWalletId();
     }
 
     @Override

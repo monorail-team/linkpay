@@ -50,12 +50,20 @@ public class WalletHistory extends BaseEntity {
     private TransactionType transactionType;
 
     @JoinColumn(name = "wallet_id", nullable = false)
-    @ManyToOne(fetch = FetchType.EAGER) // todo: Lazy Loading 안되는 이슈 해결
+    @ManyToOne(fetch = FetchType.LAZY)
     private Wallet wallet;
 
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    public Long getWalletId() {
+        return wallet.getId();
+    }
+
+    public Long getAmount() {
+        return amount.getAmount();
+    }
 
     @Builder
     private WalletHistory(

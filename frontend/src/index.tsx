@@ -4,6 +4,7 @@ import App from '@/App';
 import '@/index.css';
 import * as serviceWorkerRegistration from '@/serviceWorkerRegistration';
 
+serviceWorkerRegistration.register();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

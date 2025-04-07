@@ -1,9 +1,11 @@
 package monorail.linkpay.wallet.service;
 
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
+import monorail.linkpay.wallet.client.BankAccountClient;
 import monorail.linkpay.wallet.domain.LinkedWallet;
 import monorail.linkpay.wallet.domain.MyWallet;
 import monorail.linkpay.wallet.domain.Role;
@@ -13,8 +15,6 @@ import monorail.linkpay.wallet.repository.dto.LinkedWalletDto;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +26,7 @@ public class LinkedWalletService {
     private final MyWalletFetcher myWalletFetcher;
     private final WalletUpdater walletUpdater;
     private final MemberFetcher memberFetcher;
+    private final BankAccountClient bankAccountClient;
 
     public LinkedWalletsResponse readLinkedWallets(final long memberId, final Role role,
                                                    final Long lastId, final int size) {
@@ -45,6 +46,10 @@ public class LinkedWalletService {
     public Long createLinkedWallet(final long memberId, final String walletName, final Set<Long> memberIds) {
         validator.validateCreate(memberId, memberIds);
         LinkedWallet linkedWallet = walletUpdater.save(walletName, memberId, memberIds);
+
+        // 은행 계좌 생성요청 api 호출을 가장 마지막에 실행
+        bankAccountClient.createAccount(linkedWallet.getId(), memberId);
+
         return linkedWallet.getId();
     }
 
@@ -63,5 +68,13 @@ public class LinkedWalletService {
         MyWallet myWallet = myWalletFetcher.fetchByMemberIdForUpdate(memberId);
         walletUpdater.chargePoint(myWallet, linkedWallet.getPoint(), memberFetcher.fetchById(memberId));
         walletUpdater.delete(linkedWallet);
+    }
+
+    @Transactional
+    public void changeLinkedWallet(final Long linkedWalletId, final String newName,
+                                   final Long memberId) {
+        validator.validateChange(linkedWalletId, memberId);
+        LinkedWallet linkedWallet = linkedWalletFetcher.fetchById(linkedWalletId);
+        linkedWallet.changeName(newName);
     }
 }

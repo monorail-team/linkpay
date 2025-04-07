@@ -1,5 +1,7 @@
 package monorail.linkpay.payment.service;
 
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.service.LinkCardFetcher;
@@ -10,9 +12,6 @@ import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.store.service.StoreFetcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class PaymentService {
         paymentProcessor.executePay(store, linkCard, txInfo.point());
     }
 
-    public List<PaymentDto> readPaymentsByHistoryIdIn(Set<Long> walletHistoryIds) {
+    public List<PaymentDto> readPaymentsByHistoryIdIn(final Set<Long> walletHistoryIds) {
         return paymentFetcher.fetchByWalletHistoryIdIn(walletHistoryIds)
                 .stream()
                 .map(PaymentDto::from)

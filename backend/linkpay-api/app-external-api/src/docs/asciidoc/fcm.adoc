@@ -1,0 +1,12 @@
+[[Fcm]]
+== FCM(푸시 메시지)
+
+=== 사용자 토큰 등록
+
+==== HTTP Request
+
+include::{snippets}/fcm/register/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/fcm/register/http-response.adoc[]

@@ -1,12 +1,12 @@
 package monorail.linkpay.banking.account.service;
 
+import static monorail.linkpay.event.EventType.BANK_RESPONSE;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_EVENT_TYPE;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.banking.account.domain.Account;
-import monorail.linkpay.banking.account.eventhandler.EventHandler;
 import monorail.linkpay.banking.account.repository.AccountRepository;
 import monorail.linkpay.banking.common.domain.Money;
 import monorail.linkpay.banking.common.event.producer.EventProducer;
@@ -15,9 +15,12 @@ import monorail.linkpay.banking.eventlog.repository.EventLogRepository;
 import monorail.linkpay.banking.eventlog.service.EventLockManager;
 import monorail.linkpay.banking.eventlog.service.EventLogFetcher;
 import monorail.linkpay.event.Event;
+import monorail.linkpay.event.EventHandler;
+import monorail.linkpay.event.payload.BankResponseEventPayload;
 import monorail.linkpay.event.payload.EventPayload;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.util.id.IdGenerator;
+import monorail.linkpay.util.json.JsonUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +50,7 @@ public class AccountService {
                     .build());
         } finally {
             eventLockManager.unlock(event.eventId());
-            eventProducer.publish(event);
+            publishResponseEvent(event.eventId());
         }
     }
 
@@ -56,6 +59,17 @@ public class AccountService {
                 .filter(eventHandler -> eventHandler.supports(event))
                 .findAny()
                 .orElseThrow(() -> new LinkPayException(INVALID_EVENT_TYPE, "지원하지 않는 이벤트 타입입니다."));
+    }
+
+    private void publishResponseEvent(final Long eventId) {
+        Event<EventPayload> responseEvent = new Event<>(
+                eventId,
+                BANK_RESPONSE,
+                new BankResponseEventPayload(eventId)
+        );
+
+        String messageJson = JsonUtil.toJson(responseEvent).value();
+        eventProducer.publish(messageJson);
     }
 
     public Long createAccount(final Long walletId, final Long memberId) {

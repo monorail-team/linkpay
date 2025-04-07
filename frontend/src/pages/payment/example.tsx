@@ -8,12 +8,16 @@ const ExamplePage: React.FC = () => {
   const goToPayment = () => {
     navigate('/payment', {
       state: {
-        cardName: 'A105',
-        description: 'Description',
-        expireAt: '25.12.23',
-        guideText: '디바이스의 뒷면을 카드 리더기에 대세요.',
-        initialTime: 45,
-        cardColor: '#ff11ff'
+        cardData: {
+          linkCardId: '1',
+          cardName: 'A105',
+          description: 'Description',
+          expireAt: '25.12.23',
+          guideText: '디바이스의 뒷면을 카드 리더기에 대세요.',
+          initialTime: 45,
+          cardColor: '#ff11ff'
+        },
+        paymentToken: 'WebAuthn 결과로 전달받은 결제 유효성 검증용 토큰'
       }
     });
   };

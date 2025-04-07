@@ -17,7 +17,7 @@ public record LinkCardHistoryResponse(
         return new LinkCardHistoryResponse(
                 linkCard.getId().toString(),
                 linkCard.getCardName(),
-                payment.getAmount().getAmount(),
+                payment.getAmount(),
                 payment.getStore().getName(),
                 payment.getCreatedAt(),
                 linkCard.getMember().getUsername()

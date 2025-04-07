@@ -1,36 +1,8 @@
 package monorail.linkpay.acceptance;
 
-import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
-import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_목록_조회_요청;
-import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_생성_요청;
-import static monorail.linkpay.acceptance.MemberAcceptanceTest.회원_조회_요청;
-import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.포인트_충전_요청;
-import static monorail.linkpay.acceptance.PaymentAcceptanceTest.결제_요청;
-import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.가게_생성_요청;
-import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.거래정보_생성_요청;
-import static monorail.linkpay.acceptance.client.RestAssuredClient.sendDeleteRequest;
-import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
-import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPatchRequest;
-import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPostRequest;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
-
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
-import monorail.linkpay.controller.request.LinkCardCreateRequest;
-import monorail.linkpay.controller.request.LinkCardRegistRequest;
-import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
-import monorail.linkpay.controller.request.PaymentsRequest;
-import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
-import monorail.linkpay.controller.request.StoreCreateRequest;
-import monorail.linkpay.controller.request.StoreTransactionRequest;
-import monorail.linkpay.controller.request.WalletPointRequest;
+import monorail.linkpay.controller.request.*;
 import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
 import monorail.linkpay.linkcard.dto.LinkCardHistoriesResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
@@ -41,6 +13,25 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
+
+import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
+import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_목록_조회_요청;
+import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_생성_요청;
+import static monorail.linkpay.acceptance.MemberAcceptanceTest.회원_조회_요청;
+import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.포인트_충전_요청;
+import static monorail.linkpay.acceptance.PaymentAcceptanceTest.결제_요청;
+import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.가게_생성_요청;
+import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.거래정보_생성_요청;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class LinkCardAcceptanceTest extends AcceptanceTest {
 
@@ -283,18 +274,26 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                     assertThat(linkCardsResponse.linkCards()).hasSize(1);
                 }),
                 dynamicTest("지갑 충전 및 카드 사용", () -> {
+                    // given
                     포인트_충전_요청(accessToken, new WalletPointRequest(50000));
-
                     var storeRes = 가게_생성_요청(accessToken, new StoreCreateRequest("새로운 가게"));
                     String storeId = storeRes.header("Location").split("/")[3];
-                    var payInfoRes = 거래정보_생성_요청(accessToken, storeRes.header("Location"),
+                    var txInfoRes = 거래정보_생성_요청(accessToken, storeRes.header("Location"),
                             new StoreTransactionRequest(3000L));
-                    TransactionResponse transactionResponse = payInfoRes.as(TransactionResponse.class);
-                    ExtractableResponse<Response> response = 결제_요청(accessToken,
-                            new PaymentsRequest(3000L,
-                                    linkCardId.get().toString(),
-                                    storeId, transactionResponse.transactionSignature(),
-                                    "token"));
+                    var txResponse = txInfoRes.as(TransactionResponse.class);
+                    var request = PaymentsRequest.builder()
+                            .amount(3000L)
+                            .linkCardId(linkCardId.get().toString())
+                            .storeId(storeId)
+                            .transactionSignature(txResponse.transactionSignature())
+                            .paymentToken("mockPaymentToken") // TODO: WebAuthn 인증 후 받은 실제 paymentToken 사용
+                            .build();
+
+                    // when
+                    ExtractableResponse<Response> response = 결제_요청(accessToken, request);
+
+                    // then
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
                 }),
                 dynamicTest("카드 내역을 확인한다", () -> {
                     ExtractableResponse<Response> response = 링크카드_사용내역_조회_요청(accessToken, linkCardId.get());
@@ -330,8 +329,8 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
         return sendPostRequest("/api/cards", accessToken, request);
     }
 
-    private ExtractableResponse<Response> 링크지갑에서_링크카드_생성_요청(final String accessToken,
-                                                            final SharedLinkCardCreateRequest request) {
+    public static ExtractableResponse<Response> 링크지갑에서_링크카드_생성_요청(final String accessToken,
+                                                                  final SharedLinkCardCreateRequest request) {
         return sendPostRequest("/api/cards/shared", accessToken, request);
     }
 

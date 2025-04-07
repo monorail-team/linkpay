@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import monorail.linkpay.controller.request.LinkedMemberCreateRequest;
 import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
@@ -64,6 +65,25 @@ public class LinkedMemberAcceptanceTest extends AcceptanceTest {
                             () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                             () -> assertThat(linkedMembersResponse.linkedMembers()).hasSize(3)
                     );
+                }),
+
+                dynamicTest("링크지갑의 참여자들 중 여러명을 삭제한다", () -> {
+                    LinkedMembersResponse linkedMembersResponse = 링크지갑_참여자_조회_요청(accessToken, linkedWalletId).as(
+                            LinkedMembersResponse.class);
+                    ExtractableResponse<Response> response = 링크지갑_참여자들_삭제_요청(accessToken, linkedWalletId,
+                            Set.of(Long.parseLong(linkedMembersResponse.linkedMembers().get(1).linkedMemberId()),
+                                    Long.parseLong(linkedMembersResponse.linkedMembers().get(2).linkedMemberId())));
+
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+                }),
+
+                dynamicTest("삭제 후 참여자를 확인한다", () -> {
+                    ExtractableResponse<Response> response = 링크지갑_참여자_조회_요청(accessToken, linkedWalletId);
+                    LinkedMembersResponse linkedMembersResponse = response.as(LinkedMembersResponse.class);
+                    assertAll(
+                            () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                            () -> assertThat(linkedMembersResponse.linkedMembers()).hasSize(1)
+                    );
                 })
         );
     }
@@ -82,5 +102,13 @@ public class LinkedMemberAcceptanceTest extends AcceptanceTest {
                                                          final Long linkedMemberId) {
         return sendDeleteRequest("/api/linked-wallets/%s/members?linkedMemberIds=%s"
                 .formatted(linkedWalletId, linkedMemberId), accessToken);
+    }
+
+    private ExtractableResponse<Response> 링크지갑_참여자들_삭제_요청(final String accessToken, final Long linkedWalletId,
+                                                          final Set<Long> linkedMemberIds) {
+        return sendDeleteRequest("/api/linked-wallets/%s/members?linkedMemberIds=%s"
+                .formatted(linkedWalletId, linkedMemberIds.stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.joining("&linkedMemberIds="))), accessToken);
     }
 }

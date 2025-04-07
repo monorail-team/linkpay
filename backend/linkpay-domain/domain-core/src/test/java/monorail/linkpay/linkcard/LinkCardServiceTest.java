@@ -410,7 +410,7 @@ public class LinkCardServiceTest extends IntegrationTest {
         return Payment.builder()
                 .id(1L)
                 .linkCard(linkCard)
-                .amount(new Point(3000L))
+                .point(new Point(3000L))
                 .member(member).store(store)
                 .walletHistory(walletHistory)
                 .build();
