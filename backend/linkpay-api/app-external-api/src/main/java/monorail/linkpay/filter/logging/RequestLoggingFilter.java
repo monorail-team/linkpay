@@ -17,18 +17,42 @@ import java.util.stream.Collectors;
 public class RequestLoggingFilter extends OncePerRequestFilter {
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        return requestURI.startsWith("/actuator/**") ||
+                requestURI.startsWith("/favicon.ico") ||
+                requestURI.startsWith("/h2-console");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String method = request.getMethod();
         String uri = request.getRequestURI();
 
-        CachedBodyHttpServletRequest wrappedRequest = new CachedBodyHttpServletRequest(request);
-        String body = new BufferedReader(wrappedRequest.getReader())
-                .lines().collect(Collectors.joining(System.lineSeparator()));
+        String body = "[unreadable]";
+        CachedBodyHttpServletRequest wrappedRequest = null;
 
-       log.info("Incoming Request: method = {}, uri = {}, body = {}", method, uri, body);
+        try {
+            wrappedRequest = new CachedBodyHttpServletRequest(request);
 
-        filterChain.doFilter(wrappedRequest, response);
+            BufferedReader reader = wrappedRequest.getReader();
+            if (reader != null) {
+                body = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+            } else {
+                body = "[null reader]";
+            }
+        } catch (Exception e) {
+            log.warn("Failed to read request body for uri: {}, error: {}", uri, e.getMessage());
+        }
+
+        log.info("Incoming Request: method = {}, uri = {}, body = {}", method, uri, body);
+
+        if (wrappedRequest != null) {
+            filterChain.doFilter(wrappedRequest, response);
+        } else {
+            filterChain.doFilter(request, response);
+        }
     }
 }
