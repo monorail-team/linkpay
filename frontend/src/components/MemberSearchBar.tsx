@@ -20,9 +20,9 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
   // 컴포넌트가 마운트될 때와 initialMembers가 변경될 때만 상태 업데이트
   useEffect(() => {
     // memberId가 없으면 linkedmemberid를 사용하여 정규화
-    const normalizedMembers = (initialMembers || []).map(member => ({
+    const normalizedMembers = (initialMembers || []).map( (member: Member & { linkedMemberId?: string }) => ({
       ...member,
-      memberId: member.memberId || (member as any).linkedMemberId,
+      memberId: member.memberId || member.linkedMemberId || '',
     }));
     setAddedMembers(normalizedMembers);
   }, [JSON.stringify(initialMembers)]);
