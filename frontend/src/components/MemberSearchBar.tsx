@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '@/components/Icon';
 import axios from 'axios';
 import { Member } from '@/model/Member'
@@ -13,15 +13,23 @@ interface MemberSearchBarProps {
 
 const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initialMembers = []}) => {
   const [email, setEmail] = useState('');
-  const [addedMembers, setAddedMembers] = useState<Member[]>(initialMembers);
+  const [addedMembers, setAddedMembers] = useState<Member[]>([]);
   const [error, setError] = useState<string | null>(null);
   const { theme } = useThemeStore();
 
+  // 컴포넌트가 마운트될 때와 initialMembers가 변경될 때만 상태 업데이트
   useEffect(() => {
-    setAddedMembers(initialMembers);
-  }, []);
+    // memberId가 없으면 linkedmemberid를 사용하여 정규화
+    const normalizedMembers = (initialMembers || []).map(member => ({
+      ...member,
+      memberId: member.memberId || (member as any).linkedMemberId,
+    }));
+    setAddedMembers(normalizedMembers);
+  }, [JSON.stringify(initialMembers)]);
 
+  // addedMembers가 변경될 때 부모 컴포넌트에 알림
   useEffect(() => {
+    // console.log('addedMembers changed:', addedMembers);
     if (onMembersChange) {
       onMembersChange(addedMembers);
     }
@@ -37,7 +45,7 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
         return;
         }
       
-      const response = await axios.get(`${base_url}/api/members?email=${email}`,{
+      const response = await axios.get(`${base_url}/api/members?email=${email}`, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`,
@@ -45,12 +53,12 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
       });
       const member: Member | null = response.data; // 일치하는 사용자가 없으면 null 반환
       if (!member || !member.memberId) {
-        // 검색 결과가 없을 경우 에러 메시지 표시 (모달로 대체 가능)
+        // 검색 결과가 없을 경우 에러 메시지 표시
         setError('일치하는 사용자가 없습니다.');
       } else {
         // 이미 추가된 사용자가 아니라면 추가
         if (!addedMembers.find(m => m.memberId === member.memberId)) {
-            setAddedMembers([...addedMembers, member]);
+            setAddedMembers(prevMembers => [...prevMembers, member]);
         }
         setEmail('');
         setError(null);
@@ -70,7 +78,13 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
 
   // 추가된 사용자 제거 함수
   const removeUser = (id: string) => {
-    setAddedMembers(prevMembers => prevMembers.filter(member => member.memberId !== id));
+    // console.log('Removing user with ID:', id);
+    // console.log('Before removal:', addedMembers);
+    setAddedMembers(prevMembers => {
+      const updatedMembers = prevMembers.filter(member => member.memberId !== id);
+      // console.log('After removal:', updatedMembers);
+      return updatedMembers;
+    });
   };
 
   return (
@@ -83,7 +97,7 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={handleKeyPress}
           placeholder="초대 대상 이메일 검색"
-          className="w-full border-b border-gray-300 py-2 pr-10  focus:outline-none dark:bg-black dark:text-white dark:placeholder-white"
+          className="w-full border-b border-gray-300 py-2 pr-10 focus:outline-none dark:bg-black dark:text-white dark:placeholder-white"
         />
         <button 
           onClick={handleSearch}
@@ -92,19 +106,24 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
           <Icon name={theme === 'dark' ? "searchDarkIcon" : "searchIcon"} width={50} height={50} alt="검색" />
         </button>
       </div>
-      {/* 에러 메시지 (모달로 대체 가능) */}
+      {/* 에러 메시지 */}
       {error && (
         <div className="mt-2 text-red-500">
           {error}
         </div>
       )}
-      {/* 추가된 사용자 리스트: 각 칩은 좌측에 이름, 우측에 x 아이콘 포함 */}
+      {/* 추가된 사용자 리스트 */}
       <div className="mt-4 flex flex-wrap gap-2 justify-center w-full">
         {addedMembers.map(member => (
           <div key={member.memberId} className="flex items-center justify-between border rounded-full px-3 py-1 min-w-[200px] dark:bg-[#9E9E9E]">
-            <span key={`span-${member.memberId}`} className="mr-2 dark:text-white">{member.username}({member.email})</span>
-            <button key={`btn-${member.memberId}`} onClick={() => removeUser(member.memberId)}>
-            <Icon key={`icon-${member.memberId}`} name={theme === 'dark' ? "searchcalcelDarkIcon" : "searchcalcelIcon"} width={theme === 'dark' ? 13 : 10} height={theme === 'dark' ? 13 : 10} alt="입력취소" />
+            <span className="mr-2 dark:text-white">{member.username}({member.email})</span>
+            <button onClick={() => removeUser(member.memberId)}>
+              <Icon 
+                name={theme === 'dark' ? "searchcalcelDarkIcon" : "searchcalcelIcon"} 
+                width={theme === 'dark' ? 13 : 10} 
+                height={theme === 'dark' ? 13 : 10} 
+                alt="입력취소" 
+              />
             </button>
           </div>
         ))}

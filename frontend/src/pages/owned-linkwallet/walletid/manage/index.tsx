@@ -45,7 +45,12 @@ const ManageLinkWalletPage: React.FC = () => {
         console.log(response.data);
         const membersData = response.data.linkedMembers;
         const myMemberEmail = sessionStorage.getItem('memberEmail');
-        const filteredMembers = membersData.filter((member: Member) => member.email !== myMemberEmail);
+        const filteredMembers = membersData
+        .filter((member: Member & { linkedMemberId?: string }) => member.email !== myMemberEmail)
+        .map((member: Member & { linkedMemberId?: string }) => ({
+          ...member,
+          memberId: member.memberId || member.linkedMemberId,
+        }));
         console.log('filteredMembers', filteredMembers);
         setSelectedMembers(filteredMembers);
         setInitialMembers(filteredMembers);
@@ -107,15 +112,28 @@ const ManageLinkWalletPage: React.FC = () => {
         );
       }
       if (membersToRemove.length > 0) {
-        const memberIds = membersToRemove.map(member => member.memberId).join(',');
-        await axios.delete(
-          `${base_url}/api/linked-wallets/${walletId}/members?linkedMemberIds=${memberIds}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        if (membersToRemove.length === 1) {
+          // 한 명 삭제: path parameter 사용
+          await axios.delete(
+            `${base_url}/api/linked-wallets/${walletId}/members/${membersToRemove[0].memberId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+        } else {
+          // 여러 명 삭제: query parameter 사용
+          const memberIds = membersToRemove.map(member => member.memberId).join(',');
+          await axios.delete(
+            `${base_url}/api/linked-wallets/${walletId}/members?linkedMemberIds=${memberIds}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+        }
       }
       navigate(-1);
     } catch (error) {
