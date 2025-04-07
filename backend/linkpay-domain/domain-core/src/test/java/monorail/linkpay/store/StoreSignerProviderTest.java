@@ -1,9 +1,8 @@
-package monorail.linkpay.auth.service;
+package monorail.linkpay.store;
 
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.payment.dto.TransactionInfo;
-import monorail.linkpay.store.StoreFixtures;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.util.signature.SignatureProvider;
 import org.assertj.core.api.Assertions;
