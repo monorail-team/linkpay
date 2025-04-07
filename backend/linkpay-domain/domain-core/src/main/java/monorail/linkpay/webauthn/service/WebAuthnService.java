@@ -7,15 +7,20 @@ import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.payment.service.PaymentTokenProvider;
+import monorail.linkpay.webauthn.domain.AuthnChallenge;
 import monorail.linkpay.webauthn.domain.WebAuthnCredential;
 import monorail.linkpay.webauthn.dto.WebAuthnChallengeResponse;
 import monorail.linkpay.webauthn.dto.WebAuthnResponse;
+import monorail.linkpay.webauthn.repository.AuthnChallengeRepository;
 import monorail.linkpay.webauthn.repository.WebAuthnCredentialRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.security.SecureRandom;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.*;
+import java.security.spec.*;
 import java.util.*;
 
 @Slf4j
@@ -29,6 +34,8 @@ public class WebAuthnService {
     private final WebAuthnCredentialRepository credentialRepository;
     private final WebAuthnCredentialFetcher credentialFetcher;
     private final PaymentTokenProvider paymentTokenProvider;
+    private final AuthnChallengeRepository authnChallengeRepository;
+
 
     public String getRegisterChallenge() {
         return generateRandomChallenge();
@@ -99,24 +106,179 @@ public class WebAuthnService {
     public WebAuthnChallengeResponse getAuthChallenge(Long memberId) {
         WebAuthnCredential credential = credentialFetcher.fetchByMemberId(memberId);
         String challenge = generateRandomChallenge();
-        // TODO: 세션에 챌린지를 기록 & TTL
+
+        authnChallengeRepository.save(AuthnChallenge.builder()
+                .memberId(memberId)
+                .challenge(challenge)
+                .build());
+
         return new WebAuthnChallengeResponse(challenge, credential.getCredentialId());
     }
 
     @Transactional
-    public WebAuthnResponse verifyAuthentication(Long memberId, String credentialId, String clientDataJSON, String authenticatorData) {
-        WebAuthnCredential credential = credentialFetcher.fetchByCredentialId(credentialId);
-        if (!Objects.equals(credential.getMemberId(), memberId)) {
-            throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, "지문 인증 실패");
-        }
+    public WebAuthnResponse verifyAuthentication(Long memberId, String credentialId, String clientDataJSON, String authenticatorData, String signature) {
+        try {
+            //credentialId  정보 조회
+            WebAuthnCredential credential = credentialFetcher.fetchByMemberId(memberId);
+            if (credential == null) {
+                //등록되지 않은 사용자
+                throw new RuntimeException("credential not found.");
+            }
 
-        // TODO: 세션에서 챌린지 삭제?
-        return new WebAuthnResponse(paymentTokenProvider.generateFor(memberId));
+            // 2. credentialId 검증
+            if (!credential.getCredentialId().equals(credentialId)) {
+                //이거 뭐던져야 하지
+                throw new RuntimeException("credential id mismatch.");
+            }
+
+            // 3. 클라이언트 데이터 파싱
+            byte[] clientDataJSONBytes = Base64.getDecoder().decode(clientDataJSON);
+            String clientDataJSONString = new String(clientDataJSONBytes, StandardCharsets.UTF_8);
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> clientData = mapper.readValue(clientDataJSONString, Map.class);
+
+            Optional<AuthnChallenge> authnChallengeOpt = authnChallengeRepository.findByMemberId(memberId);
+            // 4. 챌린지 검증
+            String challengeFromClient = (String) clientData.get("challenge");
+            if(authnChallengeOpt.isPresent()) {
+                String storedChallenge = authnChallengeOpt.get().getChallenge();
+
+                if (storedChallenge.isEmpty() || !challengeFromClient.equals(storedChallenge)) {
+                    throw new RuntimeException("challenge mismatch.");
+                }
+                authnChallengeRepository.delete(authnChallengeOpt.get());
+            }
+
+
+
+            // 5. 인증 데이터 검증
+            byte[] authDataBytes = Base64.getDecoder().decode(authenticatorData);
+            byte[] signatureBytes = Base64.getDecoder().decode(signature);
+            log.info("signatureBytes: {}", signatureBytes.toString());
+            // 6. 공개키 복원
+            byte[] publicKeyBytes = Base64.getDecoder().decode(credential.getPublicKey());
+
+            // COSE 형식의 공개키를 Java 공개키 형태로 변환
+            CBORFactory cborFactory = new CBORFactory();
+            ObjectMapper cborMapper = new ObjectMapper(cborFactory);
+            @SuppressWarnings("unchecked")
+            Map<?, Object> coseKey = cborMapper.readValue(publicKeyBytes, Map.class);
+
+            log.info("COSE Key Map: {}", coseKey);
+            PublicKey publicKey = convertCOSEKeyToPublicKey(coseKey);
+
+
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] clientDataHash = digest.digest(clientDataJSONBytes);
+            byte[] signedData = new byte[authDataBytes.length + clientDataHash.length];
+            System.arraycopy(authDataBytes, 0, signedData, 0, authDataBytes.length);
+            System.arraycopy(clientDataHash, 0, signedData, authDataBytes.length, clientDataHash.length);
+
+
+            // 서명 알고리즘 결정 (COSE 키 타입에 따라 달라짐)
+            String algorithm = determineAlgorithmFromCOSEKey(coseKey);
+
+            Signature signatureVerifier = Signature.getInstance(algorithm);
+            signatureVerifier.initVerify(publicKey);
+            signatureVerifier.update(signedData);
+
+            log.info("AuthenticatorData: {}", Arrays.toString(authDataBytes));
+            log.info("ClientDataHash: {}", Arrays.toString(clientDataHash));
+            log.info("SignedData: {}", Arrays.toString(signedData));
+
+            if(signatureVerifier.verify(signatureBytes)){
+                return new WebAuthnResponse(paymentTokenProvider.generateFor(memberId));
+            }else{
+                throw new RuntimeException("signature verification failed.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     private String generateRandomChallenge() {
         byte[] randomBytes = new byte[32];
         secureRandom.nextBytes(randomBytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+    }
+
+    private PublicKey convertCOSEKeyToPublicKey(Map<?, Object> coseKey) throws Exception {
+        log.info("COSE Key Map: {}", coseKey);
+        for (Object key : coseKey.keySet()) {
+            log.info("COSE Key: {} | Type: {}", key, key.getClass().getName());
+        }
+        // COSE 키 타입 확인
+        int kty = ((Number) coseKey.get("1")).intValue(); // 1: kty (Key Type)
+
+        if (kty == 2) { // 2: EC2 (Elliptic Curve)
+            // 타원 곡선 파라미터 추출
+            int crv = ((Number) coseKey.get("-1")).intValue(); // -1: crv (Curve)
+            byte[] x = (byte[]) coseKey.get("-2"); // -2: x-coordinate
+            byte[] y = (byte[]) coseKey.get("-3"); // -3: y-coordinate
+
+            String curveName;
+            switch (crv) {
+                case 1:
+                    curveName = "secp256r1"; // P-256
+                    break;
+                case 2:
+                    curveName = "secp384r1"; // P-384
+                    break;
+                case 3:
+                    curveName = "secp521r1"; // P-521
+                    break;
+                default:
+                    throw new IllegalArgumentException("지원되지 않는 곡선 타입: " + crv);
+            }
+
+            // 타원 곡선 공개키 생성
+            AlgorithmParameters parameters = AlgorithmParameters.getInstance("EC");
+            parameters.init(new ECGenParameterSpec(curveName));
+            ECParameterSpec ecParameters = parameters.getParameterSpec(ECParameterSpec.class);
+
+            ECPoint point = new ECPoint(new BigInteger(1, x), new BigInteger(1, y));
+            ECPublicKeySpec keySpec = new ECPublicKeySpec(point, ecParameters);
+
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
+
+
+            return keyFactory.generatePublic(keySpec);
+        } else if (kty == 3) { // 3: RSA
+            // RSA 키 파라미터 추출
+            byte[] n = (byte[]) coseKey.get("-1"); // -1: n (Modulus)
+            byte[] e = (byte[]) coseKey.get("-2"); // -2: e (Exponent)
+
+            // RSA 공개키 생성
+            RSAPublicKeySpec keySpec = new RSAPublicKeySpec(new BigInteger(1, n), new BigInteger(1, e));
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(keySpec);
+        } else {
+            throw new IllegalArgumentException("지원되지 않는 키 타입: " + kty);
+        }
+    }
+
+    // COSE 키에 따른 서명 알고리즘 결정
+    private String determineAlgorithmFromCOSEKey(Map<?, Object> coseKey) {
+        int kty = ((Number) coseKey.get("1")).intValue(); // 1: kty (Key Type)
+
+        if (kty == 2) { // 2: EC2 (Elliptic Curve)
+            int alg = ((Number) coseKey.get("3")).intValue(); // 3: alg (Algorithm)
+            switch (alg) {
+                case -7:  // ES256
+                    return "SHA256withECDSA";
+                case -35: // ES384
+                    return "SHA384withECDSA";
+                case -36: // ES512
+                    return "SHA512withECDSA";
+                default:
+                    return "SHA256withECDSA"; // 기본값
+            }
+        } else if (kty == 3) { // 3: RSA
+            return "SHA256withRSA";
+        } else {
+            return "SHA256withECDSA"; // 기본값
+        }
     }
 }

@@ -1,5 +1,6 @@
 package monorail.linkpay.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
@@ -57,7 +58,9 @@ public class WebAuthnController {
                 principal.memberId(),
                 request.credentialId(),
                 request.clientDataJSON(),
-                request.authenticatorData());
+                request.authenticatorData(),
+                request.signature());
+
         return ResponseEntity.ok(response);
     }
 
