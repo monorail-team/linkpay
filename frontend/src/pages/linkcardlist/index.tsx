@@ -125,8 +125,8 @@ const LinkCardListPage: React.FC = () => {
     setActiveTab(tab);
   };
 
-  const handleCardClick = (cardid: number) => {
-    navigate(`/cards/${cardid}`);
+  const handleCardClick = (card: Card) => {
+    navigate(`/cards/${card.linkCardId}`,{state: card});
   }
 
 
@@ -168,7 +168,7 @@ const LinkCardListPage: React.FC = () => {
             key={card.linkCardId}
             className="my-1 box-border rounded-lg w-5/6 p-4 mx-auto bg-center h-[150px]"
             style={{ backgroundColor: card.cardColor }}
-            onClick={() => handleCardClick(card.linkCardId)}
+            onClick={() => handleCardClick(card)}
           >
              <LinkCardItem
                 cardName={card.cardName}
