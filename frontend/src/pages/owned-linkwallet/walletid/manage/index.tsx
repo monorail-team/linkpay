@@ -71,7 +71,6 @@ const ManageLinkWalletPage: React.FC = () => {
   const isDataChanged = () => {
     const isWalletNameChanged = walletName !== initialWalletName;
 
-    // 멤버 비교: memberId 리스트를 정렬하여 JSON 문자열로 비교
     const currentMemberIds = selectedMembers.map(m => m.memberId).sort();
     const initialMemberIds = initialMembers.map(m => m.memberId).sort();
     const isMembersChanged = JSON.stringify(currentMemberIds) !== JSON.stringify(initialMemberIds);
@@ -86,11 +85,9 @@ const ManageLinkWalletPage: React.FC = () => {
       return;
     }
 
-    // 추가할 멤버: 현재 선택된 멤버에서 초기 목록에 없는 멤버
     const membersToAdd = selectedMembers.filter(
       member => !initialMembers.find(initial => initial.memberId === member.memberId)
     );
-    // 제거할 멤버: 초기 목록에서 현재 선택된 멤버에 없는 멤버
     const membersToRemove = initialMembers.filter(
       member => !selectedMembers.find(selected => selected.memberId === member.memberId)
     );
@@ -99,6 +96,19 @@ const ManageLinkWalletPage: React.FC = () => {
     console.log("Members to remove:", membersToRemove);
     
     try {
+      if (walletName !== initialWalletName) {
+        await axios.patch(
+          `${base_url}/api/linked-wallets/${walletId}`,
+          { linkedWalletName: walletName },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+      }
+      
       for (const member of membersToAdd) {
         await axios.post(
           `${base_url}/api/linked-wallets/${walletId}/members`,
@@ -113,7 +123,6 @@ const ManageLinkWalletPage: React.FC = () => {
       }
       if (membersToRemove.length > 0) {
         if (membersToRemove.length === 1) {
-          // 한 명 삭제: path parameter 사용
           await axios.delete(
             `${base_url}/api/linked-wallets/${walletId}/members/${membersToRemove[0].memberId}`,
             {
@@ -123,7 +132,6 @@ const ManageLinkWalletPage: React.FC = () => {
             }
           );
         } else {
-          // 여러 명 삭제: query parameter 사용
           const memberIds = membersToRemove.map(member => member.memberId).join(',');
           await axios.delete(
             `${base_url}/api/linked-wallets/${walletId}/members?linkedMemberIds=${memberIds}`,

@@ -23,6 +23,8 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
     const normalizedMembers = (initialMembers || []).map( (member: Member & { linkedMemberId?: string }) => ({
       ...member,
       memberId: member.memberId || member.linkedMemberId || '',
+      username: member.username,
+      email: member.email,
     }));
     setAddedMembers(normalizedMembers);
   }, [JSON.stringify(initialMembers)]);
