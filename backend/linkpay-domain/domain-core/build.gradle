@@ -11,6 +11,10 @@ dependencies {
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-cbor
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.18.3")
 
+    // Google:FCM
+    implementation platform('com.google.auth:google-auth-library-bom:1.30.1')
+    implementation 'com.google.auth:google-auth-library-oauth2-http'
+
     testRuntimeOnly 'com.h2database:h2'
     testImplementation testFixtures(project(':linkpay-in-system-available:common-web'))
     testImplementation testFixtures(project(':linkpay-domain:domain-core'))

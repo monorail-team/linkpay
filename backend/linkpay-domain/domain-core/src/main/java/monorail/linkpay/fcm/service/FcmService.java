@@ -17,14 +17,19 @@ public class FcmService {
     private final FcmTokenRepository fcmTokenRepository;
     private final IdGenerator idGenerator;
     private final MemberFetcher memberFetcher;
+    private final FcmSender fcmSender;
 
     @Transactional
     public void register(final Long memberId, final String token) {
         Member member = memberFetcher.fetchById(memberId);
-        fcmTokenRepository.save(FcmToken.builder()
+        fcmTokenRepository.save(FcmToken.builder() // TODO: 기기별(or 회원 별) 토큰 구분
                 .id(idGenerator.generate())
                 .member(member)
                 .token(token)
                 .build());
+    }
+
+    public void sendmessgae(final Long memberId, final String title, final String content) {
+        fcmSender.send(memberId, title, content);
     }
 }
