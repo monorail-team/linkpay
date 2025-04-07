@@ -10,6 +10,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,29 +32,20 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String method = request.getMethod();
         String uri = request.getRequestURI();
+        String queryString = request.getQueryString();
 
-        String body = "[unreadable]";
-        CachedBodyHttpServletRequest wrappedRequest = null;
+        // 간단한 header 로깅 (선택)
+        String headers = List.of(request.getHeaderNames()).stream()
+                .map(name -> name + "=" + request.getHeader(String.valueOf(name)))
+                .collect(Collectors.joining(", "));
 
-        try {
-            wrappedRequest = new CachedBodyHttpServletRequest(request);
+        log.info("Incoming Request: method={}, uri={}{}{} | headers=[{}]",
+                method,
+                uri,
+                (queryString != null ? "?" + queryString : ""),
+                (request.getContentType() != null ? " [Content-Type=" + request.getContentType() + "]" : ""),
+                headers);
 
-            BufferedReader reader = wrappedRequest.getReader();
-            if (reader != null) {
-                body = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-            } else {
-                body = "[null reader]";
-            }
-        } catch (Exception e) {
-            log.warn("Failed to read request body for uri: {}, error: {}", uri, e.getMessage());
-        }
-
-        log.info("Incoming Request: method = {}, uri = {}, body = {}", method, uri, body);
-
-        if (wrappedRequest != null) {
-            filterChain.doFilter(wrappedRequest, response);
-        } else {
-            filterChain.doFilter(request, response);
-        }
+        filterChain.doFilter(request, response);
     }
 }
