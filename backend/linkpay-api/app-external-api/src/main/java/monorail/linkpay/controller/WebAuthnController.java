@@ -43,14 +43,12 @@ public class WebAuthnController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    // 인증 챌린지 발급: 클라이언트가 인증 시작 전에 챌린지를 요청
     @GetMapping("/authenticate/challenge")
     public ResponseEntity<WebAuthnChallengeResponse> getAuthChallenge(@AuthenticationPrincipal final AuthPrincipal principal) {
         var response = webAuthnService.getAuthChallenge(principal.memberId());
         return ResponseEntity.ok(response);
     }
 
-    // 인증 수행: 클라이언트가 WebAuthn 데이터를 보내면 검증
     @PostMapping("/authenticate")
     public ResponseEntity<WebAuthnResponse> authenticate(@AuthenticationPrincipal final AuthPrincipal principal,
                                                          @Valid @RequestBody final WebAuthnRequest request) {

@@ -65,36 +65,25 @@ public class WebAuthnService {
 
         byte[] authData = (byte[]) attestationMap.get("authData");
 
-        if (authData.length < 37) { // 최소 길이 체크: 32(RP ID 해시)+1(플래그)+4(서명 카운트)
+        if (authData.length < 37) {
             throw new IllegalArgumentException("authData 길이가 너무 짧습니다.");
         }
 
         int flags = authData[32] & 0xFF;
-        // AT(Attested Credential Data) 플래그가 설정되어 있는지 확인 (0x40)
         boolean hasAttestedCredentialData = (flags & 0x40) != 0;
         if (!hasAttestedCredentialData) {
             throw new LinkPayException(ExceptionCode.INVALID_REQUEST, "Attested Credential Data가 authData에 존재하지 않습니다.");
         }
 
         int offset = 37;
-        // AAGUID: 16바이트
         offset += 16;
-
-        // Credential ID 길이: 2바이트 (빅 엔디언)
         int credIdLen = ((authData[offset] & 0xFF) << 8) | (authData[offset + 1] & 0xFF);
         offset += 2;
-
-        // Credential ID: credIdLen 바이트 (이미 등록 요청으로 전달된 credentialId와 일치하는지 확인할 수 있음)
         byte[] credentialIdBytes = Arrays.copyOfRange(authData, offset, offset + credIdLen);
         offset += credIdLen;
 
-        // 나머지 바이트가 credentialPublicKey (COSE 형식의 CBOR 데이터)
         byte[] publicKeyBytes = Arrays.copyOfRange(authData, offset, authData.length);
-
-        //추출한 credentialPublicKey 전체를 base64로 인코딩하여 저장
         String publicKeyBase64 = Base64.getEncoder().encodeToString(publicKeyBytes);
-
-        // 저장
         credentialRepository.save(WebAuthnCredential.builder()
                 .credentialId(credentialId)
                 .memberId(memberId)
@@ -118,27 +107,25 @@ public class WebAuthnService {
     @Transactional
     public WebAuthnResponse verifyAuthentication(Long memberId, String credentialId, String clientDataJSON, String authenticatorData, String signature) {
         try {
-            //credentialId  정보 조회
             WebAuthnCredential credential = credentialFetcher.fetchByMemberId(memberId);
             if (credential == null) {
-                //등록되지 않은 사용자
                 throw new RuntimeException("credential not found.");
             }
 
-            // 2. credentialId 검증
+
             if (!credential.getCredentialId().equals(credentialId)) {
-                //이거 뭐던져야 하지
+
                 throw new RuntimeException("credential id mismatch.");
             }
 
-            // 3. 클라이언트 데이터 파싱
+
             byte[] clientDataJSONBytes = Base64.getDecoder().decode(clientDataJSON);
             String clientDataJSONString = new String(clientDataJSONBytes, StandardCharsets.UTF_8);
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> clientData = mapper.readValue(clientDataJSONString, Map.class);
 
             Optional<AuthnChallenge> authnChallengeOpt = authnChallengeRepository.findByMemberId(memberId);
-            // 4. 챌린지 검증
+
             String challengeFromClient = (String) clientData.get("challenge");
             if(authnChallengeOpt.isPresent()) {
                 String storedChallenge = authnChallengeOpt.get().getChallenge();
@@ -151,14 +138,12 @@ public class WebAuthnService {
 
 
 
-            // 5. 인증 데이터 검증
+
             byte[] authDataBytes = Base64.getDecoder().decode(authenticatorData);
             byte[] signatureBytes = Base64.getDecoder().decode(signature);
-            log.info("signatureBytes: {}", signatureBytes.toString());
-            // 6. 공개키 복원
             byte[] publicKeyBytes = Base64.getDecoder().decode(credential.getPublicKey());
 
-            // COSE 형식의 공개키를 Java 공개키 형태로 변환
+
             CBORFactory cborFactory = new CBORFactory();
             ObjectMapper cborMapper = new ObjectMapper(cborFactory);
             @SuppressWarnings("unchecked")
@@ -175,16 +160,12 @@ public class WebAuthnService {
             System.arraycopy(clientDataHash, 0, signedData, authDataBytes.length, clientDataHash.length);
 
 
-            // 서명 알고리즘 결정 (COSE 키 타입에 따라 달라짐)
+
             String algorithm = determineAlgorithmFromCOSEKey(coseKey);
 
             Signature signatureVerifier = Signature.getInstance(algorithm);
             signatureVerifier.initVerify(publicKey);
             signatureVerifier.update(signedData);
-
-            log.info("AuthenticatorData: {}", Arrays.toString(authDataBytes));
-            log.info("ClientDataHash: {}", Arrays.toString(clientDataHash));
-            log.info("SignedData: {}", Arrays.toString(signedData));
 
             if(signatureVerifier.verify(signatureBytes)){
                 return new WebAuthnResponse(paymentTokenProvider.generateFor(memberId));
@@ -209,31 +190,29 @@ public class WebAuthnService {
         for (Object key : coseKey.keySet()) {
             log.info("COSE Key: {} | Type: {}", key, key.getClass().getName());
         }
-        // COSE 키 타입 확인
-        int kty = ((Number) coseKey.get("1")).intValue(); // 1: kty (Key Type)
 
-        if (kty == 2) { // 2: EC2 (Elliptic Curve)
-            // 타원 곡선 파라미터 추출
-            int crv = ((Number) coseKey.get("-1")).intValue(); // -1: crv (Curve)
-            byte[] x = (byte[]) coseKey.get("-2"); // -2: x-coordinate
-            byte[] y = (byte[]) coseKey.get("-3"); // -3: y-coordinate
+        int kty = ((Number) coseKey.get("1")).intValue();
+
+        if (kty == 2) {
+            int crv = ((Number) coseKey.get("-1")).intValue();
+            byte[] x = (byte[]) coseKey.get("-2");
+            byte[] y = (byte[]) coseKey.get("-3");
 
             String curveName;
             switch (crv) {
                 case 1:
-                    curveName = "secp256r1"; // P-256
+                    curveName = "secp256r1";
                     break;
                 case 2:
-                    curveName = "secp384r1"; // P-384
+                    curveName = "secp384r1";
                     break;
                 case 3:
-                    curveName = "secp521r1"; // P-521
+                    curveName = "secp521r1";
                     break;
                 default:
                     throw new IllegalArgumentException("지원되지 않는 곡선 타입: " + crv);
             }
 
-            // 타원 곡선 공개키 생성
             AlgorithmParameters parameters = AlgorithmParameters.getInstance("EC");
             parameters.init(new ECGenParameterSpec(curveName));
             ECParameterSpec ecParameters = parameters.getParameterSpec(ECParameterSpec.class);
@@ -245,12 +224,9 @@ public class WebAuthnService {
 
 
             return keyFactory.generatePublic(keySpec);
-        } else if (kty == 3) { // 3: RSA
-            // RSA 키 파라미터 추출
-            byte[] n = (byte[]) coseKey.get("-1"); // -1: n (Modulus)
-            byte[] e = (byte[]) coseKey.get("-2"); // -2: e (Exponent)
-
-            // RSA 공개키 생성
+        } else if (kty == 3) {
+            byte[] n = (byte[]) coseKey.get("-1");
+            byte[] e = (byte[]) coseKey.get("-2");
             RSAPublicKeySpec keySpec = new RSAPublicKeySpec(new BigInteger(1, n), new BigInteger(1, e));
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(keySpec);
@@ -259,26 +235,25 @@ public class WebAuthnService {
         }
     }
 
-    // COSE 키에 따른 서명 알고리즘 결정
     private String determineAlgorithmFromCOSEKey(Map<?, Object> coseKey) {
-        int kty = ((Number) coseKey.get("1")).intValue(); // 1: kty (Key Type)
+        int kty = ((Number) coseKey.get("1")).intValue();
 
-        if (kty == 2) { // 2: EC2 (Elliptic Curve)
-            int alg = ((Number) coseKey.get("3")).intValue(); // 3: alg (Algorithm)
+        if (kty == 2) {
+            int alg = ((Number) coseKey.get("3")).intValue();
             switch (alg) {
-                case -7:  // ES256
+                case -7:
                     return "SHA256withECDSA";
-                case -35: // ES384
+                case -35:
                     return "SHA384withECDSA";
-                case -36: // ES512
+                case -36:
                     return "SHA512withECDSA";
                 default:
-                    return "SHA256withECDSA"; // 기본값
+                    return "SHA256withECDSA";
             }
-        } else if (kty == 3) { // 3: RSA
+        } else if (kty == 3) {
             return "SHA256withRSA";
         } else {
-            return "SHA256withECDSA"; // 기본값
+            return "SHA256withECDSA";
         }
     }
 }
