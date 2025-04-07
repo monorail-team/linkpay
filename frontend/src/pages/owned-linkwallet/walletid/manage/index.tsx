@@ -46,10 +46,12 @@ const ManageLinkWalletPage: React.FC = () => {
         const membersData = response.data.linkedMembers;
         const myMemberEmail = sessionStorage.getItem('memberEmail');
         const filteredMembers = membersData
-        .filter((member: Member & { linkedMemberId?: string }) => member.email !== myMemberEmail)
-        .map((member: Member & { linkedMemberId?: string }) => ({
+        .filter((member: Member & { linkedMemberId?: string } & { name?: string }) => member.email !== myMemberEmail)
+        .map((member: Member & { linkedMemberId?: string } & { name?: string }) => ({
           ...member,
           memberId: member.memberId || member.linkedMemberId,
+          username: member.username || member.name,
+          email: member.email,
         }));
         console.log('filteredMembers', filteredMembers);
         setSelectedMembers(filteredMembers);
@@ -108,7 +110,7 @@ const ManageLinkWalletPage: React.FC = () => {
           }
         );
       }
-      
+
       for (const member of membersToAdd) {
         await axios.post(
           `${base_url}/api/linked-wallets/${walletId}/members`,
