@@ -1,5 +1,6 @@
 package monorail.linkpay.controller;
 
+import jakarta.servlet.http.HttpSession;
 import monorail.linkpay.controller.request.WebAuthnRegisterRequest;
 import monorail.linkpay.controller.request.WebAuthnRequest;
 import monorail.linkpay.webauthn.dto.WebAuthnChallengeResponse;
@@ -8,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -64,7 +64,7 @@ public class WebAuthnControllerTest extends ControllerTest {
 
     @Test
     void 지문_인증을_수행한다() {
-        when(webAuthnService.verifyAuthentication(anyLong(), anyString(), anyString(), anyString()))
+        when(webAuthnService.verifyAuthentication(anyLong(), anyString(), anyString(), anyString(),anyString()))
                 .thenReturn(WebAuthnResponse.builder().paymentToken("{paymentToken}").build());
 
         docsGiven
@@ -74,6 +74,7 @@ public class WebAuthnControllerTest extends ControllerTest {
                         .credentialId("{credentialId}")
                         .authenticatorData("{authenticatorData}")
                         .clientDataJSON("{clientDataJSON}")
+                        .signature("{signature}")
                         .build())
                 .when().post("/api/webauthn/authenticate")
                 .then().log().all()

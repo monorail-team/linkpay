@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
-import Icon from '@/components/Icon';
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import "react-day-picker/style.css";
 import { useThemeStore } from '@/store/themeStore';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { MdOutlineCancel } from "react-icons/md";
+import { FaRegCalendar } from "react-icons/fa6";
+
+
 const CreateCardPage: React.FC = () => {
   const [cardName, setCardName] = useState('');
   const [cardLimit, setCardLimit] = useState('');
@@ -19,6 +22,10 @@ const CreateCardPage: React.FC = () => {
   const { theme } = useThemeStore();
 
   const base_url = process.env.REACT_APP_API_URL;
+    const CancelIcon = MdOutlineCancel as unknown as (props: React.ComponentProps<'svg'>) => JSX.Element;
+    const CalendarIcon = FaRegCalendar as unknown as (props: React.ComponentProps<'svg'>) => JSX.Element;
+  
+  
   
   // 달력 선택 함수수
   const handleDateSelect = (date: string) => {
@@ -71,8 +78,8 @@ const CreateCardPage: React.FC = () => {
   const defaultClassNames = getDefaultClassNames();
 
   return (
-    <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-black">
-      <Header headerType="menu" onBackClick={() => console.log('뒤로가기')} />
+    <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-[#3b3838]">
+      <Header headerType="back" onBackClick={() => navigate("/mywallet")} />
       <div className="p-4 flex-1 space-y-8 mx-4 overflow-auto"> 
         {/* 카드 이름 입력 */}
         <div>
@@ -83,20 +90,21 @@ const CreateCardPage: React.FC = () => {
                 placeholder="카드 이름을 입력하세요."
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
-                className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-white"
+                className="text-[20px] w-full py-1  pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-[#3b3838] dark:text-white dark:placeholder-[#ccc]"
+                style={{borderBottom:"1px solid #ccc", borderBottomColor:theme==="dark"?"#333":"#ccc"}}
               />
               {cardName && (
                 <button 
                   onClick={handleClearCardName}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
                 > 
-                  <Icon name={theme === 'dark' ? "canceltextDarkIcon" : "canceltextIcon"} width={24} height={24} alt="입력취소" />
+                <CancelIcon style={{width:"24px", height:"24px"}}/>
                 </button>
               )}
-            </div>
           {cardName.length > 10 && (
-            <p className="mt-1 text-red-500 text-xs">카드 이름은 10자 내로 입력해 주세요.</p>
+            <p className=" absolute text-red-500 text-xs">카드 이름은 10자 내로 입력해 주세요.</p>
           )}
+            </div>
         </div>
 
         {/* 카드 한도 입력 */}
@@ -119,7 +127,8 @@ const CreateCardPage: React.FC = () => {
                       // 숫자를 콤마가 찍힌 문자열로 변환
                       setCardLimit(num.toLocaleString());
                   }}
-                  className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-white"
+                  className="text-[20px] w-full py-1 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-[#3b3838] dark:text-white dark:placeholder-[#ccc] "
+                   style={{borderBottom:"1px solid #ccc", borderBottomColor:theme==="dark"?"#333":"#ccc"}}
                   />
                   {cardLimit && (
                     <button 
@@ -127,7 +136,7 @@ const CreateCardPage: React.FC = () => {
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
                     >
                       
-                      <Icon name={theme === 'dark' ? "canceltextDarkIcon" : "canceltextIcon"} width={24} height={24} alt="입력취소" />
+                     <CancelIcon style={{width:"24px", height:"24px"}}/>
                     </button>
                   )}
               </div>
@@ -144,15 +153,16 @@ const CreateCardPage: React.FC = () => {
                   placeholder="만료일을 선택하세요."
                   value={expireDate}
                   readOnly
-                  className="w-full py-2 pl-0 pr-10 border-b border-gray-300 focus:outline-none focus:ring-0 cursor-pointer dark:bg-black dark:text-white dark:placeholder-white"
+                  className="text-[20px] w-full py-1 pl-0 pr-10 border-b border-gray-300 focus:outline-none focus:ring-0 cursor-pointer dark:bg-[#3b3838] dark:text-white dark:placeholder-[#ccc]"
                   onClick={toggleCalendar}
+                   style={{borderBottom:"1px solid #ccc", borderBottomColor:theme==="dark"?"#333":"#ccc"}}
                 />
                 <button 
                   onClick={toggleCalendar}
-                  className="absolute right-0 text-gray-500"
+                  className="absolute right-2 -translate-y-1/2  text-gray-500"
                   style={{ anchorName: "--rdp" } as React.CSSProperties}
                 >
-                  <Icon name={theme === 'dark' ? 'calendarDarkIcon' : 'calandarIcon'} width={24} height={24} alt="달력 아이콘" />
+                  <CalendarIcon style={{width:"24px", height:"24px"}}/>
                 </button>
               </div>
         

@@ -114,11 +114,11 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className='dark:bg-[#3b3838] overflow-hidden'>
+    <div className='dark:bg-[#3b3838] overflow-hidden h-screen w-full'>
     <Header headerType="menu" onMenuClick={handleMenuClick} />
       {showMenu && <MenuModal onClose={handleMenuClose} />}
 
-    <div className="relative w-4/5 max:w-[456px] mx-auto  mt-20 rounded-lg">
+    <div className="relative w-4/5 max:w-[456px] mx-auto  mt-10 rounded-lg">
       <div className='p-4 
             bg-white dark:bg-[#5a5757]
             border border-gray-200 dark:border-gray-600
@@ -149,11 +149,11 @@ const Home: React.FC = () => {
             </div>
           </div>
             {/* Link Pay 문구 */}
-            <div className="text-center text-lg text-gray-300 font-bold mt-3">Link Pay</div>
+            <div className="text-center text-lg text-[#969292] font-bold mt-3">{currentIndex !== cards.length?"Link Card":"링크카드 등록"}</div>
 
             {/* my link 섹션 */}
-            <div className="flex flex-col flex-1 items-center justify-center mt-10 min-h-[80px]">
-              {walletInfo?.amount !== undefined ?(
+            <div className="flex flex-col flex-1 items-center justify-center min-h-[80px]">
+              {walletInfo?.amount !== undefined && currentIndex !== cards.length?(
                 <div className="text-2xl font-medium mb-2 text-center dark:text-white">
                   지갑 잔액 {walletInfo.amount.toLocaleString()} 원
                 </div>
@@ -168,7 +168,7 @@ const Home: React.FC = () => {
       
 
       {/* 지문 아이콘 및 결제 문구 */}
-      <footer className="flex flex-col items-center p-4 mt-10 min-h-[120px]">
+      <footer className="absolute  flex flex-col text-center items-center bottom-[30px] left-[50%] -translate-x-[50%] w-full">
         <button
           onClick={onFingerprintClick}
           disabled={loading}
@@ -176,13 +176,13 @@ const Home: React.FC = () => {
         >
           <Icon
             name={theme === 'dark' ? 'fingerprintDarkIcon' : 'fingerprintIcon'}
-            width={78}
-            height={78}
+            width={68}
+            height={68}
             alt="지문 인증"
           />
         </button>
         {loading && <p className="mt-4 text-white">처리중...</p>}
-        <p className="mt-2 text-black dark:text-white">지문 버튼을 눌러 결제를 진행하세요.</p>
+        <p className="mt-3 text-black dark:text-[#ccc] text-[17px]">지문 버튼을 눌러 결제를 진행하세요.</p>
       </footer>
     </div>
   );

@@ -22,7 +22,7 @@ public class StoreTransactionAcceptanceTest extends AcceptanceTest {
     Stream<DynamicTest> 거래정보_생성_및_결제_성공_시나리오() {
         String accessToken = 엑세스_토큰();
         var storeUrl = new ThreadLocal<String>();
-        var transaction = new ThreadLocal<TransactionResponse>();
+        var transactionFlat = new ThreadLocal<String>();
 
         return Stream.of(
                 dynamicTest("가게를 생성한다.", () -> {
@@ -39,10 +39,10 @@ public class StoreTransactionAcceptanceTest extends AcceptanceTest {
                     var response = 거래정보_생성_요청(accessToken, storeUrl.get(), request);
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-                    var transactionResponse = response.as(TransactionResponse.class);
-                    assertThat(transactionResponse).isNotNull();
+                    var transactionResponseFlat = response.as(TransactionResponse.Flat.class);
+                    assertThat(transactionResponseFlat).isNotNull();
 
-                    transaction.set(transactionResponse);
+                    transactionFlat.set(transactionResponseFlat.data());
                 }),
                 dynamicTest("결제자가 거래에 대한 결제를 요청하면 결제가 완료된다.", () -> {
                     // todo
