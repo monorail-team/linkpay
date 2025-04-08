@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import CardComponent from '@/components/Card';
 import ButtonModal from '@/modal/ButtonModal';
+import CardHistoryModal from '@/modal/CardHistoryModal';
 import axios from 'axios';
 import { Card } from '@/model/Card';
 import { CardHistory } from '@/model/CardHistory';
@@ -24,6 +25,9 @@ const CardDetailPage: React.FC = () => {
   const [lastId, setLastId] = useState<string | null>(null); 
   const [hasNext, setHasNext] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [selectedHistory, setSelectedHistory] = useState<CardHistory | null>(null);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -109,6 +113,11 @@ const CardDetailPage: React.FC = () => {
     }
   };
 
+  const handleHistoryClick = (history: CardHistory) => {
+    setSelectedHistory(history);
+    setShowHistoryModal(true);
+  };
+
   return (
     <div className="w-full h-screen max-w-md mx-auto dark:bg-[#3b3838] flex flex-col">
         {/* 헤더: menu 타입 */}
@@ -150,6 +159,7 @@ const CardDetailPage: React.FC = () => {
                     <li
                         key={index}
                         className="border-b flex justify-between items-center text-lg border-gray-300 dark:border-[#515151] dark:bg-[#3b3838]"
+                        onClick={() => handleHistoryClick(item)}
                     >
                         {/* 왼쪽: 사용처 + 날짜 (아래에 작게) */}
                         <div className="flex flex-col">
@@ -185,6 +195,12 @@ const CardDetailPage: React.FC = () => {
                 </h3>
            </ButtonModal>
         )}
+         {/* 거래 내역 상세 모달 */}
+        <CardHistoryModal
+          isOpen={showHistoryModal}
+          onClose={() => setShowHistoryModal(false)}
+          historyData={selectedHistory}
+        />
     </div>
   );
 };
