@@ -190,7 +190,12 @@ const CreateSharedCardPage: React.FC = () => {
           </div>
 
           {isCalendarOpen && (
-            <div>
+            <div className="bg-white dark:bg-dark" style={{
+                position: 'absolute',
+                top: '100%', // 입력 필드 바로 아래에 나타나게 함
+                right: 0,
+                zIndex: 100, // 다른 요소 위에 표시할 수 있도록 충분히 높은 값
+              }}>
               <DayPicker
                 mode="single"
                 selected={expireDate ? new Date(expireDate) : undefined}
