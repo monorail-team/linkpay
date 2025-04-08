@@ -1,5 +1,5 @@
 export interface Wallet {
-    id: number;
+    id: string;
     type: 'OWNED' | 'SHARED';
     remainingPoints: number;
 }
