@@ -15,6 +15,6 @@ public class AuthnChallengeFetcher {
 
     public AuthnChallenge fetchByMemberId(Long memberId) {
         return repository.findByMemberId(memberId)
-                .orElseThrow(()->new LinkPayException(ExceptionCode.WEBAUTHN_NOT_REGISTERED, "등록되지 챌린지"));
+                .orElseThrow(()->new LinkPayException(ExceptionCode.WEBAUTHN_NOT_REGISTERED, "등록되지않은 챌린지"));
     }
 }
