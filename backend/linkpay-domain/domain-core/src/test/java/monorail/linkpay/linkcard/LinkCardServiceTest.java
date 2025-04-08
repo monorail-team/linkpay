@@ -62,12 +62,12 @@ public class LinkCardServiceTest extends IntegrationTest {
         memberRepository.saveAll(List.of(member1));
         linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
         LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
-        linkedMemberRepository.saveAll(List.of(
+        List<LinkedMember> linkedMembers = linkedMemberRepository.saveAll(List.of(
                 createLinkedMember(CREATOR, member, linkedWallet),
                 createLinkedMember(PARTICIPANT, member1, linkedWallet)));
         SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
                 linkedWallet.getId().toString(),
-                List.of(member.getId().toString(), member1.getId().toString()));
+                List.of(linkedMembers.get(0).getId().toString(), linkedMembers.get(1).getId().toString()));
 
         // when
         linkCardService.createShared(request, member.getId());
@@ -84,13 +84,13 @@ public class LinkCardServiceTest extends IntegrationTest {
         memberRepository.saveAll(List.of(member1));
         linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
         LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
-        linkedMemberRepository.saveAll(List.of(
+        List<LinkedMember> linkedMembers = linkedMemberRepository.saveAll(List.of(
                 createLinkedMember(CREATOR, member, linkedWallet),
                 createLinkedMember(PARTICIPANT, member1, linkedWallet)));
 
         SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
                 linkedWallet.getId().toString(),
-                List.of(member.getId().toString(), member1.getId().toString()));
+                List.of(linkedMembers.get(0).getId().toString(), linkedMembers.get(1).getId().toString()));
 
         // when // then
         assertThatThrownBy(() -> linkCardService.createShared(request, member1.getId())).isInstanceOf(
@@ -101,17 +101,23 @@ public class LinkCardServiceTest extends IntegrationTest {
     @Test
     void 링크지갑_참여자가_아닌사람에게_카드생성_시도시_오류가_발생한다() {
         // given
-        Member member1 = createMember("test@email.com", "u1");
-        Member member2 = createMember("test@email.com", "u1");
-        memberRepository.saveAll(List.of(member1));
-        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑").build());
-        LinkedWallet linkedWallet = linkedWalletRepository.findById(1L).orElseThrow();
-        linkedMemberRepository.saveAll(List.of(
-                createLinkedMember(CREATOR, member, linkedWallet),
-                createLinkedMember(PARTICIPANT, member1, linkedWallet)));
+        Member member1 = createMember("test1@email.com", "u1");
+        Member member2 = createMember("test2@email.com", "u1");
+        memberRepository.saveAll(List.of(member1, member2));
+        linkedWalletRepository.save(LinkedWallet.builder().id(1L).name("링크지갑1").build());
+        linkedWalletRepository.save(LinkedWallet.builder().id(2L).name("링크지갑2").build());
+        LinkedWallet linkedWallet1 = linkedWalletRepository.findById(1L).orElseThrow();
+        LinkedWallet linkedWallet2 = linkedWalletRepository.findById(2L).orElseThrow();
+        List<LinkedMember> linkedMembers1 = linkedMemberRepository.saveAll(List.of(
+                createLinkedMember(CREATOR, member, linkedWallet1),
+                createLinkedMember(PARTICIPANT, member1, linkedWallet1)));
+        List<LinkedMember> linkedMembers2 = linkedMemberRepository.saveAll(List.of(
+                createLinkedMember(CREATOR, member, linkedWallet2),
+                createLinkedMember(PARTICIPANT, member2, linkedWallet2)));
+
         SharedLinkCardCreateServiceRequest request = createSharedCards(LocalDate.now().plusDays(1),
-                linkedWallet.getId().toString(),
-                List.of(member.getId().toString(), member2.getId().toString()));
+                linkedWallet1.getId().toString(),
+                List.of(linkedMembers2.get(0).getId().toString(), linkedMembers2.get(1).getId().toString()));
 
         // when // then
         assertThatThrownBy(() -> linkCardService.createShared(request, member.getId())).isInstanceOf(
@@ -425,12 +431,12 @@ public class LinkCardServiceTest extends IntegrationTest {
     }
 
     private static SharedLinkCardCreateServiceRequest createSharedCards(final LocalDate date, final String walletId,
-                                                                        final List<String> memberIds) {
+                                                                        final List<String> linkedMemberIds) {
         return SharedLinkCardCreateServiceRequest.builder()
                 .cardName("test card")
                 .expiredAt(date)
                 .limitPrice(new Point(500000))
-                .memberIds(memberIds)
+                .linkedMemberIds(linkedMemberIds)
                 .linkedWalletId(walletId)
                 .build();
     }

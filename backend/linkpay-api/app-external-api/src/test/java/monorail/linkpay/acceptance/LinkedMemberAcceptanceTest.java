@@ -51,7 +51,7 @@ public class LinkedMemberAcceptanceTest extends AcceptanceTest {
 
                 dynamicTest("링크지갑 참여자를 삭제한다", () -> {
                     String linkedMemberId = 링크지갑_참여자_조회_요청(accessToken, linkedWalletId).as(LinkedMembersResponse.class)
-                            .linkedMembers().getLast().linkedMemberId();
+                            .linkedMembers().getFirst().linkedMemberId();
 
                     ExtractableResponse<Response> response = 링크지갑_참여자_삭제_요청(
                             accessToken, linkedWalletId, Long.parseLong(linkedMemberId));
@@ -71,8 +71,8 @@ public class LinkedMemberAcceptanceTest extends AcceptanceTest {
                     LinkedMembersResponse linkedMembersResponse = 링크지갑_참여자_조회_요청(accessToken, linkedWalletId).as(
                             LinkedMembersResponse.class);
                     ExtractableResponse<Response> response = 링크지갑_참여자들_삭제_요청(accessToken, linkedWalletId,
-                            Set.of(Long.parseLong(linkedMembersResponse.linkedMembers().get(1).linkedMemberId()),
-                                    Long.parseLong(linkedMembersResponse.linkedMembers().get(2).linkedMemberId())));
+                            Set.of(Long.parseLong(linkedMembersResponse.linkedMembers().get(0).linkedMemberId()),
+                                    Long.parseLong(linkedMembersResponse.linkedMembers().get(1).linkedMemberId())));
 
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
                 }),
@@ -94,7 +94,7 @@ public class LinkedMemberAcceptanceTest extends AcceptanceTest {
                 accessToken, linkedMemberCreateRequest);
     }
 
-    private ExtractableResponse<Response> 링크지갑_참여자_조회_요청(final String accessToken, final Long linkedWalletId) {
+    public static ExtractableResponse<Response> 링크지갑_참여자_조회_요청(final String accessToken, final Long linkedWalletId) {
         return sendGetRequest("/api/linked-wallets/%s/members".formatted(linkedWalletId), accessToken);
     }
 

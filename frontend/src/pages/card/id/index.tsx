@@ -38,7 +38,13 @@ const CardDetailPage: React.FC = () => {
         const token = sessionStorage.getItem('accessToken');
         if (!token) return;
         setIsLoading(true);
-        const url = `${base_url}/api/cards/card-histories/${id}?lastId=${lastIdParam}&size=10`;
+        const params = new URLSearchParams();
+        params.append('size', '10');
+        if (lastIdParam !== null) {
+          params.append('lastId', lastIdParam);
+        }
+
+        const url = `${base_url}/api/cards/card-histories/${id}?${params.toString()}`;
         const response = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -46,8 +52,8 @@ const CardDetailPage: React.FC = () => {
         setCardHistory((prev) => (lastIdParam ? [...prev, ...newHistories] : newHistories));
         setHasNext(response.data.hasNext);
         if (newHistories.length > 0) {
-          //const lastHistory = newHistories[newHistories.length - 1];
-          //setLastId(lastHistory.HistoryId);
+          const lastHistory = newHistories[newHistories.length - 1];
+          setLastId(lastHistory.paymentId); // 마지막 카드 내역의 paymentId를 lastId로 설정
         }
       } catch (error) {
         console.error('카드 내역을 불러오는 중 오류 발생', error);
@@ -173,7 +179,7 @@ const CardDetailPage: React.FC = () => {
                     ))}
                 </ul>
                 ) : (
-                <p className="text-white mt-4 mx-4">사용 내역이 없습니다.</p>
+                <p className="text-black dark:text-white mt-4 mx-4">사용 내역이 없습니다.</p>
                 )}
         </div>
 
