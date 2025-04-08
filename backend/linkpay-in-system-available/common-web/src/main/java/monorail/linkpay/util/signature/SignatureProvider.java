@@ -17,8 +17,8 @@ import java.util.Base64;
 @SupportLayer
 public class SignatureProvider {
 
-    private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
-    private static final String KEY_ALGORITHM = "RSA";
+    private static final String SIGNATURE_ALGORITHM = "Ed25519";
+    private static final String KEY_ALGORITHM = "Ed25519";
 
     public String sign(final Object data, final String base64PrivateKey) {
         try {
