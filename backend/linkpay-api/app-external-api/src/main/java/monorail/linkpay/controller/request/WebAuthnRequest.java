@@ -12,7 +12,8 @@ public record WebAuthnRequest(
         String clientDataJSON,
 
         @NotBlank(message = "authenticatorData 값을 입력해주세요.")
-        String authenticatorData
+        String authenticatorData,
 
-
+        @NotBlank(message = "signature 값을 입력해주세요.")
+        String signature
 ) {}

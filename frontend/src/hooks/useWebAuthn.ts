@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 const base_url = process.env.REACT_APP_API_URL;
-interface ParsedAssertionResult {
+interface AuthChallengeResponse {
+  challenge: string;
   credentialId: string;
-  clientDataJSON: string;
-  authenticatorData: string;
-  signature: string;
 }
+
 /* 
     문자열을 Uint8Array로 변환하는 유틸 함수
     WebAuthn API 스펙상 challenge 필드는 반드시 바이너리 데이터(ArrayBuffer 또는 이를 래핑한 Uint8Array)여야 함함
@@ -29,7 +28,7 @@ function base64UrlToUint8Array(base64UrlString: string): Uint8Array {
 }
 
 interface WebAuthnHook {
-  handleWebAuthn: () => Promise<ParsedAssertionResult  | null>;
+  handleWebAuthn: () => Promise<string  | null>;
   loading: boolean;
 }
 
@@ -55,64 +54,85 @@ const useWebAuthn = (): WebAuthnHook => {
   };
 
   //  WebAuthn 인증을 수행하고 assertionResult을 반환하는 함수
-  const performAuthentication = async (): Promise<ParsedAssertionResult | null> => {
+  const performAuthentication = async (): Promise<string | null> => {
+    try{
+      // 1. 인증용 Challenge 요청
+      const authChallengeRes = await axios.get(`${base_url}/api/webauthn/authenticate/challenge`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const authChallenge = authChallengeRes.data.challenge;
+      const credentialId = authChallengeRes.data.credentialId;
 
-    // 1. 인증용 Challenge 요청
+      // 2. authenticationOptions 구성
+      const publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptions = {
+        challenge: base64UrlToUint8Array(authChallenge),
+        allowCredentials: [
+          {
+            id: base64UrlToUint8Array(credentialId),
+            type: "public-key",
+          },
+        ],
+        timeout: 60000,
+        userVerification: "required",
+      };
 
-    const authChallengeRes = await axios.get(`${base_url}/api/webauthn/auth-challenge`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const authChallenge = authChallengeRes.data.challenge;
-    const credentialId = authChallengeRes.data.credentialId;
+      // 3. Credential을 이용한 인증 (서명 생성)
+      const assertionResult = await navigator.credentials.get({
+        publicKey: publicKeyCredentialRequestOptions,
+      }) as PublicKeyCredential;
 
-    // 2. authenticationOptions 구성
-    const publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptions = {
-      challenge: base64UrlToUint8Array(authChallenge),
-      allowCredentials: [
-        {
-          id: base64UrlToUint8Array(credentialId),
-          type: "public-key",
-        },
-      ],
-      timeout: 60000,
-      userVerification: "required",
-    };
+      if (!assertionResult) {
+        throw new Error("인증 실패");
+      }
 
-    // 3. Credential을 이용한 인증 (서명 생성)
-    const assertionResult = await navigator.credentials.get({
-      publicKey: publicKeyCredentialRequestOptions,
-    }) as PublicKeyCredential;
+      const response = assertionResult.response as AuthenticatorAssertionResponse;
+      const clientDataJSON = arrayBufferToBase64(response.clientDataJSON);
+      const authenticatorData = arrayBufferToBase64(response.authenticatorData);
+      const signature = arrayBufferToBase64(response.signature);
 
-    if (!assertionResult) {
-      throw new Error("인증 실패");
-    }
+      const verificationPayload = {
+        credentialId: assertionResult.id,
+        clientDataJSON,
+        authenticatorData,
+        signature,
+      };
 
-    const response = assertionResult.response as AuthenticatorAssertionResponse;
-    const clientDataJSON = arrayBufferToBase64(response.clientDataJSON);
-    const authenticatorData = arrayBufferToBase64(response.authenticatorData);
-    const signature = arrayBufferToBase64(response.signature);
-
-    return {
-      credentialId: assertionResult.id,
-      clientDataJSON,
-      authenticatorData,
-      signature,
+  
+      const verificationRes = await axios.post<string>(`${base_url}/api/webauthn/authenticate`, verificationPayload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log("인증 성공", verificationRes.data);
+      return verificationRes.data;
+    }catch (error) {
+      console.error("인증 에러", error);
+      return null;
     }
   };
 
   //전체 기능 function
-  const handleWebAuthn = async (): Promise<ParsedAssertionResult  | null> => {
+  const handleWebAuthn = async (): Promise<string  | null> => {
     setLoading(true);
+    let authChallengeRes: AxiosResponse<AuthChallengeResponse> | undefined;
     try {
-      // 1. 백엔드에 현재 사용자의 등록 여부 확인
-      const regStatusResponse = await axios.get(`${base_url}/api/webauthn/registration-status`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const isRegistered = regStatusResponse.data.registered;
+      let isRegistered = true;
+      
+
+      try {
+        authChallengeRes = await axios.get(`${base_url}/api/webauthn/authenticate/challenge`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response?.data.code === 4004) {
+          isRegistered = false;
+          console.log("등록된 인증기가 없습니다. 신규 등록이 필요합니다.");
+        } else {
+          throw error;
+        }
+      }
 
       if (!isRegistered) {
         // 신규 사용자 등록 플로우
-        const challengeRes = await axios.get(`${base_url}/api/webauthn/register-challenge`, {
+        const challengeRes = await axios.get(`${base_url}/api/webauthn/register/challenge`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         // 등록용 Challenge (Base64url 문자열)
