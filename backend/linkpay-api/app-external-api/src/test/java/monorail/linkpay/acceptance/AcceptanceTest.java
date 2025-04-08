@@ -1,6 +1,13 @@
 package monorail.linkpay.acceptance;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+
 import io.restassured.RestAssured;
+import java.time.LocalDate;
 import monorail.linkpay.auth.dto.KakaoUserResponse;
 import monorail.linkpay.auth.kakao.KakaoOauthClient;
 import monorail.linkpay.auth.kakao.dto.KakaoOauthResponse;
@@ -16,12 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.time.LocalDate;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 @Sql(value = {
         "/data/truncate.sql",
@@ -60,7 +61,7 @@ public abstract class AcceptanceTest {
     }
 
     // TODO: WebAuthn 로직 완성되면 실제 요청으로 대체
-    private void setUpPaymentTokenMock(){
+    private void setUpPaymentTokenMock() {
         when(mockPaymentTokenProvider.generateFor(anyLong()))
                 .thenReturn("mockPaymentToken");
         doNothing().when(mockPaymentTokenProvider)

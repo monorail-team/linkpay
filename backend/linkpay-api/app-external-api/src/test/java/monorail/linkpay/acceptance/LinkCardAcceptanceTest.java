@@ -1,37 +1,47 @@
 package monorail.linkpay.acceptance;
 
+import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
+import static monorail.linkpay.acceptance.LinkedMemberAcceptanceTest.링크지갑_참여자_조회_요청;
+import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_목록_조회_요청;
+import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_생성_요청;
+import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.포인트_충전_요청;
+import static monorail.linkpay.acceptance.PaymentAcceptanceTest.결제_요청;
+import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.가게_생성_요청;
+import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.거래정보_생성_요청;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendDeleteRequest;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendGetRequest;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPatchRequest;
+import static monorail.linkpay.acceptance.client.RestAssuredClient.sendPostRequest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import monorail.linkpay.controller.request.*;
-import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
-import monorail.linkpay.linkcard.dto.LinkCardHistoriesResponse;
-import monorail.linkpay.linkcard.dto.LinkCardsResponse;
-import monorail.linkpay.member.dto.MemberResponse;
-import monorail.linkpay.store.dto.TransactionResponse;
-import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestFactory;
-import org.springframework.http.HttpStatus;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
-
-import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
-import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_목록_조회_요청;
-import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_생성_요청;
-import static monorail.linkpay.acceptance.MemberAcceptanceTest.회원_조회_요청;
-import static monorail.linkpay.acceptance.MyWalletAcceptanceTest.포인트_충전_요청;
-import static monorail.linkpay.acceptance.PaymentAcceptanceTest.결제_요청;
-import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.가게_생성_요청;
-import static monorail.linkpay.acceptance.StoreTransactionAcceptanceTest.거래정보_생성_요청;
-import static monorail.linkpay.acceptance.client.RestAssuredClient.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+import monorail.linkpay.controller.request.LinkCardCreateRequest;
+import monorail.linkpay.controller.request.LinkCardRegistRequest;
+import monorail.linkpay.controller.request.LinkedWalletCreateRequest;
+import monorail.linkpay.controller.request.PaymentsRequest;
+import monorail.linkpay.controller.request.SharedLinkCardCreateRequest;
+import monorail.linkpay.controller.request.StoreCreateRequest;
+import monorail.linkpay.controller.request.StoreTransactionRequest;
+import monorail.linkpay.controller.request.WalletPointRequest;
+import monorail.linkpay.linkcard.dto.LinkCardDetailResponse;
+import monorail.linkpay.linkcard.dto.LinkCardHistoriesResponse;
+import monorail.linkpay.linkcard.dto.LinkCardsResponse;
+import monorail.linkpay.store.dto.TransactionResponse;
+import monorail.linkpay.wallet.dto.LinkedMemberResponse;
+import monorail.linkpay.wallet.dto.LinkedMembersResponse;
+import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
+import org.springframework.http.HttpStatus;
 
 public class LinkCardAcceptanceTest extends AcceptanceTest {
 
@@ -66,11 +76,15 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> walletResponse = 링크지갑_목록_조회_요청(accessToken, "CREATOR");
         LinkedWalletsResponse linkedWalletsResponse = walletResponse.as(LinkedWalletsResponse.class);
 
-        ExtractableResponse<Response> memberRes = 회원_조회_요청(accessToken, EMAIL);
-        MemberResponse memberResponse = memberRes.as(MemberResponse.class);
+        ExtractableResponse<Response> linkedMemberResponse = 링크지갑_참여자_조회_요청(accessToken,
+                Long.parseLong(linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId()));
+        List<String> linkedMemberIds = linkedMemberResponse.as(LinkedMembersResponse.class).linkedMembers()
+                .stream()
+                .map(LinkedMemberResponse::linkedMemberId)
+                .toList();
 
         SharedLinkCardCreateRequest sharedLinkCardCreateRequest = new SharedLinkCardCreateRequest(
-                "테스트카드", 500000, LocalDate.now().plusMonths(1), List.of(memberResponse.memberId(), "1"),
+                "테스트카드", 500000, LocalDate.now().plusMonths(1), linkedMemberIds,
                 linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId());
 
         ExtractableResponse<Response> response = 링크지갑에서_링크카드_생성_요청(accessToken, sharedLinkCardCreateRequest);
@@ -107,12 +121,16 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                     ExtractableResponse<Response> walletResponse = 링크지갑_목록_조회_요청(accessToken, "CREATOR");
                     LinkedWalletsResponse linkedWalletsResponse = walletResponse.as(LinkedWalletsResponse.class);
 
-                    ExtractableResponse<Response> memberRes = 회원_조회_요청(accessToken, EMAIL);
-                    MemberResponse memberResponse = memberRes.as(MemberResponse.class);
+                    ExtractableResponse<Response> linkedMemberResponse = 링크지갑_참여자_조회_요청(accessToken,
+                            Long.parseLong(linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId()));
+                    List<String> linkedMemberIds = linkedMemberResponse.as(LinkedMembersResponse.class).linkedMembers()
+                            .stream()
+                            .map(LinkedMemberResponse::linkedMemberId)
+                            .toList();
 
                     SharedLinkCardCreateRequest sharedLinkCardCreateRequest = new SharedLinkCardCreateRequest(
                             "테스트카드", 500000, LocalDate.now().plusMonths(1),
-                            List.of(memberResponse.memberId(), "1"),
+                            linkedMemberIds,
                             linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId());
 
                     링크지갑에서_링크카드_생성_요청(accessToken, sharedLinkCardCreateRequest);
@@ -153,7 +171,7 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                     ExtractableResponse<Response> cardRes = 링크카드_조회_요청(accessToken, "shared");
                     LinkCardsResponse linkCardsResponse = cardRes.as(LinkCardsResponse.class);
 
-                    assertThat(linkCardsResponse.linkCards()).hasSize(1);
+                    assertThat(linkCardsResponse.linkCards()).hasSize(3);
                 }),
 
                 dynamicTest("공유한 링크카드를 삭제한다", () -> {
@@ -167,7 +185,7 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                 dynamicTest("공유한 링크카드를 조회한다", () -> {
                     ExtractableResponse<Response> cardRes = 링크카드_조회_요청(accessToken, "shared");
                     LinkCardsResponse linkCardsResponse = cardRes.as(LinkCardsResponse.class);
-                    assertThat(linkCardsResponse.linkCards()).isEmpty();
+                    assertThat(linkCardsResponse.linkCards()).hasSize(2);
                 })
         );
     }
@@ -189,12 +207,16 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                     ExtractableResponse<Response> walletResponse = 링크지갑_목록_조회_요청(accessToken, "CREATOR");
                     LinkedWalletsResponse linkedWalletsResponse = walletResponse.as(LinkedWalletsResponse.class);
 
-                    ExtractableResponse<Response> memberRes = 회원_조회_요청(accessToken, EMAIL);
-                    MemberResponse memberResponse = memberRes.as(MemberResponse.class);
+                    ExtractableResponse<Response> linkedMemberResponse = 링크지갑_참여자_조회_요청(accessToken,
+                            Long.parseLong(linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId()));
+                    List<String> linkedMemberIds = linkedMemberResponse.as(LinkedMembersResponse.class).linkedMembers()
+                            .stream()
+                            .map(LinkedMemberResponse::linkedMemberId)
+                            .toList();
 
                     SharedLinkCardCreateRequest sharedLinkCardCreateRequest = new SharedLinkCardCreateRequest(
                             "테스트카드", 500000, LocalDate.now().plusMonths(1),
-                            List.of(memberResponse.memberId(), "1", "2", "3"),
+                            linkedMemberIds,
                             linkedWalletsResponse.linkedWallets().getFirst().linkedWalletId());
 
                     ExtractableResponse<Response> response = 링크지갑에서_링크카드_생성_요청(accessToken,
