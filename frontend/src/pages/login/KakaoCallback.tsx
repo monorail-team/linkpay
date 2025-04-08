@@ -27,6 +27,13 @@ const KakaoCallback: React.FC = () => {
         const { accessToken } = response.data;
         console.log('Access Token:', accessToken);
         sessionStorage.setItem('accessToken', accessToken);
+
+        const mypageResponse = await axios.get(`${base_url}/api/mypage`, {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+        });
+        const { email } = mypageResponse.data;
+        console.log('Member email:', email);
+        sessionStorage.setItem('memberEmail', email);
         navigate('/', { replace: true });
       } catch (error) {
         console.error('로그인 실패:', error);
