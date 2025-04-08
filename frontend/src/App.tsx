@@ -39,7 +39,7 @@ const App: React.FC = () => {
   useFcm();
 
   return (
-    <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto border">
+    <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto ">
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />

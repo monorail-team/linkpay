@@ -126,7 +126,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-screen md:w-[456px] md:h-[820px] mx-auto border flex flex-col dark:bg-[#3b3838]">
+    <div className="w-full h-screen md:w-[456px] md:h-[820px] mx-auto  flex flex-col dark:bg-[#3b3838]">
       {/* Header: 뒤로가기 모드 */}
       <Header headerType="back" onBackClick={handleBackClick} />
 

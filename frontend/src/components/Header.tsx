@@ -42,15 +42,15 @@ const Header: React.FC<HeaderProps> = ({
           {/* 다크모드 토글 버튼 */}
           <button
             onClick={toggleTheme}
-            className=" text-sm focus:outline-none p-2 border rounded dark:text-gray-300"
+            className=" text-sm focus:outline-none p-2  rounded dark:text-gray-300"
           >
             <Icon name="themeIcon" width={30} height={30} alt="다크 모드 토글" />
           </button>
           <button onClick={onMenuClick} className="text-lg focus:outline-none">
           <Icon
             name={theme === 'dark' ? 'menuDarkIcon' : 'menuIcon'}
-            width={40}
-            height={40}
+            width={30}
+            height={30}
             alt="메뉴"
           />
           </button>
