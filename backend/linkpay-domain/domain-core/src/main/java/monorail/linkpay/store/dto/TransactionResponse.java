@@ -2,6 +2,7 @@ package monorail.linkpay.store.dto;
 
 import lombok.Builder;
 import monorail.linkpay.payment.dto.TransactionInfo;
+import monorail.linkpay.util.encoder.FlatEncoder;
 
 @Builder
 public record TransactionResponse(
@@ -14,5 +15,12 @@ public record TransactionResponse(
                 .amount(txInfo.point().getAmount())
                 .transactionSignature(txInfo.signature())
                 .build();
+    }
+
+    public Flat flat() {
+        return new Flat(FlatEncoder.encode(this));
+    }
+
+    public record Flat(String data) {
     }
 }

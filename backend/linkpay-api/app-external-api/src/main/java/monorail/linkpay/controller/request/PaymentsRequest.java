@@ -1,31 +1,26 @@
 package monorail.linkpay.controller.request;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.payment.dto.TransactionInfo;
+import monorail.linkpay.store.dto.TransactionResponse;
+import monorail.linkpay.util.encoder.FlatEncoder;
 
 @Builder
 public record PaymentsRequest(
-
-        @Positive(message = "금액은 양수여야 합니다.")
-        long amount,
-        @NotNull
-        String linkCardId,
-        @NotNull
-        String storeId,
-        @NotNull
-        String transactionSignature,
-        @NotNull
-        String paymentToken
+        @NotNull String transactionFlat,
+        @NotNull String linkCardId,
+        @NotNull String paymentToken
 ) {
+
     public TransactionInfo txInfo() {
+        TransactionResponse decoded = FlatEncoder.decode(transactionFlat, TransactionResponse.class);
         return TransactionInfo.builder()
-                .storeId(Long.parseLong(storeId))
-                .point(new Point(amount))
-                .signature(transactionSignature)
+                .storeId(Long.parseLong(decoded.storeId()))
+                .point(new Point(decoded.amount()))
+                .signature(decoded.transactionSignature())
                 .build();
     }
 

@@ -18,9 +18,9 @@ public class StoreTransactionController {
 
     // todo 인증 및 인가
     @PostMapping
-    public ResponseEntity<TransactionResponse> create(@PathVariable(name = "storeId") final Long storeId,
+    public ResponseEntity<TransactionResponse.Flat> create(@PathVariable(name = "storeId") final Long storeId,
                                                       @RequestBody final StoreTransactionRequest request) {
         TransactionInfo txInfo = storeTransactionService.create(storeId, new Point(request.amount()));
-        return ResponseEntity.ok(TransactionResponse.from(txInfo));
+        return ResponseEntity.ok(TransactionResponse.from(txInfo).flat());
     }
 }
