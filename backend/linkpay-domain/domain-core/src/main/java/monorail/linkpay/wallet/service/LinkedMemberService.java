@@ -47,7 +47,7 @@ public class LinkedMemberService {
     public void createLinkedMember(final Long linkedWalletId, final Long memberId, final Long participantId) {
         validateCreatorPermission(linkedWalletId, memberId);
         validateDuplicatedLinkedMember(linkedWalletId, participantId);
-        if (linkedMemberRepository.restoreDeletedLinkedMember(linkedWalletId, participantId) > 0) {
+        if (linkedMemberRepository.restoreDeletedLinkedMember(participantId, linkedWalletId) > 0) {
             return;
         }
         Member member = memberFetcher.fetchById(participantId);
