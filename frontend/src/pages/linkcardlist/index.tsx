@@ -27,7 +27,6 @@ const LinkCardListPage: React.FC = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const { theme } = useThemeStore();
 
-  console.log(activeTab)
   const navigate = useNavigate();
   const observerRef = useRef<HTMLDivElement>(null);
 
