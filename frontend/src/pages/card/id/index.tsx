@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef} from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import CardComponent from '@/components/Card';
@@ -18,50 +18,90 @@ const CardDetailPage: React.FC = () => {
   const initialCardData = location.state as Card | undefined;
   const navigate = useNavigate();
 
-  const [cardData, setCardData] = useState<Card | null>(initialCardData || null);
+  const [cardData] = useState<Card | null>(initialCardData || null);
   const [cardHistory, setCardHistory] = useState<CardHistory[]>([]);
   const [showDiscardModal, setShowDiscardModal] = useState(false);
+  const [lastId, setLastId] = useState<string | null>(null); 
+  const [hasNext, setHasNext] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   // 카드 내역 가져오기
-  useEffect(() => {
-    const fetchCardHistory = async () => {
+  const fetchCardHistory = useCallback(
+    async (lastIdParam: string | null) => {
       try {
         const token = sessionStorage.getItem('accessToken');
         if (!token) return;
-        const response = await axios.get(
-          `${base_url}/api/cards/card-histories/${id}?lastId=null&size=10`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setCardHistory(response.data.linkCardHistories);
+        setIsLoading(true);
+        const url = `${base_url}/api/cards/card-histories/${id}?lastId=${lastIdParam}&size=10`;
+        const response = await axios.get(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const newHistories: CardHistory[] = response.data.linkCardHistories;
+        setCardHistory((prev) => (lastIdParam ? [...prev, ...newHistories] : newHistories));
+        setHasNext(response.data.hasNext);
+        if (newHistories.length > 0) {
+          //const lastHistory = newHistories[newHistories.length - 1];
+          //setLastId(lastHistory.HistoryId);
+        }
       } catch (error) {
         console.error('카드 내역을 불러오는 중 오류 발생', error);
+      } finally {
+        setIsLoading(false);
       }
-    };
-    if (id) {
-      fetchCardHistory();
-    }
-    }, [id]);
+    },
+    [id]
+  );
 
-    const handleDiscard = async () => {
-      try {
-        const token = sessionStorage.getItem('accessToken');
-        if (!token) return;
-        await axios.delete(`${base_url}/api/cards?linkCardId=${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        });
-        alert('카드가 폐기되었습니다.');
-        navigate(-1);
-      } catch (error) {
-        console.error('카드 폐기 실패', error);
-        alert('카드 폐기 실패');
+  useEffect(() => {
+    if (id) {
+      fetchCardHistory(null);
+    }
+  }, [id, fetchCardHistory]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNext && !isLoading) {
+          fetchCardHistory(lastId);
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1.0,
       }
+    );
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) {
+      observer.observe(currentSentinel);
+    }
+    return () => {
+      if (currentSentinel) {
+        observer.unobserve(currentSentinel);
+      }
+      observer.disconnect();
     };
+  }, [hasNext, isLoading, lastId, fetchCardHistory]);
+
+  const handleDiscard = async () => {
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      if (!token) return;
+      await axios.delete(`${base_url}/api/cards?linkCardId=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      alert('카드가 폐기되었습니다.');
+      navigate(-1);
+    } catch (error) {
+      console.error('카드 폐기 실패', error);
+      alert('카드 폐기 실패');
+    }
+  };
 
   return (
     <div className="w-full h-screen max-w-md mx-auto dark:bg-[#3b3838] flex flex-col">
@@ -78,7 +118,7 @@ const CardDetailPage: React.FC = () => {
                 text-gray-800
                 dark:text-white
                 hover:bg-gray-200 dark:hover:bg-gray-600
-                transition
+                transition mb-2
             "
             onClick={() => setShowDiscardModal(true)}
             >
@@ -123,7 +163,7 @@ const CardDetailPage: React.FC = () => {
                     ))}
                 </ul>
                 ) : (
-                <p className="text-white mt-2">사용 내역이 없습니다.</p>
+                <p className="text-white mt-4 mx-4">사용 내역이 없습니다.</p>
                 )}
         </div>
 
