@@ -3,6 +3,7 @@ package monorail.linkpay.util.signature;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.util.encoder.Base85Encoder;
 import monorail.linkpay.util.json.JsonUtil;
 
 import java.nio.charset.StandardCharsets;
@@ -26,19 +27,19 @@ public class SignatureProvider {
             Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
             signature.initSign(privateKey);
             signature.update(toBytes(data));
-            return Base64.getEncoder().encodeToString(signature.sign());
+            return Base85Encoder.encode(signature.sign());
         } catch (Exception e) {
             throw new LinkPayException(ExceptionCode.INVALID_REQUEST, "서명 생성 실패");
         }
     }
 
-    public void verify(final Object data, final String base64Signature, final String base64PublicKey) {
+    public void verify(final Object data, final String signatureBase85, final String publicKeyBase64) {
         try {
-            PublicKey publicKey = decodePublicKey(base64PublicKey);
+            PublicKey publicKey = decodePublicKey(publicKeyBase64);
             Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
             signature.initVerify(publicKey);
             signature.update(toBytes(data));
-            byte[] signatureBytes = Base64.getDecoder().decode(base64Signature);
+            byte[] signatureBytes = Base85Encoder.decode(signatureBase85);
 
             if (!signature.verify(signatureBytes)) {
                 throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, "유효하지 않은 서명");
