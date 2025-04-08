@@ -18,7 +18,7 @@ public class StoreFixtures {
     }
 
     public static StoreSigner storeSigner(Store store) {
-        KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyAlgorithm.RSA);
+        KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyAlgorithm.ED25519);
         return StoreSigner.builder()
                 .id(idGenerator.getAndIncrement())
                 .encryptKey(keyPair.getPrivate().getEncoded())

@@ -51,7 +51,6 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
     @TestFactory
     Stream<DynamicTest> 내_지갑_카드사용_후_지갑_내역_확인한다() {
         String accessToken = 엑세스_토큰();
-        var transaction = new ThreadLocal<TransactionResponse>();
 
         return Stream.of(
                 dynamicTest("내 지갑에 충전후 잔액을 확인한다", () -> {
@@ -79,15 +78,12 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
                     링크카드_생성_요청(accessToken, LINK_CARD_CREATE_REQUEST);
                     LinkCardsResponse cardsResponse = 링크카드_조회_요청(accessToken, "owned").as(LinkCardsResponse.class);
                     var storeRes = 가게_생성_요청(accessToken, new StoreCreateRequest("새로운 가게"));
-                    String storeId = storeRes.header("Location").split("/")[3];
                     var payInfoRes = 거래정보_생성_요청(accessToken, storeRes.header("Location"),
                             new StoreTransactionRequest(3000L));
-                    TransactionResponse transactionResponse = payInfoRes.as(TransactionResponse.class);
-                    transaction.set(transactionResponse);
+                    var transactionResponseFlat = payInfoRes.as(TransactionResponse.Flat.class);
                     ExtractableResponse<Response> response = 결제_요청(accessToken,
-                            new PaymentsRequest(3000L,
+                            new PaymentsRequest(transactionResponseFlat.data(),
                                     cardsResponse.linkCards().getFirst().linkCardId(),
-                                    storeId, transactionResponse.transactionSignature(),
                                     "token"));
 
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -165,11 +161,10 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
                     String storeId = storeRes.header("Location").split("/")[3];
                     var payInfoRes = 거래정보_생성_요청(accessToken, storeRes.header("Location"),
                             new StoreTransactionRequest(3000L));
-                    TransactionResponse transactionResponse = payInfoRes.as(TransactionResponse.class);
+                    var transactionResponseFlat = payInfoRes.as(TransactionResponse.Flat.class);
                     ExtractableResponse<Response> response = 결제_요청(accessToken,
-                            new PaymentsRequest(3000L,
+                            new PaymentsRequest(transactionResponseFlat.data(),
                                     linkCardId.get().toString(),
-                                    storeId, transactionResponse.transactionSignature(),
                                     "token"));
 
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());

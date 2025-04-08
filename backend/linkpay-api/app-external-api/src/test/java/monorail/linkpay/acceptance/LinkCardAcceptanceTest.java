@@ -299,15 +299,12 @@ public class LinkCardAcceptanceTest extends AcceptanceTest {
                     // given
                     포인트_충전_요청(accessToken, new WalletPointRequest(50000));
                     var storeRes = 가게_생성_요청(accessToken, new StoreCreateRequest("새로운 가게"));
-                    String storeId = storeRes.header("Location").split("/")[3];
                     var txInfoRes = 거래정보_생성_요청(accessToken, storeRes.header("Location"),
                             new StoreTransactionRequest(3000L));
-                    var txResponse = txInfoRes.as(TransactionResponse.class);
+                    var txResponseFlat = txInfoRes.as(TransactionResponse.Flat.class);
                     var request = PaymentsRequest.builder()
-                            .amount(3000L)
+                            .transactionFlat(txResponseFlat.data())
                             .linkCardId(linkCardId.get().toString())
-                            .storeId(storeId)
-                            .transactionSignature(txResponse.transactionSignature())
                             .paymentToken("mockPaymentToken") // TODO: WebAuthn 인증 후 받은 실제 paymentToken 사용
                             .build();
 

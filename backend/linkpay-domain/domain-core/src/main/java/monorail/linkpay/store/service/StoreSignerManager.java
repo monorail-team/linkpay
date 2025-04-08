@@ -22,7 +22,7 @@ public class StoreSignerManager {
 
     @Transactional
     public void create(Store store) {
-        KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyAlgorithm.RSA);
+        KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyAlgorithm.ED25519);
         PrivateKey privateKey = keyPair.getPrivate();
         PublicKey publicKey = keyPair.getPublic();
         storeSignerRepository.save(StoreSigner.builder()

@@ -8,7 +8,7 @@ import monorail.linkpay.util.signature.SignatureProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class StoreSignerProviderTest {
+class SignatureProviderTest {
 
     private SignatureProvider sut = new SignatureProvider();
 
