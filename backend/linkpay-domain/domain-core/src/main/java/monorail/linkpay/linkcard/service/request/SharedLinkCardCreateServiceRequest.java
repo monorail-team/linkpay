@@ -17,7 +17,7 @@ public record SharedLinkCardCreateServiceRequest(
         String cardName,
         Point limitPrice,
         LocalDate expiredAt,
-        List<String> memberIds,
+        List<String> linkedMemberIds,
         String linkedWalletId
 ) {
     public LinkCard toLinkCard(final Long newId, final Member member, final LinkedWallet linkedwallet) {
