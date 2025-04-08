@@ -6,6 +6,8 @@ import static monorail.linkpay.wallet.domain.Role.CREATOR;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.linkcard.domain.CardState;
@@ -72,18 +74,17 @@ public class LinkCardService {
         if (!linkedWalletCreator.getMember().getId().equals(memberId)) {
             throw new LinkPayException(INVALID_REQUEST, "링크카드 생성 권한이 없습니다.");
         }
-        List<Long> memberIds = linkedMemberRepository.findByLinkedWalletId(linkedwallet.getId()).stream()
-                .map(linkedMember -> linkedMember.getMember().getId())
-                .toList();
+        Set<Long> linkedMemberIds = linkedMemberRepository.findByLinkedWalletId(linkedwallet.getId()).stream()
+                .map(LinkedMember::getId)
+                .collect(Collectors.toSet());
 
-        boolean hasUnregisteredMember = request.memberIds().stream()
-                .anyMatch(id -> !memberIds.contains(Long.parseLong(id)));
+        boolean hasUnregisteredMember = request.linkedMemberIds().stream()
+                .anyMatch(linkedMemberId -> !linkedMemberIds.contains(Long.parseLong(linkedMemberId)));
         if (hasUnregisteredMember) {
             throw new LinkPayException(INVALID_REQUEST, "해당 링크지갑에 참여하지 않은 사용자입니다.");
         }
-        List<LinkCard> linkCards = memberRepository.findMembersByIdIn(
-                        new HashSet<>(request.memberIds().stream().map(Long::parseLong).toList())).stream()
-                .map(member -> request.toLinkCard(idGenerator.generate(), member, linkedwallet))
+        List<LinkCard> linkCards = linkedMemberRepository.findByIdIn(linkedMemberIds).stream()
+                .map(linkedMember -> request.toLinkCard(idGenerator.generate(), linkedMember.getMember(), linkedwallet))
                 .toList();
 
         linkCardRepository.saveAll(linkCards);
