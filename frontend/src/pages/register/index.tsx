@@ -126,7 +126,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto border flex flex-col dark:bg-[#3b3838]">
+    <div className="w-full h-screen md:w-[456px] md:h-[820px] mx-auto  flex flex-col dark:bg-[#3b3838]">
       {/* Header: 뒤로가기 모드 */}
       <Header headerType="back" onBackClick={handleBackClick} />
 
@@ -145,7 +145,7 @@ const Register: React.FC = () => {
             >
               {/* 카드 영역: 선택된 경우 테두리 강조 */}
               <div
-                className={`my-1 box-border rounded-lg w-5/6 p-4 mx-auto bg-center h-[150px] ${
+                className={`my-1 box-border rounded-lg w-5/6 mx-auto bg-center h-[150px] ${
                   selectedIndices.includes(card.linkCardId)
                     ? 'outline outline-4 outline-gray-400 brightness-90 dark:outline-white '
                     : ''

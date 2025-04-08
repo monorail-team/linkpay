@@ -127,7 +127,7 @@ const LinkWalletListPage: React.FC = () => {
       {showMenu && <MenuModal onClose={handleMenuClose} />}
 
       {/* 탭 영역 */}
-      <div className="flex justify-around items-center border-b border-gray-200  dark:border-gray-700 text-sm mx-10">
+      <div className="flex justify-around items-center border-b border-gray-200  dark:border-gray-700 text-[16px] mx-10">
         <button
           className={`py-3 w-full 
             ${

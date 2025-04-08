@@ -3,6 +3,7 @@ import Icon from '@/components/Icon';
 import axios from 'axios';
 import { Member } from '@/model/Member'
 import { useThemeStore } from '@/store/themeStore';
+import { IoSearch } from "react-icons/io5";
 
 const base_url = process.env.REACT_APP_API_URL;
 
@@ -16,8 +17,8 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
   const [addedMembers, setAddedMembers] = useState<Member[]>([]);
   const [error, setError] = useState<string | null>(null);
   const { theme } = useThemeStore();
+  const SearchIcon = IoSearch as unknown as (props: React.ComponentProps<'svg'>) => JSX.Element;
 
-  // 컴포넌트가 마운트될 때와 initialMembers가 변경될 때만 상태 업데이트
   useEffect(() => {
     // memberId가 없으면 linkedmemberid를 사용하여 정규화
     const normalizedMembers = (initialMembers || []).map( (member: Member & { linkedMemberId?: string }) => ({
@@ -99,13 +100,13 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={handleKeyPress}
           placeholder="초대 대상 이메일 검색"
-          className="w-full border-b border-gray-300 py-2 pr-10 focus:outline-none dark:bg-black dark:text-white dark:placeholder-white"
+          className="w-full border-b border-gray-300 py-2 pr-10  focus:outline-none  dark:text-white dark:placeholder-white dark:bg-[#3b3838]"
         />
         <button 
           onClick={handleSearch}
-          className="absolute -right-3 top-1/2 transform -translate-y-1/2 p-2"
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2"
         >
-          <Icon name={theme === 'dark' ? "searchDarkIcon" : "searchIcon"} width={50} height={50} alt="검색" />
+          <SearchIcon style={{width:"24px", height:"24px", color:theme=='dark'?"rgb(107, 114, 128)":"rgb(107, 114, 128 )"}}/>
         </button>
       </div>
       {/* 에러 메시지 */}
@@ -120,12 +121,8 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
           <div key={member.memberId} className="flex items-center justify-between border rounded-full px-3 py-1 min-w-[200px] dark:bg-[#9E9E9E]">
             <span className="mr-2 dark:text-white">{member.username}({member.email})</span>
             <button onClick={() => removeUser(member.memberId)}>
-              <Icon 
-                name={theme === 'dark' ? "searchcalcelDarkIcon" : "searchcalcelIcon"} 
-                width={theme === 'dark' ? 13 : 10} 
-                height={theme === 'dark' ? 13 : 10} 
-                alt="입력취소" 
-              />
+            
+            <Icon name={theme === 'dark' ? "searchcalcelDarkIcon" : "searchcalcelIcon"} width={theme === 'dark' ? 13 : 10} height={theme === 'dark' ? 13 : 10} alt="입력취소" />
             </button>
           </div>
         ))}

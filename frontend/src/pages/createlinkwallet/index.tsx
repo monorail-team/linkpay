@@ -6,6 +6,8 @@ import { useThemeStore } from '@/store/themeStore';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Member } from '@/model/Member';
+import { MdOutlineCancel } from "react-icons/md";
+
 
 const CreateLinkWalletPage: React.FC = () => {
   const [walletName, setWalletName] = useState('');
@@ -14,7 +16,7 @@ const CreateLinkWalletPage: React.FC = () => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
   
-  
+  const CancelIcon = MdOutlineCancel as unknown as (props: React.ComponentProps<'svg'>) => JSX.Element;
   const base_url = process.env.REACT_APP_API_URL;
   
   const handleClearLinkWalletName = () => setWalletName('');
@@ -55,7 +57,7 @@ const CreateLinkWalletPage: React.FC = () => {
   const isFormComplete = walletName && selectedMembers && isLinkWalletNameValid;
 
   return (
-    <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-black">
+    <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-[#3b3838]">
       <Header headerType="menu" onBackClick={() => console.log('뒤로가기')} />
       <div className="p-4 flex-1 space-y-8 mx-4 overflow-auto"> 
         {/* 링크지갑 이름 입력 */}
@@ -67,14 +69,14 @@ const CreateLinkWalletPage: React.FC = () => {
                 placeholder="링크지갑 이름을 입력하세요."
                 value={walletName}
                 onChange={(e) => setWalletName(e.target.value)}
-                className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-white"
+                className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0  dark:text-white dark:placeholder-white dark:bg-[#3b3838]"
                 />
                 {walletName && (
                 <button 
                     onClick={handleClearLinkWalletName}
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
                 > 
-                    <Icon name={theme === 'dark' ? "canceltextDarkIcon" : "canceltextIcon"} width={24} height={24} alt="입력취소" />
+                    <CancelIcon style={{width:"24px", height:"24px"}}/>
                 </button>
                 )}
             </div>

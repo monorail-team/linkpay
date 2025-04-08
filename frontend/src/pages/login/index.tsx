@@ -26,9 +26,9 @@ const Login: React.FC = () => {
 
   return (
     <div
-      className="w-full h-screen md:w-[456px] md:h-[820px] mx-auto border flex flex-col dark:bg-[#3b3838] bg-[#9CA1D7]">
+      className="w-full h-screen md:w-[456px] md:h-[820px] mx-auto flex flex-col dark:bg-[#3b3838] bg-[#9CA1D7]">
       <div className="flex-1 flex items-center justify-center">
-        <h1 className="text-4xl font-bold text-[#E8E8E8]">LinkPay</h1>
+        <h1 className="text-4xl font-bold text-[#E8E8E8]" style={{fontFamily:"NanumSquareRound"}}>LinkPay</h1>
       </div>
 
       {/* 하단 버튼 */}

@@ -35,7 +35,8 @@ public enum ExceptionCode {
 
     BANK_API_FAILED(8000, INTERNAL_SERVER_ERROR),
 
-    SERVER_ERROR(9000, INTERNAL_SERVER_ERROR);
+    SERVER_ERROR(9000, INTERNAL_SERVER_ERROR),
+    CONVERSION_ERROR(9001, INTERNAL_SERVER_ERROR);
 
     private final int code;
     private final HttpStatus httpStatus;
