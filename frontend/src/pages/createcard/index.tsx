@@ -78,7 +78,7 @@ const CreateCardPage: React.FC = () => {
   const defaultClassNames = getDefaultClassNames();
 
   return (
-    <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-black">
+    <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-[#3b3838]">
       <Header headerType="back" onBackClick={() => navigate("/mywallet")} />
       <div className="p-4 flex-1 space-y-8 mx-4 overflow-auto"> 
         {/* 카드 이름 입력 */}
@@ -90,7 +90,7 @@ const CreateCardPage: React.FC = () => {
                 placeholder="카드 이름을 입력하세요."
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
-                className="text-[20px] w-full py-1  pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-[#ccc]"
+                className="text-[20px] w-full py-1  pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-[#3b3838] dark:text-white dark:placeholder-[#ccc]"
                 style={{borderBottom:"1px solid #ccc", borderBottomColor:theme==="dark"?"#333":"#ccc"}}
               />
               {cardName && (
@@ -127,7 +127,7 @@ const CreateCardPage: React.FC = () => {
                       // 숫자를 콤마가 찍힌 문자열로 변환
                       setCardLimit(num.toLocaleString());
                   }}
-                  className="text-[20px] w-full py-1 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-[#ccc] "
+                  className="text-[20px] w-full py-1 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-[#3b3838] dark:text-white dark:placeholder-[#ccc] "
                    style={{borderBottom:"1px solid #ccc", borderBottomColor:theme==="dark"?"#333":"#ccc"}}
                   />
                   {cardLimit && (
@@ -153,7 +153,7 @@ const CreateCardPage: React.FC = () => {
                   placeholder="만료일을 선택하세요."
                   value={expireDate}
                   readOnly
-                  className="text-[20px] w-full py-1 pl-0 pr-10 border-b border-gray-300 focus:outline-none focus:ring-0 cursor-pointer dark:bg-black dark:text-white dark:placeholder-[#ccc]"
+                  className="text-[20px] w-full py-1 pl-0 pr-10 border-b border-gray-300 focus:outline-none focus:ring-0 cursor-pointer dark:bg-[#3b3838] dark:text-white dark:placeholder-[#ccc]"
                   onClick={toggleCalendar}
                    style={{borderBottom:"1px solid #ccc", borderBottomColor:theme==="dark"?"#333":"#ccc"}}
                 />

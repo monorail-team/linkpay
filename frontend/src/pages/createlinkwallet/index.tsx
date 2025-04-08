@@ -57,7 +57,7 @@ const CreateLinkWalletPage: React.FC = () => {
   const isFormComplete = walletName && selectedMembers && isLinkWalletNameValid;
 
   return (
-    <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-black">
+    <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-[#3b3838]">
       <Header headerType="menu" onBackClick={() => console.log('뒤로가기')} />
       <div className="p-4 flex-1 space-y-8 mx-4 overflow-auto"> 
         {/* 링크지갑 이름 입력 */}
@@ -69,7 +69,7 @@ const CreateLinkWalletPage: React.FC = () => {
                 placeholder="링크지갑 이름을 입력하세요."
                 value={walletName}
                 onChange={(e) => setWalletName(e.target.value)}
-                className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-white"
+                className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0  dark:text-white dark:placeholder-white dark:bg-[#3b3838]"
                 />
                 {walletName && (
                 <button 
