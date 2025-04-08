@@ -1,104 +1,106 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback, useRef} from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import CardComponent from '@/components/Card';
 import ButtonModal from '@/modal/ButtonModal';
 import axios from 'axios';
-
-interface CardData {
-  linkCardId: number;
-  cardName: string;
-  expiredAt: string;
-  usedPoint: number;
-  limitPrice: number;
-  cardColor: string;
-}
-
-interface UsageItem {
-  detail: string;
-  date: string;
-  point: number;
-}
+import { Card } from '@/model/Card';
+import { CardHistory } from '@/model/CardHistory';
+import { formatDateTime } from '@/util/formatdate';
 
 
-// 목 데이터 정의
-const mockCardData: CardData = {
-    linkCardId: 1,
-    cardName: "카드 1",
-    expiredAt: "25.12.23",
-    usedPoint: 54000,
-    limitPrice: 100000,
-    cardColor: "#DAD8FC",
-  };
-  
-const mockUsageHistory: UsageItem[] = [
-  { detail: "음식 결제", date: "2023.07.01", point: 12000 },
-  { detail: "쇼핑 결제", date: "2023.07.03", point: 18000 },
-  { detail: "교통비", date: "2023.07.05", point: 6000 },
-]
+
 const base_url = process.env.REACT_APP_API_URL;
 
 const CardDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // 카드 id를 URL 파라미터로 받음
+  const location = useLocation();
+  const initialCardData = location.state as Card | undefined;
   const navigate = useNavigate();
 
-  // 카드 정보와 사용 내역 상태
-  const [cardData, setCardData] = useState<CardData | null>(null);
-  const [usageHistory, setUsageHistory] = useState<UsageItem[]>([]);
+  const [cardData] = useState<Card | null>(initialCardData || null);
+  const [cardHistory, setCardHistory] = useState<CardHistory[]>([]);
   const [showDiscardModal, setShowDiscardModal] = useState(false);
+  const [lastId, setLastId] = useState<string | null>(null); 
+  const [hasNext, setHasNext] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-//   useEffect(() => {
-//     const fetchCardDetails = async () => {
-//       try {
-//         const token = sessionStorage.getItem('accessToken');
-//         if (!token) return;
-//         const response = await axios.get(`${base_url}/api/cards/${id}`, {
-//           headers: { Authorization: `Bearer ${token}` },
-//         });
-//         // response.data 예시: { card: {...}, usageHistory: [...] }
-//         setCardData(response.data.card);
-//         setUsageHistory(response.data.usageHistory);
-//       } catch (error) {
-//         console.error('카드 상세 정보를 불러오는데 실패했습니다.', error);
-//       }
-//     };
+  // 카드 내역 가져오기
+  const fetchCardHistory = useCallback(
+    async (lastIdParam: string | null) => {
+      try {
+        const token = sessionStorage.getItem('accessToken');
+        if (!token) return;
+        setIsLoading(true);
+        const url = `${base_url}/api/cards/card-histories/${id}?lastId=${lastIdParam}&size=10`;
+        const response = await axios.get(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const newHistories: CardHistory[] = response.data.linkCardHistories;
+        setCardHistory((prev) => (lastIdParam ? [...prev, ...newHistories] : newHistories));
+        setHasNext(response.data.hasNext);
+        if (newHistories.length > 0) {
+          //const lastHistory = newHistories[newHistories.length - 1];
+          //setLastId(lastHistory.HistoryId);
+        }
+      } catch (error) {
+        console.error('카드 내역을 불러오는 중 오류 발생', error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [id]
+  );
 
-//     if (id) {
-//       fetchCardDetails();
-//     }
-//   }, [id]);
+  useEffect(() => {
+    if (id) {
+      fetchCardHistory(null);
+    }
+  }, [id, fetchCardHistory]);
 
-//   // 폐기 API 호출 함수
-//   const handleDiscard = async () => {
-//     try {
-//       const token = sessionStorage.getItem('accessToken');
-//       if (!token) return;
-//       await axios.delete(`${base_url}/api/cards/${id}`, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//       alert('카드가 폐기되었습니다.');
-//       navigate(-1);
-//     } catch (error) {
-//       console.error('카드 폐기 실패', error);
-//       alert('카드 폐기 실패');
-//     }
-//   };
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNext && !isLoading) {
+          fetchCardHistory(lastId);
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1.0,
+      }
+    );
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) {
+      observer.observe(currentSentinel);
+    }
+    return () => {
+      if (currentSentinel) {
+        observer.unobserve(currentSentinel);
+      }
+      observer.disconnect();
+    };
+  }, [hasNext, isLoading, lastId, fetchCardHistory]);
 
-// 목 데이터를 활용해 카드 정보와 사용 내역을 설정
-useEffect(() => {
-    // 실제 API가 준비되면 아래 코드를 axios 호출로 대체
-    setTimeout(() => {
-      setCardData(mockCardData);
-      setUsageHistory(mockUsageHistory);
-    }, 500); // 0.5초 후 목 데이터를 적용
-  }, [id]);
-
-  // 폐기 버튼을 누른 경우: 목 데이터이므로 실제 API 호출 대신 알림 후 이전 페이지로 이동
   const handleDiscard = async () => {
-    // 실제 API 호출 시 axios.delete 등으로 처리
-    alert('카드가 폐기되었습니다.');
-    navigate(-1);
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      if (!token) return;
+      await axios.delete(`${base_url}/api/cards?linkCardId=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      alert('카드가 폐기되었습니다.');
+      navigate(-1);
+    } catch (error) {
+      console.error('카드 폐기 실패', error);
+      alert('카드 폐기 실패');
+    }
   };
 
   return (
@@ -107,7 +109,7 @@ useEffect(() => {
         <Header headerType="menu" onMenuClick={() => {}} />
 
         {/* 헤더와 카드 사이 오른쪽에 위치한 폐기 버튼 */}
-        <div className="flex justify-end mr-16 mt-1">
+        <div className="flex justify-end mr-11 mt-1">
             <button
             className="
                 px-3 py-0.5
@@ -116,7 +118,7 @@ useEffect(() => {
                 text-gray-800
                 dark:text-white
                 hover:bg-gray-200 dark:hover:bg-gray-600
-                transition
+                transition mb-2
             "
             onClick={() => setShowDiscardModal(true)}
             >
@@ -125,7 +127,7 @@ useEffect(() => {
         </div>
 
         {/* 카드 상세 정보 영역 */}
-        <div className="mt-1 mx-auto">
+        <div className="w-5/6 h-1/4 mx-auto flex justify-center">
             {cardData ? (
             <CardComponent {...cardData} />
             ) : (
@@ -136,32 +138,32 @@ useEffect(() => {
         {/* 사용 내역 영역 */}
         <div className="mt-12 mx-6 flex-1 overflow-auto">
             <h3 className="text-lg text-[#969595] ml-4">사용 내역</h3>
-                {usageHistory.length > 0 ? (
+                {cardHistory.length > 0 ? (
                     <ul className="mt-3 mx-5">
-                    {usageHistory.map((item, index) => (
+                    {cardHistory.map((item, index) => (
                     <li
                         key={index}
                         className="border-b flex justify-between items-center text-lg border-gray-300 dark:border-[#515151] dark:bg-[#3b3838]"
                     >
                         {/* 왼쪽: 사용처 + 날짜 (아래에 작게) */}
                         <div className="flex flex-col">
-                        <p className="text-black dark:text-white font-medium">{item.detail}</p>
+                        <p className="text-black dark:text-white font-medium">{item.storeName}</p>
                         <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                            {item.date}
+                            {formatDateTime(item.time)}
                         </p>
                         </div>
                 
                         {/* 오른쪽: 금액 */}
                         <div className="flex flex-col items-end">
                         <p className="text-black dark:text-white">
-                            {item.point.toLocaleString()}원
+                            {item.usedPoint.toLocaleString()}원
                         </p>
                         </div>
                     </li>
                     ))}
                 </ul>
                 ) : (
-                <p className="text-white mt-2">사용 내역이 없습니다.</p>
+                <p className="text-white mt-4 mx-4">사용 내역이 없습니다.</p>
                 )}
         </div>
 
