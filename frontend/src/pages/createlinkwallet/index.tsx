@@ -6,6 +6,8 @@ import { useThemeStore } from '@/store/themeStore';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Member } from '@/model/Member';
+import { MdOutlineCancel } from "react-icons/md";
+
 
 const CreateLinkWalletPage: React.FC = () => {
   const [walletName, setWalletName] = useState('');
@@ -14,7 +16,7 @@ const CreateLinkWalletPage: React.FC = () => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
   
-  
+  const CancelIcon = MdOutlineCancel as unknown as (props: React.ComponentProps<'svg'>) => JSX.Element;
   const base_url = process.env.REACT_APP_API_URL;
   
   const handleClearLinkWalletName = () => setWalletName('');
@@ -74,7 +76,7 @@ const CreateLinkWalletPage: React.FC = () => {
                     onClick={handleClearLinkWalletName}
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
                 > 
-                    <Icon name={theme === 'dark' ? "canceltextDarkIcon" : "canceltextIcon"} width={24} height={24} alt="입력취소" />
+                    <CancelIcon style={{width:"24px", height:"24px"}}/>
                 </button>
                 )}
             </div>

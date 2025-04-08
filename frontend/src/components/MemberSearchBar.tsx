@@ -3,6 +3,7 @@ import Icon from '@/components/Icon';
 import axios from 'axios';
 import { Member } from '@/model/Member'
 import { useThemeStore } from '@/store/themeStore';
+import { IoSearch } from "react-icons/io5";
 
 const base_url = process.env.REACT_APP_API_URL;
 
@@ -15,6 +16,8 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange }) => 
   const [addedMembers, setAddedMembers] = useState<Member[]>([]);
   const [error, setError] = useState<string | null>(null);
   const { theme } = useThemeStore();
+  const SearchIcon = IoSearch as unknown as (props: React.ComponentProps<'svg'>) => JSX.Element;
+
   useEffect(() => {
     if (onMembersChange) {
       onMembersChange(addedMembers);
@@ -81,9 +84,9 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange }) => 
         />
         <button 
           onClick={handleSearch}
-          className="absolute -right-3 top-1/2 transform -translate-y-1/2 p-2"
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2"
         >
-          <Icon name={theme === 'dark' ? "searchDarkIcon" : "searchIcon"} width={50} height={50} alt="검색" />
+          <SearchIcon style={{width:"24px", height:"24px", color:theme=='dark'?"rgb(107, 114, 128)":"rgb(107, 114, 128 )"}}/>
         </button>
       </div>
       {/* 에러 메시지 (모달로 대체 가능) */}
@@ -98,6 +101,7 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange }) => 
           <div key={member.memberId} className="flex items-center justify-between border rounded-full px-3 py-1 min-w-[200px] dark:bg-[#9E9E9E]">
             <span className="mr-2 dark:text-white">{member.username}({member.email})</span>
             <button onClick={() => removeUser(member.memberId)}>
+            
             <Icon name={theme === 'dark' ? "searchcalcelDarkIcon" : "searchcalcelIcon"} width={theme === 'dark' ? 13 : 10} height={theme === 'dark' ? 13 : 10} alt="입력취소" />
             </button>
           </div>

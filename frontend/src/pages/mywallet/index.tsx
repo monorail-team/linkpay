@@ -170,25 +170,25 @@ const MyWallet: React.FC = () => {
       {showMenu && <MenuModal onClose={handleMenuClose} />}
       <div className="w-full max-w-md mx-auto p-4" style={{ height: 'calc(100vh - 64px)' }}>
         {/* 내 지갑 정보 */}
-        <div className="w-4/5 h-2/6 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
-          <p className="test-sm text-[clamp(0.8rem,2vw,1rem)] text-black text-start mt-4 px-4 dark:text-[#D4D4D4]">
+        <div className="w-4/5 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col gap-2 justify-between relative dark:bg-[#6C6C6C]">
+          <p className=" text-[clamp(0.9rem,2vw,1rem)] text-[#333] text-start mt-4 px-4 dark:text-[#D4D4D4]">
           {username}의 지갑
           </p>
-          <div className='flex flex-col items-center justify-center h-2/3'>
-            <p className="text-[clamp(1rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4]">
+          <div className='flex flex-col items-center justify-center '>
+            <p className="text-[clamp(1.2rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4]">
               잔여 포인트
             </p>
-            <p className="text-[clamp(1.5rem,4vw,2.5rem)] sm:text-3xl text-black text-center font-bold dark:text-[#D4D4D4]">
+            <p className="text-[clamp(1.6rem,4vw,2.5rem)] sm:text-3xl text-black text-center font-bold dark:text-[#D4D4D4]">
               {walletBalance.toLocaleString()}원
             </p>
           </div>
-          <div className="flex justify-between w-full">
+          <div className="flex justify-between w-full gap-7 mt-2">
             <button
             onClick={handleCreateCard} 
-            className="bg-white text-black py-2 px-4 ml-auto mr-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">
+            className="bg-white text-black py-2 px-4 ml-auto mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(1rem,2vw,1rem)]">
               카드 생성
             </button>
-            <button className="bg-white text-black py-2 px-4 mr-auto ml-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]"
+            <button className="bg-white text-black py-2 px-4 mr-auto mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(1rem,2vw,1rem)]"
               onClick={() => setShowChargeModal(true)}>
               충전하기
             </button>

@@ -47,6 +47,7 @@ const ChargeModal: React.FC<ChargeModalProps> = ({ onClose, onConfirm }) => {
         value={amount}
         onChange={handleChange}
         className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-left"
+        style={{border:"1px solid #ccc"}}
       />
     </ButtonModal>
   );
