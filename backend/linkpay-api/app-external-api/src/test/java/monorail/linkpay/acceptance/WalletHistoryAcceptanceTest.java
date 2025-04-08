@@ -4,6 +4,7 @@ import static monorail.linkpay.acceptance.AuthAcceptanceTest.엑세스_토큰;
 import static monorail.linkpay.acceptance.LinkCardAcceptanceTest.링크지갑에서_링크카드_생성_요청;
 import static monorail.linkpay.acceptance.LinkCardAcceptanceTest.링크카드_생성_요청;
 import static monorail.linkpay.acceptance.LinkCardAcceptanceTest.링크카드_조회_요청;
+import static monorail.linkpay.acceptance.LinkedMemberAcceptanceTest.링크지갑_참여자_조회_요청;
 import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_목록_조회_요청;
 import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_생성_요청;
 import static monorail.linkpay.acceptance.LinkedWalletAcceptanceTest.링크지갑_충전_요청;
@@ -37,6 +38,8 @@ import monorail.linkpay.facade.dto.WalletHistoryResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
 import monorail.linkpay.member.dto.MemberResponse;
 import monorail.linkpay.store.dto.TransactionResponse;
+import monorail.linkpay.wallet.dto.LinkedMemberResponse;
+import monorail.linkpay.wallet.dto.LinkedMembersResponse;
 import monorail.linkpay.wallet.dto.LinkedWalletsResponse;
 import monorail.linkpay.wallet.dto.WalletResponse;
 import org.junit.jupiter.api.DynamicTest;
@@ -111,6 +114,7 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
         String accessToken = 엑세스_토큰();
         AtomicReference<String> linkedWalletId = new AtomicReference<>();
         AtomicReference<String> linkCardId = new AtomicReference<>();
+        AtomicReference<String> linkedMemberId = new AtomicReference<>();
 
         return Stream.of(
                 dynamicTest("링크지갑을 생성한다", () -> {
@@ -137,10 +141,16 @@ public class WalletHistoryAcceptanceTest extends AcceptanceTest {
                 dynamicTest("링크지갑에서 링크카드를 생성한다", () -> {
                     ExtractableResponse<Response> memberRes = 회원_조회_요청(accessToken, EMAIL);
                     MemberResponse memberResponse = memberRes.as(MemberResponse.class);
+                    ExtractableResponse<Response> linkedMemberResponse = 링크지갑_참여자_조회_요청(accessToken,
+                            Long.parseLong(linkedWalletId.get()));
+                    List<String> linkedMemberIds = linkedMemberResponse.as(LinkedMembersResponse.class)
+                            .linkedMembers().stream()
+                            .map(LinkedMemberResponse::linkedMemberId)
+                            .toList();
 
                     SharedLinkCardCreateRequest sharedLinkCardCreateRequest = new SharedLinkCardCreateRequest(
                             "테스트카드", 500000, LocalDate.now().plusMonths(1),
-                            List.of(memberResponse.memberId(), "1"),
+                            linkedMemberIds,
                             linkedWalletId.get());
 
                     링크지갑에서_링크카드_생성_요청(accessToken, sharedLinkCardCreateRequest);

@@ -7,6 +7,7 @@ import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.domain.Role;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,12 +25,16 @@ public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long
 
     Optional<LinkedMember> findByLinkedWalletIdAndMemberId(Long linkedWalletId, Long memberId);
 
+    @EntityGraph(attributePaths = {"member"})
+    List<LinkedMember> findByIdIn(Set<Long> linkedMemberIds);
+
     List<LinkedMember> findByLinkedWalletId(Long linkedWalletId);
 
     @Query("select lm from LinkedMember lm "
             + "join fetch lm.member "
             + "where lm.linkedWallet.id = :linkedWalletId "
-            + "and (:lastId is null or lm.id < :lastId)")
+            + "and (:lastId is null or lm.id < :lastId) "
+            + "order by lm.id desc")
     Slice<LinkedMember> findAllByLinkedWalletId(@Param("linkedWalletId") Long linkedWalletId,
                                                 @Param("lastId") Long lastId,
                                                 Pageable pageable);
@@ -45,4 +50,15 @@ public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long
             + "and lm.role = :role")
     LinkedMember findByLinkedWalletIdAndRole(@Param("linkedWalletId") Long linkedWalletId,
                                              @Param("role") Role role);
+
+    @Modifying
+    @Query(value = """
+            update linked_member 
+            set deleted_at = null 
+            where member_id = :memberId 
+              and wallet_id = :linkedWalletId 
+              and deleted_at is not null
+            """, nativeQuery = true)
+    int restoreDeletedLinkedMember(@Param("memberId") Long memberId,
+                                   @Param("linkedWalletId") Long linkedWalletId);
 }

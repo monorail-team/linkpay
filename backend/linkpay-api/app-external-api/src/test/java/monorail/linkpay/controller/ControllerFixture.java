@@ -135,6 +135,7 @@ public class ControllerFixture {
 
     public static final LinkCardHistoryResponse LINK_CARD_HISTORY_RESPONSE = new LinkCardHistoryResponse(
             "1",
+            "1",
             "카드명",
             5000L,
             "상점명",

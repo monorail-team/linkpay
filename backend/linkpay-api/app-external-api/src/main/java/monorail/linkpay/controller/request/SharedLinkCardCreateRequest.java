@@ -26,7 +26,7 @@ public record SharedLinkCardCreateRequest(
         LocalDate expiredAt,
 
         @NotEmpty
-        List<String> memberIds,
+        List<String> linkedMemberIds,
 
         @NotNull(message = "연결된 링크 지갑 정보를 입력해주세요.")
         String linkedWalletId
@@ -36,7 +36,7 @@ public record SharedLinkCardCreateRequest(
                 .cardName(cardName)
                 .limitPrice(new Point(limitPrice))
                 .expiredAt(expiredAt)
-                .memberIds(memberIds)
+                .linkedMemberIds(linkedMemberIds)
                 .linkedWalletId(linkedWalletId)
                 .build();
     }

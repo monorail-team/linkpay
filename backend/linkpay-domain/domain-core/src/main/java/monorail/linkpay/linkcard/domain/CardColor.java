@@ -7,20 +7,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum CardColor {
 
-    LIGHT_GRAY("#c1c0c7"),
+    LIGHT_PINK("#ffeffa"),
     CHERRY_BLOSSOM("#F19DAB"),
     PEACH("#FEB8B9"),
     LIGHT_ORANGE("#fec9b8"),
     ORANGE("#ffba86"),
     YELLOW("#ffd681"),
     MELLON("#eeffba"),
-    GREEN("#81ca85"),
+    GREEN("#aedcb1"),
     LIGHT_GREEN("#c6f8d4"),
     MINT("#bcffe9"),
     AQUA("#b7f8ff"),
     SKY("#d8edfc"),
     LILAC("#dad8fc"),
-    PURPLE("#b589e1"),
+    PURPLE("#d7c6e8"),
     PLUM("#d59ccf");
 
     private final String hexCode;
