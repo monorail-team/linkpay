@@ -64,7 +64,7 @@ public class WebAuthnControllerTest extends ControllerTest {
 
     @Test
     void 지문_인증을_수행한다() {
-        when(webAuthnService.verifyAuthentication(anyLong(), anyString(), anyString(), anyString(),anyString(),))
+        when(webAuthnService.verifyAuthentication(anyLong(), anyString(), anyString(), anyString(),anyString()))
                 .thenReturn(WebAuthnResponse.builder().paymentToken("{paymentToken}").build());
 
         docsGiven
