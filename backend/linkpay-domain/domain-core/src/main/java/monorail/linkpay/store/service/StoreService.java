@@ -2,10 +2,13 @@ package monorail.linkpay.store.service;
 
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.store.domain.Store;
+import monorail.linkpay.store.dto.StoreListResponse;
 import monorail.linkpay.store.repository.StoreRepository;
 import monorail.linkpay.util.id.IdGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,5 +29,10 @@ public class StoreService {
         // 기본 가게 서명 1개 생성
         storeSignerManager.create(store);
         return store.getId();
+    }
+
+    public StoreListResponse readAll() {
+        List<Store> storeList = storeRepository.findAll();
+        return StoreListResponse.from(storeList);
     }
 }
