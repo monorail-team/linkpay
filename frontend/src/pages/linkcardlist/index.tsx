@@ -5,6 +5,7 @@ import LinkCardItem from '@/components/LinkCardItem';
 import MenuModal from '@/modal/MenuModal';
 import axios from 'axios';
 import { Card } from '@/model/Card';
+import { useThemeStore } from '@/store/themeStore';
 
 
 
@@ -24,7 +25,7 @@ const LinkCardListPage: React.FC = () => {
   const [lastId, setLastId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [showMenu, setShowMenu] = useState<boolean>(false);
-
+  const { theme } = useThemeStore();
 
   const navigate = useNavigate();
   const observerRef = useRef<HTMLDivElement>(null);
@@ -137,25 +138,52 @@ const LinkCardListPage: React.FC = () => {
       {showMenu && <MenuModal onClose={handleMenuClose} />}
 
       {/* 탭 영역 */}
-      <div className="flex justify-around items-center border-b border-gray-200 dark:border-gray-700 text-sm mx-10">
+      <div className="flex justify-around items-center  text-[16px] mx-10 gap-3" style={{borderBottom:"1px solid #ccc", borderBottomColor:theme=='dark'?"#666":"#ccc"}}>
         <button
           className={`py-3 w-full 
-            ${activeTab === TAB_OWNED ? 'text-[#76558F] dark:text-[#D8D5F8] first-letter:font-bold border-b-2 border-[#76558F] dark:border-[#D8D5F8]' : 'text-gray-500 dark:text-white'}`}
+            ${activeTab === TAB_OWNED ? 'text-[#76558F] dark:text-[#D8D5F8] first-letter:font-bold ' : 'text-gray-500 dark:text-white'}`}
           onClick={() => handleTabClick(TAB_OWNED)}
+         style={{
+      borderBottom: '2px solid',
+      borderBottomColor:
+        activeTab === TAB_OWNED
+          ? theme === 'dark'
+            ? '#D8D5F8'
+            : '#76558F'
+          : 'transparent',
+    }}
         >
           내 지갑 카드
         </button>
         <button
           className={`py-3 w-full 
-            ${activeTab === TAB_LINKED ? 'text-[#76558F] dark:text-[#D8D5F8] font-bold border-b-2 border-[#76558F] dark:border-[#D8D5F8]' : 'text-gray-500 dark:text-white'}`}
+            ${activeTab === TAB_LINKED ? 'text-[#76558F] dark:text-[#D8D5F8] font-bold ' : 'text-gray-500 dark:text-white'}`}
           onClick={() => handleTabClick(TAB_LINKED)}
+          style={{
+      borderBottom: '2px solid',
+      borderBottomColor:
+        activeTab === TAB_LINKED
+          ? theme === 'dark'
+            ? '#D8D5F8'
+            : '#76558F'
+          : 'transparent',
+    }}
         >
           링크 지갑 카드
         </button>
         <button
           className={`py-3 w-full 
-            ${activeTab === TAB_SHARED ? 'text-[#76558F] dark:text-[#D8D5F8] font-bold border-b-2 border-[#76558F] dark:border-[#D8D5F8]' : 'text-gray-500 dark:text-white'}`}
+            ${activeTab === TAB_SHARED ? 'text-[#76558F] dark:text-[#D8D5F8] font-bold' : 'text-gray-500 dark:text-white'}`}
           onClick={() => handleTabClick(TAB_SHARED)}
+          style={{
+      borderBottom: '2px solid',
+      borderBottomColor:
+        activeTab === TAB_SHARED
+          ? theme === 'dark'
+            ? '#D8D5F8'
+            : '#76558F'
+          : 'transparent',
+    }}
         >
           공유한 카드
         </button>
@@ -166,7 +194,7 @@ const LinkCardListPage: React.FC = () => {
         {cards.map((card) => (
           <div 
             key={card.linkCardId}
-            className="my-1 box-border rounded-lg w-5/6 p-4 mx-auto bg-center h-[150px]"
+            className="my-1 box-border rounded-lg w-5/6 mx-auto bg-center h-[150px]"
             style={{ backgroundColor: card.cardColor }}
             onClick={() => handleCardClick(card.linkCardId)}
           >
@@ -179,6 +207,11 @@ const LinkCardListPage: React.FC = () => {
             />
           </div>
         ))}
+        {(cards.length==0)&&
+          <div className="text-center text-gray-500 text-[16px]">
+            해당하는 링크카드가 존재하지 않습니다.
+          </div>
+        }
         <div ref={observerRef} />
         {loading && <p className="text-center text-gray-500">불러오는 중...</p>}
       </div>
