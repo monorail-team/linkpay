@@ -1,12 +1,9 @@
 package monorail.linkpay.common;
 
-import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
-import static monorail.linkpay.linkcard.domain.CardType.SHARED;
-
-import java.time.LocalDate;
 import monorail.linkpay.DatabaseCleaner;
 import monorail.linkpay.MockTestConfiguration;
 import monorail.linkpay.common.domain.Point;
+import monorail.linkpay.fcm.repository.FcmTokenRepository;
 import monorail.linkpay.history.repository.WalletHistoryRepository;
 import monorail.linkpay.linkcard.domain.CardColor;
 import monorail.linkpay.linkcard.domain.LinkCard;
@@ -30,6 +27,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+
+import java.time.LocalDate;
+
+import static monorail.linkpay.linkcard.domain.CardState.UNREGISTERED;
+import static monorail.linkpay.linkcard.domain.CardType.SHARED;
 
 @Import(MockTestConfiguration.class)
 @SpringBootTest(
@@ -59,6 +61,8 @@ public abstract class IntegrationTest {
     protected StoreRepository storeRepository;
     @Autowired
     protected StoreSignerRepository storeSignerRepository;
+    @Autowired
+    protected FcmTokenRepository fcmTokenRepository;
     @Autowired
     protected IdGenerator idGenerator;
 

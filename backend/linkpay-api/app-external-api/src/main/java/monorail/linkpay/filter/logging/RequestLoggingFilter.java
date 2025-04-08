@@ -10,6 +10,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -17,18 +19,33 @@ import java.util.stream.Collectors;
 public class RequestLoggingFilter extends OncePerRequestFilter {
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        return requestURI.startsWith("/actuator/**") ||
+                requestURI.startsWith("/favicon.ico") ||
+                requestURI.startsWith("/h2-console");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String method = request.getMethod();
         String uri = request.getRequestURI();
+        String queryString = request.getQueryString();
 
-        CachedBodyHttpServletRequest wrappedRequest = new CachedBodyHttpServletRequest(request);
-        String body = new BufferedReader(wrappedRequest.getReader())
-                .lines().collect(Collectors.joining(System.lineSeparator()));
+        // 간단한 header 로깅 (선택)
+        String headers = List.of(request.getHeaderNames()).stream()
+                .map(name -> name + "=" + request.getHeader(String.valueOf(name)))
+                .collect(Collectors.joining(", "));
 
-       log.info("Incoming Request: method = {}, uri = {}, body = {}", method, uri, body);
+        log.info("Incoming Request: method={}, uri={}{}{} | headers=[{}]",
+                method,
+                uri,
+                (queryString != null ? "?" + queryString : ""),
+                (request.getContentType() != null ? " [Content-Type=" + request.getContentType() + "]" : ""),
+                headers);
 
-        filterChain.doFilter(wrappedRequest, response);
+        filterChain.doFilter(request, response);
     }
 }

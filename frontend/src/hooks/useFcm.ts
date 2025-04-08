@@ -5,13 +5,13 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 
-const VAPID_KEY = 'BA13QxJeQQghIG_vO3vQJw_vptJg6385ZfRQXQUxMUlhAD-pVfvclIKeaYwsHKs7Q9pnkfjQiZP-xm9FY4GAPWQ';
+const VAPID_KEY = process.env.REACT_APP_VAPID_KEY;
 const base_url = process.env.REACT_APP_API_URL;
 
 export const useFcm = async () => {
   useEffect(() => {
     // 앱 로드시 알림 권한 요청 + 토큰 발급
-    requestNotificationPermission()
+    requestNotificationPermission();
 
     // 포그라운드 메시지 수신
     onMessage(messaging, (payload) => {
@@ -29,16 +29,21 @@ export const useFcm = async () => {
       }
       console.log('Notification permission granted.');
 
-      const token = await getToken(messaging, { vapidKey: VAPID_KEY });
-      console.log('FCM token:', token);
-
+      const fcmToken = await getToken(messaging, { vapidKey: VAPID_KEY });
+      console.log('FCM token:', fcmToken);
+      const accessToken = sessionStorage.getItem('accessToken');
       // 서버에 token 보내기
-      await axios.post(`${base_url}/api/{somewhere-register-token-api}`,
-        { token }, // TODO: QueryParameter or RequestBody 고민중
-        { headers: { 'Content-Type': 'application/json' } }
+      await axios.post(`${base_url}/api/fcm/register?token=${fcmToken}`,
+        null,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          }
+        }
       );
 
-      return token;
+      return fcmToken;
 
     } catch (err) {
       console.error('FCM 등록 실패', err);

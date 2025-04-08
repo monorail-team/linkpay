@@ -5,6 +5,7 @@ import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
 import monorail.linkpay.auth.AuthConfig;
 import monorail.linkpay.auth.service.AuthService;
 import monorail.linkpay.facade.WalletHistoryFacade;
+import monorail.linkpay.fcm.service.FcmService;
 import monorail.linkpay.linkcard.service.LinkCardService;
 import monorail.linkpay.member.service.MemberService;
 import monorail.linkpay.payment.service.PaymentService;
@@ -36,7 +37,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
         PaymentController.class,
         WalletHistoryController.class,
         MypageController.class,
-        WebAuthnController.class
+        WebAuthnController.class,
+        FcmController.class
 })
 @WithCustomUser
 @ExtendWith(RestDocumentationExtension.class)
@@ -62,6 +64,8 @@ public abstract class ControllerTest {
     protected WalletHistoryFacade walletHistoryFacade;
     @MockitoBean
     protected WebAuthnService webAuthnService;
+    @MockitoBean
+    protected FcmService fcmService;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext,
