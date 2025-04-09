@@ -126,26 +126,17 @@ const ManageLinkWalletPage: React.FC = () => {
         );
       }
       if (membersToRemove.length > 0) {
-        if (membersToRemove.length === 1) {
-          await axios.delete(
-            `${base_url}/api/linked-wallets/${walletId}/members/${membersToRemove[0].memberId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          );
-        } else {
-          const memberIds = membersToRemove.map(member => member.memberId).join(',');
-          await axios.delete(
-            `${base_url}/api/linked-wallets/${walletId}/members?linkedMemberIds=${memberIds}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          );
-        }
+        
+        const memberIds = membersToRemove.map(member => member.memberId).join(',');
+        await axios.delete(
+          `${base_url}/api/linked-wallets/${walletId}/members?linkedMemberIds=${memberIds}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+      
       }
       navigate(-1);
     } catch (error) {
