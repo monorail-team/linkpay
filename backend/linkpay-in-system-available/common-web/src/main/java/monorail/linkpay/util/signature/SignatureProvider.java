@@ -3,8 +3,9 @@ package monorail.linkpay.util.signature;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
-import monorail.linkpay.util.encoder.Base85Encoder;
+import monorail.linkpay.util.encoder.Base91Encoder;
 import monorail.linkpay.util.json.JsonUtil;
+import monorail.linkpay.util.key.KeyAlgorithm;
 
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
@@ -18,8 +19,8 @@ import java.util.Base64;
 @SupportLayer
 public class SignatureProvider {
 
-    private static final String SIGNATURE_ALGORITHM = "Ed25519";
-    private static final String KEY_ALGORITHM = "Ed25519";
+    private static final String SIGNATURE_ALGORITHM = "ED25519";
+    private static final KeyAlgorithm KEY_ALGORITHM = KeyAlgorithm.ED25519;
 
     public String sign(final Object data, final String base64PrivateKey) {
         try {
@@ -27,8 +28,9 @@ public class SignatureProvider {
             Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
             signature.initSign(privateKey);
             signature.update(toBytes(data));
-            return Base85Encoder.encode(signature.sign());
+            return Base91Encoder.encode(signature.sign());
         } catch (Exception e) {
+            System.out.println("e = " + e);
             throw new LinkPayException(ExceptionCode.INVALID_REQUEST, "서명 생성 실패");
         }
     }
@@ -39,7 +41,7 @@ public class SignatureProvider {
             Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
             signature.initVerify(publicKey);
             signature.update(toBytes(data));
-            byte[] signatureBytes = Base85Encoder.decode(signatureBase85);
+            byte[] signatureBytes = Base91Encoder.decode(signatureBase85);
 
             if (!signature.verify(signatureBytes)) {
                 throw new LinkPayException(ExceptionCode.FORBIDDEN_ACCESS, "유효하지 않은 서명");
@@ -56,12 +58,12 @@ public class SignatureProvider {
     private PrivateKey decodePrivateKey(String base64Key) throws Exception {
         byte[] keyBytes = Base64.getDecoder().decode(base64Key);
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-        return KeyFactory.getInstance(KEY_ALGORITHM).generatePrivate(spec);
+        return KeyFactory.getInstance(KEY_ALGORITHM.getValue()).generatePrivate(spec);
     }
 
     private PublicKey decodePublicKey(String base64Key) throws Exception {
         byte[] keyBytes = Base64.getDecoder().decode(base64Key);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-        return KeyFactory.getInstance(KEY_ALGORITHM).generatePublic(spec);
+        return KeyFactory.getInstance(KEY_ALGORITHM.getValue()).generatePublic(spec);
     }
 }

@@ -5,7 +5,7 @@ import lombok.Builder;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.payment.dto.TransactionInfo;
-import monorail.linkpay.store.dto.TransactionResponse;
+import monorail.linkpay.util.encoder.Base85Encoder;
 import monorail.linkpay.util.encoder.FlatEncoder;
 
 @Builder
@@ -16,11 +16,15 @@ public record PaymentsRequest(
 ) {
 
     public TransactionInfo txInfo() {
-        TransactionResponse decoded = FlatEncoder.decode(transactionFlat, TransactionResponse.class);
+        StringBuilder sb = new StringBuilder();
+        sb.append(transactionFlat);
+        sb.insert(20, FlatEncoder.DELIMITER);
+        sb.insert(10, FlatEncoder.DELIMITER);
+        String[] split = sb.toString().split(FlatEncoder.DELIMITER);
         return TransactionInfo.builder()
-                .storeId(Long.parseLong(decoded.storeId()))
-                .point(new Point(decoded.amount()))
-                .signature(decoded.transactionSignature())
+                .storeId(Base85Encoder.decodeBase85ToLong(split[0]))
+                .point(new Point(Base85Encoder.decodeBase85ToLong(split[1])))
+                .signature(split[2])
                 .build();
     }
 

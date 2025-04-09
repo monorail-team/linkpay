@@ -15,16 +15,18 @@ import java.util.Map;
 
 import static monorail.linkpay.exception.ExceptionCode.CONVERSION_ERROR;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
+import static monorail.linkpay.util.encoder.Base85Encoder.decodeBase85ToLong;
+import static monorail.linkpay.util.encoder.Base85Encoder.encodeLongToBase85;
 
 public class FlatEncoder {
 
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static final String DELIMITER = "\\|";
-    private static final String JOINER = "|";
+    public static final String DELIMITER = "\u001F";
+    private static final String JOINER = "\u001F";
 
     public static String encode(Object obj) {
         Json json = JsonUtil.toJson(obj);
-        return jsonToFlatString(json);
+        return jsonToFlatString(json, obj.getClass());
     }
 
     public static <T> T decode(String flat, Class<T> clazz) {
@@ -32,18 +34,27 @@ public class FlatEncoder {
         return JsonUtil.parse(jsonString, clazz);
     }
 
-    private static String jsonToFlatString(Json json) {
+    private static String jsonToFlatString(Json json, Class<?> clazz) {
+
         try {
             JsonNode root = mapper.readTree(json.value());
             if (!root.isObject()) throw new LinkPayException(INVALID_REQUEST, "JSON은 객체여야 합니다.");
 
             List<String> tokens = new ArrayList<>();
 
-            for (Iterator<Map.Entry<String, JsonNode>> it = root.fields(); it.hasNext(); ) {
+            Field[] fields = clazz.getDeclaredFields();
+
+            int index = 0;
+
+            for (Iterator<Map.Entry<String, JsonNode>> it = root.fields(); it.hasNext(); index++) {
                 Map.Entry<String, JsonNode> entry = it.next();
                 JsonNode value = entry.getValue();
+                Field field = fields[index];
 
-                if (value.isValueNode()) {
+                if (isLongType(field)) {
+                    long longValue = value.asLong();
+                    tokens.add(encodeLongToBase85(longValue));
+                } else if (value.isValueNode()) {
                     tokens.add(value.asText());
                 } else {
                     tokens.add(mapper.writeValueAsString(value));
@@ -54,6 +65,10 @@ public class FlatEncoder {
         } catch (Exception e) {
             throw new LinkPayException(CONVERSION_ERROR, "JSON → Flat 변환 실패");
         }
+    }
+
+    private static boolean isLongType(Field field) {
+        return field.getType().equals(long.class) || field.getType().equals(Long.class);
     }
 
     private static <T> String toJsonStringFromFlat(String flat, Class<T> clazz) {
@@ -71,7 +86,13 @@ public class FlatEncoder {
                 String fieldName = fields[i].getName();
                 String rawValue = tokens[i];
 
-                JsonNode valueNode = parseTokenToJsonNode(rawValue);
+                JsonNode valueNode;
+                if (isLongType(fields[i])) {
+                    long longValue = decodeBase85ToLong(rawValue);
+                    valueNode = mapper.getNodeFactory().numberNode(longValue);
+                } else {
+                    valueNode = parseTokenToJsonNode(rawValue);
+                }
                 root.set(fieldName, valueNode);
             }
 

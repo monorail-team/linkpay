@@ -11,7 +11,7 @@ const NfcWrite: React.FC = () => {
   const [stores, setStores] = useState([]);
   const [storeName, setStoreName] = useState('');
   const [amount, setAmount] = useState(0);
-  const [selectedStoreId, setSelectedStoreId] = useState<number | null>(null);
+  const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
 
   // console.log(window);
   const handleWrite = async () => {
@@ -21,53 +21,53 @@ const NfcWrite: React.FC = () => {
   const handleCreateStore = async () => {
     await createStore();
     await readAllStores();
-  }
+  };
 
   useEffect(() => {
     readAllStores();
-  }, [])
+  }, []);
 
   const createPaymentTransaction = async () => {
     try {
       const accessToken = sessionStorage.getItem('accessToken');
       if (!accessToken) {
-        console.error("Access token not found");
+        console.error('Access token not found');
         return;
       }
       if (!selectedStoreId) {
-        console.error("no store id found");
+        console.error('no store id found');
         return;
       }
-      const response = await axios.post(`${base_url}/api/stores/${selectedStoreId}/transactions`,{
+      const response = await axios.post(`${base_url}/api/stores/${selectedStoreId}/transactions`, {
         amount
       }, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
       setMessage(response.data.data);
       console.log(response.data);
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   const createStore = async () => {
     try {
       const accessToken = sessionStorage.getItem('accessToken');
       if (!accessToken) {
-        console.error("Access token not found");
+        console.error('Access token not found');
         return;
       }
-      await axios.post(`${base_url}/api/stores`,{
+      await axios.post(`${base_url}/api/stores`, {
         storeName
       }, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
     } catch (err) {
       console.error(err);
     }
@@ -77,17 +77,17 @@ const NfcWrite: React.FC = () => {
     try {
       const accessToken = sessionStorage.getItem('accessToken');
       if (!accessToken) {
-        console.error("Access token not found");
+        console.error('Access token not found');
         return;
       }
       const response = await axios.get(`${base_url}/api/stores`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
       console.log(response.data);
-      setStores(response.data.stores)
+      setStores(response.data.stores);
     } catch (err) {
       console.error(err);
     }

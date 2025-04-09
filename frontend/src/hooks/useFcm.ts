@@ -44,16 +44,6 @@ export const useFcm = () => {
       }
       console.log('Notification permission granted.');
 
-      // deviceId 식별
-      let deviceId = sessionStorage.getItem(DEVICE_ID_KEY);
-      if (!deviceId) {
-        deviceId = crypto.randomUUID(); // 브라우저 내장 UUID 생성기
-        sessionStorage.setItem(DEVICE_ID_KEY, deviceId);
-        console.log('🆕 deviceId 생성:', deviceId);
-      } else {
-        console.log('📱 기존 deviceId 사용:', deviceId);
-      }
-
       const fcmToken = await getToken(messaging, { vapidKey: VAPID_KEY });
       console.log('FCM token:', fcmToken);
       const storedToken = sessionStorage.getItem(FCM_TOKEN_KEY);
@@ -66,7 +56,16 @@ export const useFcm = () => {
         console.log('✅ 기존과 동일한/유효한 FCM 토큰 — 등록 생략');
         return;
       }
-      
+
+      // deviceId 식별
+      let deviceId = sessionStorage.getItem(DEVICE_ID_KEY);
+      if (!deviceId) {
+        deviceId = crypto.randomUUID(); // 브라우저 내장 UUID 생성기
+        console.log('🆕 deviceId 생성:', deviceId);
+      } else {
+        console.log('📱 기존 deviceId 사용:', deviceId);
+      }
+
       // 서버에 token 보내기
       const response = await axios.put(`${base_url}/api/fcm/register`,
         {
@@ -84,6 +83,7 @@ export const useFcm = () => {
       const { expiresAt } = response.data;
       sessionStorage.setItem(FCM_TOKEN_KEY, fcmToken);
       sessionStorage.setItem(EXPIRE_KEY, expiresAt);
+      sessionStorage.setItem(DEVICE_ID_KEY, deviceId);
       console.log('✅ FCM 등록 완료 (만료일:', expiresAt, ')');
     } catch (err) {
       console.error('FCM 등록 실패', err);

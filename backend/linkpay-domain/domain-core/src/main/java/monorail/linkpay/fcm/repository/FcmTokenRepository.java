@@ -15,6 +15,5 @@ public interface FcmTokenRepository extends JpaRepository<FcmToken, Long> {
 
     List<FcmToken> findAllByMemberId(Long memberId);
 
-    @Lock(LockModeType.OPTIMISTIC)
     Optional<FcmToken> findByTokenOrDeviceId(String token, String deviceId);
 }

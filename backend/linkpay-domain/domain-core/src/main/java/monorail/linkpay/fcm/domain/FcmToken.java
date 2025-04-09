@@ -43,10 +43,6 @@ public class FcmToken extends BaseEntity {
 
     private Instant expiresAt;
 
-    @Version
-    @Column(name = "version", nullable = false)
-    private Long version;
-
     @Builder
     private FcmToken(Long id, Member member, String token, String deviceId, Instant expiresAt) {
         this.id = id;
