@@ -74,16 +74,20 @@ public class LinkCardService {
         if (!linkedWalletCreator.getMember().getId().equals(memberId)) {
             throw new LinkPayException(INVALID_REQUEST, "링크카드 생성 권한이 없습니다.");
         }
-        Set<Long> linkedMemberIds = linkedMemberRepository.findByLinkedWalletId(linkedwallet.getId()).stream()
+        List<Long> linkedMemberIds = linkedMemberRepository.findByLinkedWalletId(linkedwallet.getId()).stream()
                 .map(LinkedMember::getId)
-                .collect(Collectors.toSet());
+                .toList();
 
         boolean hasUnregisteredMember = request.linkedMemberIds().stream()
                 .anyMatch(linkedMemberId -> !linkedMemberIds.contains(Long.parseLong(linkedMemberId)));
         if (hasUnregisteredMember) {
             throw new LinkPayException(INVALID_REQUEST, "해당 링크지갑에 참여하지 않은 사용자입니다.");
         }
-        List<LinkCard> linkCards = linkedMemberRepository.findByIdIn(linkedMemberIds).stream()
+        Set<Long> extractedLinkedMemberIds = request.linkedMemberIds().stream()
+                .map(Long::parseLong)
+                .collect(Collectors.toSet());
+
+        List<LinkCard> linkCards = linkedMemberRepository.findByIdIn(extractedLinkedMemberIds).stream()
                 .map(linkedMember -> request.toLinkCard(idGenerator.generate(), linkedMember.getMember(), linkedwallet))
                 .toList();
 

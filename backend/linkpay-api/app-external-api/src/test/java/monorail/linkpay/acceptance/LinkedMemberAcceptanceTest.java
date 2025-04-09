@@ -84,6 +84,12 @@ public class LinkedMemberAcceptanceTest extends AcceptanceTest {
                             () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                             () -> assertThat(linkedMembersResponse.linkedMembers()).hasSize(1)
                     );
+                }),
+
+                dynamicTest("삭제한 참여자를 다시 참여시킨다", () -> {
+                    ExtractableResponse<Response> response = 링크지갑_참여자_추가_요청(accessToken, linkedWalletId,
+                            new LinkedMemberCreateRequest("3"));
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
                 })
         );
     }

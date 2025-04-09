@@ -20,13 +20,20 @@ const KakaoCallback: React.FC = () => {
           null,
           {
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            }
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
           }
         );
         const { accessToken } = response.data;
         console.log('Access Token:', accessToken);
         sessionStorage.setItem('accessToken', accessToken);
+
+        const mypageResponse = await axios.get(`${base_url}/api/mypage`, {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+        });
+        const { email } = mypageResponse.data;
+        console.log('Member email:', email);
+        sessionStorage.setItem('memberEmail', email);
         window.location.href = '/';
       } catch (error) {
         console.error('로그인 실패:', error);

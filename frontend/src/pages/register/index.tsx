@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import LinkCardItem from '@/components/LinkCardItem';
 import axios from 'axios';
 import { Card } from '@/model/Card';
+import adjustColorBrightness from '@/util/colorset';
 
 const base_url = process.env.REACT_APP_API_URL;
 const PAGE_SIZE = 10;
@@ -11,7 +12,7 @@ const PAGE_SIZE = 10;
 const Register: React.FC = () => {
 
 
-  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [selectedIndices, setSelectedIndices] = useState<string[]>([]);
   const [cards, setCards] = useState<Card[]>([]);
   const [hasNext, setHasNext] = useState(true);
   const [lastId, setLastId] = useState<string | null>(null);
@@ -86,7 +87,7 @@ const Register: React.FC = () => {
     };
   }, [fetchCards, hasNext, loading]);
 
-  const handleSelect = (index: number) => {
+  const handleSelect = (index: string) => {
     setSelectedIndices((prev) => {
       if (prev.includes(index)) {
         return prev.filter((i) => i !== index);
@@ -150,7 +151,7 @@ const Register: React.FC = () => {
                     ? 'outline outline-4 outline-gray-400 brightness-90 dark:outline-white '
                     : ''
                 }`}
-                style={{ backgroundColor: card.cardColor }}
+                style={{  background: `linear-gradient(155deg, ${card.cardColor}, ${adjustColorBrightness(card.cardColor, -20)} 70%)` }}
               >
                  <LinkCardItem
                     cardName={card.cardName}

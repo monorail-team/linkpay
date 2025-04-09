@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.controller.request.StoreCreateRequest;
 import monorail.linkpay.payment.dto.TransactionInfo;
+import monorail.linkpay.store.dto.StoreListResponse;
 import monorail.linkpay.store.service.StoreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,5 +23,10 @@ public class StoreController {
     public ResponseEntity<TransactionInfo> create(@RequestBody @Valid final StoreCreateRequest request) {
         Long storeId = storeService.create(request.storeName());
         return ResponseEntity.created(URI.create(String.format("/api/stores/%s", storeId))).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<StoreListResponse> readAll() {
+        return ResponseEntity.ok(storeService.readAll());
     }
 }
