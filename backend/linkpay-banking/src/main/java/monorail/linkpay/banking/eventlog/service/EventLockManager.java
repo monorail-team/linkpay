@@ -23,7 +23,8 @@ public class EventLockManager {
 
     @Retryable(
             maxAttempts = 4,
-            backoff = @Backoff(delay = 500, multiplier = 2)
+            backoff = @Backoff(delay = 500, multiplier = 2),
+            recover = "recover"
     )
     public void acquireLockWithRetry(final Long eventId) {
         if (!eventLogDistributedLockRepository.lock(eventId, LOCK_TTL)) {
