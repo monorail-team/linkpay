@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { formatDateTime } from '@/util/formatdate';
 import { LinkWallet } from '@/model/LinkWallet';
 import axios from 'axios';
+import BackgroundImage from '@/components/BackgroundImage';
 
 const ParticipatedLinkWalletPage: React.FC = () => {
   const [showChargeModal, setShowChargeModal] = useState(false);
@@ -143,19 +144,20 @@ const ParticipatedLinkWalletPage: React.FC = () => {
       <div className="w-full max-w-md mx-auto p-4" style={{ height: 'calc(100vh - 64px)' }}>
         {/* 지갑 정보 영역 (카드 생성 버튼은 제거됨) */}
         <div className="w-4/5 h-1/4 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
-          <p className="text-[clamp(0.8rem,2vw,1rem)] text-black text-start mt-4 px-4 dark:text-[#D4D4D4]">
+        <BackgroundImage />
+          <p className="text-[clamp(0.8rem,2vw,1rem)] text-black text-start mt-4 px-4 dark:text-[#D4D4D4] z-[3]">
             {linkWallet?.linkedWalletName || '로딩 중...'}
           </p>
           <div className="flex flex-col items-center justify-center h-2/3">
-            <p className="text-[clamp(1rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4]">
+            <p className="text-[clamp(1rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4] z-[3]">
               잔여 포인트
             </p>
-            <p className="text-[clamp(1.5rem,4vw,2.5rem)] sm:text-3xl text-black text-center font-bold dark:text-[#D4D4D4]">
+            <p className="text-[clamp(1.5rem,4vw,2.5rem)] sm:text-3xl text-black text-center font-bold dark:text-[#D4D4D4] z-[3]">
               {linkWallet?.amount?.toLocaleString() || '0'}원
             </p>
           </div>
           <div className="flex justify-center w-full">
-            <button className="bg-white text-black py-2 w-2/3 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]"
+            <button className="bg-white text-black py-2 w-2/3 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)] z-[3]"
               onClick={() => setShowChargeModal(true)}>
               충전하기
             </button>
@@ -164,7 +166,7 @@ const ParticipatedLinkWalletPage: React.FC = () => {
         <div className="flex justify-end mr-10 mt-3">
           <button
             onClick={() => handleManageLinkWallet(walletId!)}
-            className="bg-white border text-black py-1 px-2 rounded-lg dark:bg-[#4F4F4F] dark:text-white dark:border-[#4F4F4F]"
+            className="bg-white border text-black py-1 px-2 rounded-lg dark:bg-[#4F4F4F] dark:text-white dark:border-[#4F4F4F] "
           >
             참여자목록
           </button>

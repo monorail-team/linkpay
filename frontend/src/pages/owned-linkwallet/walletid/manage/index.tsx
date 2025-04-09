@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Icon from '@/components/Icon';
 import MemberSearchBar from '@/components/MemberSearchBar';
+import ButtonModal from '@/modal/ButtonModal';
 import { useThemeStore } from '@/store/themeStore';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -13,6 +14,7 @@ const ManageLinkWalletPage: React.FC = () => {
   const [selectedMembers, setSelectedMembers] = useState<Member[]>([]);
   const [initialMembers, setInitialMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showDiscardModal, setShowDiscardModal] = useState(false);
 
   const navigate = useNavigate();
   const { theme } = useThemeStore();
@@ -152,6 +154,22 @@ const ManageLinkWalletPage: React.FC = () => {
     }
   };
 
+  const handleDiscard = async () => {
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      if (!token) return;
+      await axios.delete(`${base_url}/api/linked-wallets/${walletId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert('지갑이 폐기되었습니다.');
+      navigate("/linkwalletlist");
+    } catch (error) {
+      console.error('지갑 폐기 실패', error);
+      alert('지갑 폐기 실패');
+    }
+  };
   const handleClearLinkWalletName = () => setWalletName('');
 
   const isLinkWalletNameValid = walletName.length <= 10;
@@ -167,7 +185,23 @@ const ManageLinkWalletPage: React.FC = () => {
       <div className="p-4 flex-1 space-y-8 mx-4 overflow-auto">
         {/* 링크지갑 이름 입력 */}
         <div>
-          <span className="text-sm text-gray-600 dark:text-gray-400">링크 지갑 이름</span>
+          <div className="flex justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">링크 지갑 이름</span>
+            <button
+            className="
+                px-3 py-0.5
+                border border-gray-400 
+                rounded-lg
+                text-gray-800
+                dark:text-white
+                hover:bg-gray-200 dark:hover:bg-gray-600
+                transition mb-2
+            "
+            onClick={() => setShowDiscardModal(true)}
+            >
+            지갑 폐기하기
+            </button>
+        </div>
           <div className="relative">
             <input
               type="text"
@@ -205,6 +239,18 @@ const ManageLinkWalletPage: React.FC = () => {
           {isDataChanged() ? '수정하기' : '확인'}
         </button>
       </div>
+      {showDiscardModal && (
+            <ButtonModal
+             type="confirmAndCancel"
+             onClose={() => setShowDiscardModal(false)}
+             onConfirm={handleDiscard}
+            >
+                <h3 className="text-lg font-bold mb-4 text-black dark:text-white">
+                지갑을 폐기하시겠습니까?
+                </h3>
+           </ButtonModal>
+      )}
+      
     </div>
   );
 };

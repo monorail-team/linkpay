@@ -34,7 +34,7 @@ const KakaoCallback: React.FC = () => {
         const { email } = mypageResponse.data;
         console.log('Member email:', email);
         sessionStorage.setItem('memberEmail', email);
-        navigate('/', { replace: true });
+        window.location.href = '/';
       } catch (error) {
         console.error('로그인 실패:', error);
         // 에러 처리 로직 추가 가능

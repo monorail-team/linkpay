@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import MenuModal from '@/modal/MenuModal';
 import axios from 'axios';
 import { LinkWallet } from '@/model/LinkWallet';
+import BackgroundImage from "@/components/BackgroundImage"
 
 const base_url = process.env.REACT_APP_API_URL;
 const TAB_OWNED = 'CREATOR';
@@ -129,22 +130,22 @@ const LinkWalletListPage: React.FC = () => {
       {/* 탭 영역 */}
       <div className="flex justify-around items-center border-b border-gray-200  dark:border-gray-700 text-[16px] mx-10">
         <button
-          className={`py-3 w-full 
+          className={`py-3 w-full border-b-2
             ${
               activeTab === TAB_OWNED
-                ? 'text-[#65558F] font-bold border-b-2 border-[#65558F] dark:text-[#D8D5F8] dark:border-[#D8D5F8]'
-                : 'text-gray-500 dark:text-white'
+                ? 'text-[#65558F] font-bold  border-[#65558F] dark:text-[#D8D5F8] dark:border-[#D8D5F8]'
+                : 'text-gray-500 dark:text-white border-[transparent]'
             }`}
           onClick={() => handleTabClick(TAB_OWNED)}
         >
           내 소유 링크지갑
         </button>
         <button
-          className={`py-3 w-full 
+          className={`py-3 w-full border-b-2
             ${
               activeTab === TAB_PARTICIPATED
-                ? 'text-[#65558F] font-bold border-b-2 border-[#65558F] dark:text-[#D8D5F8] dark:border-[#D8D5F8]'
-                : 'text-gray-500 dark:text-white'
+                ? 'text-[#65558F] font-bold  border-[#65558F] dark:text-[#D8D5F8] dark:border-[#D8D5F8]'
+                : 'text-gray-500 dark:text-white border-[transparent]'
             }`}
           onClick={() => handleTabClick(TAB_PARTICIPATED)}
         >
@@ -157,9 +158,11 @@ const LinkWalletListPage: React.FC = () => {
         {wallets.map((wallet) => (
             <div
                 key={wallet.linkedWalletId}
-                className="relative my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px] bg-[#EEEEEE] dark:bg-[#5c5b5b] dark:border-[#706E6E]"
+                className="relative my-1 box-border border rounded-lg w-5/6 p-4 mx-auto bg-center h-[7vh] min-h-[120px]  dark:border-[#706E6E]"
                 onClick={() => handleLinkWallet(wallet.linkedWalletId)}
             >
+                <BackgroundImage />
+
                 {/* 왼쪽: 지갑명 (수직 중앙) */}
                 <div className="absolute left-4 top-1/2 -translate-y-1/2">
                     <p className="text-sm text-gray-800 dark:text-white">
@@ -209,6 +212,11 @@ const LinkWalletListPage: React.FC = () => {
             <span className="text-4xl text-gray-500">+</span>
           </div>
         )}
+        {activeTab === TAB_PARTICIPATED&&(wallets.length==0)&&
+          <div className="text-center text-gray-500 text-[16px]">
+            참여한 링크지갑이 존재하지 않습니다.
+          </div>
+        }
       </div>
     </div>
   );

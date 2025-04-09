@@ -28,6 +28,8 @@ dependencies {
     // prometheus
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
+    // DB
+    runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
 }
 
