@@ -20,14 +20,14 @@ const KakaoCallback: React.FC = () => {
           null,
           {
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
           }
         );
         const { accessToken } = response.data;
         console.log('Access Token:', accessToken);
         sessionStorage.setItem('accessToken', accessToken);
-        navigate('/', { replace: true });
+        window.location.href = '/';
       } catch (error) {
         console.error('로그인 실패:', error);
         // 에러 처리 로직 추가 가능
