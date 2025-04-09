@@ -6,6 +6,7 @@ import com.jcraft.jsch.Session;
 import jakarta.annotation.PreDestroy;
 import monorail.linkpay.exception.LinkPayException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -13,6 +14,7 @@ import java.util.Properties;
 import java.util.function.Consumer;
 
 import static monorail.linkpay.exception.ExceptionCode.SERVER_ERROR;
+
 
 @Component
 public class SshTunnelingInitializer {
