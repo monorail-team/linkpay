@@ -17,44 +17,52 @@ const CheckoutSuccess: React.FC = () => {
   const navigate = useNavigate();
 
   const confirmPayment = async() => {
-    // const response = await fetch("/sandbox-dev/api/v1/payments/confirm", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     paymentKey,
-    //     orderId,
-    //     amount,
-    //   }),
-    // });
-
-    // if (response.ok) {
-    //   setIsConfirmed(true);
-    // }
-    await handleDeposit();
-    setIsConfirmed(true);
+    try {
+        await handleConfirmPayment();
+        await handleDeposit();
+        setIsConfirmed(true);
+      } catch (error: any) {
+        console.error("결제 확인 또는 충전 중 오류 발생:", error);
+        alert("예기치 못한 오류가 발생했어요.");
+        handleRedirect();
+      }
   }
 
   const handleRedirect = () => {
     navigate(returnUrl, {replace: true});
   }
 
-  const handleDeposit = async () => {
-    try {
-        const token = sessionStorage.getItem('accessToken');
-        const response = await axios.patch(`${base_url}/api/my-wallets/charge`, 
-            { amount },
-            {
-                headers: {
+  const handleConfirmPayment = async () => {
+    const token = sessionStorage.getItem('accessToken');
+    const response = await axios.post(`${base_url}/api/toss/checkout/confirm`, 
+        {
+            paymentKey,
+            orderId,
+            amount
+        },
+        {
+            headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
-                },
-            }
-        );
-      } catch (error) {
-        console.error(error);
-      }
+            },
+        }
+    );
+    return response;
+  }
+
+  const handleDeposit = async () => {
+    const token = sessionStorage.getItem('accessToken');
+    const response = await axios.patch(`${base_url}/api/my-wallets/charge`, 
+        { amount },
+        {
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            },
+        }
+    );
+    return response;
+      
   }
 
   return (
