@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.within;
 
 class FcmServiceTest extends IntegrationTest {
 
@@ -30,10 +31,10 @@ class FcmServiceTest extends IntegrationTest {
         Member member = memberRepository.save(MemberFixtures.member());
         String token = "fcm-token";
         String deviceId = UUID.randomUUID().toString();
-        Instant expiresAt = Instant.now().plus(3600, ChronoUnit.SECONDS).truncatedTo(ChronoUnit.MILLIS);
+        Instant expiresAt = Instant.now().plus(60*60*24*30, ChronoUnit.SECONDS).truncatedTo(ChronoUnit.MILLIS);
 
         //when
-        sut.register(member.getId(), token, deviceId, expiresAt);
+        sut.register(member.getId(), token, deviceId);
 
         //then
         List<FcmToken> savedTokens = fcmTokenRepository.findAll();
@@ -43,7 +44,7 @@ class FcmServiceTest extends IntegrationTest {
             assertThat(out.getMember().getId()).isEqualTo(member.getId());
             assertThat(out.getToken()).isEqualTo(token);
             assertThat(out.getDeviceId()).isEqualTo(deviceId);
-            assertThat(out.getExpiresAt()).isEqualTo(expiresAt);
+            assertThat(out.getExpiresAt()).isCloseTo(expiresAt, within(1, ChronoUnit.SECONDS));
         });
     }
 
@@ -62,7 +63,7 @@ class FcmServiceTest extends IntegrationTest {
         for (int i = 0; i < exCount; i++) {
             executorService.submit(() -> {
                 try {
-                    sut.register(memberId, token, deviceId, expiresAt);
+                    sut.register(memberId, token, deviceId);
                 } finally {
                     latch.countDown();
                 }

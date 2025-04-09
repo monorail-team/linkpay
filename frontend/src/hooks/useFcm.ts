@@ -66,15 +66,12 @@ export const useFcm = () => {
         console.log('✅ 기존과 동일한/유효한 FCM 토큰 — 등록 생략');
         return;
       }
-
-      const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(); // 30일 후
-
+      
       // 서버에 token 보내기
-      await axios.put(`${base_url}/api/fcm/register`,
+      const response = await axios.put(`${base_url}/api/fcm/register`,
         {
           token: fcmToken,
-          deviceId: deviceId,
-          expiresAt: expiresAt
+          deviceId: deviceId
         },
         {
           headers: {
@@ -84,6 +81,7 @@ export const useFcm = () => {
         }
       );
 
+      const { expiresAt } = response.data;
       sessionStorage.setItem(FCM_TOKEN_KEY, fcmToken);
       sessionStorage.setItem(EXPIRE_KEY, expiresAt);
       console.log('✅ FCM 등록 완료 (만료일:', expiresAt, ')');
