@@ -21,13 +21,14 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
 
-  const { handleWebAuthn, loading } = useWebAuthn();
+  const { handleWebAuthn, loading, notification} = useWebAuthn();
+  
 
   const onFingerprintClick = async () => {
     const assertionResult = await handleWebAuthn();
     if (assertionResult) {
       const selectedCard = cards[currentIndex];
-      navigate("/payment", { state: { cardData: selectedCard} }); // TODO: state에 paymentToken 추가해주세요
+      navigate("/payment", { state: { cardData: selectedCard, paymentToken: assertionResult} }); // TODO: state에 paymentToken 추가해주세요
     } else {
       console.error("assertionResult 생성 실패");
     }
@@ -164,6 +165,7 @@ const Home: React.FC = () => {
               )}
             </div>
           </div>
+          {notification && <div className="text-sm text-white bg-black bg-opacity-40 px-5 py-2 rounded-md text-center w-4/5 mx-auto">{notification}</div>}
       </div>
       
 
