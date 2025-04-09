@@ -6,7 +6,6 @@ import 'react-day-picker/style.css';
 import { useThemeStore } from '@/store/themeStore';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import MemberSearchBar from '@/components/MemberSearchBar';
 import { Member } from '@/model/Member';
 
 const CreateSharedCardPage: React.FC = () => {
@@ -15,7 +14,7 @@ const CreateSharedCardPage: React.FC = () => {
   const [expireDate, setExpireDate] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [memberList, setMemberList] = useState<Member[]>([]);
-  const [initialMembers, setInitialMembers] = useState<Member[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
   const { walletId } = useParams<{ walletId: string }>();
   const navigate = useNavigate();
@@ -32,8 +31,12 @@ const CreateSharedCardPage: React.FC = () => {
   };
 
 
-  const onMembersChange = (members: Member[]) => {
-    setMemberList(members);
+  const toggleMemberSelection = (memberId: string) => {
+    setSelectedMembers((prevSelected) =>
+      prevSelected.includes(memberId)
+        ? prevSelected.filter((id) => id !== memberId)
+        : [...prevSelected, memberId]
+    );
   };
 
   useEffect(() => {
@@ -51,18 +54,13 @@ const CreateSharedCardPage: React.FC = () => {
           }
         );
         const membersData = response.data.linkedMembers;
-        const myMemberEmail = sessionStorage.getItem('memberEmail');
-        const filteredMembers = membersData
-          .filter((member: Member & { linkedMemberId?: string } & { name?: string }) => member.email !== myMemberEmail)
-          .map((member: Member & { linkedMemberId?: string } & { name?: string }) => ({
-            ...member,
-            memberId: member.memberId || member.linkedMemberId || '',
-            username: member.username || member.name,
-            email: member.email,
-          }));
-        // 초기 참여 멤버와 현재 멤버 상태에 모두 반영
-        setMemberList(filteredMembers);
-        setInitialMembers(filteredMembers);
+        const normalizedMembers = membersData.map((member: Member & { linkedMemberId?: string; name?: string }) => ({
+          ...member,
+          memberId: member.memberId || member.linkedMemberId || '',
+          username: member.username || member.name || '',
+        }));
+        setMemberList(normalizedMembers);
+        setSelectedMembers([]);
       } catch (error) {
         console.error('링크멤버 정보를 불러오는 중 오류 발생:', error);
       }
@@ -89,14 +87,13 @@ const CreateSharedCardPage: React.FC = () => {
     const month = dateObj.getMonth() + 1; 
     const day = dateObj.getDate();
 
- 
-    const memberIds = memberList.map((member) => member.memberId);
 
+  
     const payload = {
       cardName,
       limitPrice,
       expiredAt: [year, month, day],
-      linkedMemberIds: memberIds,
+      linkedMemberIds: selectedMembers,
       linkedWalletId: walletId,
     };
 
@@ -217,8 +214,30 @@ const CreateSharedCardPage: React.FC = () => {
 
         {/* 멤버 초대 검색바 */}
         <div>
-          <span className="text-sm text-gray-600 dark:text-gray-400">멤버 초대</span>
-          <MemberSearchBar onMembersChange={onMembersChange} initialMembers={initialMembers}/>
+          <span className="text-sm text-gray-600 dark:text-gray-400">멤버 선택</span>
+          <div className="mt-4 max-h-60 overflow-y-auto">
+            <div className="mt-4 flex flex-wrap gap-2 justify-center">
+              {memberList.map((member) => {
+                const isSelected = selectedMembers.includes(member.memberId);
+                return (
+                  <div
+                    key={member.memberId}
+                    onClick={() => toggleMemberSelection(member.memberId)}
+                    className={`cursor-pointer border rounded-full px-3 py-1 transition-colors w-60 text-center truncate ${
+                      isSelected
+                        ? 'bg-indigo-500 text-white border-transparent dark:bg-indigo-500 dark:text-white'
+                        : 'bg-white text-[#010101] border-gray-300 dark:bg-[#9E9E9E] dark:text-[#FFFFFF]'
+                    } `}
+                  >
+                    {member.username} ({member.email})
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          {selectedMembers.length === 0 && (
+            <p className="mt-2 text-sm text-red-500">한명 이상의 멤버를 선택해 주세요.</p>
+          )}
         </div>
       </div>
 

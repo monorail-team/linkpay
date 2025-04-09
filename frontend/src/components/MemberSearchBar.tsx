@@ -118,10 +118,11 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
       {/* 추가된 사용자 리스트 */}
       <div className="mt-4 flex flex-wrap gap-2 justify-center w-full">
         {addedMembers.map(member => (
-          <div key={member.memberId} className="flex items-center justify-between border rounded-full px-3 py-1 min-w-[200px] dark:bg-[#9E9E9E]">
-            <span className="mr-2 dark:text-white">{member.username}({member.email})</span>
+          <div key={member.memberId} className="flex items-center justify-between border rounded-full px-3 py-1 min-w-[200px] dark:bg-[#9E9E9E] ">
+            <div className="flex items-center w-60 text-center truncate">
+              <span className="mr-2 dark:text-white">{member.username}({member.email})</span>
+            </div>
             <button onClick={() => removeUser(member.memberId)}>
-            
             <Icon name={theme === 'dark' ? "searchcalcelDarkIcon" : "searchcalcelIcon"} width={theme === 'dark' ? 13 : 10} height={theme === 'dark' ? 13 : 10} alt="입력취소" />
             </button>
           </div>
