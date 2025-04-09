@@ -15,7 +15,6 @@ const Payment: React.FC = () => {
   const cardData: Card = location.state.cardData;
   const paymentToken: string = location.state.paymentToken;
   const initTime: number = 45;
-  const description: string = 'description'; // TODO: description 필드 존재 여부 체크
   const guideText: string = '디바이스의 뒷면을 카드 리더기에 대세요.';
 
   const [timeLeft, setTimeLeft] = useState(initTime);
@@ -79,15 +78,15 @@ const Payment: React.FC = () => {
         className="text-center text-black rounded-2xl shadow-lg w-[249px] h-[384px] mb-12 flex flex-col justify-between p-6"
         style={backgroundStyle}>
         <div className="flex flex-col justify-center mt-24 items-start ml-4">
-          <p className="text-sm text-gray-700 mb-1 truncate w-full text-left">{cardData.cardName}</p>
-          <h2 className="text-2xl font-semibold text-gray-600 truncate w-full text-left">{description}</h2>
+          <p className="text-sm text-gray-700 mb-1 truncate w-full text-left">카드명</p>
+          <h2 className="text-2xl font-semibold text-gray-600 truncate w-full text-left">{cardData.cardName}</h2>
         </div>
         <div className="mt-auto text-xs text-gray-500 text-right">만료일 {cardData.expiredAt}</div>
       </div>
 
       {/* 카운트다운 */}
       <div className="text-center">
-        <div className="border border-dashed border-white rounded-full px-6 py-2 mb-3 text-lg font-semibold">
+        <div className="mx-auto border border-dashed border-white rounded-full w-1/3 px-6 py-2 mb-3 text-lg font-semibold">
           {timeLeft}
         </div>
         <p className="text-sm mb-2 opacity-90">{guideText}</p>
