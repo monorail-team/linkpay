@@ -4,9 +4,12 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import jakarta.annotation.PreDestroy;
+import lombok.Getter;
+import lombok.Setter;
 import monorail.linkpay.exception.LinkPayException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -15,25 +18,18 @@ import java.util.function.Consumer;
 
 import static monorail.linkpay.exception.ExceptionCode.SERVER_ERROR;
 
-
-@Component
+@Getter
+@Setter
+@Configuration
+@ConfigurationProperties(prefix = "ssh")
 public class SshTunnelingInitializer {
-
-    @Value("${ssh.ssh_host}")
     private String sshHost;
-    @Value("${ssh.ssh_user}")
     private String sshUser;
-    @Value("${ssh.ssh_port}")
     private int sshPort;
-    @Value("${ssh.ssh_key}")
     private String sshKey;
-    @Value("${ssh.database_host}")
     private String databaseHost;
-    @Value("${ssh.database_port}")
     private int databasePort;
-    @Value("${ssh.redis_host}")
     private String redisHost;
-    @Value("${ssh.redis_port}")
     private int redisPort;
 
     private Session rdsSession;
