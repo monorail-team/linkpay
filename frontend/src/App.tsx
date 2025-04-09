@@ -10,11 +10,12 @@ import CreateCard from '@/pages/createcard';
 import LinkWalletList from '@/pages/linkwalletlist';
 import LinkCardList from '@/pages/linkcardlist';
 import CardDetail from '@/pages/card/id';
-import CreateLinkWallet from './pages/createlinkwallet';
+import CreateLinkWallet from '@/pages/createlinkwallet';
 import OwnedLinkWallet from '@/pages/owned-linkwallet/walletid';
 import ParticipatedLinkWallet from '@/pages/participated-linkwallet/walletid';
-import ManageLinkWallet from './pages/owned-linkwallet/walletid/manage';
 import Checkout from '@/pages/tossPayments/checkout';
+import ManageLinkWallet from '@/pages/owned-linkwallet/walletid/manage';
+import CreateLinkWalletCard from '@/pages/owned-linkwallet/walletid/create';
 
 import { useThemeStore } from '@/store/themeStore';
 import PrivateRoute from './components/PrivateRoute';
@@ -43,7 +44,7 @@ const App: React.FC = () => {
   useFcm();
 
   return (
-    <div className="w-full h-full md:w-[456px] md:h-[820px] mx-auto ">
+    <div className="w-full h-screen md:w-[456px] md:h-[820px] mx-auto ">
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -67,6 +68,7 @@ const App: React.FC = () => {
             <Route path="/linkcardlist" element={<LinkCardList />} />
             <Route path="/cards/:id" element={<CardDetail />} />
             <Route path="/owned-linkwallet/:walletId/manage" element={<ManageLinkWallet />} />
+            <Route path="/owned-linkwallet/:walletId/create" element={<CreateLinkWalletCard />} />
           </Route>
         </Routes>
       </Router>

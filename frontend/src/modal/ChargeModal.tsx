@@ -16,8 +16,8 @@ const ChargeModal: React.FC<ChargeModalProps> = ({ onClose, onConfirm, returnPag
   const formatNumber = (value: string) => {
     // 숫자만 남기기 (정수값만 입력 가능)
     let numericValue = value.replace(/\D/g, '');
-    if (parseInt(numericValue) > 100000000) {
-      alert('최대 입력 가능 금액은 100,000,000원 입니다.');
+    if (parseInt(numericValue) > 10000000) {
+      alert('최대 입력 가능 금액은 10,000,000원 입니다.');
       numericValue = amount; // 최대값 제한
     }
     // 1000 단위 콤마 추가

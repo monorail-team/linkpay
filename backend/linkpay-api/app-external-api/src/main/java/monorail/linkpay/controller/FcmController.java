@@ -1,11 +1,16 @@
 package monorail.linkpay.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.auth.AuthPrincipal;
+import monorail.linkpay.controller.request.FcmRegisterRequest;
 import monorail.linkpay.fcm.service.FcmService;
+import monorail.linkpay.fcm.service.dto.FcmRegisterResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,11 +19,11 @@ public class FcmController {
 
     private final FcmService fcmService;;
 
-    @PostMapping("/register") // TODO: PUT Method?
-    public ResponseEntity<Void> registerFcmToken(@AuthenticationPrincipal final AuthPrincipal principal,
-                                                 @RequestParam("token") final String token) {
-        fcmService.register(principal.memberId(), token);
-        return ResponseEntity.noContent().build();
+    @PutMapping("/register")
+    public ResponseEntity<FcmRegisterResponse> registerFcmToken(@AuthenticationPrincipal final AuthPrincipal principal,
+                                                                @Valid @RequestBody FcmRegisterRequest request) {
+        var response = fcmService.register(principal.memberId(), request.token(), request.deviceId());
+        return ResponseEntity.ok(response);
     }
 
     @Deprecated // 테스트용

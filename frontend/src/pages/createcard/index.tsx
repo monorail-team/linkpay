@@ -123,7 +123,7 @@ const CreateCardPage: React.FC = () => {
                         return;
                       }
                       let num = Number(Rvalue);
-                      if (num > 100000000) num = 100000000;
+                      if (num > 10000000) num = 10000000;
                       // 숫자를 콤마가 찍힌 문자열로 변환
                       setCardLimit(num.toLocaleString());
                   }}

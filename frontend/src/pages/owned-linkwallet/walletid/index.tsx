@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { formatDateTime } from '@/util/formatdate';
 import { LinkWallet } from '@/model/LinkWallet';
 import axios from 'axios';
+import BackgroundImage from '@/components/BackgroundImage';
 
 const OwnedLinkWalletPage: React.FC = () => {
   const [showChargeModal, setShowChargeModal] = useState(false);
@@ -141,30 +142,31 @@ const OwnedLinkWalletPage: React.FC = () => {
   const handleMenuClose = () => setShowMenu(false);
 
   return (
-    <div className="dark:bg-[#3b3838]">
+    <div className="dark:bg-[#3b3838] h-screen">
       <Header headerType="menu" onMenuClick={handleMenuClick} />
       {showMenu && <MenuModal onClose={handleMenuClose} />}
       <div className="w-full max-w-md mx-auto p-4 " style={{ height: 'calc(100vh - 64px)' }}>
         {/* 지갑 정보 영역 */}
-        <div className="w-4/5 h-1/4 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
-          <p className="test-sm text-[clamp(0.8rem,2vw,1rem)] text-black text-start mt-4 px-4 dark:text-[#D4D4D4]">
+        <div className="w-4/5 bg-[#F7F6F9] rounded-lg mx-auto flex flex-col justify-between relative dark:bg-[#6C6C6C]">
+        <BackgroundImage />
+          <p className="test-sm text-[clamp(0.9rem,2vw,1rem)] text-black text-start mt-4 px-4 dark:text-[#D4D4D4] z-[3]">
             {linkWallet?.linkedWalletName || '로딩 중...'}
           </p>
-          <div className="flex flex-col items-center justify-center h-2/3">
-            <p className="text-[clamp(1rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4]">
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-[clamp(1.1rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4] z-[3]">
               잔여 포인트
             </p>
-            <p className="text-[clamp(1.5rem,4vw,2.5rem)] sm:text-3xl text-black text-center font-bold dark:text-[#D4D4D4]">
+            <p className="text-[clamp(1.6rem,4vw,2.5rem)] sm:text-3xl text-black text-center font-bold dark:text-[#D4D4D4] z-[3]">
             {linkWallet?.amount?.toLocaleString() || '0'}원
             </p>
           </div>
-          <div className="flex justify-between w-full">
+          <div className="flex justify-between w-full gap-7 mt-2">
             <button
             onClick={() => handleCreateCard(walletId!)} 
-            className="bg-white text-black py-2 px-4 ml-auto mr-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]">
+            className="bg-white text-black py-2 px-4 ml-auto mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(1rem,2vw,1rem)] z-[3]">
               카드 생성
             </button>
-            <button className="bg-white text-black py-2 px-4 mr-auto ml-2 mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(0.8rem,2vw,1rem)]"
+            <button className="bg-white text-black py-2 px-4 mr-auto mb-4 rounded-lg dark:bg-[#D4D4D4] text-[clamp(1rem,2vw,1rem)] z-[3]"
               onClick={() => setShowChargeModal(true)}>
               충전하기
             </button>
@@ -179,7 +181,7 @@ const OwnedLinkWalletPage: React.FC = () => {
           </button>
         </div>
         {/* 입출금 내역 영역 */}
-        <div className="mt-12 mx-6" ref={scrollContainerRef} style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+        <div className="mt-5 mx-6 h-full" ref={scrollContainerRef} style={{  overflowY: 'auto' }}>
           <h3 className="text-lg text-[#969595]">입출금 내역</h3>
           <ul className="mt-2 hide-scrollbar">
             {walletHistories.map((history: MyWalletHistory) => (

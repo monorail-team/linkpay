@@ -1,6 +1,6 @@
 export interface CardHistory {
     paymentId: string;
-    linkCardId: number;
+    linkCardId: string;
     linkCardName: string;
     usedPoint: number;
     storeName: string;

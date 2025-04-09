@@ -15,6 +15,8 @@ dependencies {
 
     implementation 'com.github.mwiede:jsch:0.2.24'
 
+    // DB
+    runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
 }
 

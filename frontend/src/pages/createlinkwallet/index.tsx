@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
-import Icon from '@/components/Icon';
 import MemberSearchBar from '@/components/MemberSearchBar';
-import { useThemeStore } from '@/store/themeStore';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Member } from '@/model/Member';
@@ -14,7 +12,6 @@ const CreateLinkWalletPage: React.FC = () => {
   const [selectedMembers, setSelectedMembers] = useState<Member[]>([]);
 
   const navigate = useNavigate();
-  const { theme } = useThemeStore();
   
   const CancelIcon = MdOutlineCancel as unknown as (props: React.ComponentProps<'svg'>) => JSX.Element;
   const base_url = process.env.REACT_APP_API_URL;
