@@ -21,6 +21,10 @@ public class FcmClient {
     private final FcmProps props;
     private final FcmTokenProvider fcmTokenProvider;
 
+    /**
+     * Ref.
+     * https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode?hl=ko&_gl=1*1uqa46t*_up*MQ..*_ga*MjE1NDU5Mi4xNzQ0MTU4NDQ5*_ga_CW55HF8NVT*MTc0NDE1ODQ0OS4xLjAuMTc0NDE1ODQ0OS4wLjAuMA..
+     */
     public ResponseEntity<String> sendPush(final FcmSendRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(fcmTokenProvider.getAccessToken());
@@ -35,7 +39,7 @@ public class FcmClient {
                 "notification", notification
         );
         var payload = Map.of("message", message);
-
+        // TODO 응답 및 예외 처리
         log.debug("[FCM] 메시지 전송 요청: {}", payload);
         return restTemplate.postForEntity(props.apiUrl(), new HttpEntity<>(payload, headers), String.class);
     }
