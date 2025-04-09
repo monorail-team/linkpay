@@ -51,7 +51,7 @@ class FcmServiceRetryTest {
 
         // when & then
         assertThatThrownBy(() ->
-                sut.register(memberId, token, deviceId, expiresAt)
+                sut.register(memberId, token, deviceId)
         ).isInstanceOf(LinkPayException.class)
                 .hasMessageContaining("FCM 등록에 반복 실패");
 

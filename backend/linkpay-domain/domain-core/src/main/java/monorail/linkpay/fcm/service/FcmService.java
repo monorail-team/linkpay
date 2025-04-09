@@ -6,6 +6,7 @@ import monorail.linkpay.exception.ExceptionCode;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.fcm.domain.FcmToken;
 import monorail.linkpay.fcm.repository.FcmTokenRepository;
+import monorail.linkpay.fcm.service.dto.FcmRegisterResponse;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.util.id.IdGenerator;
@@ -42,14 +43,15 @@ public class FcmService {
             recover = "recoverRegisterFailure"
     )
     @Transactional
-    public void register(final Long memberId, final String token, final String deviceId, final Instant expiresAt) {
+    public FcmRegisterResponse register(final Long memberId, final String token, final String deviceId) {
         Member member = memberFetcher.fetchById(memberId);
+        Instant expiresAt = Instant.now().plusSeconds(60 * 60 * 24 * 30);
         Optional<FcmToken> fcmTokenOptional = fcmTokenRepository.findByTokenOrDeviceId(token, deviceId);
 
         if (fcmTokenOptional.isPresent()) {
             FcmToken existing = fcmTokenOptional.get();
             existing.update(member, token, deviceId, expiresAt);
-            return;
+            return new FcmRegisterResponse(expiresAt);
         }
 
         fcmTokenRepository.save(FcmToken.builder()
@@ -59,11 +61,12 @@ public class FcmService {
                 .deviceId(deviceId)
                 .expiresAt(expiresAt)
                 .build());
+        return new FcmRegisterResponse(expiresAt);
     }
 
 
     @Recover
-    protected void recoverRegisterFailure(Exception e, Long memberId, String token, String deviceId, Instant expiresAt) {
+    protected FcmRegisterResponse recoverRegisterFailure(Exception e, Long memberId, String token, String deviceId) {
         throw new LinkPayException(ExceptionCode.DUPLICATED_RESOURCE, "FCM 등록에 반복 실패하였습니다. 다시 시도해주세요.");
     }
 
