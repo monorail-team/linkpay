@@ -14,7 +14,7 @@ import { formatDateTime } from '@/util/formatdate';
 const base_url = process.env.REACT_APP_API_URL;
 
 const CardDetailPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // 카드 id를 URL 파라미터로 받음
+  const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const initialCardData = location.state as Card | undefined;
   const navigate = useNavigate();
