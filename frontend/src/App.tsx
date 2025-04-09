@@ -14,6 +14,7 @@ import CreateLinkWallet from './pages/createlinkwallet';
 import OwnedLinkWallet from '@/pages/owned-linkwallet/walletid';
 import ParticipatedLinkWallet from '@/pages/participated-linkwallet/walletid';
 import ManageLinkWallet from './pages/owned-linkwallet/walletid/manage';
+import Checkout from '@/pages/tossPayments/checkout';
 
 import { useThemeStore } from '@/store/themeStore';
 import PrivateRoute from './components/PrivateRoute';
@@ -22,6 +23,8 @@ import ExamplePage from '@/pages/payment/example';
 import NfcWrite from 'pages/test/nfcwrite';
 import NfcRead from 'pages/test/nfcread';
 import { useFcm } from '@/hooks/useFcm';
+import CheckoutSuccess from './pages/tossPayments/checkoutSuccess';
+import CheckoutFail from './pages/tossPayments/checkoutFail';
 
 const App: React.FC = () => {
 
@@ -49,6 +52,9 @@ const App: React.FC = () => {
           <Route path="/nfcread" element={<NfcRead />} />
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout/success" element={<CheckoutSuccess />} />
+            <Route path="/checkout/fail" element={<CheckoutFail />} />
             <Route path="/register" element={<Register />} />
             <Route path="/mywallet" element={<MyWalletHistory />} />
             <Route path="/createcard" element={<CreateCard />} />

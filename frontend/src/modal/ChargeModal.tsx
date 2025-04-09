@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import ButtonModal from '@/modal/ButtonModal';
+import { useNavigate } from 'react-router-dom';
 
 export interface ChargeModalProps {
   onClose: () => void;
   onConfirm: (amount: number) => void;
+  returnPage: String,
 }
 
-const ChargeModal: React.FC<ChargeModalProps> = ({ onClose, onConfirm }) => {
+const ChargeModal: React.FC<ChargeModalProps> = ({ onClose, onConfirm, returnPage }) => {
   const [amount, setAmount] = useState<string>('');
+  const navigate = useNavigate();
 
   // 🔹 입력값을 숫자로 변환 & 1000단위 콤마 추가
   const formatNumber = (value: string) => {
@@ -30,26 +33,28 @@ const ChargeModal: React.FC<ChargeModalProps> = ({ onClose, onConfirm }) => {
   const handleConfirm = () => {
     const numAmount = parseInt(amount.replace(/,/g, ''), 10);
     if (!isNaN(numAmount) && numAmount > 0) {
-      onConfirm(numAmount);
+      navigate(`/checkout?amount=${numAmount}&returnPage=${returnPage}`)
     } else {
       alert('올바른 금액을 입력해주세요.');
     }
   };
 
   return (
-    <ButtonModal onClose={onClose} onConfirm={handleConfirm}>
-      <h2 className="text-lg font-semibold text-center mb-4">
-        충전할 금액을 입력해주세요.
-      </h2>
-      <input
-        type="text" // 🔹 숫자가 아닌 'text'로 설정하여 콤마 표시 가능
-        placeholder="금액을 입력해주세요."
-        value={amount}
-        onChange={handleChange}
-        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-left"
-        style={{border:"1px solid #ccc"}}
-      />
-    </ButtonModal>
+    <>
+      <ButtonModal onClose={onClose} onConfirm={handleConfirm}>
+        <h2 className="text-lg font-semibold text-center mb-4">
+          충전할 금액을 입력해주세요.
+        </h2>
+        <input
+          type="text" // 🔹 숫자가 아닌 'text'로 설정하여 콤마 표시 가능
+          placeholder="금액을 입력해주세요."
+          value={amount}
+          onChange={handleChange}
+          className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-left"
+          style={{border:"1px solid #ccc"}}
+        />
+      </ButtonModal>
+    </>
   );
 };
 

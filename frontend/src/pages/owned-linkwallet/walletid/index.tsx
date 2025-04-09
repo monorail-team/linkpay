@@ -213,6 +213,7 @@ const OwnedLinkWalletPage: React.FC = () => {
         <ChargeModal
           onClose={() => setShowChargeModal(false)}
           onConfirm={handleCharge}
+          returnPage={"owned-linkwallet"}
         />
       )}
     </div>
