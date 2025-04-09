@@ -201,6 +201,8 @@ const LinkCardListPage: React.FC = () => {
                 limitPrice={card.limitPrice}
                 expiredAt={card.expiredAt}
                 state={card.state}
+                username={card.username}
+                tab={activeTab}
             />
           </div>
         ))}

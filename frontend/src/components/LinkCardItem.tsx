@@ -1,12 +1,14 @@
 import React from 'react';
 import {Card} from '@/model/Card';
-type LinkCardItemProps = Pick<Card, 'cardName' | 'usedPoint' | 'limitPrice' | 'expiredAt'| 'state'>;
+type LinkCardItemProps = Pick<Card, 'cardName' | 'usedPoint' | 'limitPrice' | 'expiredAt'| 'state'|'username'|'tab'>;
 const LinkCardItem: React.FC<LinkCardItemProps> = ({
   cardName,
   usedPoint,
   limitPrice,
   expiredAt,
   state = "UNREGISTERED",
+  username,
+  tab
 }) => {
   return (
     <div className="relative w-full h-full flex flex-row gap-1 items-center pl-3">
@@ -18,8 +20,12 @@ const LinkCardItem: React.FC<LinkCardItemProps> = ({
         )}
 
         {/* (2) 카드명: 왼쪽 수직 중앙 */}
-        <div className="text-base text-gray-700 w-[45%] text-[18px]">
-        {cardName}
+        <div className='w-[45%] flex flex-col pl-1'>
+
+            <div className=" text-gray-700  text-[18px]">
+            {cardName}
+            </div>
+            {tab=="shared"&&<span>{username}</span>}
         </div>
 
         <div className='flex flex-col gap-5'>

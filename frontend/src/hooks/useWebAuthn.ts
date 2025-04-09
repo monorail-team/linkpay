@@ -30,10 +30,12 @@ function base64UrlToUint8Array(base64UrlString: string): Uint8Array {
 interface WebAuthnHook {
   handleWebAuthn: () => Promise<string  | null>;
   loading: boolean;
+  notification: string | null;
 }
 
 const useWebAuthn = (): WebAuthnHook => {
   const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
 
   const token = sessionStorage.getItem('accessToken');
 
@@ -112,6 +114,7 @@ const useWebAuthn = (): WebAuthnHook => {
   //전체 기능 function
   const handleWebAuthn = async (): Promise<string  | null> => {
     setLoading(true);
+    setNotification(null);
     let authChallengeRes: AxiosResponse<AuthChallengeResponse> | undefined;
     try {
       let isRegistered = true;
@@ -124,6 +127,7 @@ const useWebAuthn = (): WebAuthnHook => {
       } catch (error: unknown) {
         if (axios.isAxiosError(error) && error.response?.data.code === 4004) {
           isRegistered = false;
+          alert("등록된 지문이 없습니다.");
           console.log("등록된 인증기가 없습니다. 신규 등록이 필요합니다.");
         } else {
           throw error;
@@ -131,6 +135,7 @@ const useWebAuthn = (): WebAuthnHook => {
       }
 
       if (!isRegistered) {
+        setNotification("지문 등록 절차를 진행합니다.");
         // 신규 사용자 등록 플로우
         const challengeRes = await axios.get(`${base_url}/api/webauthn/register/challenge`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -181,12 +186,16 @@ const useWebAuthn = (): WebAuthnHook => {
         });
         console.log("등록 성공");
 
+        setNotification("지문 인증 절차를 진행합니다.");
         // 등록 후 바로 인증(결제) 플로우로 자동 전환
         const assertionResult = await performAuthentication();
+        setNotification(null);
         return assertionResult;
       } else {
         // 기존 사용자: 바로 인증(결제) 플로우 실행
+        setNotification("지문 인증 절차를 진행합니다.");
         const assertionResult = await performAuthentication();
+        setNotification(null);
         return assertionResult;
       }
     } catch (error) {
@@ -197,7 +206,7 @@ const useWebAuthn = (): WebAuthnHook => {
     }
   };
 
-  return { handleWebAuthn, loading };
+  return { handleWebAuthn, loading, notification };
 };
 
 export default useWebAuthn;

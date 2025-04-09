@@ -134,12 +134,11 @@ const ParticipatedLinkWalletPage: React.FC = () => {
 
   // 메뉴 관련 핸들러
   const [showMenu, setShowMenu] = useState(false);
-  const handleMenuClick = () => setShowMenu(true);
   const handleMenuClose = () => setShowMenu(false);
 
   return (
     <div className="dark:bg-[#3b3838]">
-      <Header headerType="menu" onMenuClick={handleMenuClick} />
+      <Header headerType="back" onBackClick={() => navigate("/linkwalletlist")} />
       {showMenu && <MenuModal onClose={handleMenuClose} />}
       <div className="w-full max-w-md mx-auto p-4" style={{ height: 'calc(100vh - 64px)' }}>
         {/* 지갑 정보 영역 (카드 생성 버튼은 제거됨) */}
@@ -206,6 +205,7 @@ const ParticipatedLinkWalletPage: React.FC = () => {
         <ChargeModal
           onClose={() => setShowChargeModal(false)}
           onConfirm={handleCharge}
+          returnPage={"participated-linkwallet"}
         />
       )}
     </div>

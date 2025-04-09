@@ -25,7 +25,8 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
 
-  const { handleWebAuthn, loading } = useWebAuthn();
+  const { handleWebAuthn, loading, notification} = useWebAuthn();
+  
 
   function extractPaymentToken(input: unknown): string | null {
     if (
@@ -178,7 +179,7 @@ const Home: React.FC = () => {
                 <div className="h-8"></div>
               )}
           </div>
-        </div>
+          {notification && <div className="text-sm text-white bg-black bg-opacity-40 px-5 py-2 rounded-md text-center w-4/5 mx-auto">{notification}</div>}
       </div>
 
 

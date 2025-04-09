@@ -22,7 +22,12 @@ import java.time.Instant;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Import(MockTestConfiguration.class)
-@SpringBootTest(properties = "banking.account.uri=http://localhost:8080/api/bank-account")
+@SpringBootTest(
+        properties = {
+                "banking.account.uri=http://localhost:8080/api/bank-account",
+                "toss.secret-key=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6"
+        }
+)
 @ActiveProfiles("test")
 class FcmServiceRetryTest {
 
