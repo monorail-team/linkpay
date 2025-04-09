@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 
@@ -37,6 +38,7 @@ import static monorail.linkpay.linkcard.domain.CardType.SHARED;
 @SpringBootTest(
         properties = "banking.account.uri=http://localhost:8080/api/bank-account"
 )
+@ActiveProfiles("test")
 public abstract class IntegrationTest {
 
     @Autowired

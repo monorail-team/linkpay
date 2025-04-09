@@ -1,4 +1,4 @@
-package monorail.linkpay.common.config;
+package monorail.linkpay.config;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -7,10 +7,8 @@ import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.Setter;
 import monorail.linkpay.exception.LinkPayException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;

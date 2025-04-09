@@ -1,6 +1,7 @@
-package monorail.linkpay.common.config;
+package monorail.linkpay.config;
 
 import lombok.RequiredArgsConstructor;
+import monorail.linkpay.config.SshTunnelingInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
