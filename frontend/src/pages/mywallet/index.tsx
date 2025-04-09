@@ -234,6 +234,7 @@ const MyWallet: React.FC = () => {
         <ChargeModal 
           onClose={() => setShowChargeModal(false)}
           onConfirm={handleCharge}
+          returnPage={"mywallet"}
         />
       )}
     </div>

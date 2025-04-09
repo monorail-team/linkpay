@@ -37,7 +37,6 @@ public class FcmService {
             maxAttempts = 3,
             backoff = @Backoff(delay = 100, multiplier = 2),
             retryFor = {
-                    OptimisticLockingFailureException.class,
                     DataIntegrityViolationException.class
             },
             recover = "recoverRegisterFailure"

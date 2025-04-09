@@ -2,6 +2,7 @@ package monorail.linkpay.util.encoder;
 
 import monorail.linkpay.exception.LinkPayException;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
@@ -55,6 +56,19 @@ public class Base85Encoder {
         }
 
         return result;
+    }
+
+    public static String encodeLongToBase85(long value) {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.putLong(value);
+        return Base85Encoder.encode(buffer.array());
+    }
+
+
+    public static long decodeBase85ToLong(String encoded) {
+        byte[] bytes = Base85Encoder.decode(encoded);
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        return buffer.getLong();
     }
 
 }

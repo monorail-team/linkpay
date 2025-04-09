@@ -8,7 +8,12 @@ export default {
   component: ChargeModal,
   argTypes: {
     onClose: { action: 'closed' },
-    onConfirm: { action: 'confirmed' }
+    onConfirm: { action: 'confirmed' },
+    returnPage: {
+      control: 'text',
+      defaultValue: 'mywallet',
+      description: '성공 후 돌아갈 페이지 경로',
+    }
   }
 } as Meta<typeof ChargeModal>;
 

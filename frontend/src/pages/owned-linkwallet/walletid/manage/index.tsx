@@ -126,26 +126,17 @@ const ManageLinkWalletPage: React.FC = () => {
         );
       }
       if (membersToRemove.length > 0) {
-        if (membersToRemove.length === 1) {
-          await axios.delete(
-            `${base_url}/api/linked-wallets/${walletId}/members/${membersToRemove[0].memberId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          );
-        } else {
-          const memberIds = membersToRemove.map(member => member.memberId).join(',');
-          await axios.delete(
-            `${base_url}/api/linked-wallets/${walletId}/members?linkedMemberIds=${memberIds}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          );
-        }
+        
+        const memberIds = membersToRemove.map(member => member.memberId).join(',');
+        await axios.delete(
+          `${base_url}/api/linked-wallets/${walletId}/members?linkedMemberIds=${memberIds}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+      
       }
       navigate(-1);
     } catch (error) {
@@ -181,7 +172,7 @@ const ManageLinkWalletPage: React.FC = () => {
 
   return (
     <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-black">
-      <Header headerType="menu" onBackClick={() => navigate(-1)} />
+      <Header headerType="back" onBackClick={() => navigate(-1)} />
       <div className="p-4 flex-1 space-y-8 mx-4 overflow-auto">
         {/* 링크지갑 이름 입력 */}
         <div>

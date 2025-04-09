@@ -33,36 +33,32 @@ const Payment: React.FC = () => {
     return () => clearTimeout(timer);
   }, [timeLeft, navigate]);
 
-  const backgroundStyle = {  background: `linear-gradient(155deg, ${cardData.cardColor}, ${adjustColorBrightness(cardData.cardColor, -20)} 70%)` };
+  const backgroundStyle = { background: `linear-gradient(155deg, ${cardData.cardColor}, ${adjustColorBrightness(cardData.cardColor, -20)} 70%)` };
 
   useNfcScan({
     onRead: async (data) => {
       console.log('읽기 성공', data);
       setReadValue(data); // TODO: remove
-      const txData = JSON.parse(data);
-      console.log('txData변환 -> ', txData);
       const token = sessionStorage.getItem('accessToken');
       await axios.post(
         `${base_url}/api/payments`,
         {
           linkCardId: cardData.linkCardId,
-          storeId: txData.storeId,
-          amount: txData.amount,
-          transactionSignature: txData.transactionSignature,
-          paymentToken: paymentToken,
+          transactionFlat: data,
+          paymentToken: paymentToken
         },
         {
           headers: {
             'Content-Type': `application/json`,
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`
           }
         }
       ).then((response) => {
         console.log('API 요청 성공', response);
-        // navigate('/success');
+        navigate('/', { replace: true });
       }).catch((error) => {
         console.error('API 요청 실패', error);
-        // navigate('/fail');
+        navigate('/', { replace: true });
       });
     },
     onError: (err) => {
@@ -86,7 +82,8 @@ const Payment: React.FC = () => {
 
       {/* 카운트다운 */}
       <div className="text-center">
-        <div className="mx-auto border border-dashed border-white rounded-full w-1/3 px-6 py-2 mb-3 text-lg font-semibold">
+        <div
+          className="mx-auto border border-dashed border-white rounded-full w-1/3 px-6 py-2 mb-3 text-lg font-semibold">
           {timeLeft}
         </div>
         <p className="text-sm mb-2 opacity-90">{guideText}</p>

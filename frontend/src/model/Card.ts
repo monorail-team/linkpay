@@ -8,5 +8,7 @@ export interface Card {
     usedPoint: number;
     state?: string;
     linkedWalletId?: number;
+    username?:string;
+    tab?:string
   }
   

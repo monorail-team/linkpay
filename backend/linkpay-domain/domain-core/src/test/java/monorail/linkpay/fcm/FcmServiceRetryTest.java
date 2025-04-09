@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -21,7 +22,12 @@ import java.time.Instant;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Import(MockTestConfiguration.class)
-@SpringBootTest(properties = "banking.account.uri=http://localhost:8080/api/bank-account")
+@SpringBootTest(
+        properties = {
+                "banking.account.uri=http://localhost:8080/api/bank-account",
+                "toss.secret-key=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6"
+        }
+)
 @ActiveProfiles("test")
 class FcmServiceRetryTest {
 
@@ -40,13 +46,12 @@ class FcmServiceRetryTest {
         Long memberId = 1L;
         String token = "token-retry";
         String deviceId = "device-retry";
-        Instant expiresAt = Instant.now().plusSeconds(60);
 
         Member member = Member.builder().id(memberId).build();
         BDDMockito.given(memberFetcher.fetchById(memberId)).willReturn(member);
 
         // 내부 호출 시 항상 예외 발생하게 설정
-        BDDMockito.willThrow(new OptimisticLockingFailureException("retry test"))
+        BDDMockito.willThrow(new DataIntegrityViolationException("retry test"))
                 .given(fcmTokenRepository).findByTokenOrDeviceId(token, deviceId);
 
         // when & then
