@@ -2,6 +2,24 @@ package monorail.linkpay.webauthn.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.AlgorithmParameters;
+import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.Signature;
+import java.security.spec.ECGenParameterSpec;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPoint;
+import java.security.spec.ECPublicKeySpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.exception.ExceptionCode;
@@ -16,33 +34,25 @@ import monorail.linkpay.webauthn.repository.WebAuthnCredentialRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.*;
-import java.security.spec.*;
-import java.util.*;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class WebAuthnService {
 
-    private final static SecureRandom secureRandom = new SecureRandom();
+    private static final SecureRandom secureRandom = new SecureRandom();
 
     private final WebAuthnCredentialRepository credentialRepository;
     private final WebAuthnCredentialFetcher credentialFetcher;
     private final PaymentTokenProvider paymentTokenProvider;
     private final AuthnChallengeRepository authnChallengeRepository;
 
-
     public String getRegisterChallenge() {
         return generateRandomChallenge();
     }
 
     @Transactional
-    public void registerAuthenticator(Long memberId, String credentialId, String attestationObject) {
+    public void registerAuthenticator(final Long memberId, final String credentialId, final String attestationObject) {
         byte[] attestationBytes = Base64.getDecoder().decode(attestationObject);
         CBORFactory cborFactory = new CBORFactory();
         ObjectMapper cborMapper = new ObjectMapper(cborFactory);
@@ -52,10 +62,6 @@ public class WebAuthnService {
             attestationMap = cborMapper.readValue(attestationBytes, Map.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-
-        if (attestationMap.containsKey("fmt")) {
-
         }
 
         String fmt = Optional.ofNullable(attestationMap.get("fmt"))
@@ -92,7 +98,7 @@ public class WebAuthnService {
     }
 
     @Transactional
-    public WebAuthnChallengeResponse getAuthChallenge(Long memberId) {
+    public WebAuthnChallengeResponse getAuthChallenge(final Long memberId) {
         WebAuthnCredential credential = credentialFetcher.fetchByMemberId(memberId);
         String challenge = generateRandomChallenge();
 
@@ -105,19 +111,19 @@ public class WebAuthnService {
     }
 
     @Transactional
-    public WebAuthnResponse verifyAuthentication(Long memberId, String credentialId, String clientDataJSON, String authenticatorData, String signature) {
+    public WebAuthnResponse verifyAuthentication(final Long memberId, final String credentialId,
+                                                 final String clientDataJSON, final String authenticatorData,
+                                                 final String signature) {
         try {
             WebAuthnCredential credential = credentialFetcher.fetchByMemberId(memberId);
             if (credential == null) {
                 throw new RuntimeException("credential not found.");
             }
 
-
             if (!credential.getCredentialId().equals(credentialId)) {
 
                 throw new RuntimeException("credential id mismatch.");
             }
-
 
             byte[] clientDataJSONBytes = Base64.getDecoder().decode(clientDataJSON);
             String clientDataJSONString = new String(clientDataJSONBytes, StandardCharsets.UTF_8);
@@ -127,7 +133,7 @@ public class WebAuthnService {
             Optional<AuthnChallenge> authnChallengeOpt = authnChallengeRepository.findByMemberId(memberId);
 
             String challengeFromClient = (String) clientData.get("challenge");
-            if(authnChallengeOpt.isPresent()) {
+            if (authnChallengeOpt.isPresent()) {
                 String storedChallenge = authnChallengeOpt.get().getChallenge();
 
                 if (storedChallenge.isEmpty() || !challengeFromClient.equals(storedChallenge)) {
@@ -136,13 +142,9 @@ public class WebAuthnService {
                 authnChallengeRepository.delete(authnChallengeOpt.get());
             }
 
-
-
-
             byte[] authDataBytes = Base64.getDecoder().decode(authenticatorData);
             byte[] signatureBytes = Base64.getDecoder().decode(signature);
             byte[] publicKeyBytes = Base64.getDecoder().decode(credential.getPublicKey());
-
 
             CBORFactory cborFactory = new CBORFactory();
             ObjectMapper cborMapper = new ObjectMapper(cborFactory);
@@ -152,14 +154,11 @@ public class WebAuthnService {
             log.info("COSE Key Map: {}", coseKey);
             PublicKey publicKey = convertCOSEKeyToPublicKey(coseKey);
 
-
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] clientDataHash = digest.digest(clientDataJSONBytes);
             byte[] signedData = new byte[authDataBytes.length + clientDataHash.length];
             System.arraycopy(authDataBytes, 0, signedData, 0, authDataBytes.length);
             System.arraycopy(clientDataHash, 0, signedData, authDataBytes.length, clientDataHash.length);
-
-
 
             String algorithm = determineAlgorithmFromCOSEKey(coseKey);
 
@@ -167,9 +166,9 @@ public class WebAuthnService {
             signatureVerifier.initVerify(publicKey);
             signatureVerifier.update(signedData);
 
-            if(signatureVerifier.verify(signatureBytes)){
+            if (signatureVerifier.verify(signatureBytes)) {
                 return new WebAuthnResponse(paymentTokenProvider.generateFor(memberId));
-            }else{
+            } else {
                 throw new RuntimeException("signature verification failed.");
             }
 
@@ -222,7 +221,6 @@ public class WebAuthnService {
 
             KeyFactory keyFactory = KeyFactory.getInstance("EC");
 
-
             return keyFactory.generatePublic(keySpec);
         } else if (kty == 3) {
             byte[] n = (byte[]) coseKey.get("-1");
@@ -235,7 +233,7 @@ public class WebAuthnService {
         }
     }
 
-    private String determineAlgorithmFromCOSEKey(Map<?, Object> coseKey) {
+    private String determineAlgorithmFromCOSEKey(final Map<?, Object> coseKey) {
         int kty = ((Number) coseKey.get("1")).intValue();
 
         if (kty == 2) {
