@@ -175,7 +175,7 @@ const MyWallet: React.FC = () => {
           {username}의 지갑
           </p>
           <div className='flex flex-col items-center justify-center '>
-            <p className="text-[clamp(1.2rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4]">
+            <p className="text-[clamp(1.1rem,2.5vw,1.5rem)] sm:text-base text-black text-center dark:text-[#D4D4D4]">
               잔여 포인트
             </p>
             <p className="text-[clamp(1.6rem,4vw,2.5rem)] sm:text-3xl text-black text-center font-bold dark:text-[#D4D4D4]">

@@ -5,6 +5,7 @@ import useDoubleBackExit from '@/hooks/useDoubleBackToExit';
 import axios from 'axios';
 import useNfcScan from '@/hooks/useNfcScan';
 import { Card } from '@/model/Card';
+import adjustColorBrightness from '@/util/colorset';
 
 const Payment: React.FC = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const Payment: React.FC = () => {
     return () => clearTimeout(timer);
   }, [timeLeft, navigate]);
 
-  const backgroundStyle = { backgroundColor: cardData.cardColor };
+  const backgroundStyle = {  background: `linear-gradient(155deg, ${cardData.cardColor}, ${adjustColorBrightness(cardData.cardColor, -20)} 70%)` };
 
   useNfcScan({
     onRead: async (data) => {

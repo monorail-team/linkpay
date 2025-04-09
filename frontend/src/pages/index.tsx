@@ -181,8 +181,8 @@ const Home: React.FC = () => {
             alt="지문 인증"
           />
         </button>
-        {loading && <p className="mt-4 text-white">처리중...</p>}
-        <p className="mt-3 text-black dark:text-[#ccc] text-[17px]">지문 버튼을 눌러 결제를 진행하세요.</p>
+        {loading && <p className="mt-3 text-black dark:text-[#ccc] text-[17px]">지문 인증 대기중입니다.</p>}
+        {!loading && <p className="mt-3 text-black dark:text-[#ccc] text-[17px]">지문 버튼을 눌러 결제를 진행하세요.</p>}
       </footer>
     </div>
   );

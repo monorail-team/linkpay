@@ -6,8 +6,7 @@ import MenuModal from '@/modal/MenuModal';
 import axios from 'axios';
 import { Card } from '@/model/Card';
 import { useThemeStore } from '@/store/themeStore';
-
-
+import adjustColorBrightness from '@/util/colorset';
 
 const base_url = process.env.REACT_APP_API_URL;
 const PAGE_SIZE = 10;
@@ -15,8 +14,6 @@ const PAGE_SIZE = 10;
 const TAB_OWNED  = 'owned';
 const TAB_LINKED  = 'linked';
 const TAB_SHARED = 'shared';
-
-
 
 const LinkCardListPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>(TAB_OWNED);
@@ -195,7 +192,7 @@ const LinkCardListPage: React.FC = () => {
           <div 
             key={card.linkCardId}
             className="my-1 box-border rounded-lg w-5/6 mx-auto bg-center h-[150px]"
-            style={{ backgroundColor: card.cardColor }}
+            style={{  background: `linear-gradient(155deg, ${card.cardColor}, ${adjustColorBrightness(card.cardColor, -20)} 70%)` }}
             onClick={() => handleCardClick(card)}
           >
              <LinkCardItem

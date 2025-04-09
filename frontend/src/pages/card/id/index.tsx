@@ -142,7 +142,7 @@ const CardDetailPage: React.FC = () => {
         </div>
 
         {/* 카드 상세 정보 영역 */}
-        <div className="w-5/6 h-1/4 mx-auto flex justify-center">
+        <div className="w-5/6 mx-auto flex justify-center">
             {cardData ? (
             <CardComponent {...cardData} />
             ) : (
