@@ -99,7 +99,7 @@ const MemberSearchBar: React.FC<MemberSearchBarProps> = ({onMembersChange, initi
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder="초대 대상 이메일 검색"
+          placeholder="회원 이메일 검색"
           className="w-full border-b border-gray-300 py-2 pr-10  focus:outline-none  dark:text-white dark:placeholder-white dark:bg-[#3b3838]"
         />
         <button 

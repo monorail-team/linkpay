@@ -156,7 +156,7 @@ const CreateSharedCardPage: React.FC = () => {
                   return;
                 }
                 let num = Number(Rvalue);
-                if (num > 100000000) num = 100000000;
+                if (num > 10000000) num = 10000000;
                 setCardLimit(num.toLocaleString());
               }}
               className="w-full py-2 pl-0 pr-8 border-b border-gray-300 focus:outline-none focus:ring-0 dark:bg-black dark:text-white dark:placeholder-white"
