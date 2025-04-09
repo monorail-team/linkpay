@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import LinkCardItem from '@/components/LinkCardItem';
 import axios from 'axios';
 import { Card } from '@/model/Card';
+import adjustColorBrightness from '@/util/colorset';
 
 const base_url = process.env.REACT_APP_API_URL;
 const PAGE_SIZE = 10;
@@ -150,7 +151,7 @@ const Register: React.FC = () => {
                     ? 'outline outline-4 outline-gray-400 brightness-90 dark:outline-white '
                     : ''
                 }`}
-                style={{ backgroundColor: card.cardColor }}
+                style={{  background: `linear-gradient(155deg, ${card.cardColor}, ${adjustColorBrightness(card.cardColor, -20)} 70%)` }}
               >
                  <LinkCardItem
                     cardName={card.cardName}
