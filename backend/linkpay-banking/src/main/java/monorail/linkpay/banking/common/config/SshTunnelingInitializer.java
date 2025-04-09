@@ -11,8 +11,10 @@ import java.util.Properties;
 import java.util.function.Consumer;
 import monorail.linkpay.exception.LinkPayException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+@Profile("banking")
 @Component
 public class SshTunnelingInitializer {
 
