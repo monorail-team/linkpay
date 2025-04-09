@@ -1,5 +1,5 @@
 export interface MyWalletHistory {
-    walletHistoryId: number;
+    walletHistoryId: string;
     amount: number;
     remaining : number;
     transactionType: 'DEPOSIT' | 'WITHDRAWAL';

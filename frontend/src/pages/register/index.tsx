@@ -11,7 +11,7 @@ const PAGE_SIZE = 10;
 const Register: React.FC = () => {
 
 
-  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [selectedIndices, setSelectedIndices] = useState<string[]>([]);
   const [cards, setCards] = useState<Card[]>([]);
   const [hasNext, setHasNext] = useState(true);
   const [lastId, setLastId] = useState<string | null>(null);
@@ -86,7 +86,7 @@ const Register: React.FC = () => {
     };
   }, [fetchCards, hasNext, loading]);
 
-  const handleSelect = (index: number) => {
+  const handleSelect = (index: string) => {
     setSelectedIndices((prev) => {
       if (prev.includes(index)) {
         return prev.filter((i) => i !== index);

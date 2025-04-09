@@ -1,5 +1,5 @@
 export interface Card {
-    linkCardId: number;
+    linkCardId: string;
     limitPrice: number;
     cardType?: 'OWNED' | 'SHARED';
     cardColor: string;
