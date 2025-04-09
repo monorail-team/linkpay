@@ -205,6 +205,7 @@ const ParticipatedLinkWalletPage: React.FC = () => {
         <ChargeModal
           onClose={() => setShowChargeModal(false)}
           onConfirm={handleCharge}
+          returnPage={"participated-linkwallet"}
         />
       )}
     </div>
