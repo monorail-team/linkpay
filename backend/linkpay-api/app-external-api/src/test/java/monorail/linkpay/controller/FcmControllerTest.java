@@ -3,8 +3,9 @@ package monorail.linkpay.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import java.time.Instant;
+
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -14,7 +15,7 @@ public class FcmControllerTest extends ControllerTest {
 
     @Test
     void 토큰을_등록한다() {
-        doNothing().when(fcmService).register(anyLong(), anyString());
+        doNothing().when(fcmService).register(anyLong(), anyString(), anyString(), any(Instant.class));
 
         docsGiven
                 .when().post("api/fcm/register?token=fcm-token")
