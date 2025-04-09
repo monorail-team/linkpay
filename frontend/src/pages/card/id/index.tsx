@@ -121,7 +121,7 @@ const CardDetailPage: React.FC = () => {
   return (
     <div className="w-full h-screen max-w-md mx-auto dark:bg-[#3b3838] flex flex-col">
         {/* 헤더: menu 타입 */}
-        <Header headerType="menu" onMenuClick={() => {}} />
+        <Header headerType="back" onBackClick={() => navigate("/linkcardlist")} />
 
         {/* 헤더와 카드 사이 오른쪽에 위치한 폐기 버튼 */}
         <div className="flex justify-end mr-11 mt-1">

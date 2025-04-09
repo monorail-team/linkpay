@@ -55,7 +55,7 @@ const CreateLinkWalletPage: React.FC = () => {
 
   return (
     <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-[#3b3838]">
-      <Header headerType="menu" onBackClick={() => console.log('뒤로가기')} />
+      <Header headerType="back" onBackClick={() => navigate("/linkwalletlist")} />
       <div className="p-4 flex-1 space-y-8 mx-4 overflow-auto"> 
         {/* 링크지갑 이름 입력 */}
         <div>

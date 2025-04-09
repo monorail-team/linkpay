@@ -172,7 +172,7 @@ const ManageLinkWalletPage: React.FC = () => {
 
   return (
     <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-black">
-      <Header headerType="menu" onBackClick={() => navigate(-1)} />
+      <Header headerType="back" onBackClick={() => navigate(-1)} />
       <div className="p-4 flex-1 space-y-8 mx-4 overflow-auto">
         {/* 링크지갑 이름 입력 */}
         <div>
