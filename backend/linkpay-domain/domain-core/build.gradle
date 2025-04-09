@@ -11,6 +11,8 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-cbor
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.18.3")
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'com.github.mwiede:jsch:0.2.24'
 
     // Google:FCM
     implementation platform('com.google.auth:google-auth-library-bom:1.30.1')
