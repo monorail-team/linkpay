@@ -8,7 +8,9 @@ import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.fcm.client.FcmClient;
 import monorail.linkpay.fcm.client.dto.FcmSendRequest;
 import monorail.linkpay.fcm.domain.FcmToken;
+import org.springframework.scheduling.annotation.Async;
 
+@Async
 @SupportLayer
 @RequiredArgsConstructor
 @Slf4j
@@ -17,6 +19,7 @@ public class FcmSender {
     private final FcmTokenFetcher fcmTokenFetcher;
 
     public void send(final Long memberId, final String title, final String content) {
+        log.debug("Send FCM token to memberId: {}", memberId);
         List<FcmToken> fcmTokens = fcmTokenFetcher.fetchAllByMemberId(memberId).stream()
                 .filter(token -> !token.isExpired())
                 .toList();

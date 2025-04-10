@@ -49,7 +49,7 @@ public class FcmClient {
         );
         Map<String, Object> payload = Map.of("message", message);
         // TODO 응답 및 예외 처리
-        log.debug("[FCM] 메시지 전송 요청: {}", payload);
+        log.info("[FCM] 메시지 전송 요청: {}", payload);
         return restTemplate.postForEntity(props.apiUrl(), new HttpEntity<>(payload, headers), String.class);
     }
 }
