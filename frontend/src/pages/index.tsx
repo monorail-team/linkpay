@@ -182,7 +182,7 @@ const Home: React.FC = () => {
             {notification && <div className="text-sm text-white bg-black bg-opacity-40 px-5 py-2 rounded-md text-center w-4/5 mx-auto">{notification}</div>}
           </div>
 
-
+        </div>    
           {/* 지문 아이콘 및 결제 문구 */}
           <footer
             className="absolute  flex flex-col text-center items-center bottom-[30px] left-[50%] -translate-x-[50%] w-full">
@@ -201,7 +201,6 @@ const Home: React.FC = () => {
             {loading && <p className="mt-3 text-black dark:text-[#ccc] text-[17px]">지문 인증 대기중입니다.</p>}
             {!loading && <p className="mt-3 text-black dark:text-[#ccc] text-[17px]">지문 버튼을 눌러 결제를 진행하세요.</p>}
           </footer>
-      </div>
     </div>
   );
 };
