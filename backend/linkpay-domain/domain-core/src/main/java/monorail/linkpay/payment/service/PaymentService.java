@@ -45,9 +45,6 @@ public class PaymentService {
     }
 
     public List<PaymentDto> readPaymentsByHistoryIdIn(final Set<Long> walletHistoryIds) {
-        return paymentFetcher.fetchByWalletHistoryIdIn(walletHistoryIds)
-                .stream()
-                .map(PaymentDto::from)
-                .toList();
+        return paymentFetcher.fetchByWalletHistoryIdIn(walletHistoryIds);
     }
 }

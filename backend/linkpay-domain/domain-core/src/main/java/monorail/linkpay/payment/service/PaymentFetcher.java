@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.payment.domain.Payment;
+import monorail.linkpay.payment.dto.PaymentDto;
 import monorail.linkpay.payment.repository.PaymentRepository;
 
 @SupportLayer
@@ -21,7 +22,7 @@ public class PaymentFetcher {
                 .orElseThrow(() -> new LinkPayException(NOT_FOUND_RESOURCE, "아이디에 해당하는 내역이 존재하지 않습니다."));
     }
 
-    public List<Payment> fetchByWalletHistoryIdIn(Set<Long> walletHistoryIds) {
-        return paymentRepository.findAllByWalletHistoryIdIn(walletHistoryIds);
+    public List<PaymentDto> fetchByWalletHistoryIdIn(Set<Long> walletHistoryIds) {
+        return paymentRepository.findAllWithLinkCardByWalletHistoryIds(walletHistoryIds);
     }
 }
