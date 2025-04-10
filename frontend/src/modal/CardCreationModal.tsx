@@ -8,14 +8,16 @@ export interface CardCreationModalProps {
   cardName: string;
   cardLimit: number;
   expiryDate: string;
+  children?: React.ReactNode;
 }
 
 const CardCreationModal: React.FC<CardCreationModalProps> = ({
                                                                onClose,
-                                                               onConfirm,
+                                                               onConfirm, 
                                                                cardName,
                                                                cardLimit,
-                                                               expiryDate
+                                                               expiryDate,
+                                                               children,
                                                              }) => {
   return (
     <ButtonModal type="confirmAndCancel" onConfirm={onConfirm} onClose={onClose}>
@@ -40,6 +42,15 @@ const CardCreationModal: React.FC<CardCreationModalProps> = ({
             {expiryDate}
           </span>
       </div>
+
+      {children && (
+        <div className="mb-2 flex items-center gap-2">
+          <label className="text-gray-600 text-sm w-24">멤버</label>
+          <span className="hide-scrollbar flex-1 p-2 border rounded-md bg-gray-100 text-gray-700 text-left max-w-full overflow-x-auto whitespace-nowrap">
+            {children}
+          </span>
+        </div>
+      )}
 
       {/* 안내 문구 */}
       <p className="text-center text-gray-800">카드를 생성하시겠습니까?</p>

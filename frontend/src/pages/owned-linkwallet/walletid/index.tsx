@@ -193,7 +193,7 @@ const OwnedLinkWalletPage: React.FC = () => {
                     {formatDateTime(history.time)}
                   </p>
                   {history.transactionType !== 'DEPOSIT' && (
-                    <p className="text-black ml-12 dark:text-white">카드</p>
+                    <p className="text-black ml-12 dark:text-white">{history.linkCardName}</p>
                   )}
                 </div>
                 <div className="flex flex-col items-end">

@@ -7,14 +7,16 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { MdOutlineCancel } from "react-icons/md";
 import { FaRegCalendar } from "react-icons/fa6";
-
+import CardCreationModal from '@/modal/CardCreationModal';
 
 const CreateCardPage: React.FC = () => {
   const [cardName, setCardName] = useState('');
   const [cardLimit, setCardLimit] = useState('');
   const [expireDate, setExpireDate] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [, setIsSubmitting] = useState(false);
+  
   const navigate = useNavigate();
   const handleClearCardName = () => setCardName('');
   const handleClearCardLimit = () => setCardLimit('');
@@ -27,27 +29,30 @@ const CreateCardPage: React.FC = () => {
   
   
   
-  // 달력 선택 함수수
+  // 달력 선택 함수
   const handleDateSelect = (date: string) => {
     setExpireDate(date);
     setIsCalendarOpen(false);
   };
   
-  // 버튼 클릭
-  const handleRegister = async () => {
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-      console.error('Access token not found');
-      return;
+  const handleOpenConfirmModal = () => {
+    if (cardName && cardLimit && expireDate) {
+      setShowConfirmModal(true);
     }
+  };
 
-    // 카드 한도 문자열에서 콤마 제거 후 숫자로 변환
+  // 모달의 '확인' 버튼 클릭 시 API 호출
+  const handleConfirmCreation = async () => {
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) return;
+
+    setIsSubmitting(true);
+
+    // 카드 한도 문자열에서 콤마를 제거한 후 숫자로 변환
     const limitPrice = Number(cardLimit.replace(/,/g, ''));
-
-    // expireDate 문자열을 Date 객체로 변환 (날짜 형식에 따라 파싱이 달라질 수 있으므로 형식에 주의)
     const dateObj = new Date(expireDate);
     const year = dateObj.getFullYear();
-    const month = dateObj.getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
+    const month = dateObj.getMonth() + 1;
     const day = dateObj.getDate();
 
     const payload = {
@@ -55,7 +60,7 @@ const CreateCardPage: React.FC = () => {
       limitPrice,
       expiredAt: [year, month, day],
     };
-    console.log('payload:', payload);
+
     try {
       const response = await axios.post(`${base_url}/api/cards`, payload, {
         headers: {
@@ -64,14 +69,17 @@ const CreateCardPage: React.FC = () => {
         },
       });
       if (response.status === 201) {
-        // 카드 생성 성공 시 mywallet 페이지로 이동
+        // 카드 생성 성공 시 모달을 닫고 mywallet 페이지로 이동
+        setShowConfirmModal(false);
         navigate('/mywallet');
       }
     } catch (error) {
       console.error('Failed to create card:', error);
+      alert('카드 생성에 실패했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
 
   const isCardNameValid = cardName.length <= 10;
   const isFormComplete = cardName && cardLimit && expireDate && isCardNameValid;
@@ -178,10 +186,10 @@ const CreateCardPage: React.FC = () => {
                   }
                 }}
                 classNames={{
-                  today: 'bg-gray-300 text-white dark:bg-gray-400 rounded-lg', // Add a border to today's date
-                  selected: `bg-indigo-500 border-amber-500 text-white rounded-lg`, // Highlight the selected day
-                  root: `${defaultClassNames.root} shadow-lg p-5 dark:bg-[#010101] dark:text-white `, // Add a shadow to the root element
-                  chevron: `${defaultClassNames.chevron} dark:fill-white` // Change the color of the chevron
+                  today: 'bg-gray-300 text-white dark:bg-gray-400 rounded-lg', 
+                  selected: `bg-indigo-500 border-amber-500 text-white rounded-lg`, 
+                  root: `${defaultClassNames.root} shadow-lg p-5 dark:bg-[#010101] dark:text-white `,
+                  chevron: `${defaultClassNames.chevron} dark:fill-white`
                 }}
               />                                                
             </div>
@@ -193,12 +201,21 @@ const CreateCardPage: React.FC = () => {
       <div className="p-4 mt-auto">
         <button
           className="font-bold block w-4/5 py-3 mx-auto bg-[#9CA1D7] text-white rounded-3xl disabled:bg-gray-300 dark:bg-[#252527] dark:text-white dark:disabled:text-gray-500"
-          onClick={handleRegister}
+          onClick={handleOpenConfirmModal}
           disabled={!isFormComplete}
         >
           생성하기
         </button>
       </div>
+      {showConfirmModal && (
+        <CardCreationModal 
+          cardName={cardName}
+          cardLimit={Number(cardLimit.replace(/,/g, ''))}
+          expiryDate={expireDate}
+          onClose={() => setShowConfirmModal(false)}
+          onConfirm={handleConfirmCreation}
+        />
+      )}
     </div>
   );
 };
