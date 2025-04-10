@@ -219,7 +219,7 @@ const MyWallet: React.FC = () => {
                     {formatDateTime(history.time)}
                   </p>
                   {history.transactionType  !== 'DEPOSIT' && (
-                    <p className="text-black dark:text-white truncate whitespace-nowrap" style={{ width: '4ch' }}>
+                    <p className="text-black dark:text-white truncate whitespace-nowrap" style={{ width: '8ch' }}>
                       {history.linkCardName}
                     </p>
                   )}

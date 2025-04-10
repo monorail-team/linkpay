@@ -184,7 +184,7 @@ const ParticipatedLinkWalletPage: React.FC = () => {
                     {formatDateTime(history.time)}
                   </p>
                   {history.transactionType !== 'DEPOSIT' && (
-                    <p className="text-black ml-12 dark:text-white truncate whitespace-nowrap" style={{ width: '4ch' }}>{history.linkCardName}</p>
+                    <p className="text-black ml-12 dark:text-white truncate whitespace-nowrap" style={{ width: '8ch' }}>{history.linkCardName}</p>
                   )}
                 </div>
                 <div className="flex flex-col items-end">
