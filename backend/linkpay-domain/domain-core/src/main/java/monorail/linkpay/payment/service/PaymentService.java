@@ -1,7 +1,5 @@
 package monorail.linkpay.payment.service;
 
-import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.service.LinkCardFetcher;
@@ -13,6 +11,9 @@ import monorail.linkpay.store.service.StoreFetcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -23,6 +24,7 @@ public class PaymentService {
     private final PaymentValidator paymentValidator;
     private final PaymentProcessor paymentProcessor;
     private final PaymentFetcher paymentFetcher;
+    private final PaymentNotifier paymentNotifier;
 
     @Transactional
     public void createPayment(final TransactionInfo txInfo, final PaymentInfo payInfo) {
@@ -31,6 +33,7 @@ public class PaymentService {
 
         paymentValidator.validate(linkCard, store, txInfo, payInfo);
         paymentProcessor.executePay(store, linkCard, txInfo.point());
+        paymentNotifier.notifySuccess(payInfo.memberId(), store, linkCard, txInfo.point().getAmount());
     }
 
     public List<PaymentDto> readPaymentsByHistoryIdIn(final Set<Long> walletHistoryIds) {

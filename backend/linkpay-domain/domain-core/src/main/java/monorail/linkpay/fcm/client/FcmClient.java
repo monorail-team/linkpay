@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -34,9 +36,16 @@ public class FcmClient {
                 "title", request.title(),
                 "body", request.body()
         );
-        var message = Map.of(
+        Map<String, Object> webpushNotification = new HashMap<>();
+        webpushNotification.put("vibrate", List.of(200, 100, 200));
+        webpushNotification.put("requireInteraction", true);
+        webpushNotification.put("tag", "transaction-tag");
+
+        Map<String, Object> webpush = Map.of("notification", webpushNotification);
+        Map<String, Object> message = Map.of(
                 "token", request.token(),
-                "notification", notification
+                "notification", notification,
+                "webpush", webpush
         );
         var payload = Map.of("message", message);
         // TODO 응답 및 예외 처리
