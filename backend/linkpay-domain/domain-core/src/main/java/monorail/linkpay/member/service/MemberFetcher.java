@@ -29,4 +29,8 @@ public class MemberFetcher {
     public List<Member> fetchByIdIn(final Set<Long> memberIds) {
         return memberRepository.findMembersByIdIn(memberIds);
     }
+
+    public List<Member> fetchAllByEmailLike(String keyword) {
+        return memberRepository.findByEmailStartsWith(keyword);
+    }
 }
