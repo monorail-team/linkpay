@@ -171,9 +171,9 @@ const ParticipatedLinkWalletPage: React.FC = () => {
           </button>
         </div>
         {/* 입출금 내역 영역 */}
-        <div className="mt-12 mx-6" ref={scrollContainerRef} style={{ maxHeight: '50vh'}}>
+        <div className="mt-12 mx-6" ref={scrollContainerRef}>
           <h3 className="text-lg text-[#969595]">입출금 내역</h3>
-          <ul className="mt-2 hide-scrollbar overflow-y-auto">
+          <ul className="mt-2 hide-scrollbar" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
             {walletHistories.map((history: MyWalletHistory) => (
               <li
                 key={history.walletHistoryId}
@@ -184,7 +184,7 @@ const ParticipatedLinkWalletPage: React.FC = () => {
                     {formatDateTime(history.time)}
                   </p>
                   {history.transactionType !== 'DEPOSIT' && (
-                    <p className="text-black ml-12 dark:text-white">카드</p>
+                    <p className="text-black ml-12 dark:text-white truncate whitespace-nowrap" style={{ width: '8ch' }}>{history.linkCardName}</p>
                   )}
                 </div>
                 <div className="flex flex-col items-end">

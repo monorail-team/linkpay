@@ -153,6 +153,7 @@ const CardDetailPage: React.FC = () => {
         {/* 사용 내역 영역 */}
         <div className="mt-12 mx-6 flex-1 overflow-y-auto hide-scrollbar">
             <h3 className="text-lg text-[#969595] ml-4">사용 내역</h3>
+              <div className="mt-2 hide-scrollbar" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
                 {cardHistory.length > 0 ? (
                     <ul className="mt-3 mx-5">
                     {cardHistory.map((item, index) => (
@@ -181,6 +182,7 @@ const CardDetailPage: React.FC = () => {
                 ) : (
                 <p className="text-black dark:text-white mt-4 mx-4">사용 내역이 없습니다.</p>
                 )}
+              </div>
         </div>
 
         {/* 폐기 확인 모달 */}

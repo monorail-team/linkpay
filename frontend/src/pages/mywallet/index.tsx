@@ -214,12 +214,12 @@ const MyWallet: React.FC = () => {
                 className="py-1.5 border-b flex justify-between items-center text-lg border-gray-300 dark:border-[#515151] dark:bg-[#3b3838]"
               >
                 {/* 날짜 & 카드 이름 */}
-                <div className="flex items-center w-1/2">
+                <div className="flex items-center w-1/2 gap-4">
                   <p className="text-black dark:text-white">
                     {formatDateTime(history.time)}
                   </p>
                   {history.transactionType  !== 'DEPOSIT' && (
-                    <p className="text-black ml-12 dark:text-white">
+                    <p className="text-black dark:text-white truncate whitespace-nowrap" style={{ width: '8ch' }}>
                       {history.linkCardName}
                     </p>
                   )}

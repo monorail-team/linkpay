@@ -182,7 +182,7 @@ const OwnedLinkWalletPage: React.FC = () => {
         {/* 입출금 내역 영역 */}
         <div className="mt-5 mx-6 h-full" ref={scrollContainerRef}>
           <h3 className="text-lg text-[#969595]">입출금 내역</h3>
-          <ul className="mt-2 hide-scrollbar overflow-y-auto h-[calc(100vh-200px)]">
+          <ul className="mt-2 hide-scrollbar" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
             {walletHistories.map((history: MyWalletHistory) => (
               <li
                 key={history.walletHistoryId}
@@ -193,7 +193,7 @@ const OwnedLinkWalletPage: React.FC = () => {
                     {formatDateTime(history.time)}
                   </p>
                   {history.transactionType !== 'DEPOSIT' && (
-                    <p className="text-black ml-12 dark:text-white">{history.linkCardName}</p>
+                    <p className="text-black ml-12 dark:text-white truncate whitespace-nowrap" style={{ width: '8ch' }}>{history.linkCardName}</p>
                   )}
                 </div>
                 <div className="flex flex-col items-end">
