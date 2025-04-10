@@ -102,16 +102,13 @@ const Payment: React.FC = () => {
         </div>
       )}
 
-      {/* NFC 읽기 디버깅 */}
-      {readValue && <p className="text-green-600 mt-4">✅ 읽음: {readValue}</p>}
-
       {/* 가이드 모달 */}
       {showGuideModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white text-black p-6 rounded-lg w-80 shadow-xl">
             <h3 className="text-lg font-semibold mb-3">카드 가이드</h3>
             <p className="text-sm leading-relaxed">
-              여기에 상세한 가이드 내용을 작성하세요. 카드 리더기에 카드를 가까이 대고 인식이 완료될 때까지 기다리세요.
+              카드 리더기에 카드를 가까이 대고 인식이 완료될 때까지 기다리세요.
             </p>
             <button
               className="mt-5 bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600"
