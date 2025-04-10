@@ -1,14 +1,14 @@
-// src/hooks/useNfcScan.ts
 import { useEffect, useRef } from 'react';
 
 interface UseNfcScanOptions {
   onRead: (data: string) => void;
   onError?: (error: Error) => void;
-  cardId?: string; // 필요 시 전달받아 API 요청에 활용 가능
+  cardId?: string;
 }
 
 const useNfcScan = ({ onRead, onError }: UseNfcScanOptions) => {
   const ndefRef = useRef<any>(null);
+  const hasReadRef = useRef(false); // ✅ 추가: 중복 방지용
 
   useEffect(() => {
     if (!('NDEFReader' in window)) {
@@ -25,6 +25,9 @@ const useNfcScan = ({ onRead, onError }: UseNfcScanOptions) => {
         console.log('📡 NFC 스캔 시작됨');
 
         ndef.onreading = (event: any) => {
+          if (hasReadRef.current) return; // ✅ 중복 호출 방지
+          hasReadRef.current = true;
+
           const message = event.message;
           for (const record of message.records) {
             if (record.recordType === 'text') {

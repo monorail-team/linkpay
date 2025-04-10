@@ -3,7 +3,7 @@ import Button from '../components/Button';
 
 export interface ButtonModalProps {
   type?: 'confirm' | 'confirmAndCancel';
-  onClose: () => void;
+  onClose?: () => void;
   onConfirm: () => void;
   children: React.ReactNode;
 }
@@ -12,7 +12,7 @@ const ButtonModal: React.FC<ButtonModalProps> = ({ type = 'confirmAndCancel', on
   switch (type) {
     case 'confirmAndCancel':
       return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" style={{ zIndex: 1000 }}>
           <div className="bg-white p-6 rounded-xl shadow-lg w-80">
             {children}
             <div className="flex justify-center mt-4">

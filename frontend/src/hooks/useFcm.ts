@@ -1,5 +1,5 @@
 import { messaging } from '../firebase';
-import { getToken, isSupported, onMessage } from 'firebase/messaging';
+import { getToken, isSupported } from 'firebase/messaging';
 import axios from 'axios';
 import { useEffect } from 'react';
 
@@ -25,11 +25,6 @@ export const useFcm = () => {
       return;
     }
     requestNotificationPermission(accessToken);
-    // 포그라운드 메시지 수신
-    onMessage(messaging, (payload) => {
-      console.log('📩 메시지 수신 (Foreground): ', payload);
-      alert(`🔔 ${payload.notification?.title} - ${payload.notification?.body}`);
-    });
   };
   useEffect(() => {
     setupFcm();

@@ -83,7 +83,7 @@ public class WalletUpdater {
     }
 
     public void delete(LinkedWallet linkedWallet) {
-        List<Long> linkedMemberIds = linkedMemberRepository.findByLinkedWalletId(linkedWallet.getId()).stream()
+        List<Long> linkedMemberIds = linkedMemberRepository.findAllByLinkedWalletId(linkedWallet.getId()).stream()
                 .map(LinkedMember::getId)
                 .toList();
         linkedMemberRepository.deleteByIds(new HashSet<>(linkedMemberIds));

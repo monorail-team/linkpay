@@ -29,11 +29,11 @@ public class BankAccountClient {
         headers.setContentType(APPLICATION_JSON);
         HttpEntity<AccountCreateRequest> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        ResponseEntity<Void> response = restTemplate.exchange(
+        ResponseEntity<Object> response = restTemplate.exchange(
                 bankAccountUri,
                 HttpMethod.POST,
                 requestEntity,
-                Void.class
+                Object.class
         );
 
         if (!response.getStatusCode().is2xxSuccessful()) {
