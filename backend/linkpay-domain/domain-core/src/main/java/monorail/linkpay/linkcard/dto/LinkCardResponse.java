@@ -5,6 +5,8 @@ import monorail.linkpay.linkcard.domain.LinkCard;
 
 public record LinkCardResponse(
         String linkCardId,
+        String walletId,
+        long walletAmount,
         Long limitPrice,
         String cardType,
         String cardColor,
@@ -17,6 +19,8 @@ public record LinkCardResponse(
     public static LinkCardResponse from(final LinkCard linkCard) {
         return new LinkCardResponse(
                 linkCard.getId().toString(),
+                linkCard.getWalletId().toString(),
+                linkCard.getWallet().readAmount(),
                 linkCard.getLimitPrice().getAmount(),
                 linkCard.getCardType().name(),
                 linkCard.getCardColor().getHexCode(),

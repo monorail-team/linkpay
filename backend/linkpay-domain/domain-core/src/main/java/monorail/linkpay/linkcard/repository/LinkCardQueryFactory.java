@@ -15,6 +15,7 @@ public enum LinkCardQueryFactory {
             SELECT lc
               FROM LinkCard lc
               JOIN FETCH lc.member m
+              JOIN FETCH lc.wallet w
              WHERE lc.member.id = :memberId
                AND lc.cardType = 'OWNED'
                AND (:lastId IS NULL OR lc.id < :lastId)
@@ -24,6 +25,7 @@ public enum LinkCardQueryFactory {
             SELECT lc
               FROM LinkCard lc
               JOIN FETCH lc.member m
+              JOIN FETCH lc.wallet w
              WHERE lc.member.id = :memberId
                AND lc.cardType = 'SHARED'
                AND (:lastId IS NULL OR lc.id < :lastId)
@@ -35,6 +37,7 @@ public enum LinkCardQueryFactory {
               JOIN LinkedMember lm
                 ON lm.linkedWallet.id = lc.wallet.id
               JOIN FETCH lc.member
+              JOIN FETCH lc.wallet
              WHERE lm.member.id = :memberId
                AND lm.role = 'CREATOR'
                AND lc.member.id != :memberId
