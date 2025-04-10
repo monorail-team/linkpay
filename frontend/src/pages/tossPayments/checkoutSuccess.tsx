@@ -12,8 +12,12 @@ const CheckoutSuccess: React.FC = () => {
   const orderId = searchParams.get("orderId");
   const amount = searchParams.get("amount");
   const returnPage = searchParams.get("returnPage");
-  const walletId = searchParams.get("walletId");
-  const returnUrl = `/${returnPage}` + (walletId === "null" ? `` : `/${walletId}`);
+  const rawWalletId  = searchParams.get("walletId");
+  const walletId =
+  rawWalletId && rawWalletId !== "undefined" && rawWalletId !== "null"
+    ? rawWalletId
+    : null;
+  const returnUrl = `/${returnPage}` + (walletId ? `/${walletId}` : '');
   const navigate = useNavigate();
 
   const confirmPayment = async() => {
@@ -34,15 +38,7 @@ const CheckoutSuccess: React.FC = () => {
 
   const handleConfirmPayment = async () => {
     const token = sessionStorage.getItem('accessToken');
-    let endpoint = "";
-    // walletId가 존재하고 "null"이 아니라면 링크 지갑으로 취급
-    if (walletId && walletId !== "null") {
-        endpoint = `${base_url}/api/linked-wallets/charge/${walletId}`;
-    } else {
-        endpoint = `${base_url}/api/my-wallets/charge`;
-    }
-    const response = await axios.patch(
-        endpoint, 
+    const response = await axios.post(`${base_url}/api/thirdparty/toss/checkout/confirm`,
         {
             paymentKey,
             orderId,
@@ -60,7 +56,14 @@ const CheckoutSuccess: React.FC = () => {
 
   const handleDeposit = async () => {
     const token = sessionStorage.getItem('accessToken');
-    const response = await axios.patch(`${base_url}/api/my-wallets/charge`, 
+    let endpoint = "";
+    console.log("walletId", walletId);
+    if (walletId && walletId !== "null") {
+        endpoint = `${base_url}/api/linked-wallets/charge/${walletId}`;
+    } else {
+        endpoint = `${base_url}/api/my-wallets/charge`;
+    }
+    const response = await axios.patch(endpoint , 
         { amount },
         {
             headers: {
