@@ -1,11 +1,10 @@
 package monorail.linkpay.fcm.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.annotation.SupportLayer;
 import monorail.linkpay.fcm.domain.FcmToken;
 import monorail.linkpay.fcm.repository.FcmTokenRepository;
-
-import java.util.List;
 
 @SupportLayer
 @RequiredArgsConstructor

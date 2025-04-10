@@ -14,7 +14,6 @@ public record PaymentsRequest(
         @NotNull String linkCardId,
         @NotNull String paymentToken
 ) {
-
     public TransactionInfo txInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append(transactionFlat);
@@ -28,7 +27,7 @@ public record PaymentsRequest(
                 .build();
     }
 
-    public PaymentInfo payInfo(Long memberId) {
+    public PaymentInfo payInfo(final Long memberId) {
         return PaymentInfo.builder()
                 .memberId(memberId)
                 .linkCardId(Long.parseLong(linkCardId))

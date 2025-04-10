@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,5 +34,21 @@ public class WebAuthnCredential {
         this.credentialId = credentialId;
         this.memberId = memberId;
         this.publicKey = publicKey;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof WebAuthnCredential that)) {
+            return false;
+        }
+        return getCredentialId() != null && Objects.equals(getCredentialId(), that.getCredentialId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getCredentialId());
     }
 }
