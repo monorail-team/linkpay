@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import ButtonModal from '@/modal/ButtonModal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams} from 'react-router-dom';
 
 export interface ChargeModalProps {
   onClose: () => void;
   onConfirm: (amount: number) => void;
-  returnPage: String,
+  returnPage: string,
 }
 
 const ChargeModal: React.FC<ChargeModalProps> = ({ onClose, onConfirm, returnPage }) => {
   const [amount, setAmount] = useState<string>('');
   const navigate = useNavigate();
-
+  const { walletId } = useParams<{ walletId: string }>();
   // 🔹 입력값을 숫자로 변환 & 1000단위 콤마 추가
   const formatNumber = (value: string) => {
     // 숫자만 남기기 (정수값만 입력 가능)
@@ -33,7 +33,7 @@ const ChargeModal: React.FC<ChargeModalProps> = ({ onClose, onConfirm, returnPag
   const handleConfirm = () => {
     const numAmount = parseInt(amount.replace(/,/g, ''), 10);
     if (!isNaN(numAmount) && numAmount > 0) {
-      navigate(`/checkout?amount=${numAmount}&returnPage=${returnPage}`)
+      navigate(`/checkout?amount=${numAmount}&returnPage=${returnPage}&walletId=${walletId}`)
     } else {
       alert('올바른 금액을 입력해주세요.');
     }

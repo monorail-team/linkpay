@@ -1,6 +1,16 @@
 package monorail.linkpay.fcm.domain;
 
-import jakarta.persistence.*;
+import static lombok.AccessLevel.PROTECTED;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.Instant;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,10 +18,6 @@ import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.member.domain.Member;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.time.Instant;
-
-import static lombok.AccessLevel.PROTECTED;
 
 @Table(
         name = "fcm_token",

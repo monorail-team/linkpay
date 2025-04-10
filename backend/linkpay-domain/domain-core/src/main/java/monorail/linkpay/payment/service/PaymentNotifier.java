@@ -26,16 +26,15 @@ public class PaymentNotifier {
         }
 
         String title = "✅ 결제가 성공했습니다";
-        String content = String.format(
-                """
-                   상점: %s
-                   
-                   카드: %s
-                   
-                   금액: %s
-                   
-                   일시: %s     
-                """,
+        String content = String.format("""
+                            상점: %s
+                        
+                            카드: %s
+                        
+                            금액: %s
+                        
+                            일시: %s     
+                        """,
                 store.getName(),
                 linkCard.getCardName(),
                 amount,
@@ -48,12 +47,11 @@ public class PaymentNotifier {
     public void notifyFailure(final Long executorId,
                               final Exception ex) {
         String title = "❌ 결제가 실패했습니다";
-        String content = String.format(
-                """
-                    사유: %s
-                    
-                    일시: %s      
-                """,
+        String content = String.format("""
+                        사유: %s
+                        
+                        일시: %s      
+                        """,
                 ex.getMessage(),
                 LocalDateTime.now()
         );

@@ -17,6 +17,7 @@ import monorail.linkpay.linkcard.dto.LinkCardHistoriesResponse;
 import monorail.linkpay.linkcard.dto.LinkCardHistoryResponse;
 import monorail.linkpay.linkcard.dto.LinkCardResponse;
 import monorail.linkpay.linkcard.dto.LinkCardsResponse;
+import monorail.linkpay.linkcard.repository.CustomLinkCardRepository;
 import monorail.linkpay.linkcard.repository.LinkCardQueryFactory;
 import monorail.linkpay.linkcard.repository.LinkCardQueryRepository;
 import monorail.linkpay.linkcard.repository.LinkCardRepository;
@@ -56,6 +57,7 @@ public class LinkCardService {
     private final IdGenerator idGenerator;
     private final LinkCardFetcher linkCardFetcher;
     private final PaymentRepository paymentRepository;
+    private final CustomLinkCardRepository customLinkCardRepository;
 
     @Transactional
     public Long create(final Long memberId, final LinkCardCreateServiceRequest request) {
@@ -91,7 +93,7 @@ public class LinkCardService {
                 .map(linkedMember -> request.toLinkCard(idGenerator.generate(), linkedMember.getMember(), linkedwallet))
                 .toList();
 
-        linkCardRepository.saveAll(linkCards);
+        customLinkCardRepository.saveAll(linkCards);
     }
 
     public LinkCardsResponse read(final Long memberId, final Long lastId, final int size, final String type) {

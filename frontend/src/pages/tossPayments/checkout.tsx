@@ -1,6 +1,7 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
-import { useSearchParams, useParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 
@@ -10,7 +11,8 @@ const Checkout: React.FC = () => {
   const amount = Number(searchParams.get("amount")) || 0;
   const returnPage = searchParams.get("returnPage");
   const walletId = searchParams.get("walletId");
-
+  const returnUrl = `/${returnPage}` + (walletId === "null" ? `` : `/${walletId}`);
+  const navigate = useNavigate();
   useEffect(() => {
     (async () => {
       const tossPayments = await loadTossPayments(clientKey);
@@ -48,6 +50,7 @@ const Checkout: React.FC = () => {
             });
           } catch (e) {
             console.error("결제 요청 실패", e);
+            navigate(returnUrl, {replace: true});
           }
         }}
       >

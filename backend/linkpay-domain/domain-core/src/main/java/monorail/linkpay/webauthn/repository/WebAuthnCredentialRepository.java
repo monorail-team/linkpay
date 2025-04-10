@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WebAuthnCredentialRepository extends JpaRepository<WebAuthnCredential, String> {
+
     Optional<WebAuthnCredential> findByMemberId(Long memberId);
 }

@@ -7,4 +7,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record FcmProps(
         String apiUrl,
         Json serviceAccountKey
-) {}
+) {
+}

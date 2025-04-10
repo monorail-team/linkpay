@@ -41,7 +41,7 @@ public class LinkCard extends BaseEntity {
     private Long id;
 
     @Embedded
-    @AttributeOverride(name = "amount", column = @Column(name = "limitPrice", nullable = false))
+    @AttributeOverride(name = "amount", column = @Column(name = "limit_price", nullable = false))
     private Point limitPrice;
 
     @Column(nullable = false, updatable = false)
