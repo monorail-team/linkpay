@@ -3,7 +3,7 @@ import Button from '../components/Button';
 
 export interface ButtonModalProps {
   type?: 'confirm' | 'confirmAndCancel';
-  onClose: () => void;
+  onClose?: () => void;
   onConfirm: () => void;
   children: React.ReactNode;
 }

@@ -66,7 +66,7 @@ public class FcmService {
         throw new LinkPayException(ExceptionCode.DUPLICATED_RESOURCE, "FCM 등록에 반복 실패하였습니다. 다시 시도해주세요.");
     }
 
-    public void sendmessgae(final Long memberId, final String title, final String content) {
-        fcmSender.send(memberId, title, content);
+    public void sendmessgae(final Long receiverId, final String title, final String content) {
+        fcmSender.send(receiverId, title, content);
     }
 }
