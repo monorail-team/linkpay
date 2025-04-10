@@ -41,16 +41,15 @@ export const useFcm = () => {
 
       const fcmToken = await getToken(messaging, { vapidKey: VAPID_KEY });
       console.log('FCM token:', fcmToken);
-      const storedToken = sessionStorage.getItem(FCM_TOKEN_KEY);
-
-      const storedExpiresAt = sessionStorage.getItem(EXPIRE_KEY);
-      const now = new Date();
-      const isExpired = !storedExpiresAt || new Date(storedExpiresAt) < now;
-      // 기존 토큰과 다른 경우만 서버에 등록
-      if (fcmToken === storedToken && !isExpired) {
-        console.log('✅ 기존과 동일한/유효한 FCM 토큰 — 등록 생략');
-        return;
-      }
+      // const storedToken = sessionStorage.getItem(FCM_TOKEN_KEY);
+      // const storedExpiresAt = sessionStorage.getItem(EXPIRE_KEY);
+      // const now = new Date();
+      // const isExpired = !storedExpiresAt || new Date(storedExpiresAt) < now;
+      // // 기존 토큰과 다른 경우만 서버에 등록
+      // if (fcmToken === storedToken && !isExpired) {
+      //   console.log('✅ 기존과 동일한/유효한 FCM 토큰 — 등록 생략');
+      //   return;
+      // }
 
       // deviceId 식별
       let deviceId = sessionStorage.getItem(DEVICE_ID_KEY);
