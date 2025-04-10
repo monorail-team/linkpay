@@ -1,4 +1,4 @@
-// src/pages/SuccessPage.tsx
+import React from "react";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -34,7 +34,15 @@ const CheckoutSuccess: React.FC = () => {
 
   const handleConfirmPayment = async () => {
     const token = sessionStorage.getItem('accessToken');
-    const response = await axios.post(`${base_url}/api/toss/checkout/confirm`, 
+    let endpoint = "";
+    // walletId가 존재하고 "null"이 아니라면 링크 지갑으로 취급
+    if (walletId && walletId !== "null") {
+        endpoint = `${base_url}/api/linked-wallets/charge/${walletId}`;
+    } else {
+        endpoint = `${base_url}/api/my-wallets/charge`;
+    }
+    const response = await axios.patch(
+        endpoint, 
         {
             paymentKey,
             orderId,
