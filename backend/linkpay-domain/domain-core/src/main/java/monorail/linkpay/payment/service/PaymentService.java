@@ -4,13 +4,12 @@ import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.domain.Point;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import monorail.linkpay.linkcard.service.LinkCardFetcher;
+import monorail.linkpay.payment.domain.Payment;
 import monorail.linkpay.payment.dto.PaymentDto;
 import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.payment.dto.TransactionInfo;
 import monorail.linkpay.store.domain.Store;
 import monorail.linkpay.store.service.StoreFetcher;
-import monorail.linkpay.wallet.domain.Wallet;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +35,9 @@ public class PaymentService {
         Point point = txInfo.point();
 
         paymentValidator.validate(linkCard, store, txInfo, payInfo);
-        paymentProcessor.executePay(store, linkCard, point);
-        paymentNotifier.notifySuccess(payInfo.memberId(),
+        Payment payment = paymentProcessor.executePay(store, linkCard, point);
+        paymentNotifier.notifySuccess(payment.getId(),
+                payInfo.memberId(),
                 store,
                 linkCard,
                 linkCard.getWalletId(),

@@ -34,7 +34,8 @@ public class PaymentNotifier {
     private final LinkedWalletFetcher linkedWalletFetcher;
     private final LinkedMemberFetcher linkedMemberFetcher;
 
-    public void notifySuccess(final Long payerId,
+    public void notifySuccess(final Long paymentId,
+                              final Long payerId,
                               final Store store,
                               final LinkCard linkCard,
                               final Long walletId,
@@ -46,7 +47,7 @@ public class PaymentNotifier {
         fcmSender.send(
                 payerId,
                 "✅ 결제가 성공했습니다",
-                formatPersonalSuccessMessage(store, linkCard, point.getAmount(), now)
+                formatPersonalSuccessMessage(paymentId, store, linkCard, point.getAmount(), now)
         );
 
         log.info("결제 linkcard type = {}", linkCard.getCardType());
@@ -84,7 +85,7 @@ public class PaymentNotifier {
                     fcmSender.send(
                             m.getMember().getId(),
                             title,
-                            formatSharedSuccessMessage(payer.getUsername(), store, linkCard, point.getAmount(), now)
+                            formatSharedSuccessMessage(paymentId, payer.getUsername(), store, linkCard, point.getAmount(), now)
                     );
                 });
     }
@@ -98,13 +99,15 @@ public class PaymentNotifier {
         );
     }
 
-    private String formatPersonalSuccessMessage(Store store, LinkCard linkCard, long amount, LocalDateTime time) {
+    private String formatPersonalSuccessMessage(Long paymentId, Store store, LinkCard linkCard, long amount, LocalDateTime time) {
         return String.format("""
+                        결제ID: %s
                         상점: %s
                         카드: %s
                         금액: %s
                         일시: %s
                         """,
+                paymentId,
                 store.getName(),
                 linkCard.getCardName(),
                 amount,
@@ -112,14 +115,16 @@ public class PaymentNotifier {
         );
     }
 
-    private String formatSharedSuccessMessage(String payerName, Store store, LinkCard linkCard, long amount, LocalDateTime time) {
+    private String formatSharedSuccessMessage(Long paymentId, String payerName, Store store, LinkCard linkCard, long amount, LocalDateTime time) {
         return String.format("""
+                        결제ID: %s
                         결제자: %s
                         상점: %s
                         카드: %s
                         금액: %s
                         일시: %s
                         """,
+                paymentId,
                 payerName,
                 store.getName(),
                 linkCard.getCardName(),
