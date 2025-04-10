@@ -8,6 +8,8 @@ import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.wallet.domain.LinkedMember;
 import monorail.linkpay.wallet.repository.LinkedMemberRepository;
 
+import java.util.List;
+
 @SupportLayer
 @RequiredArgsConstructor
 public class LinkedMemberFetcher {
@@ -33,5 +35,9 @@ public class LinkedMemberFetcher {
 
     public int fetchCountByLinkedWalletId(Long linkedWalletId) {
         return linkedMemberRepository.countByLinkedWalletId(linkedWalletId);
+    }
+
+    public List<LinkedMember> readAllByLinkedWalletId(final long linkedWalletId){
+        return linkedMemberRepository.findAllByLinkedWalletId(linkedWalletId);
     }
 }

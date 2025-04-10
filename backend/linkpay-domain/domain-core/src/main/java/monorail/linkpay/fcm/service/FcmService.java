@@ -63,6 +63,7 @@ public class FcmService {
 
     @Recover
     protected FcmRegisterResponse recoverRegisterFailure(Exception e, Long memberId, String token, String deviceId) {
+        log.error(e.getMessage(), e);
         throw new LinkPayException(ExceptionCode.DUPLICATED_RESOURCE, "FCM 등록에 반복 실패하였습니다. 다시 시도해주세요.");
     }
 

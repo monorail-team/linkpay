@@ -28,7 +28,7 @@ public interface LinkedMemberRepository extends JpaRepository<LinkedMember, Long
     @EntityGraph(attributePaths = {"member"})
     List<LinkedMember> findByIdIn(Set<Long> linkedMemberIds);
 
-    List<LinkedMember> findByLinkedWalletId(Long linkedWalletId);
+    List<LinkedMember> findAllByLinkedWalletId(Long linkedWalletId);
 
     @Query("select lm from LinkedMember lm "
             + "join fetch lm.member "

@@ -76,7 +76,7 @@ public class LinkCardService {
         if (!linkedWalletCreator.getMember().getId().equals(memberId)) {
             throw new LinkPayException(INVALID_REQUEST, "링크카드 생성 권한이 없습니다.");
         }
-        List<Long> linkedMemberIds = linkedMemberRepository.findByLinkedWalletId(linkedwallet.getId()).stream()
+        List<Long> linkedMemberIds = linkedMemberRepository.findAllByLinkedWalletId(linkedwallet.getId()).stream()
                 .map(LinkedMember::getId)
                 .toList();
 
