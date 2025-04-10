@@ -10,5 +10,6 @@ export interface Card {
     linkedWalletId?: number;
     username?:string;
     tab?:string
+    walletAmount: number;
   }
   

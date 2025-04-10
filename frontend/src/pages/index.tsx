@@ -203,7 +203,7 @@ const Home: React.FC = () => {
           <div className="flex flex-col flex-1 items-center justify-center min-h-[80px]">
             {walletInfo?.amount !== undefined && currentIndex !== cards.length ? (
                 <div className="text-2xl font-medium mb-2 text-center dark:text-white">
-                  지갑 잔액 {walletInfo.amount.toLocaleString()} 원
+                  지갑 잔액 {cards[currentIndex].walletAmount.toLocaleString()} 원
                 </div>
               ) :
               (
