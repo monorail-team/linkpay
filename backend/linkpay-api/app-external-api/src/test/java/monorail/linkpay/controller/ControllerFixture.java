@@ -157,7 +157,7 @@ public class ControllerFixture {
             List.of(LINKED_WALLET_RESPONSE_1, LINKED_WALLET_RESPONSE_2, LINKED_WALLET_RESPONSE_3), false
     );
 
-    public static final PaymentsRequest PAYMENT_REQUEST = new PaymentsRequest("1|90000|sig", "1", "tkn");
+    public static final PaymentsRequest PAYMENT_REQUEST = new PaymentsRequest("12345678901234567890가게아이디10자,가격10자,나머지서명=최소20자이상전달되야함", "1", "tkn");
 
     public static final LinkedMemberResponse LINKED_MEMBER_RESPONSE_1 = new LinkedMemberResponse(
             "1", "링크멤버1", "link1@gmail.com");
