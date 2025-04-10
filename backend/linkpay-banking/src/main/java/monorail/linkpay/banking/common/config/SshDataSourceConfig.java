@@ -6,7 +6,9 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
+@Profile("banking")
 @Configuration
 @RequiredArgsConstructor
 public class SshDataSourceConfig {

@@ -167,40 +167,41 @@ const Home: React.FC = () => {
           <div
             className="text-center text-lg text-[#969292] font-bold mt-3">{currentIndex !== cards.length ? 'Link Card' : '링크카드 등록'}</div>
 
-          {/* my link 섹션 */}
-          <div className="flex flex-col flex-1 items-center justify-center min-h-[80px]">
-            {walletInfo?.amount !== undefined && currentIndex !== cards.length ? (
-                <div className="text-2xl font-medium mb-2 text-center dark:text-white">
-                  지갑 잔액 {walletInfo.amount.toLocaleString()} 원
-                </div>
-              ) :
-              (
-                // 다른 사람의 지갑인 경우
-                <div className="h-8"></div>
-              )}
+            {/* my link 섹션 */}
+            <div className="flex flex-col flex-1 items-center justify-center min-h-[80px]">
+              {walletInfo?.amount !== undefined && currentIndex !== cards.length ? (
+                  <div className="text-2xl font-medium mb-2 text-center dark:text-white">
+                    지갑 잔액 {walletInfo.amount.toLocaleString()} 원
+                  </div>
+                ) :
+                (
+                  // 다른 사람의 지갑인 경우
+                  <div className="h-8"></div>
+                )}
+            </div>
+            {notification && <div className="text-sm text-white bg-black bg-opacity-40 px-5 py-2 rounded-md text-center w-4/5 mx-auto">{notification}</div>}
           </div>
-          {notification && <div className="text-sm text-white bg-black bg-opacity-40 px-5 py-2 rounded-md text-center w-4/5 mx-auto">{notification}</div>}
+
+
+          {/* 지문 아이콘 및 결제 문구 */}
+          <footer
+            className="absolute  flex flex-col text-center items-center bottom-[30px] left-[50%] -translate-x-[50%] w-full">
+            <button
+              onClick={onFingerprintClick}
+              disabled={loading}
+              className="focus:outline-none"
+            >
+              <Icon
+                name={theme === 'dark' ? 'fingerprintDarkIcon' : 'fingerprintIcon'}
+                width={68}
+                height={68}
+                alt="지문 인증"
+              />
+            </button>
+            {loading && <p className="mt-3 text-black dark:text-[#ccc] text-[17px]">지문 인증 대기중입니다.</p>}
+            {!loading && <p className="mt-3 text-black dark:text-[#ccc] text-[17px]">지문 버튼을 눌러 결제를 진행하세요.</p>}
+          </footer>
       </div>
-
-
-      {/* 지문 아이콘 및 결제 문구 */}
-      <footer
-        className="absolute  flex flex-col text-center items-center bottom-[30px] left-[50%] -translate-x-[50%] w-full">
-        <button
-          onClick={onFingerprintClick}
-          disabled={loading}
-          className="focus:outline-none"
-        >
-          <Icon
-            name={theme === 'dark' ? 'fingerprintDarkIcon' : 'fingerprintIcon'}
-            width={68}
-            height={68}
-            alt="지문 인증"
-          />
-        </button>
-        {loading && <p className="mt-3 text-black dark:text-[#ccc] text-[17px]">지문 인증 대기중입니다.</p>}
-        {!loading && <p className="mt-3 text-black dark:text-[#ccc] text-[17px]">지문 버튼을 눌러 결제를 진행하세요.</p>}
-      </footer>
     </div>
   );
 };
