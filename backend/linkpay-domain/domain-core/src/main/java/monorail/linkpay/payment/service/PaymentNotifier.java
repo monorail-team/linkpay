@@ -13,6 +13,7 @@ import monorail.linkpay.wallet.service.LinkedMemberFetcher;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -93,7 +94,7 @@ public class PaymentNotifier {
                 store.getName(),
                 linkCard.getCardName(),
                 amount,
-                time
+                time.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분"))
         );
     }
 
@@ -109,7 +110,7 @@ public class PaymentNotifier {
                 store.getName(),
                 linkCard.getCardName(),
                 amount,
-                time
+                time.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분"))
         );
     }
 
@@ -119,7 +120,7 @@ public class PaymentNotifier {
                         일시: %s
                         """,
                 ex.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분"))
         );
     }
 }
