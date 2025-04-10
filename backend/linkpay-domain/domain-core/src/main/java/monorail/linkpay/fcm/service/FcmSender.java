@@ -5,6 +5,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import monorail.linkpay.annotation.SupportLayer;
+import monorail.linkpay.exception.ExceptionCode;
+import monorail.linkpay.exception.LinkPayException;
 import monorail.linkpay.fcm.client.FcmClient;
 import monorail.linkpay.fcm.client.dto.FcmSendRequest;
 import monorail.linkpay.fcm.domain.FcmToken;
@@ -25,16 +27,17 @@ public class FcmSender {
                 .toList();
         if (fcmTokens.isEmpty()) {
             log.error("등록된 사용자 FCM 토큰이 없습니다.");
-            // TODO: 여기서 예외 던지면 결제 트랜잭션이 깨짐, requires new transaction 또는 비동기 메시징 처리할 경우에만 예외 더닞기
-//            throw new LinkPayException(ExceptionCode.NOT_FOUND_RESOURCE, "등록된 사용자 FCM 토큰이 없습니다.");
-            return;
+            throw new LinkPayException(ExceptionCode.NOT_FOUND_RESOURCE, "등록된 사용자 FCM 토큰이 없습니다.");
         }
-        fcmTokens.forEach(fcmToken -> fcmClient.sendPush(
-                FcmSendRequest.builder()
-                        .token(fcmToken.getToken())
-                        .title(title)
-                        .body(content)
-                        .build())
-        );
+
+        fcmTokens.stream()
+                .map(FcmToken::getToken).distinct()
+                .forEach(token -> fcmClient.sendPush(
+                        FcmSendRequest.builder()
+                                .token(token)
+                                .title(title)
+                                .body(content)
+                                .build())
+                );
     }
 }
