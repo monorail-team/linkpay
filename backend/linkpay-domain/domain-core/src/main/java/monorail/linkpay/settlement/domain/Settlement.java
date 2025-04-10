@@ -1,4 +1,4 @@
-package monorail.linkpay.settlement;
+package monorail.linkpay.settlement.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

@@ -1,3 +1,4 @@
 package monorail.linkpay.webauthn.dto;
 
-public record RegistrationStatusResponse(boolean registered) {}
+public record RegistrationStatusResponse(boolean registered) {
+}

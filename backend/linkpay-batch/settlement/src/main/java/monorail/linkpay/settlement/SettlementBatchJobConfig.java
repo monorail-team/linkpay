@@ -14,8 +14,9 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
-import org.springframework.batch.item.support.CompositeItemWriter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -29,12 +30,14 @@ public class SettlementBatchJobConfig {
     public Job settlementJob(
             final JobRepository jobRepository,
             final Step chargeStep,
+            final Step paymentStep,
             final Step settlementStep,
             final Step publishOutboxStep
     ) {
         return new JobBuilder("settlementJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(chargeStep)
+                .next(paymentStep)
                 .next(settlementStep)
                 .next(publishOutboxStep)
                 .build();
@@ -45,12 +48,31 @@ public class SettlementBatchJobConfig {
     public Step chargeStep(
             final JobRepository jobRepository,
             final JpaPagingItemReader<WalletHistory> chargeReader,
-            final ItemWriter<WalletHistory> outboxWriter,
+            final ItemProcessor<WalletHistory, Outbox> walletHistoryProcessor,
+            @Qualifier("depositHistoryOutboxItemWriter") final JdbcBatchItemWriter<Outbox> outboxWriter,
             final PlatformTransactionManager transactionManager
     ) {
         return new StepBuilder("chargeStep", jobRepository)
-                .<WalletHistory, WalletHistory>chunk(CHUNK_SIZE, transactionManager)
+                .<WalletHistory, Outbox>chunk(CHUNK_SIZE, transactionManager)
                 .reader(chargeReader)
+                .processor(walletHistoryProcessor)
+                .writer(outboxWriter)
+                .build();
+    }
+
+    @Bean
+    @JobScope
+    public Step paymentStep(
+            final JobRepository jobRepository,
+            final JpaPagingItemReader<Payment> paymentReader,
+            final ItemProcessor<Payment, Outbox> paymentProcessor,
+            @Qualifier("paymentOutboxItemWriter") final JdbcBatchItemWriter<Outbox> outboxWriter,
+            final PlatformTransactionManager transactionManager
+    ) {
+        return new StepBuilder("paymentStep", jobRepository)
+                .<Payment, Outbox>chunk(CHUNK_SIZE, transactionManager)
+                .reader(paymentReader)
+                .processor(paymentProcessor)
                 .writer(outboxWriter)
                 .build();
     }
@@ -60,13 +82,13 @@ public class SettlementBatchJobConfig {
     public Step settlementStep(
             final JobRepository jobRepository,
             final JpaPagingItemReader<Payment> paymentReader,
-            final CompositeItemWriter<Payment> settlementCompositeWriter,
+            final ItemWriter<Payment> settlementItemWriter,
             final PlatformTransactionManager transactionManager
     ) {
         return new StepBuilder("settlementStep", jobRepository)
                 .<Payment, Payment>chunk(CHUNK_SIZE, transactionManager)
                 .reader(paymentReader)
-                .writer(settlementCompositeWriter)
+                .writer(settlementItemWriter)
                 .build();
     }
 

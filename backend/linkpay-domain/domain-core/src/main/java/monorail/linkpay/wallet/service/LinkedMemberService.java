@@ -4,9 +4,14 @@ import static monorail.linkpay.exception.ExceptionCode.DUPLICATED_RESOURCE;
 import static monorail.linkpay.exception.ExceptionCode.INVALID_REQUEST;
 import static monorail.linkpay.wallet.domain.Role.PARTICIPANT;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.exception.LinkPayException;
+import monorail.linkpay.linkcard.domain.LinkCard;
+import monorail.linkpay.linkcard.repository.LinkCardRepository;
 import monorail.linkpay.member.domain.Member;
 import monorail.linkpay.member.service.MemberFetcher;
 import monorail.linkpay.util.id.IdGenerator;
@@ -26,11 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class LinkedMemberService {
 
     private final LinkedMemberRepository linkedMemberRepository;
+    private final LinkCardRepository linkCardRepository;
     private final LinkedMemberFetcher linkedMemberFetcher;
     private final LinkedWalletFetcher linkedWalletFetcher;
     private final MemberFetcher memberFetcher;
-    private final IdGenerator idGenerator;
     private final LinkedMemberValidator linkedMemberValidator;
+    private final IdGenerator idGenerator;
 
     public LinkedMembersResponse getLinkedMembers(final Long linkedWalletId, final long memberId,
                                                   final Long lastId, final int size) {
@@ -71,11 +77,14 @@ public class LinkedMemberService {
         if (target.isCreator()) {
             throw new LinkPayException(INVALID_REQUEST, "링크지갑 생성자를 삭제할 수 없습니다.");
         }
+        List<LinkCard> linkCards = linkCardRepository.findByMemberIdAndWalletId(memberId, linkedWalletId);
+        linkCardRepository.deleteAllInBatch(linkCards);
         linkedMemberRepository.delete(target);
     }
 
     @Transactional
     public void deleteLinkedMembers(final Long linkedWalletId, final Set<Long> linkedMemberIds, final Long memberId) {
+        validateNotEmptyLinkedMemberIds(linkedMemberIds);
         linkedWalletFetcher.checkExistsById(linkedWalletId);
         LinkedMember linkedMember = linkedMemberFetcher.fetchByLinkedWalletIdAndMemberId(linkedWalletId, memberId);
 
@@ -83,7 +92,32 @@ public class LinkedMemberService {
             throw new LinkPayException(INVALID_REQUEST, "링크지갑 생성자만 참여자를 관리할 수 있습니다.");
         }
         validateNotDeletingCreator(linkedMemberIds, linkedMember.getId());
-        linkedMemberRepository.deleteByIds(linkedMemberIds);
+
+        List<LinkedMember> linkedMembers = linkedMemberRepository.findByIdIn(linkedMemberIds);
+        validateAllLinkedMembersExist(linkedMemberIds, linkedMembers);
+
+        Set<Long> memberIds = linkedMembers.stream()
+                .map(LinkedMember::getMember)
+                .map(Member::getId)
+                .collect(Collectors.toSet());
+
+        List<LinkCard> linkCards = linkCardRepository.findByMemberIdInAndWalletId(memberIds, linkedWalletId);
+
+        linkCardRepository.deleteAllInBatch(linkCards);
+        linkedMemberRepository.deleteAllByIdInBatch(linkedMemberIds);
+    }
+
+    private void validateNotEmptyLinkedMemberIds(final Set<Long> linkedMemberIds) {
+        if (Objects.isNull(linkedMemberIds) || linkedMemberIds.isEmpty()) {
+            throw new LinkPayException(INVALID_REQUEST, "삭제하려는 링크멤버 아이디를 입력해주세요.");
+        }
+    }
+
+    private void validateAllLinkedMembersExist(final Set<Long> linkedMemberIds,
+                                               final List<LinkedMember> linkedMembers) {
+        if (!Objects.equals(linkedMembers.size(), linkedMemberIds.size())) {
+            throw new LinkPayException(INVALID_REQUEST, "삭제 대상에 올바르지 않은 아이디가 포함되어 있습니다.");
+        }
     }
 
     private void validateCreatorPermission(final Long linkedWalletId, final Long memberId) {

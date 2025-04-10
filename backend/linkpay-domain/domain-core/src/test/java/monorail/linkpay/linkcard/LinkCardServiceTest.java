@@ -306,9 +306,7 @@ public class LinkCardServiceTest extends IntegrationTest {
                         .build()));
 
         LinkCard card = createLinkWalletCard(linkedWallet, member);
-        linkCardRepository.saveAll(
-                List.of(card,
-                        createLinkWalletCard(linkedWallet, member1)));
+        linkCardRepository.saveAll(List.of(card, createLinkWalletCard(linkedWallet, member1)));
 
         // when
         linkCardService.deleteLinkCard(card.getId(), member.getId());
@@ -430,8 +428,8 @@ public class LinkCardServiceTest extends IntegrationTest {
                 .build();
     }
 
-    private static SharedLinkCardCreateServiceRequest createSharedCards(final LocalDate date, final String walletId,
-                                                                        final List<String> linkedMemberIds) {
+    public static SharedLinkCardCreateServiceRequest createSharedCards(final LocalDate date, final String walletId,
+                                                                       final List<String> linkedMemberIds) {
         return SharedLinkCardCreateServiceRequest.builder()
                 .cardName("test card")
                 .expiredAt(date)

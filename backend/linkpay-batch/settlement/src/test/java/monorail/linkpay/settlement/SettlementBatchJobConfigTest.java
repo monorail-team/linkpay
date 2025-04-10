@@ -43,6 +43,19 @@ class SettlementBatchJobConfigTest {
     }
 
     @Test
+    void testPaymentStep() {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("start", String.valueOf(START))
+                .addString("end", String.valueOf(END))
+                .addLong("runId", System.currentTimeMillis())
+                .toJobParameters();
+
+        JobExecution execution = jobLauncherTestUtils.launchStep("paymentStep", jobParameters);
+
+        assertThat(execution.getExitStatus()).isEqualTo(COMPLETED);
+    }
+
+    @Test
     void testSettlementStep() {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("start", String.valueOf(START))

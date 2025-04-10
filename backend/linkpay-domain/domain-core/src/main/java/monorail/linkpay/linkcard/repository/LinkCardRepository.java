@@ -1,6 +1,10 @@
 package monorail.linkpay.linkcard.repository;
 
 import jakarta.persistence.LockModeType;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import monorail.linkpay.linkcard.domain.CardState;
 import monorail.linkpay.linkcard.domain.LinkCard;
 import org.springframework.data.domain.Pageable;
@@ -12,15 +16,20 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 @Repository
 public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
 
     List<LinkCard> findByMemberId(Long memberId);
+
+    @Query("SELECT l from LinkCard l "
+            + "WHERE l.member.id in :memberIds "
+            + "AND l.wallet.id = :walletId")
+    List<LinkCard> findByMemberIdInAndWalletId(Set<Long> memberIds, Long walletId);
+
+    @Query("SELECT l from LinkCard l "
+            + "WHERE l.member.id = :memberId "
+            + "AND l.wallet.id = :walletId")
+    List<LinkCard> findByMemberIdAndWalletId(Long memberId, Long walletId);
 
     @Query("SELECT EXISTS ("
             + "SELECT 1 FROM LinkCard l WHERE l.wallet.id = :walletId)")
@@ -49,8 +58,8 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
     Optional<LinkCard> findByIdForUpdate(@Param("linkCardId") Long linkCardId);
 
     @Query("""
-        SELECT l FROM LinkCard l
-        WHERE l.wallet.id = :walletId
-    """)
+                SELECT l FROM LinkCard l
+                WHERE l.wallet.id = :walletId
+            """)
     List<LinkCard> findAllByWalletId(Long walletId);
 }

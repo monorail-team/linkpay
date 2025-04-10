@@ -2,6 +2,7 @@ package monorail.linkpay.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import monorail.linkpay.auth.dto.LoginPrincipal;
 import monorail.linkpay.auth.dto.LoginRequest;
 import monorail.linkpay.auth.dto.LoginResponse;
 import monorail.linkpay.member.domain.Member;
@@ -33,22 +34,7 @@ public class AuthService {
         log.debug("login process in progress : {}", request);
         var loginPrincipal = loginStrategyResolver.resolve(request);
         var loginMember = memberRepository.findByEmail(loginPrincipal.email())
-                .orElseGet(() -> {
-                    Member member = memberRepository.save(Member.builder()
-                            .id(idGenerator.generate())
-                            .email(loginPrincipal.email())
-                            .username(loginPrincipal.username())
-                            .build()
-                    );
-                    MyWallet myWallet = myWalletRepository.save(MyWallet.builder()
-                            .id(idGenerator.generate())
-                            .member(member)
-                            .build());
-
-                    bankAccountClient.createAccount(myWallet.getId(), member.getId());
-
-                    return member;
-                });
+                .orElseGet(() -> createMemberWithWalletAndAccount(loginPrincipal));
 
         var accessToken = authTokenGenerator.generateFor(loginMember, TokenType.ACCESS);
 
@@ -56,6 +42,30 @@ public class AuthService {
         return LoginResponse.builder()
                 .accessToken(accessToken.value())
                 .build();
+    }
+
+    private Member createMemberWithWalletAndAccount(final LoginPrincipal loginPrincipal) {
+        Member member = createMember(loginPrincipal);
+        MyWallet myWallet = createMyWallet(member);
+
+        bankAccountClient.createAccount(myWallet.getId(), member.getId());
+        return member;
+    }
+
+    private Member createMember(final LoginPrincipal loginPrincipal) {
+        return memberRepository.save(Member.builder()
+                .id(idGenerator.generate())
+                .email(loginPrincipal.email())
+                .username(loginPrincipal.username())
+                .build()
+        );
+    }
+
+    private MyWallet createMyWallet(final Member member) {
+        return myWalletRepository.save(MyWallet.builder()
+                .id(idGenerator.generate())
+                .member(member)
+                .build());
     }
 }
 
