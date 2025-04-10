@@ -36,6 +36,7 @@ public interface LinkCardRepository extends JpaRepository<LinkCard, Long> {
     boolean existsByWalletId(Long walletId);
 
     @Query("SELECT l FROM LinkCard l " +
+            "JOIN FETCH l.wallet " +
             "WHERE l.member.id = :memberId " +
             "AND l.state = :state " +
             "AND (:lastId IS NULL OR l.id < :lastId) " +

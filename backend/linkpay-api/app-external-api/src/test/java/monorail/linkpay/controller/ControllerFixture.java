@@ -68,7 +68,11 @@ public class ControllerFixture {
     public static final LinkedWalletCreateRequest LINKED_WALLET_CREATE_REQUEST = new LinkedWalletCreateRequest(
             "링크지갑1", Set.of("1", "2", "3"));
 
-    public static final LinkCardResponse REGISTERED_LINK_CARD_RESPONSE = new LinkCardResponse("1", 500000L,
+    public static final LinkCardResponse REGISTERED_LINK_CARD_RESPONSE = new LinkCardResponse(
+            "1",
+            "1",
+            10000,
+            500000L,
             CardType.OWNED.name(),
             CardColor.getRandomColor().getHexCode(),
             "test card1",
@@ -77,6 +81,8 @@ public class ControllerFixture {
 
     public static final LinkCardResponse REGISTERED_SHARED_LINK_CARD_RESPONSE = new LinkCardResponse(
             "3",
+            "3",
+            30000,
             500000L,
             CardType.SHARED.name(),
             CardColor.getRandomColor().getHexCode(),
@@ -84,14 +90,22 @@ public class ControllerFixture {
             LocalDate.now().plusMonths(1),
             0L, "유저", "REGISTERED");
 
-    public static final LinkCardResponse LINK_CARD_RESPONSE_1 = new LinkCardResponse("1", 500000L,
+    public static final LinkCardResponse LINK_CARD_RESPONSE_1 = new LinkCardResponse(
+            "1",
+            "1",
+            10000,
+            500000L,
             CardType.OWNED.name(),
             CardColor.getRandomColor().getHexCode(),
             "test card1",
             LocalDate.now().plusMonths(1),
             0L, "유저", "UNREGISTERED");
 
-    public static final LinkCardResponse LINK_CARD_RESPONSE_2 = new LinkCardResponse("2", 500000L,
+    public static final LinkCardResponse LINK_CARD_RESPONSE_2 = new LinkCardResponse(
+            "2",
+            "2",
+            20000,
+            500000L,
             CardType.OWNED.name(),
             CardColor.getRandomColor().getHexCode(),
             "test card2",
@@ -100,6 +114,8 @@ public class ControllerFixture {
 
     public static final LinkCardResponse SHARED_LINK_CARD_RESPONSE = new LinkCardResponse(
             "3",
+            "3",
+            30000,
             500000L,
             CardType.SHARED.name(),
             CardColor.getRandomColor().getHexCode(),
@@ -109,6 +125,8 @@ public class ControllerFixture {
 
     public static final LinkCardResponse SHARED_LINK_CARD_RESPONSE_2 = new LinkCardResponse(
             "4",
+            "4",
+            40000,
             500000L,
             CardType.SHARED.name(),
             CardColor.getRandomColor().getHexCode(),
