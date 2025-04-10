@@ -151,7 +151,7 @@ const CardDetailPage: React.FC = () => {
         </div>
 
         {/* 사용 내역 영역 */}
-        <div className="mt-12 mx-6 flex-1 overflow-auto">
+        <div className="mt-12 mx-6 flex-1 overflow-y-auto hide-scrollbar">
             <h3 className="text-lg text-[#969595] ml-4">사용 내역</h3>
                 {cardHistory.length > 0 ? (
                     <ul className="mt-3 mx-5">
