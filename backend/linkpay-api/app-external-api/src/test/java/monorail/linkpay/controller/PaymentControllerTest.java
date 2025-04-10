@@ -1,15 +1,15 @@
 package monorail.linkpay.controller;
 
+import static monorail.linkpay.controller.ControllerFixture.PAYMENT_REQUEST;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+
 import monorail.linkpay.payment.dto.PaymentInfo;
 import monorail.linkpay.payment.dto.TransactionInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import static monorail.linkpay.controller.ControllerFixture.PAYMENT_REQUEST;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 
 public class PaymentControllerTest extends ControllerTest {
 
