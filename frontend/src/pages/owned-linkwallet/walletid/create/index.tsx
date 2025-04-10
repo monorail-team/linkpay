@@ -7,6 +7,7 @@ import { useThemeStore } from '@/store/themeStore';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Member } from '@/model/Member';
+import CardCreationModal from '@/modal/CardCreationModal';
 
 const CreateSharedCardPage: React.FC = () => {
   const [cardName, setCardName] = useState('');
@@ -15,6 +16,7 @@ const CreateSharedCardPage: React.FC = () => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [memberList, setMemberList] = useState<Member[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const { walletId } = useParams<{ walletId: string }>();
   const navigate = useNavigate();
@@ -71,7 +73,7 @@ const CreateSharedCardPage: React.FC = () => {
     }
   }, [base_url, walletId]);
 
-  const handleRegister = async () => {
+  const confirmRegister  = async () => {
     const accessToken = sessionStorage.getItem('accessToken');
     if (!accessToken) {
       console.error('Access token not found');
@@ -106,6 +108,7 @@ const CreateSharedCardPage: React.FC = () => {
         },
       });
       if (response.status === 201) {
+        setShowConfirmModal(false);
         navigate(`/owned-linkwallet/${walletId}`);
       }
     } catch (error) {
@@ -117,6 +120,16 @@ const CreateSharedCardPage: React.FC = () => {
   const isFormComplete = cardName && cardLimit && expireDate && isCardNameValid;
   const defaultClassNames = getDefaultClassNames();
 
+  const selectedMemberUsernames = memberList
+  .filter((member) => selectedMembers.includes(member.memberId))
+  .map((member) => member.username);
+
+  const openConfirmModal = () => {
+    if (isFormComplete) {
+      setShowConfirmModal(true);
+    }
+  };
+  
   return (
     <div className="w-full h-screen max-w-md mx-auto flex flex-col flex-1 dark:bg-black">
       <Header headerType="back" onBackClick={() => navigate(-1)} />
@@ -244,12 +257,27 @@ const CreateSharedCardPage: React.FC = () => {
       <div className="p-4 mt-auto">
         <button
           disabled={!isFormComplete}
-          onClick={handleRegister}
+          onClick={openConfirmModal}
           className="font-bold block w-4/5 py-3 mx-auto bg-[#9CA1D7] text-white rounded-3xl disabled:bg-gray-300 dark:bg-[#252527] dark:text-white dark:disabled:text-gray-500"
         >
           생성하기
         </button>
       </div>
+      {showConfirmModal && (
+        <CardCreationModal
+          cardName={cardName}
+          cardLimit={Number(cardLimit.replace(/,/g, ''))}
+          expiryDate={expireDate}
+          onClose={() => setShowConfirmModal(false)}
+          onConfirm={confirmRegister}
+        >
+          <div className="mt-2">
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              {selectedMemberUsernames.join(', ')}
+            </p>
+          </div>
+        </CardCreationModal>
+      )}
     </div>
   );
 };

@@ -5,7 +5,7 @@ import MenuModal from '@/modal/MenuModal';
 import axios from 'axios';
 import { LinkWallet } from '@/model/LinkWallet';
 import BackgroundImage from "@/components/BackgroundImage"
-
+import { useThemeStore } from '@/store/themeStore';
 const base_url = process.env.REACT_APP_API_URL;
 const TAB_OWNED = 'CREATOR';
 const TAB_PARTICIPATED = 'PARTICIPANT';
@@ -20,6 +20,7 @@ const LinkWalletListPage: React.FC = () => {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
   const observerRef = useRef<HTMLDivElement>(null);
+  const { theme } = useThemeStore();
 
   const role = activeTab === TAB_OWNED ? 'CREATOR' : 'PARTICIPANT';
   
@@ -64,6 +65,15 @@ const LinkWalletListPage: React.FC = () => {
     }
   }, [lastId, loading, hasNext, role]);
 
+
+  useEffect(() => {
+        const root = document.documentElement;
+        if (theme === 'dark') {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+  }, [theme]);
 
   useEffect(() => {
     setWallets([]);
