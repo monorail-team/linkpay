@@ -5,6 +5,7 @@ import MenuModal from '@/modal/MenuModal';
 import { MyWalletHistory } from '@/model/MyWalletHistory';
 import { useNavigate } from 'react-router-dom';
 import { formatDateTime } from'@/util/formatdate';
+import { useThemeStore } from '@/store/themeStore';
 import axios from 'axios';
 
 const MyWallet: React.FC = () => {
@@ -15,7 +16,7 @@ const MyWallet: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [lastId, setLastId] = useState<string | null>(null);
   const [username, setUsername] = useState('');
-
+  const { theme } = useThemeStore();
   const base_url = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
@@ -122,6 +123,15 @@ const MyWallet: React.FC = () => {
     fetchWalletHistories();
   }, [fetchWalletHistories]);
 
+  useEffect(() => {
+      const root = document.documentElement;
+      if (theme === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+    }, [theme]);
+    
   // 충전 API 호출 함수
   const handleCharge = async (amount: number) => {
     try {
