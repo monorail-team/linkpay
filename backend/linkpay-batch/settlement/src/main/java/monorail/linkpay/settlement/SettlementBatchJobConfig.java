@@ -16,7 +16,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -49,7 +48,7 @@ public class SettlementBatchJobConfig {
             final JobRepository jobRepository,
             final JpaPagingItemReader<WalletHistory> chargeReader,
             final ItemProcessor<WalletHistory, Outbox> walletHistoryProcessor,
-            @Qualifier("depositHistoryOutboxItemWriter") final JdbcBatchItemWriter<Outbox> outboxWriter,
+            final JdbcBatchItemWriter<Outbox> outboxWriter,
             final PlatformTransactionManager transactionManager
     ) {
         return new StepBuilder("chargeStep", jobRepository)
@@ -66,7 +65,7 @@ public class SettlementBatchJobConfig {
             final JobRepository jobRepository,
             final JpaPagingItemReader<Payment> paymentReader,
             final ItemProcessor<Payment, Outbox> paymentProcessor,
-            @Qualifier("paymentOutboxItemWriter") final JdbcBatchItemWriter<Outbox> outboxWriter,
+            final JdbcBatchItemWriter<Outbox> outboxWriter,
             final PlatformTransactionManager transactionManager
     ) {
         return new StepBuilder("paymentStep", jobRepository)
