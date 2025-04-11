@@ -10,8 +10,12 @@ const Checkout: React.FC = () => {
   const [searchParams] = useSearchParams();
   const amount = Number(searchParams.get("amount")) || 0;
   const returnPage = searchParams.get("returnPage");
-  const walletId = searchParams.get("walletId");
-  const returnUrl = `/${returnPage}` + (walletId === "null" ? `` : `/${walletId}`);
+  const rawWalletId  = searchParams.get("walletId");
+  const walletId =
+    rawWalletId && rawWalletId !== "undefined" && rawWalletId !== "null"
+    ? rawWalletId
+    : null;
+  const returnUrl = `/${returnPage}` + (walletId ? `/${walletId}` : '');
   const navigate = useNavigate();
   useEffect(() => {
     (async () => {
@@ -46,7 +50,7 @@ const Checkout: React.FC = () => {
               customerName: "홍길동",
               customerEmail: "customer@example.com",
               successUrl: window.location.origin + `/checkout/success?returnPage=${returnPage}&walletId=${walletId}`,
-              failUrl: window.location.origin + `/checkout/fail`,
+              failUrl: window.location.origin + `/checkout/fail?returnPage=${returnPage}&walletId=${walletId}`,
             });
           } catch (e) {
             console.error("결제 요청 실패", e);
