@@ -6,21 +6,17 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import monorail.linkpay.common.domain.BaseEntity;
 import monorail.linkpay.event.EventType;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "outbox")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE outbox SET deleted_at = CURRENT_TIMESTAMP WHERE outbox_id = ?")
-@SQLRestriction("deleted_at is null")
 @Entity
 public class Outbox {
 
@@ -36,12 +32,21 @@ public class Outbox {
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
 
+    private LocalDateTime createdAt;
+
     @Builder
-    private Outbox(final Long id, final EventType eventType, final String payload, final EventStatus eventStatus) {
+    private Outbox(
+            final Long id,
+            final EventType eventType,
+            final String payload,
+            final EventStatus eventStatus,
+            final LocalDateTime createdAt
+    ) {
         this.id = id;
         this.eventType = eventType;
         this.payload = payload;
         this.eventStatus = eventStatus;
+        this.createdAt = createdAt;
     }
 
     public void approveEvent() {

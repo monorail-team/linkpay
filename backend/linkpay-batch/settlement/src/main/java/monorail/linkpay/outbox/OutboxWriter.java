@@ -1,5 +1,7 @@
 package monorail.linkpay.outbox;
 
+import static java.time.LocalTime.now;
+
 import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import monorail.linkpay.common.event.Outbox;
@@ -28,10 +30,11 @@ public class OutboxWriter {
                     param.addValue("eventType", outbox.getEventType().name());
                     param.addValue("payload", outbox.getPayload());
                     param.addValue("eventStatus", outbox.getEventStatus().name());
+                    param.addValue("createdAt", now());
                     return param;
                 })
-                .sql("INSERT INTO outbox (outbox_id, event_type, payload, event_status) "
-                        + "VALUES (:id, :eventType, :payload, :eventStatus)")
+                .sql("INSERT INTO outbox (outbox_id, event_type, payload, event_status, created_at) "
+                        + "VALUES (:id, :eventType, :payload, :eventStatus, :createdAt)")
                 .dataSource(dataSource)
                 .build();
     }
