@@ -1,6 +1,6 @@
 package monorail.linkpay.outbox;
 
-import static java.time.LocalTime.now;
+import static java.time.LocalDateTime.now;
 
 import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
