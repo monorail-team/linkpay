@@ -22,7 +22,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE outbox SET deleted_at = CURRENT_TIMESTAMP WHERE outbox_id = ?")
 @SQLRestriction("deleted_at is null")
 @Entity
-public class Outbox extends BaseEntity {
+public class Outbox {
 
     @Id
     @Column(name = "outbox_id")
