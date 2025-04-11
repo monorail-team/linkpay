@@ -1,0 +1,14 @@
+[[Auth]]
+== 인증/인가
+
+=== 로그인
+
+==== 로그인 요청
+
+include::{snippets}/auth/login/kakao/http-request.adoc[]
+include::{snippets}/auth/login/kakao/query-parameters.adoc[]
+
+==== 로그인 응답
+
+include::{snippets}/auth/login/kakao/http-response.adoc[]
+include::{snippets}/auth/login/kakao/response-fields.adoc[]

@@ -1,0 +1,12 @@
+[[Payment]]
+== 결제
+
+=== 링크카드 결제 요청
+
+==== HTTP Request
+
+include::{snippets}/payments/create/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/payments/create/http-response.adoc[]

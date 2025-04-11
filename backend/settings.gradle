@@ -1,0 +1,8 @@
+rootProject.name = 'A105'
+
+include 'linkpay-banking'
+include 'linkpay-batch:settlement'
+include 'linkpay-support'
+include 'linkpay-in-system-available:common-web'
+include 'linkpay-domain:domain-core'
+include 'linkpay-api:app-external-api'

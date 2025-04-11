@@ -1,0 +1,42 @@
+replicaCount: 1
+
+image:
+  repository: cheonwoo/linkpay  # 실제 Docker Hub 경로에 맞게 수정
+  tag: frontend
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: j12a105.p.ssafy.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - host:
+        - j12a105.p.ssafy.io
+      secretName: j12a105-tls
+
+resources: {}
+
+serviceAccount:
+  create: true
+  name: ""
+  
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+imagePullSecrets:
+  - name: docker-hub
+

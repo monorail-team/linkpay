@@ -1,0 +1,10 @@
+plugins {
+    id 'java-test-fixtures'
+}
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.auth0:java-jwt:4.4.0'
+    api 'org.springframework.kafka:spring-kafka'
+    implementation 'com.github.mwiede:jsch:0.2.24'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+}

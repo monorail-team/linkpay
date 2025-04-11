@@ -1,0 +1,116 @@
+[[LinkCard]]
+== 링크카드
+
+=== 링크카드 생성
+
+==== 내 지갑에서 생성
+
+===== HTTP Request
+
+include::{snippets}/cards/create/http-request.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/cards/create/http-response.adoc[]
+
+==== 링크 지갑에서 생성
+
+===== HTTP Request
+
+include::{snippets}/cards/create/shared/http-request.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/cards/create/shared/http-response.adoc[]
+
+=== 링크카드 조회
+
+==== 내지갑 링크카드
+
+===== HTTP Request
+
+include::{snippets}/cards/read/http-request.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/cards/read/http-response.adoc[]
+
+==== 링크지갑 링크카드
+
+===== HTTP Request
+
+include::{snippets}/cards/read/linked/http-request.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/cards/read/linked/http-response.adoc[]
+
+==== 공유한 링크카드
+
+===== HTTP Request
+
+include::{snippets}/cards/read/shared/http-request.adoc[]
+
+===== HTTP Response
+
+include::{snippets}/cards/read/shared/http-response.adoc[]
+
+=== 결제카드로 등록안된 링크카드 조회
+
+==== HTTP Request
+
+include::{snippets}/cards/read/deactivate/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/read/deactivate/http-response.adoc[]
+
+=== 결제카드로 등록된 링크카드 조회
+
+==== HTTP Request
+
+include::{snippets}/cards/read/activate/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/read/activate/http-response.adoc[]
+
+=== 링크카드 상세 조회
+
+==== HTTP Request
+
+include::{snippets}/cards/read/detail/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/read/detail/http-response.adoc[]
+
+=== 결제카드로 등록
+
+==== HTTP Request
+
+include::{snippets}/cards/activate/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/activate/http-response.adoc[]
+
+=== 링크카드 내역 조회
+
+==== HTTP Request
+
+include::{snippets}/cards/read/histories/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/read/histories/http-response.adoc[]
+
+=== 링크카드 삭제
+
+==== HTTP Request
+
+include::{snippets}/cards/delete/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/cards/delete/http-response.adoc[]

@@ -1,0 +1,42 @@
+[[WebAuthn]]
+== 지문 인증
+
+=== 지문 등록 챌린지
+
+==== HTTP Request
+
+include::{snippets}/webauthn/register-challenge/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/webauthn/register-challenge/http-response.adoc[]
+
+=== 지문 등록
+
+==== HTTP Request
+
+include::{snippets}/webauthn/register/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/webauthn/register/http-response.adoc[]
+
+=== 지문 인증 챌린지
+
+==== HTTP Request
+
+include::{snippets}/webauthn/authenticate-challenge/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/webauthn/authenticate-challenge/http-response.adoc[]
+
+=== 지문 인증
+
+==== HTTP Request
+
+include::{snippets}/webauthn/authenticate/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/webauthn/authenticate/http-response.adoc[]
