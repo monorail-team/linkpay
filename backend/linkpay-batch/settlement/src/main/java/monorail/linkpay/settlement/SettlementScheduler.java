@@ -19,7 +19,7 @@ public class SettlementScheduler {
     private final JobLauncher jobLauncher;
     private final Job settlementJob;
 
-    @Scheduled(cron = "0 0 2 * * *")
+    @Scheduled(cron = "0 20 5 * * *")
     public void runSettlementJob() {
         try {
             LocalDateTime start = LocalDate.now().minusDays(1).atStartOfDay();
