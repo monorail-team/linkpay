@@ -13,14 +13,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import monorail.linkpay.event.EventType;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 @Table(name = "outbox")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE outbox SET deleted_at = CURRENT_TIMESTAMP WHERE outbox_id = ?")
-@SQLRestriction("deleted_at is null")
 @Entity
 public class Outbox {
 
