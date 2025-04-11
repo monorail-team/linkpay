@@ -15,11 +15,11 @@ import monorail.linkpay.util.id.IdGenerator;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -52,9 +52,15 @@ public class SettlementWriter {
     @StepScope
     public JdbcBatchItemWriter<Settlement> jdbcSettlementItemWriter() {
         return new JdbcBatchItemWriterBuilder<Settlement>()
-                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO settlement (id, store_id, point) "
-                        + "VALUES (:id, :storeId, :point)")
+                .itemSqlParameterSourceProvider(settlement -> {
+                    MapSqlParameterSource param = new MapSqlParameterSource();
+                    param.addValue("id", settlement.getId());
+                    param.addValue("storeId", settlement.getStoreId());
+                    param.addValue("amount", settlement.getPoint().getAmount());
+                    return param;
+                })
+                .sql("INSERT INTO settlement (settlement_id, store_id, amount) "
+                        + "VALUES (:id, :storeId, :amount)")
                 .dataSource(dataSource)
                 .build();
     }
