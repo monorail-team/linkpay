@@ -41,7 +41,27 @@
 ![054](https://github.com/user-attachments/assets/c5fc6396-43c1-46b1-8f20-3647ab8bbf63)
 
 # 팀원 소개
-![055](https://github.com/user-attachments/assets/267b3786-ff0d-4b72-94d1-f9e2610aa144)
+<!-- ![055](https://github.com/user-attachments/assets/267b3786-ff0d-4b72-94d1-f9e2610aa144) -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://github.com/Cheonwooo"><img src="https://avatars.githubusercontent.com/u/82378975?v=4" width="100px;" alt=""/></a></td>
+      <td align="center"><a href="https://github.com/JJBINY"><img src="https://avatars.githubusercontent.com/u/97151887?v=4" width="100px;" alt=""/></a></td>
+        <td align="center"><a href="https://github.com/elsa-kim"><img src="https://avatars.githubusercontent.com/u/116364101?v=4" width="100px;" alt=""/></a></td>
+        <td align="center"><a href="https://github.com/mwjng"><img src="https://avatars.githubusercontent.com/u/87010483?v=4" width="100px;" alt=""/></a></td>
+      <td align="center"><a href="https://github.com/GuKBABjOa"><img src="https://avatars.githubusercontent.com/u/128679235?v=4" width="100px;" alt=""/></a></td>
+      <td align="center"><a href="https://github.com/PKafka0320"><img src="https://avatars.githubusercontent.com/u/66552990?v=4" width="100px;" alt=""/></a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://github.com/Cheonwooo"><b> 천현우 </b></a><br />팀장, Infra<br /></td>
+      <td align="center"><a href="https://github.com/JJBINY"><b> 강주빈 </b></a><br />BE, FE<br /></td>
+      <td align="center"><a href="https://github.com/elsa-kim"><b> 김소현 </b></a><br />BE<br /></td>
+      <td align="center"><a href="https://github.com/mwjng"><b> 정민우 </b></a><br />BE<br /></td>
+      <td align="center"><a href="https://github.com/GuKBABjOa"><b> 진성일 </b></a><br />FE<br /></td>
+      <td align="center"><a href="https://github.com/PKafka0320"><b> 최성환 </b></a><br />BE<br /></td>
+    </tr>
+  </tbody>
+</table>
 
 # 세부 기술 소개
 ## 지문 인증
